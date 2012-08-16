@@ -1,0 +1,6 @@
+CC = gcc
+AS = as
+LD = ld
+
+ARCH = $(shell uname -m)
+CFLAGS	:= -g -O2 -fpic -Wall -fshort-wchar -fno-strict-aliasing -fno-merge-constants -std=gnu99 -D_GNU_SOURCE

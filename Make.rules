@@ -1,0 +1,19 @@
+%.a :
+	$(AR) -cvqs $@ $^
+
+% : %.o
+	$(CC) $(CCLDFLAGS) -o $@ $^ $(foreach lib,$(LIBS),-l$(lib))
+
+%.so : 
+	$(CC) $(INCDIR) $(CFLAGS) -Wl,-soname,$(SONAME) $(CCLDFLAGS) $^ -o $@
+
+%.o: %.c
+	$(CC) $(INCDIR) $(CFLAGS) $(CPPFLAGS) -c $< -o $@
+
+%.S: %.c
+	$(CC) $(INCDIR) $(CFLAGS) $(CPPFLAGS) -S $< -o $@
+
+%.E: %.c
+	$(CC) $(INCDIR) $(CFLAGS) $(CPPFLAGS) -E $< -o $@
+
+%.c : %.h
