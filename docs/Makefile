@@ -8,6 +8,8 @@ DOCTARGETS = efi_get_variable_size.3 efi_get_variable_attributes.3 \
 
 all :
 
+clean :
+
 install :
 	$(INSTALL) -d -m 755 $(INSTALLROOT)$(DOCDIR)/man3
 	$(foreach x, $(DOCTARGETS), $(INSTALL) -m 644 $(x) $(INSTALLROOT)/$(DOCDIR)/man3/;)

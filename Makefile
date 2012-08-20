@@ -1,7 +1,7 @@
 TOPDIR = $(shell echo $$PWD)
 
 SUBDIRS := src docs
-VERSION = 0.1
+VERSION := 0.1
 
 all : $(SUBDIRS)
 
@@ -14,7 +14,10 @@ clean :
 install :
 	@for x in $(SUBDIRS) ; do make -C $${x} TOPDIR=$(TOPDIR) SRCDIR=$(TOPDIR)/$@/ ARCH=$(ARCH) $@ ; done
 
-.PHONY: $(SUBDIRS) clean install
+test : all
+	@for x in $(SUBDIRS) ; do make -C $${x} TOPDIR=$(TOPDIR) SRCDIR=$(TOPDIR)/$@/ ARCH=$(ARCH) $@ ; done
+
+.PHONY: $(SUBDIRS) all clean install test
 
 include $(TOPDIR)/Make.rules
 

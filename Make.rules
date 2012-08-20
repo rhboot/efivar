@@ -4,7 +4,7 @@
 % : %.o
 	$(CC) $(CCLDFLAGS) -o $@ $^ $(foreach lib,$(LIBS),-l$(lib))
 
-%.so : 
+%.so.$(SONAME_VERSION) : 
 	$(CC) $(CFLAGS) -Wl,-soname,$(SONAME) $(CCLDFLAGS) $^ -o $@
 
 %.o: %.c
