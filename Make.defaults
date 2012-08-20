@@ -2,8 +2,9 @@ CC	:= gcc
 AS	:= as
 LD	:= ld
 INSTALL := install
-LIBDIR	:= /usr/lib64
+LIBDIR	:= /usr/lib64/
 DOCDIR	:= /usr/share/man/
+INCDIR	:= /usr/include/
 
 ARCH = $(shell uname -m)
 CFLAGS	:= -g -O2 -fpic -Wall -fshort-wchar -fno-strict-aliasing -fno-merge-constants -std=gnu99 -D_GNU_SOURCE -I${TOPDIR}/src/
