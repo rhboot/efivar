@@ -11,7 +11,7 @@ all : tester
 install :
 
 clean :
-	@rm -rfv tester *.o
+	@rm -rfv tester *.o *.E *.S
 
 test : tester
 	./tester
