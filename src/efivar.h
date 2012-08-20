@@ -42,6 +42,7 @@ typedef struct {
 #define EFI_VARIABLE_TIME_BASED_AUTHENTICATED_WRITE_ACCESS 0x0000000000000020
 #define EFI_VARIABLE_APPEND_WRITE	0x0000000000000040
 
+extern int efi_variables_supported(void);
 extern int efi_get_variable_size(efi_guid_t guid, const char *name,
 				 size_t *size);
 extern int efi_get_variable_attributes(efi_guid_t, const char *name,

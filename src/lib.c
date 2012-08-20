@@ -40,6 +40,14 @@ typedef struct efi_variable_t {
 
 #define GUID_FORMAT "%08x-%04x-%04x-%04x-%02x%02x%02x%02x%02x%02x"
 
+int efi_variables_supported(void)
+{
+	if (!access("/sys/firmware/efi/vars/new_var", F_OK))
+		return 1;
+	
+	return 0;
+}
+
 static int
 read_fd(int fd, uint8_t **buf, size_t *bufsize)
 {

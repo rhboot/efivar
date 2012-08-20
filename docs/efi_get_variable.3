@@ -1,11 +1,13 @@
 .TH EFI_GET_VARIABLE 3 "Thu Aug 20 2012"
 .SH NAME
-efi_del_variable, efi_get_variable, efi_get_variable_attributes,
-efi_get_variable_size, efi_set_variable \- manipulate UEFI variables
+efi_variables_supported, efi_del_variable, efi_get_variable,
+efi_get_variable_attributes, efi_get_variable_size, efi_set_variable \-
+manipulate UEFI variables
 .SH SYNOPSIS
 .nf
 .B #include <efivar.h>
 .sp
+\fBint efi_variables_supported(void);\fR
 \fBint efi_del_variable(efi_guid_t\fR \fIguid\fR\fB, const char\fR \fI*name\fR\fB);\fR
 
 \fBint efi_get_variable(efi_guid_t\fR \fIguid\fR\fB, const char *\fR\fIname\fR\fB,
@@ -23,6 +25,9 @@ efi_get_variable_size, efi_set_variable \- manipulate UEFI variables
 				 uint32_t \fR\fIattributes\fR\fB);\fR
 .fi
 .SH DESCRIPTION
+.BR efi_variables_supported ()
+tests if the UEFI variable facility is supported on the current machine.
+.PP
 .BR efi_del_variable ()
 deletes the variable specified by \fIguid\fR and \fIname\fR.
 .PP
@@ -39,6 +44,8 @@ gets the size of the data for the variable specified by \fIguid\fR and \fIname\f
 sets the variable specified by \fIguid\fR and \fIname\fR.
 .PP
 .SH "RETURN VALUE"
+\fBefi_variables_supported\fR() returns true if variables are supported on the running hardware, and false if they are not.
+.PP
 \fBefi_del_variable\fR(), \fBefi_get_variable\fR(), \fBefi_get_variable_attributes\fR(), \fBefi_get_variable_size\fR(), and \fBefi_set_variable\fR() return negative on error and zero on success.
 .SH AUTHORS
 .nf
