@@ -30,7 +30,9 @@ int main(void)
 	int rc;
 	rc = efi_set_variable(TEST_GUID, "small",
 			      smallvalue, strlen(smallvalue)+1,
-			      EFI_VARIABLE_RUNTIME_ACCESS);
+			      EFI_VARIABLE_BOOTSERVICE_ACCESS |
+			      EFI_VARIABLE_RUNTIME_ACCESS | 
+			      EFI_VARIABLE_NON_VOLATILE);
 	if (rc < 0)
 		report_error("small value test failed: %m\n");
 
