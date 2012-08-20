@@ -1,0 +1,46 @@
+.TH EFI_GET_VARIABLE 3 "Thu Aug 20 2012"
+.SH NAME
+efi_del_variable, efi_get_variable, efi_get_variable_attributes,
+efi_get_variable_size, efi_set_variable \- manipulate UEFI variables
+.SH SYNOPSIS
+.nf
+.B #include <efivar.h>
+.sp
+\fBint efi_del_variable(efi_guid_t\fR \fIguid\fR\fB, const char\fR \fI*name\fR\fB);\fR
+
+\fBint efi_get_variable(efi_guid_t\fR \fIguid\fR\fB, const char *\fR\fIname\fR\fB,
+				 void **\fR\fIdata\fR\fB, ssize_t *\fR\fIdata_size\fR\fB,
+				 uint32_t *\fR\fIattributes\fR\fB);\fR
+
+\fBint efi_get_variable_attributes(efi_guid_t \fR\fIguid\fR\fB, const char *\fR\fIname\fR\fB,
+						  uint32_t *\fR\fIattributes\fR\fB);\fR
+
+\fBint efi_get_variable_size(efi_guid_t \fR\fIguid\fR\fB, const char *\fR\fIname\fR\fB,
+					 size_t *\fR\fIsize\fR\fB);\fR
+
+\fBint efi_set_variable(efi_guid_t \fR\fIguid\fR\fB, const char *\fR\fIname\fR\fB,
+				 void *\fR\fIdata\fR\fB, size_t \fR\fIdata_size\fR\fB,
+				 uint32_t \fR\fIattributes\fR\fB);\fR
+.fi
+.SH DESCRIPTION
+.BR efi_del_variable ()
+deletes the variable specified by \fIguid\fR and \fIname\fR.
+.PP
+.BR efi_get_variable ()
+gets the variable specified by \fIguid\fR and \fIname\fR. The value is stored in \fIdata\fR, its size in \fIdata_size\fR, and its attributes are stored in \fIattributes\fR.
+.PP
+.BR efi_get_variable_attributes ()
+gets attributes for the variable specified by \fIguid\fR and \fIname\fR.
+.PP
+.BR efi_get_variable_size ()
+gets the size of the data for the variable specified by \fIguid\fR and \fIname\fR.
+.PP
+.BR efi_set_variable ()
+sets the variable specified by \fIguid\fR and \fIname\fR.
+.PP
+.SH "RETURN VALUE"
+\fBefi_del_variable\fR(), \fBefi_get_variable\fR(), \fBefi_get_variable_attributes\fR(), \fBefi_get_variable_size\fR(), and \fBefi_set_variable\fR() return negative on error and zero on success.
+.SH AUTHORS
+.nf
+Peter Jones
+.fi
