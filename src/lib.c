@@ -36,7 +36,7 @@ typedef struct efi_variable_t {
 	uint8_t		Data[1024];
 	efi_status_t	Status;
 	uint32_t	Attributes;
-} efi_variable_t;
+} __attribute__((packed)) efi_variable_t;
 
 #define GUID_FORMAT "%08x-%04x-%04x-%04x-%02x%02x%02x%02x%02x%02x"
 
@@ -318,8 +318,8 @@ efi_set_variable(efi_guid_t guid, const char *name, void *data,
 		.Status = 0,
 		.Attributes = attributes
 		};
-	for (int i = 0, j = 1; name[i] != '\0'; i++, j+=2)
-		var.VariableName[j] = name[i];
+	for (int i = 0; name[i] != '\0'; i++)
+		var.VariableName[i] = name[i];
 	memcpy(var.Data, data, data_size);
 
 	fd = open("/sys/firmware/efi/vars/new_var", O_WRONLY);
