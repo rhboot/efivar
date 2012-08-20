@@ -6,7 +6,7 @@ include $(TOPDIR)/Make.defaults
 CCLDFLAGS =-L$(TOPDIR)/src/ -Wl,-rpath=$(TOPDIR)/src/
 LIBS=efivar
 
-all :
+all : tester
 
 install :
 
