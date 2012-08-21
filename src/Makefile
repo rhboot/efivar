@@ -8,6 +8,7 @@ include $(TOPDIR)/Make.defaults
 TARGETS = libefivar.so.0 libefivar.a
 INCTARGETS = efivar.h
 all : $(TARGETS)
+	@make -C test TOPDIR=$(TOPDIR) SRCDIR=$(SRCDIR)/test $@
 
 SOURCES = $(patsubst %.c,%,$(wildcard *.c))
 OBJECTS = $(foreach source,$(SOURCES),$(source).o)
