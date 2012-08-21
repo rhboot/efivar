@@ -189,7 +189,7 @@ err:
 }
 
 int
-efi_get_variable(efi_guid_t guid, const char *name, void **data,
+efi_get_variable(efi_guid_t guid, const char *name, uint8_t **data,
 		  size_t *data_size, uint32_t *attributes)
 {
 	int errno_value;
@@ -281,7 +281,7 @@ err:
 }
 
 int
-efi_set_variable(efi_guid_t guid, const char *name, void *data,
+efi_set_variable(efi_guid_t guid, const char *name, uint8_t *data,
 		 size_t data_size, uint32_t attributes)
 {
 	int errno_value;

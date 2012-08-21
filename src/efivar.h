@@ -47,10 +47,10 @@ extern int efi_get_variable_size(efi_guid_t guid, const char *name,
 				 size_t *size);
 extern int efi_get_variable_attributes(efi_guid_t, const char *name,
 				       uint32_t *attributes);
-extern int efi_get_variable(efi_guid_t guid, const char *name, void **data,
+extern int efi_get_variable(efi_guid_t guid, const char *name, uint8_t **data,
 			    size_t *data_size, uint32_t *attributes);
 extern int efi_del_variable(efi_guid_t guid, const char *name);
-extern int efi_set_variable(efi_guid_t guid, const char *name, void *data,
+extern int efi_set_variable(efi_guid_t guid, const char *name, uint8_t *data,
 			    size_t data_size, uint32_t attributes);
 
 #endif /* EFIVAR_H */
