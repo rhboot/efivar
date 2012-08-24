@@ -130,8 +130,10 @@ efi_get_variable_size(efi_guid_t guid, const char *name, size_t *size)
 
 	size_t retsize = 0;
 	rc = get_size_from_file(path, &retsize);
-	if (rc >= 0)
+	if (rc >= 0) {
 		ret = 0;
+		*size = retsize;
+	}
 err:
 	errno_value = errno;
 
