@@ -148,46 +148,20 @@ int
 efi_get_variable_attributes(efi_guid_t guid, const char *name,
 			    uint32_t *attributes)
 {
-	int errno_value;
 	int ret = -1;
 
-	char *path = NULL;
-	int rc = asprintf(&path, "/sys/firmware/efi/vars/%s-"GUID_FORMAT
-			  "/attributes",
-			  name, guid.a, guid.b, guid.c, guid.d, guid.e[0],
-			  guid.e[1], guid.e[2], guid.e[3], guid.e[4],
-			  guid.e[5]);
-	if (rc < 0)
-		return -1;
+	uint8_t *data;
+	size_t data_size;
+	uint32_t attribs;
 
-	int fd = open(path, O_RDONLY);
-	if (fd < 0)
-		goto err;
+	ret = efi_get_variable(guid, name, &data, &data_size, &attribs);
+	if (ret < 0)
+		return ret;
 
-	uint8_t *buf = NULL;
-	size_t bufsize = 0;
-	rc = read_fd(fd, &buf, &bufsize);
-	if (rc < 0 || bufsize != sizeof(*attributes))
-		goto err;
-
-	memcpy(attributes, buf, sizeof(*attributes));
-	
-	ret = 0;
-err:
-	errno_value = errno;
-
-	if (buf)
-		free(buf);
-
-	if (fd >= 0)
-		close(fd);
-
-	if (path)
-		free(path);
-
-	errno = errno_value;
+	*attributes = attribs;
+	if (data)
+		free(data);
 	return ret;
-
 }
 
 int
