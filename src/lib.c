@@ -122,9 +122,9 @@ efi_get_variable_size(efi_guid_t guid, const char *name, size_t *size)
 
 	char *path = NULL;
 	int rc = asprintf(&path, "/sys/firmware/efi/vars/%s-"GUID_FORMAT"/size",
-			  name, guid.a, guid.b, guid.c, guid.d, guid.e[0],
-			  guid.e[1], guid.e[2], guid.e[3], guid.e[4],
-			  guid.e[5]);
+			  name, guid.a, guid.b, guid.c, bswap_16(guid.d),
+			  guid.e[0], guid.e[1], guid.e[2], guid.e[3],
+			  guid.e[4], guid.e[5]);
 	if (rc < 0)
 		goto err;
 
@@ -172,10 +172,10 @@ efi_get_variable(efi_guid_t guid, const char *name, uint8_t **data,
 	int ret = -1;
 
 	char *path;
-	int rc = asprintf(&path, "/sys/firmware/efi/vars/%s-"GUID_FORMAT"/data",
-			  name, guid.a, guid.b, guid.c, guid.d, guid.e[0],
-			  guid.e[1], guid.e[2], guid.e[3], guid.e[4],
-			  guid.e[5]);
+	int rc = asprintf(&path, "/sys/firmware/efi/vars/%s-"GUID_FORMAT
+			  "/raw_var", name, guid.a, guid.b, guid.c,
+			  bswap_16(guid.d), guid.e[0], guid.e[1], guid.e[2],
+			  guid.e[3], guid.e[4], guid.e[5]);
 	if (rc < 0)
 		return -1;
 
@@ -222,9 +222,9 @@ efi_del_variable(efi_guid_t guid, const char *name)
 	int ret = -1;
 	char *path;
 	int rc = asprintf(&path, "/sys/firmware/efi/vars/%s-"GUID_FORMAT
-			  "raw_var", name, guid.a, guid.b, guid.c, guid.d,
-			  guid.e[0], guid.e[1], guid.e[2], guid.e[3], guid.e[4],
-			  guid.e[5]);
+			  "/raw_var", name, guid.a, guid.b, guid.c,
+			  bswap_16(guid.d), guid.e[0], guid.e[1], guid.e[2],
+			  guid.e[3], guid.e[4], guid.e[5]);
 	if (rc < 0)
 		return -1;
 
@@ -281,9 +281,9 @@ efi_set_variable(efi_guid_t guid, const char *name, uint8_t *data,
 
 	char *path;
 	int rc = asprintf(&path, "/sys/firmware/efi/vars/%s-"GUID_FORMAT"/data",
-			  name, guid.a, guid.b, guid.c, guid.d, guid.e[0],
-			  guid.e[1], guid.e[2], guid.e[3], guid.e[4],
-			  guid.e[5]);
+			  name, guid.a, guid.b, guid.c, bswap_16(guid.d),
+			  guid.e[0], guid.e[1], guid.e[2], guid.e[3],
+			  guid.e[4], guid.e[5]);
 	if (rc < 0)
 		return -1;
 

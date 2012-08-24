@@ -20,6 +20,7 @@
 
 #include <stdint.h>
 #include <unistd.h>
+#include <byteswap.h>
 
 typedef struct {
 	uint32_t	a;
@@ -30,7 +31,7 @@ typedef struct {
 } efi_guid_t;
 
 #define EFI_GUID(a,b,c,d,e0,e1,e2,e3,e4,e5) \
-((efi_guid_t) {(a), (b), (c), (d), { (e0), (e1), (e2), (e3), (e4), (e5) }})
+((efi_guid_t) {(a), (b), (c), bswap_16(d), { (e0), (e1), (e2), (e3), (e4), (e5) }})
 
 #define EFI_GLOBAL_GUID EFI_GUID(0x8be4df61,0x93ca,0x11d2,0xaa0d,0x00,0xe0,0x98,0x03,0x2b,0x8c)
 
