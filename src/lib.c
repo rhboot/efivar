@@ -246,12 +246,13 @@ efi_del_variable(efi_guid_t guid, const char *name)
 	if (rc < 0)
 		return -1;
 
+	uint8_t *buf = NULL;
+	size_t buf_size = 0;
+
 	int fd = open(path, O_RDONLY);
 	if (fd < 0)
 		goto err;
 
-	uint8_t *buf = NULL;
-	size_t buf_size = 0;
 	rc = read_fd(fd, &buf, &buf_size);
 	if (rc < 0 || buf_size != sizeof(efi_variable_t))
 		goto err;
