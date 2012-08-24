@@ -68,10 +68,18 @@ static void print_error(struct test *test, int rc, char *fmt, ...)
 	va_end(ap);
 }
 
-#define report_error(test, ret, rc, ...) ({		\
-		print_error(test, rc, __VA_ARGS__);	\
-		ret = -1;				\
-		goto fail;				\
+#define report_error(test, ret, rc, ...) ({			\
+		__typeof(errno) __errno_saved = errno;		\
+		if (test->result != rc)				\
+			print_error(test, rc, __VA_ARGS__);	\
+		free(testdata);					\
+		ret = -1;					\
+		if (data) {					\
+			free(data);				\
+			data = NULL;				\
+		}						\
+		errno = __errno_saved;				\
+		goto fail;					\
 	})
 
 int do_test(struct test *test)
@@ -91,8 +99,9 @@ int do_test(struct test *test)
 			      EFI_VARIABLE_BOOTSERVICE_ACCESS |
 			      EFI_VARIABLE_RUNTIME_ACCESS | 
 			      EFI_VARIABLE_NON_VOLATILE);
-	if (rc < 0)
+	if (rc < 0) {
 		report_error(test, ret, rc, "set test failed: %m\n");
+	}
 
 	uint8_t *data = alloca(test->size);
 	size_t datasize = 0;
