@@ -157,7 +157,7 @@ int main(void)
 	}
 
 	struct test tests[] = {
-		{.name=	"empty", .size = 0, .result= 0},
+		{.name=	"empty", .size = 0, .result= -1},
 		{.name= "one", .size = 1, .result= 0 },
 		{.name= "two", .size = 2, .result= 0 },
 		{.name= "three", .size = 3, .result= 0 },
