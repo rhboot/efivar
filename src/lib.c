@@ -189,8 +189,14 @@ efi_get_variable(efi_guid_t guid, const char *name, uint8_t **data,
 	if (rc < 0)
 		goto err;
 
-	*data = buf;
-	*data_size = bufsize;
+	efi_variable_t *var = (void *)buf;
+
+	*data = malloc(var->DataSize);
+	if (!*data)
+		goto err;
+	memcpy(*data, var->Data, var->DataSize);
+	*data_size = var->DataSize;
+	*attributes = var->Attributes;
 
 	ret = 0;
 err:
