@@ -87,6 +87,7 @@ int do_test(struct test *test)
 	int rc;
 
 	uint8_t *testdata = NULL;
+	uint8_t *data = NULL;
 
 	rc = get_random_bytes(test->size, &testdata);
 	if (rc < 0)
@@ -103,7 +104,6 @@ int do_test(struct test *test)
 		report_error(test, ret, rc, "set test failed: %m\n");
 	}
 
-	uint8_t *data = alloca(test->size);
 	size_t datasize = 0;
 	uint32_t attributes = 0;
 
@@ -124,6 +124,9 @@ int do_test(struct test *test)
 
 	if (memcmp(data, testdata, test->size))
 		report_error(test, ret, rc, "get test failed: bad data\n");
+
+	free(data);
+	free(testdata);
 
 	if (attributes != (EFI_VARIABLE_BOOTSERVICE_ACCESS |
 			   EFI_VARIABLE_RUNTIME_ACCESS |
