@@ -85,6 +85,7 @@ static void print_error(struct test *test, int rc, char *fmt, ...)
 int do_test(struct test *test)
 {
 	int rc;
+	errno = 0;
 
 	uint8_t *testdata = NULL;
 	uint8_t *data = NULL;
@@ -95,6 +96,7 @@ int do_test(struct test *test)
 
 	int ret = 0;
 
+	printf("testing efi_set_variable()\n");
 	rc = efi_set_variable(TEST_GUID, test->name,
 			      testdata, test->size,
 			      EFI_VARIABLE_BOOTSERVICE_ACCESS |
@@ -107,6 +109,7 @@ int do_test(struct test *test)
 	size_t datasize = 0;
 	uint32_t attributes = 0;
 
+	printf("testing efi_get_variable_size()\n");
 	rc = efi_get_variable_size(TEST_GUID, test->name, &datasize);
 	if (rc < 0)
 		report_error(test, ret, rc, "get size test failed: %m\n");
@@ -114,6 +117,7 @@ int do_test(struct test *test)
 	if (datasize != test->size)
 		report_error(test, ret, rc, "get size test failed: wrong size\n");
 
+	printf("testing efi_get_variable()\n");
 	rc = efi_get_variable(TEST_GUID, test->name, &data, &datasize,
 			      &attributes);
 	if (rc < 0)
@@ -133,6 +137,7 @@ int do_test(struct test *test)
 			   EFI_VARIABLE_NON_VOLATILE))
 		report_error(test, ret, rc, "get test failed: wrong attributes\n");
 
+	printf("testing efi_get_variable_attributes()\n");
 	rc = efi_get_variable_attributes(TEST_GUID, test->name, &attributes);
 	if (rc < 0)
 		report_error(test, ret, rc, "get attributes test failed: %m\n");
@@ -142,6 +147,7 @@ int do_test(struct test *test)
 			   EFI_VARIABLE_NON_VOLATILE))
 		report_error(test, ret, rc, "get attributes test failed: wrong attributes\n");
 
+	printf("testing efi_del_variable()\n");
 	rc = efi_del_variable(TEST_GUID, test->name);
 	if (rc < 0)
 		report_error(test, ret, rc, "del test failed: %m\n");
@@ -176,7 +182,7 @@ int main(void)
 		{.name= "thirtytwo", .size = 32, .result= 0 },
 		{.name= "thirtythree", .size = 33, .result= 0 },
 		{.name= "tentwentyfour", .size = 1024, .result= 0},
-		{.name= "tentwentyfive", .size = 1025, .result= -1},
+		{.name= "tentwentyfive", .size = 1025, .result= 0},
 		{.name= "", .size = 0, .result= 0}
 	};
 
@@ -187,6 +193,7 @@ int main(void)
 	int ret = 0;
 
 	for (int x = 0; tests[x].name[0] != '\0'; x++) {
+		printf("About to test %s\n", tests[x].name);
 		int rc = do_test(&tests[x]);
 		if (rc < 0) {
 			efi_del_variable(TEST_GUID, tests[x].name);
