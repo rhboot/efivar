@@ -11,7 +11,7 @@ all : $(TARGETS)
 	@make -C test TOPDIR=$(TOPDIR) SRCDIR=$(SRCDIR)/test $@
 
 SOURCES = lib
-OBJECTS = lib.o efivar.o vars.o efivarfs.o
+OBJECTS = lib.o vars.o efivarfs.o
 DEPS = .lib.c.P .efivar.c.P .efivar.h.P .vars.o.P .lib.h.P efivarfs.h.P
 
 libefivar.a :: $(OBJECTS)
