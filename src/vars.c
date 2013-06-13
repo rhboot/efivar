@@ -18,6 +18,7 @@
 
 #include <errno.h>
 #include <fcntl.h>
+#include <limits.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -34,6 +35,72 @@ typedef struct efi_variable_t {
 	efi_status_t	Status;
 	uint32_t	Attributes;
 } __attribute__((packed)) efi_variable_t;
+
+int
+read_fd(int fd, uint8_t **buf, size_t *bufsize)
+{
+	uint8_t *p;
+	size_t size = 4096;
+	int s = 0, filesize = 0;
+
+	if (!(*buf = calloc(4096, sizeof (char))))
+		return -1;
+
+	do {
+		p = *buf + filesize;
+		s = read(fd, p, 4096 - s);
+		if (s < 0)
+			break;
+		filesize += s;
+		/* only exit for empty reads */
+		if (s == 0)
+			break;
+		else if (s == 4096) {
+			*buf = realloc(*buf, size + 4096);
+			memset(*buf + size, '\0', 4096);
+			size += s;
+			s = 0;
+		} else {
+			size += s;
+		}
+	} while (1);
+
+	*bufsize = filesize;
+	return 0;
+}
+
+int
+get_size_from_file(const char *filename, size_t *retsize)
+{
+	int errno_value;
+	int ret = -1;
+	int fd = open(filename, O_RDONLY);
+	if (fd < 0)
+		goto err;
+
+	uint8_t *buf = NULL;
+	size_t bufsize = -1;
+	int rc = read_fd(fd, &buf, &bufsize);
+	if (rc < 0)
+		goto err;
+
+	*retsize = strtoll((char *)buf, NULL, 0);
+	if ((*retsize == LLONG_MIN || *retsize == LLONG_MAX) && errno == ERANGE)
+		*retsize = -1;
+	else
+		ret = 0;
+err:
+	errno_value = errno;
+
+	if (fd >= 0)
+		close(fd);
+
+	if (buf != NULL)
+		free(buf);
+
+	errno = errno_value;
+	return ret;
+}
 
 
 int

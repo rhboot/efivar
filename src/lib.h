@@ -38,9 +38,6 @@ struct efi_var_operations {
 
 typedef unsigned long efi_status_t;
 
-extern int read_fd(int fd, uint8_t **buf, size_t *bufsize);
-extern int get_size_from_file(const char *filename, size_t *retsize);
-
 extern struct efi_var_operations vars_ops;
 extern struct efi_var_operations efivarfs_ops;
 
