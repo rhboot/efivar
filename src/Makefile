@@ -1,21 +1,29 @@
 SRCDIR = $(realpath .)
 TOPDIR = $(realpath ..)
 
-SONAME := libefivar.so.$(SONAME_VERSION)
+SONAME = libefivar.so.$(SONAME_VERSION)
 
 include $(TOPDIR)/Make.defaults
 
-TARGETS = libefivar.so.0 libefivar.a
+TARGETS = libefivar.so.0 libefivar.a efivar
 INCTARGETS = efivar.h
 all : $(TARGETS)
 	@make -C test TOPDIR=$(TOPDIR) SRCDIR=$(SRCDIR)/test $@
 
-SOURCES = $(patsubst %.c,%,$(wildcard *.c))
-OBJECTS = $(foreach source,$(SOURCES),$(source).o)
+SOURCES = lib
+OBJECTS = lib.o efivar.o vars.o efivarfs.o
+DEPS = .lib.c.P .efivar.c.P .efivar.h.P .vars.o.P .lib.h.P efivarfs.h.P
 
 libefivar.a :: $(OBJECTS)
 
 libefivar.so.$(SONAME_VERSION) :: $(OBJECTS)
+
+efivar : efivar.c libefivar.so
+	$(CC) $(CFLAGS) $(CCLDFLAGS) -L. -lefivar -o $@ $^
+
+deps : $(DEPS)
+
+-include $(DEPS)
 
 clean : 
 	@rm -rfv *~ *.o *.a *.so *.so.$(SONAME_VERSION)
@@ -31,6 +39,6 @@ install : all
 test :all
 	make -C test TOPDIR=$(TOPDIR) SRCDIR=$(TOPDIR)/src/ $@
 
-.PHONY: all clean install test
+.PHONY: all deps clean install test
 
 include $(TOPDIR)/Make.rules

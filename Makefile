@@ -19,6 +19,7 @@ test : all
 
 .PHONY: $(SUBDIRS) all clean install test
 
+include $(TOPDIR)/Make.defaults
 include $(TOPDIR)/Make.rules
 
 GITTAG = $(VERSION)

@@ -1,6 +1,6 @@
 /*
  * libefivar - library for the manipulation of EFI variables
- * Copyright 2012 Red Hat, Inc.
+ * Copyright 2012-2013 Red Hat, Inc.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -16,39 +16,30 @@
  * along with this library.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <efivar.h>
 #include <errno.h>
 #include <fcntl.h>
 #include <limits.h>
-#include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <unistd.h>
 
-typedef unsigned long efi_status_t;
+#include "efivar.h"
+#include "lib.h"
 
-typedef struct efi_variable_t {
-	uint16_t	VariableName[1024/sizeof(uint16_t)];
-	efi_guid_t	VendorGuid;
-	unsigned long	DataSize;
-	uint8_t		Data[1024];
-	efi_status_t	Status;
-	uint32_t	Attributes;
-} __attribute__((packed)) efi_variable_t;
-
-#define GUID_FORMAT "%08x-%04x-%04x-%04x-%02x%02x%02x%02x%02x%02x"
-
-int efi_variables_supported(void)
+static int default_probe(void)
 {
-	if (!access("/sys/firmware/efi/vars/new_var", F_OK))
-		return 1;
-	
-	return 0;
+	return 1;
 }
 
-static int
+struct efi_var_operations default_ops = {
+		.probe = default_probe,
+	};
+
+struct efi_var_operations *ops = NULL;
+
+int
 read_fd(int fd, uint8_t **buf, size_t *bufsize)
 {
 	uint8_t *p;
@@ -81,7 +72,7 @@ read_fd(int fd, uint8_t **buf, size_t *bufsize)
 	return 0;
 }
 
-static int
+int
 get_size_from_file(const char *filename, size_t *retsize)
 {
 	int errno_value;
@@ -115,212 +106,72 @@ err:
 }
 
 int
-efi_get_variable_size(efi_guid_t guid, const char *name, size_t *size)
+efi_set_variable(efi_guid_t guid, const char *name, uint8_t *data,
+		 size_t data_size, uint32_t attributes)
 {
-	int errno_value;
-	int ret = -1;
-
-	char *path = NULL;
-	int rc = asprintf(&path, "/sys/firmware/efi/vars/%s-"GUID_FORMAT"/size",
-			  name, guid.a, guid.b, guid.c, bswap_16(guid.d),
-			  guid.e[0], guid.e[1], guid.e[2], guid.e[3],
-			  guid.e[4], guid.e[5]);
-	if (rc < 0)
-		goto err;
-
-	size_t retsize = 0;
-	rc = get_size_from_file(path, &retsize);
-	if (rc >= 0) {
-		ret = 0;
-		*size = retsize;
-	}
-err:
-	errno_value = errno;
-
-	if (path)
-		free(path);
-
-	errno = errno_value;
-	return ret;
+	if (!ops->set_variable)
+		return -ENOSYS;
+	return ops->set_variable(guid, name, data, data_size,
+						attributes);
 }
 
 int
-efi_get_variable_attributes(efi_guid_t guid, const char *name,
-			    uint32_t *attributes)
+efi_del_variable(efi_guid_t guid, const char *name)
 {
-	int ret = -1;
-
-	uint8_t *data;
-	size_t data_size;
-	uint32_t attribs;
-
-	ret = efi_get_variable(guid, name, &data, &data_size, &attribs);
-	if (ret < 0)
-		return ret;
-
-	*attributes = attribs;
-	if (data)
-		free(data);
-	return ret;
+	if (!ops->del_variable)
+		return -ENOSYS;
+	return ops->del_variable(guid, name);
 }
 
 int
 efi_get_variable(efi_guid_t guid, const char *name, uint8_t **data,
 		  size_t *data_size, uint32_t *attributes)
 {
-	int errno_value;
-	int ret = -1;
-
-	char *path;
-	int rc = asprintf(&path, "/sys/firmware/efi/vars/%s-"GUID_FORMAT
-			  "/raw_var", name, guid.a, guid.b, guid.c,
-			  bswap_16(guid.d), guid.e[0], guid.e[1], guid.e[2],
-			  guid.e[3], guid.e[4], guid.e[5]);
-	if (rc < 0)
-		return -1;
-
-	int fd = open(path, O_RDONLY);
-	if (fd <= 0)
-		goto err;
-
-	uint8_t *buf = NULL;
-	size_t bufsize = -1;
-	rc = read_fd(fd, &buf, &bufsize);
-	if (rc < 0)
-		goto err;
-
-	efi_variable_t *var = (void *)buf;
-
-	*data = malloc(var->DataSize);
-	if (!*data)
-		goto err;
-	memcpy(*data, var->Data, var->DataSize);
-	*data_size = var->DataSize;
-	*attributes = var->Attributes;
-
-	ret = 0;
-err:
-	errno_value = errno;
-
-	if (buf)
-		free(buf);
-
-	if (fd >= 0)
-		close(fd);
-
-	if (path)
-		free(path);
-
-	errno = errno_value;
-	return ret;
+	if (!ops->get_variable)
+		return -ENOSYS;
+	return ops->get_variable(guid, name, data, data_size, attributes);
 }
 
 int
-efi_del_variable(efi_guid_t guid, const char *name)
+efi_get_variable_attributes(efi_guid_t guid, const char *name,
+			    uint32_t *attributes)
 {
-	int errno_value;
-	int ret = -1;
-	char *path;
-	int rc = asprintf(&path, "/sys/firmware/efi/vars/%s-"GUID_FORMAT
-			  "/raw_var", name, guid.a, guid.b, guid.c,
-			  bswap_16(guid.d), guid.e[0], guid.e[1], guid.e[2],
-			  guid.e[3], guid.e[4], guid.e[5]);
-	if (rc < 0)
-		return -1;
-
-	uint8_t *buf = NULL;
-	size_t buf_size = 0;
-
-	int fd = open(path, O_RDONLY);
-	if (fd < 0)
-		goto err;
-
-	rc = read_fd(fd, &buf, &buf_size);
-	if (rc < 0 || buf_size != sizeof(efi_variable_t))
-		goto err;
-
-	close(fd);
-	fd = open("/sys/firmware/efi/vars/del_var", O_WRONLY);
-	if (fd < 0)
-		goto err;
-	
-	rc = write(fd, buf, buf_size);
-	if (rc >= 0)
-		ret = 0;
-err:
-	errno_value = errno;
-
-	if (buf)
-		free(buf);
-
-	if (fd >= 0)
-		close(fd);
-
-	if (path)
-		free(path);
-
-	errno = errno_value;
-	return ret;
+	if (!ops->get_variable_attributes)
+		return -ENOSYS;
+	return ops->get_variable_attributes(guid, name, attributes);
 }
 
 int
-efi_set_variable(efi_guid_t guid, const char *name, uint8_t *data,
-		 size_t data_size, uint32_t attributes)
+efi_get_variable_size(efi_guid_t guid, const char *name, size_t *size)
 {
-	int errno_value;
-	int ret = -1;
+	if (!ops->get_variable_size)
+		return -ENOSYS;
+	return ops->get_variable_size(guid, name, size);
+}
 
-	if (strlen(name) > 1024) {
-		errno = EINVAL;
-		return -1;
-	}
-	if (data_size > 1024) {
-		errno = ENOSPC;
-		return -1;
-	}
-
-	char *path;
-	int rc = asprintf(&path, "/sys/firmware/efi/vars/%s-"GUID_FORMAT"/data",
-			  name, guid.a, guid.b, guid.c, bswap_16(guid.d),
-			  guid.e[0], guid.e[1], guid.e[2], guid.e[3],
-			  guid.e[4], guid.e[5]);
-	if (rc < 0)
-		return -1;
-
-	int fd = -1;
-
-	if (!access(path, F_OK)) {
-		rc = efi_del_variable(guid, name);
-		if (rc < 0)
-			goto err;
-	}
-
-	efi_variable_t var = {
-		.VendorGuid = guid,
-		.DataSize = data_size,
-		.Status = 0,
-		.Attributes = attributes
-		};
-	for (int i = 0; name[i] != '\0'; i++)
-		var.VariableName[i] = name[i];
-	memcpy(var.Data, data, data_size);
-
-	fd = open("/sys/firmware/efi/vars/new_var", O_WRONLY);
-	if (fd < 0)
-		goto err;
-
-	rc = write(fd, &var, sizeof(var));
-	if (rc >= 0)
-		ret = 0;
-err:
-	errno_value = errno;
+int efi_variables_supported(void)
+{
+	if (ops == &default_ops)
+		return 0;
 	
-	if (path)
-		free(path);
+	return 1;
+}
 
-	if (fd >= 0)
-		close(fd);
+static void libefivar_init(void) __attribute__((constructor));
 
-	errno = errno_value;
-	return ret;
+static void libefivar_init(void)
+{
+	struct efi_var_operations *ops_list[] = {
+		&efivarfs_ops,
+		&vars_ops,
+		&default_ops,
+		NULL
+	};
+	for (int i = 0; ops_list[i] != NULL; i++)
+	{
+		if (ops_list[i]->probe()) {
+			ops = ops_list[i];
+			break;
+		}
+	}
 }

@@ -5,10 +5,16 @@
 	$(CC) $(CCLDFLAGS) -o $@ $^ $(foreach lib,$(LIBS),-l$(lib))
 
 %.so.$(SONAME_VERSION) : 
-	$(CC) $(CFLAGS) -Wl,-soname,$(SONAME) $(CCLDFLAGS) $^ -o $@
+	$(CC) $(CFLAGS) -Wl,-soname,$(SONAME) $(CCLDFLAGS) $(LIBFLAGS) $^ -o $@
+
+%.so : %.so.$(SONAME_VERSION)
+	ln -sf $^ $@
 
 %.o: %.c
 	$(CC) $(CFLAGS) $(CPPFLAGS) -c $< -o $@
+
+.%.c.P : %.c
+	$(CC) $(CFLAGS) $(CPPFLAGS) -M -MM -MF $@ $^
 
 %.S: %.c
 	$(CC) $(CFLAGS) $(CPPFLAGS) -S $< -o $@
