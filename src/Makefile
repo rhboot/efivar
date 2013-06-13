@@ -5,7 +5,8 @@ SONAME = libefivar.so.$(SONAME_VERSION)
 
 include $(TOPDIR)/Make.defaults
 
-TARGETS = libefivar.so.0 libefivar.a efivar
+TARGETS = libefivar.so.0 libefivar.a efivar.pc
+# TARGETS += efivar
 INCTARGETS = efivar.h
 all : $(TARGETS)
 	@make -C test TOPDIR=$(TOPDIR) SRCDIR=$(SRCDIR)/test $@
@@ -32,6 +33,11 @@ clean :
 install : all
 	$(INSTALL) -d -m 755 $(INSTALLROOT)$(LIBDIR)
 	$(foreach x, $(TARGETS), $(INSTALL) -m 755 $(x) $(INSTALLROOT)$(LIBDIR);)
+	$(INSTALL) -d -m 755 $(INSTALLROOT)$(LIBDIR)pkgconfig
+	sed -e "s,@@VERSION@@,$(VERSION),g" \
+	    -e "s,@@LIBDIR@@,$(LIBDIR),g" \
+		efivar.pc > $(INSTALLROOT)$(LIBDIR)pkgconfig/efivar.pc
+
 	$(INSTALL) -d -m 755 $(INSTALLROOT)$(INCDIR)
 	$(foreach x, $(INCTARGETS), $(INSTALL) -m 644 $(x) $(INSTALLROOT)$(INCDIR);)
 	$(foreach x, $(wildcard *.so.$(SONAME_VERSION)), ln -s $(x) $(patsubst %.so.$(SONAME_VERSION),%.so,$(INSTALLROOT)$(LIBDIR)$(x));)
