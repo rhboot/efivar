@@ -38,7 +38,7 @@ typedef struct efi_variable_t {
 	uint8_t		Data[];
 } __attribute__((packed)) efi_variable_t;
 
-int
+static int
 efivarfs_probe(void)
 {
 	if (!access(EFIVARS_PATH, F_OK)) {
@@ -65,7 +65,7 @@ efivarfs_probe(void)
 			(guid).e[3], (guid).e[4], (guid).e[5]);		\
 	})
 
-int
+static int
 efivarfs_get_variable_size(efi_guid_t guid, const char *name, size_t *size)
 {
 	char *path = NULL;
@@ -95,7 +95,7 @@ err:
 	return ret;
 }
 
-int
+static int
 efivarfs_get_variable_attributes(efi_guid_t guid, const char *name,
 			    uint32_t *attributes)
 {
@@ -115,7 +115,7 @@ efivarfs_get_variable_attributes(efi_guid_t guid, const char *name,
 	return ret;
 }
 
-int
+static int
 efivarfs_get_variable(efi_guid_t guid, const char *name, uint8_t **data,
 		  size_t *data_size, uint32_t *attributes)
 {
@@ -175,7 +175,7 @@ err:
 	return ret;
 }
 
-int
+static int
 efivarfs_del_variable(efi_guid_t guid, const char *name)
 {
 	char *path;
@@ -192,7 +192,7 @@ efivarfs_del_variable(efi_guid_t guid, const char *name)
 	return rc;
 }
 
-int
+static int
 efivarfs_set_variable(efi_guid_t guid, const char *name, uint8_t *data,
 		 size_t data_size, uint32_t attributes)
 {

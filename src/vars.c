@@ -36,7 +36,7 @@ typedef struct efi_variable_t {
 	uint32_t	Attributes;
 } __attribute__((packed)) efi_variable_t;
 
-int
+static int
 read_fd(int fd, uint8_t **buf, size_t *bufsize)
 {
 	uint8_t *p;
@@ -69,7 +69,7 @@ read_fd(int fd, uint8_t **buf, size_t *bufsize)
 	return 0;
 }
 
-int
+static int
 get_size_from_file(const char *filename, size_t *retsize)
 {
 	int errno_value;
@@ -103,7 +103,7 @@ err:
 }
 
 
-int
+static int
 vars_probe(void)
 {
 	if (!access("/sys/firmware/efi/vars/new_var", F_OK))
@@ -111,7 +111,7 @@ vars_probe(void)
 	return 0;
 }
 
-int
+static int
 vars_get_variable_size(efi_guid_t guid, const char *name, size_t *size)
 {
 	int errno_value;
@@ -141,7 +141,7 @@ err:
 	return ret;
 }
 
-int
+static int
 vars_get_variable_attributes(efi_guid_t guid, const char *name,
 			    uint32_t *attributes)
 {
@@ -161,7 +161,7 @@ vars_get_variable_attributes(efi_guid_t guid, const char *name,
 	return ret;
 }
 
-int
+static int
 vars_get_variable(efi_guid_t guid, const char *name, uint8_t **data,
 		  size_t *data_size, uint32_t *attributes)
 {
@@ -212,7 +212,7 @@ err:
 	return ret;
 }
 
-int
+static int
 vars_del_variable(efi_guid_t guid, const char *name)
 {
 	int errno_value;
@@ -260,7 +260,7 @@ err:
 	return ret;
 }
 
-int
+static int
 vars_set_variable(efi_guid_t guid, const char *name, uint8_t *data,
 		 size_t data_size, uint32_t attributes)
 {
@@ -330,5 +330,3 @@ struct efi_var_operations vars_ops = {
 	.get_variable_attributes = vars_get_variable_attributes,
 	.get_variable_size = vars_get_variable_size,
 };
-
-
