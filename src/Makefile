@@ -13,7 +13,8 @@ all : $(TARGETS)
 
 SOURCES = lib
 OBJECTS = lib.o vars.o efivarfs.o
-DEPS = .lib.c.P .efivar.c.P .efivar.h.P .vars.o.P .lib.h.P efivarfs.h.P
+DEPS = .lib.c.P .efivar.c.P .efivar.h.P .vars.c.P .lib.h.P \
+	.generic_next_variable_name.h.P
 
 libefivar.a :: $(OBJECTS)
 
@@ -27,7 +28,7 @@ deps : $(DEPS)
 -include $(DEPS)
 
 clean : 
-	@rm -rfv *~ *.o *.a *.so *.so.$(SONAME_VERSION)
+	@rm -rfv *~ *.o *.a *.so *.so.$(SONAME_VERSION) .*.c.P .*.h.P
 	@make -C test TOPDIR=$(TOPDIR) SRCDIR=$(TOPDIR)/src/ $@
 
 install : all

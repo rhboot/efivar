@@ -16,6 +16,9 @@
 .%.c.P : %.c
 	$(CC) $(CFLAGS) $(CPPFLAGS) -M -MM -MF $@ $^
 
+.%.h.P : %.h
+	$(CC) $(CFLAGS) $(CPPFLAGS) -M -MM -MF $@ $^
+
 %.S: %.c
 	$(CC) $(CFLAGS) $(CPPFLAGS) -S $< -o $@
 

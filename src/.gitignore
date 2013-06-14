@@ -4,6 +4,7 @@
 *.so
 *.so.?
 .*.c.P
+.*.h.P
 core.*
 efivar
 .*.sw?
