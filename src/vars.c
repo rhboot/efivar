@@ -26,6 +26,7 @@
 #include <sys/stat.h>
 
 #include "lib.h"
+#include "generic_next_variable_name.h"
 
 #define VARS_PATH "/sys/firmware/efi/vars/"
 
@@ -324,6 +325,12 @@ err:
 	return ret;
 }
 
+static int
+vars_get_next_variable_name(efi_guid_t **guid, char **name)
+{
+	return generic_get_next_variable_name(VARS_PATH, guid, name);
+}
+
 struct efi_var_operations vars_ops = {
 	.probe = vars_probe,
 	.set_variable = vars_set_variable,
@@ -331,4 +338,5 @@ struct efi_var_operations vars_ops = {
 	.get_variable = vars_get_variable,
 	.get_variable_attributes = vars_get_variable_attributes,
 	.get_variable_size = vars_get_variable_size,
+	.get_next_variable_name = vars_get_next_variable_name,
 };

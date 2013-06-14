@@ -83,6 +83,14 @@ efi_get_variable_size(efi_guid_t guid, const char *name, size_t *size)
 }
 
 int
+efi_get_next_variable_name(efi_guid_t **guid, char **name)
+{
+	if (!ops->get_next_variable_name)
+		return -ENOSYS;
+	return ops->get_next_variable_name(guid, name);
+}
+
+int
 efi_variables_supported(void)
 {
 	if (ops == &default_ops)

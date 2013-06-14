@@ -34,6 +34,7 @@ struct efi_var_operations {
 				       uint32_t *attributes);
 	int (*get_variable_size)(efi_guid_t guid, const char *name,
 				 size_t *size);
+	int (*get_next_variable_name)(efi_guid_t **guid, char **name);
 };
 
 typedef unsigned long efi_status_t;

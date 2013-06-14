@@ -30,6 +30,7 @@
 #include <unistd.h>
 
 #include "lib.h"
+#include "generic_next_variable_name.h"
 
 #define EFIVARS_PATH "/sys/firmware/efi/efivars/"
 
@@ -253,6 +254,12 @@ err:
 	return ret;
 }
 
+static int
+efivarfs_get_next_variable_name(efi_guid_t **guid, char **name)
+{
+	return generic_get_next_variable_name(EFIVARS_PATH, guid, name);
+}
+
 struct efi_var_operations efivarfs_ops = {
 	.probe = efivarfs_probe,
 	.set_variable = efivarfs_set_variable,
@@ -260,6 +267,7 @@ struct efi_var_operations efivarfs_ops = {
 	.get_variable = efivarfs_get_variable,
 	.get_variable_attributes = efivarfs_get_variable_attributes,
 	.get_variable_size = efivarfs_get_variable_size,
+	.get_next_variable_name = efivarfs_get_next_variable_name,
 };
 
 
