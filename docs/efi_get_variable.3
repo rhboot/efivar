@@ -23,6 +23,8 @@ manipulate UEFI variables
 \fBint efi_set_variable(efi_guid_t \fR\fIguid\fR\fB, const char *\fR\fIname\fR\fB,
 				 void *\fR\fIdata\fR\fB, size_t \fR\fIdata_size\fR\fB,
 				 uint32_t \fR\fIattributes\fR\fB);\fR
+
+\fBint efi_get_next_variable_name(efi_guid_t **\fR\fIguid\fR\fB, char **\fr\fIname\fR\fB;\fR
 .fi
 .SH DESCRIPTION
 .BR efi_variables_supported ()
@@ -43,8 +45,13 @@ gets the size of the data for the variable specified by \fIguid\fR and \fIname\f
 .BR efi_set_variable ()
 sets the variable specified by \fIguid\fR and \fIname\fR.
 .PP
+.BR efi_get_next_variable_name ()
+iterates across the currently extant variables, passing back a guid and name.
+.PP
 .SH "RETURN VALUE"
 \fBefi_variables_supported\fR() returns true if variables are supported on the running hardware, and false if they are not.
+.PP
+\fBefi_get_next_variable_name\fR() returns 0 when iteration has completed, 1 when iteration has not completed, and -1 on error.
 .PP
 \fBefi_del_variable\fR(), \fBefi_get_variable\fR(), \fBefi_get_variable_attributes\fR(), \fBefi_get_variable_size\fR(), and \fBefi_set_variable\fR() return negative on error and zero on success.
 .SH AUTHORS
