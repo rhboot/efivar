@@ -16,10 +16,19 @@
  * along with this library.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include <stdio.h>
+
 #include "efivar.h"
 
 int main(void)
 {
+	efi_guid_t *guid;
+	char *name;
+	int rc;
+
+	while ((rc = efi_get_next_variable_name(&guid, &name)) > 0) {
+		 printf("name: \"%s\"\n", name);
+	}
 
 	return 0;
 }
