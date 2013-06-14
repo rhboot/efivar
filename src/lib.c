@@ -82,7 +82,8 @@ efi_get_variable_size(efi_guid_t guid, const char *name, size_t *size)
 	return ops->get_variable_size(guid, name, size);
 }
 
-int efi_variables_supported(void)
+int
+efi_variables_supported(void)
 {
 	if (ops == &default_ops)
 		return 0;
@@ -92,7 +93,8 @@ int efi_variables_supported(void)
 
 static void libefivar_init(void) __attribute__((constructor));
 
-static void libefivar_init(void)
+static void
+libefivar_init(void)
 {
 	struct efi_var_operations *ops_list[] = {
 		&efivarfs_ops,
