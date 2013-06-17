@@ -33,11 +33,11 @@ git commit -a -q -m "%{version} baseline."
 git am %{patches} </dev/null
 
 %build
-make
+make libdir=%{_libdir} bindir=%{_bindir} OPT_FLAGS="$RPM_OPT_FLAGS"
 
 %install
 rm -rf $RPM_BUILD_ROOT
-make INSTALLROOT=$RPM_BUILD_ROOT install
+%makeinstall
 
 %clean
 rm -rf $RPM_BUILD_ROOT

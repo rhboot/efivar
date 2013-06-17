@@ -1,17 +1,18 @@
-CC	?= gcc
-AS	?= as
-LD	?= ld
+CC	= gcc
+AS	= as
+LD	= ld
 INSTALL ?= install
-LIBDIR	?= /usr/lib64/
-DOCDIR	?= /usr/share/man/
-INCDIR	?= /usr/include/
-BINDIR	?= /usr/bin/
-PCDIR	?= $(LIBDIR)pkgconfig/
-INSTALLROOT ?= $(TOPDIR)
+libdir	?= /usr/lib64/
+mandir	?= /usr/share/man/
+includedir	?= /usr/include/
+bindir	?= /usr/bin/
+PCDIR	?= $(libdir)/pkgconfig/
+DESTDIR ?= ""
 
 ARCH = $(shell uname -m)
-CFLAGS	?= -g -O0 -fpic -Wall -fshort-wchar -fno-strict-aliasing -fno-merge-constants -std=gnu99 -D_GNU_SOURCE -I${TOPDIR}/src/
-CCLDFLAGS ?=
+OPT_FLAGS ?= -O0 -g
+CFLAGS	?= ${OPT_FLAGS} -fpic -Wall -fshort-wchar -fno-strict-aliasing -fno-merge-constants -std=gnu99 -D_GNU_SOURCE -I${TOPDIR}/src/
+CCLDFLAGS ?= ${OPT_FLAGS} -L/usr/lib/gcc/x86_64-redhat-linux/4.8.1/32/
 LIBFLAGS ?= -shared
 
 SONAME_VERSION := 0

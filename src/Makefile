@@ -25,7 +25,7 @@ efivar : efivar.c libefivar.so
 
 efivar.pc : efivar.pc.in
 	sed -e "s,@@VERSION@@,$(VERSION),g" \
-	    -e "s,@@LIBDIR@@,$(LIBDIR),g" \
+	    -e "s,@@LIBDIR@@,$(libdir),g" \
 		efivar.pc.in > efivar.pc
 
 deps : $(DEPS)
@@ -37,15 +37,15 @@ clean :
 	@make -C test TOPDIR=$(TOPDIR) SRCDIR=$(TOPDIR)/src/ $@
 
 install : all
-	$(INSTALL) -d -m 755 $(INSTALLROOT)$(LIBDIR)
-	$(foreach x, $(LIBTARGETS), $(INSTALL) -m 755 $(x) $(INSTALLROOT)$(LIBDIR);)
-	$(INSTALL) -d -m 755 $(INSTALLROOT)$(PCDIR)
-	$(foreach x, $(PCTARGETS), $(INSTALL) -m 644 $(x) $(INSTALLROOT)$(PCDIR) ;)
-	$(INSTALL) -d -m 755 $(INSTALLROOT)$(INCDIR)
-	$(foreach x, $(INCTARGETS), $(INSTALL) -m 644 $(x) $(INSTALLROOT)$(INCDIR);)
-	$(INSTALL) -d -m 755 $(INSTALLROOT)$(BINDIR)
-	$(foreach x, $(BINTARGETS), $(INSTALL) -m 755 $(x) $(INSTALLROOT)$(BINDIR);)
-	$(foreach x, $(wildcard *.so.$(SONAME_VERSION)), ln -s $(x) $(patsubst %.so.$(SONAME_VERSION),%.so,$(INSTALLROOT)$(LIBDIR)$(x));)
+	$(INSTALL) -d -m 755 $(DESTDIR)$(libdir)
+	$(foreach x, $(LIBTARGETS), $(INSTALL) -m 755 $(x) $(DESTDIR)$(libdir);)
+	$(INSTALL) -d -m 755 $(DESTDIR)$(PCDIR)
+	$(foreach x, $(PCTARGETS), $(INSTALL) -m 644 $(x) $(DESTDIR)$(PCDIR) ;)
+	$(INSTALL) -d -m 755 $(DESTDIR)$(includedir)
+	$(foreach x, $(INCTARGETS), $(INSTALL) -m 644 $(x) $(DESTDIR)$(includedir);)
+	$(INSTALL) -d -m 755 $(DESTDIR)$(bindir)
+	$(foreach x, $(BINTARGETS), $(INSTALL) -m 755 $(x) $(DESTDIR)$(bindir);)
+	$(foreach x, $(wildcard *.so.$(SONAME_VERSION)), ln -s $(x) $(patsubst %.so.$(SONAME_VERSION),%.so,$(DESTDIR)$(libdir)/$(x));)
 
 test :all
 	make -C test TOPDIR=$(TOPDIR) SRCDIR=$(TOPDIR)/src/ $@
