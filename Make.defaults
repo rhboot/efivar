@@ -5,6 +5,9 @@ INSTALL ?= install
 LIBDIR	?= /usr/lib64/
 DOCDIR	?= /usr/share/man/
 INCDIR	?= /usr/include/
+BINDIR	?= /usr/bin/
+PCIDR	?= $(LIBDIR)pkgconfig/
+INSTALLROOT ?= $(TOPDIR)
 
 ARCH = $(shell uname -m)
 CFLAGS	?= -g -O0 -fpic -Wall -fshort-wchar -fno-strict-aliasing -fno-merge-constants -std=gnu99 -D_GNU_SOURCE -I${TOPDIR}/src/

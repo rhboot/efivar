@@ -12,7 +12,7 @@ clean :
 	@for x in $(SUBDIRS) ; do make -C $${x} TOPDIR=$(TOPDIR) SRCDIR=$(TOPDIR)/$@/ ARCH=$(ARCH) $@ ; done
 
 install :
-	@for x in $(SUBDIRS) ; do make -C $${x} TOPDIR=$(TOPDIR) SRCDIR=$(TOPDIR)/$@/ ARCH=$(ARCH) VERSION=$(VERSION) $@ ; done
+	@for x in $(SUBDIRS) ; do make -C $${x} TOPDIR=$(TOPDIR) SRCDIR=$(TOPDIR)/$@/ ARCH=$(ARCH) VERSION=$(VERSION) INSTALLROOT=$(INSTALLROOT) INCDIR=$(INCDIR) BINDIR=$(BINDIR) LIBDIR=$(LIBDIR) $@ ; done
 
 test : all
 	@for x in $(SUBDIRS) ; do make -C $${x} TOPDIR=$(TOPDIR) SRCDIR=$(TOPDIR)/$@/ ARCH=$(ARCH) $@ ; done
