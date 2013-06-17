@@ -6,7 +6,7 @@ LIBDIR	?= /usr/lib64/
 DOCDIR	?= /usr/share/man/
 INCDIR	?= /usr/include/
 BINDIR	?= /usr/bin/
-PCIDR	?= $(LIBDIR)pkgconfig/
+PCDIR	?= $(LIBDIR)pkgconfig/
 INSTALLROOT ?= $(TOPDIR)
 
 ARCH = $(shell uname -m)
