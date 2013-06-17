@@ -44,7 +44,7 @@ install : all
 	$(INSTALL) -d -m 755 $(INSTALLROOT)$(INCDIR)
 	$(foreach x, $(INCTARGETS), $(INSTALL) -m 644 $(x) $(INSTALLROOT)$(INCDIR);)
 	$(INSTALL) -d -m 755 $(INSTALLROOT)$(BINDIR)
-	$(foreach x, $(BINTARGETS), $(INSTALL) -m 644 $(x) $(INSTALLROOT)$(BINDIR);)
+	$(foreach x, $(BINTARGETS), $(INSTALL) -m 755 $(x) $(INSTALLROOT)$(BINDIR);)
 	$(foreach x, $(wildcard *.so.$(SONAME_VERSION)), ln -s $(x) $(patsubst %.so.$(SONAME_VERSION),%.so,$(INSTALLROOT)$(LIBDIR)$(x));)
 
 test :all
