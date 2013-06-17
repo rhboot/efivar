@@ -17,6 +17,7 @@ unsigned int get_random_bytes(size_t size, uint8_t **data)
 {
 	int ret = -1;
 	int errno_saved = 0;
+	int fd = -1;
 
 	if (!size) {
 		*data = NULL;
@@ -27,7 +28,7 @@ unsigned int get_random_bytes(size_t size, uint8_t **data)
 	if (!retdata)
 		goto fail;
 
-	int fd = open("/dev/urandom", O_RDONLY);
+	fd = open("/dev/urandom", O_RDONLY);
 	if (fd < 0)
 		goto fail;
 
