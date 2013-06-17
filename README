@@ -1,7 +1,7 @@
-libefivar
+efivar
 =========
 
-Library to manipulate EFI variables.
+Tools and library to manipulate EFI variables.
 
 This library is free software; you can redistribute it and/or
 modify it under the terms of the GNU Lesser General Public
