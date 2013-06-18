@@ -4,6 +4,7 @@ Release:        0.2%{?dist}
 Summary:        Tools to manage UEFI variables
 License:        LGPLv2.1
 URL:            https://github.com/vathpela/libefivar
+BuildRequires:	popt-devel
 # this archive is built from the tag corresponding with %{version}
 # using the "archive" make target in the repository.
 Source0:        %{name}-%{version}.tar.bz2
