@@ -33,6 +33,10 @@ static const char *attribute_names[] = {
 	"Non-Volatile",
 	"Boot Service Access",
 	"Runtime Service Access",
+	"Hardware Error Record",
+	"Authenticated Write Access",
+	"Time-Based Authenticated Write Access",
+	"Append Write",
 	""
 };
 
