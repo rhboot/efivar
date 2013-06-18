@@ -20,8 +20,8 @@ libefivar.a :: $(OBJECTS)
 
 libefivar.so.$(SONAME_VERSION) :: $(OBJECTS)
 
-efivar : efivar.c libefivar.so
-	$(CC) $(CFLAGS) $(CCLDFLAGS) -L. -lefivar -o $@ $^
+efivar : efivar.o libefivar.so
+	$(CC) $(CCLDFLAGS) -L. -lefivar -lpopt -o $@ $^
 
 efivar.pc : efivar.pc.in
 	sed -e "s,@@VERSION@@,$(VERSION),g" \
