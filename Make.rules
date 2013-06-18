@@ -11,7 +11,7 @@
 	ln -sf $^ $@
 
 %.o: %.c
-	$(CC) $(CFLAGS) $(CPPFLAGS) -c $< -o $@
+	$(CC) $(CFLAGS) $(CPPFLAGS) -c -o $@ $<
 
 .%.c.P : %.c
 	$(CC) $(CFLAGS) $(CPPFLAGS) -M -MM -MF $@ $^
