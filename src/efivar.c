@@ -58,7 +58,7 @@ list_all_variables(void)
 	}
 }
 
-static int
+static void
 show_variable(char *guid_name)
 {
 	efi_guid_t guid;
@@ -69,7 +69,8 @@ show_variable(char *guid_name)
 	 * character */
 	if (strlen(guid_name) < guid_len + 2) {
 		errno = -EINVAL;
-		return -1;
+		fprintf(stderr, "efivar: show variable: %m\n");
+		exit(1);
 	}
 
 	char c = guid_name[guid_len];
@@ -79,7 +80,8 @@ show_variable(char *guid_name)
 	guid_name[guid_len] = c;
 	if (rc < 0) {
 		errno = EINVAL;
-		return -1;
+		fprintf(stderr, "efivar: show variable: %m\n");
+		exit(1);
 	}
 
 	name = guid_name + guid_len + 1;
@@ -89,8 +91,10 @@ show_variable(char *guid_name)
 	uint32_t attributes;
 
 	rc = efi_get_variable(guid, name, &data, &data_size, &attributes);
-	if (rc < 0)
-		return rc;
+	if (rc < 0) {
+		fprintf(stderr, "efivar: show variable: %m\n");
+		exit(1);
+	}
 
 	printf("GUID: "GUID_FORMAT "\n",
 		 	guid.a, guid.b, guid.c, bswap_16(guid.d),
@@ -135,8 +139,6 @@ show_variable(char *guid_name)
 		}
 		printf("|%s|\n", charbuf);
 	}
-
-	return 0;
 }
 
 int main(int argc, char *argv[])
