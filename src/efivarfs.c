@@ -30,7 +30,7 @@
 #include <unistd.h>
 
 #include "lib.h"
-#include "generic_next_variable_name.h"
+#include "generics.h"
 
 #define EFIVARS_PATH "/sys/firmware/efi/efivars/"
 

@@ -14,7 +14,7 @@ all : $(LIBTARGETS) $(PCTARGETS) $(BINTARGETS) $(INCTARGETS)
 
 OBJECTS = lib.o vars.o efivarfs.o guid.o
 DEPS = .lib.c.P .efivar.c.P .efivar.h.P .vars.c.P .lib.h.P \
-	.generic_next_variable_name.h.P .guid.h.P .guid.c.P
+	.generics.h.P .guid.h.P .guid.c.P
 
 libefivar.a :: $(OBJECTS)
 

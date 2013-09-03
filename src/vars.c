@@ -26,7 +26,7 @@
 #include <sys/stat.h>
 
 #include "lib.h"
-#include "generic_next_variable_name.h"
+#include "generics.h"
 
 #define VARS_PATH "/sys/firmware/efi/vars/"
 
