@@ -12,9 +12,9 @@ INCTARGETS = efivar.h
 all : $(LIBTARGETS) $(PCTARGETS) $(BINTARGETS) $(INCTARGETS)
 	@make -C test TOPDIR=$(TOPDIR) SRCDIR=$(SRCDIR)/test $@
 
-OBJECTS = lib.o vars.o efivarfs.o
+OBJECTS = lib.o vars.o efivarfs.o guid.o
 DEPS = .lib.c.P .efivar.c.P .efivar.h.P .vars.c.P .lib.h.P \
-	.generic_next_variable_name.h.P
+	.generic_next_variable_name.h.P .guid.h.P .guid.c.P
 
 libefivar.a :: $(OBJECTS)
 
