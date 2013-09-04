@@ -58,11 +58,11 @@ struct test {
 	int result;
 };
 
-static void print_error(struct test *test, int rc, char *fmt, ...)
-	__attribute__ ((format (printf, 3, 4)));
-static void print_error(struct test *test, int rc, char *fmt, ...)
+static void print_error(int line, struct test *test, int rc, char *fmt, ...)
+	__attribute__ ((format (printf, 4, 5)));
+static void print_error(int line, struct test *test, int rc, char *fmt, ...)
 {
-	fprintf(stderr, "FAIL: \"%s\" (%d) ", test->name, rc);
+	fprintf(stderr, "FAIL: \"%s\"(line %d) (%d) ", test->name, line, rc);
 	va_list ap;
 	va_start(ap, fmt);
 	vfprintf(stderr, fmt, ap);
@@ -72,7 +72,7 @@ static void print_error(struct test *test, int rc, char *fmt, ...)
 #define report_error(test, ret, rc, ...) ({			\
 		__typeof(errno) __errno_saved = errno;		\
 		if (test->result != rc)				\
-			print_error(test, rc, __VA_ARGS__);	\
+			print_error(__LINE__, test, rc, __VA_ARGS__);	\
 		free(testdata);					\
 		ret = -1;					\
 		if (data) {					\
@@ -131,7 +131,7 @@ int do_test(struct test *test)
 		report_error(test, ret, rc, "get test failed: bad data\n");
 
 	free(data);
-	free(testdata);
+	data = NULL;
 
 	if (attributes != (EFI_VARIABLE_BOOTSERVICE_ACCESS |
 			   EFI_VARIABLE_RUNTIME_ACCESS |
@@ -153,6 +153,46 @@ int do_test(struct test *test)
 	if (rc < 0)
 		report_error(test, ret, rc, "del test failed: %m\n");
 
+	rc = efi_set_variable(TEST_GUID, test->name,
+			      testdata, test->size,
+			      EFI_VARIABLE_BOOTSERVICE_ACCESS |
+			      EFI_VARIABLE_RUNTIME_ACCESS | 
+			      EFI_VARIABLE_NON_VOLATILE);
+	if (rc < 0) {
+		report_error(test, ret, rc, "set test failed: %m\n");
+	}
+
+	rc = efi_append_variable(TEST_GUID, test->name,
+				testdata, test->size,
+				EFI_VARIABLE_APPEND_WRITE |
+				EFI_VARIABLE_BOOTSERVICE_ACCESS |
+				EFI_VARIABLE_RUNTIME_ACCESS |
+				EFI_VARIABLE_NON_VOLATILE);
+	if (rc < 0) {
+		report_error(test, ret, rc, "append test failed: %m\n");
+	}
+
+	printf("testing efi_get_variable()\n");
+	rc = efi_get_variable(TEST_GUID, test->name, &data, &datasize,
+			      &attributes);
+	if (rc < 0)
+		report_error(test, ret, rc, "get test failed: %m\n");
+
+	if (datasize != test->size * 2)
+		report_error(test, ret, rc, "get test failed: wrong size\n");
+
+	if (memcmp(data, testdata, test->size))
+		report_error(test, ret, rc, "get test failed: bad data\n");
+	if (memcmp(data + test->size, testdata, test->size))
+		report_error(test, ret, rc, "get test failed: bad data\n");
+
+	printf("testing efi_del_variable()\n");
+	rc = efi_del_variable(TEST_GUID, test->name);
+	if (rc < 0)
+		report_error(test, ret, rc, "del test failed: %m\n");
+
+	free(data);
+	free(testdata);
 fail:
 	if (ret != test->result)
 		return -1;

@@ -1,3 +1,5 @@
+#include <stdio.h>
+
 #include "efivar.h"
 #include "guid.h"
 

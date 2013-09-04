@@ -53,6 +53,9 @@ extern int efi_get_variable(efi_guid_t guid, const char *name, uint8_t **data,
 extern int efi_del_variable(efi_guid_t guid, const char *name);
 extern int efi_set_variable(efi_guid_t guid, const char *name, uint8_t *data,
 			    size_t data_size, uint32_t attributes);
+extern int efi_append_variable(efi_guid_t guid, const char *name,
+			       uint8_t *data, size_t data_size,
+			       uint32_t attributes);
 extern int efi_get_next_variable_name(efi_guid_t **guid, char **name);
 
 extern int efi_str_to_guid(const char *s, efi_guid_t *guid);

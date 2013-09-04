@@ -1,16 +1,18 @@
 #ifndef LIBEFIVAR_GENERIC_NEXT_VARIABLE_NAME_H
 #define LIBEFIVAR_GENERIC_NEXT_VARIABLE_NAME_H 1
 
+#include <dirent.h>
+#include <errno.h>
 #include <limits.h>
 #include <stdlib.h>
 #include <sys/types.h>
-#include <dirent.h>
 
 #include "guid.h"
 
 static DIR *dir;
 
 static inline int
+__attribute__((unused))
 generic_get_next_variable_name(char *path, efi_guid_t **guid, char **name)
 {
 	static char ret_name[NAME_MAX+1];
@@ -95,6 +97,56 @@ close_dir(void)
 		closedir(dir);
 		dir = NULL;
 	}
+}
+
+/* this is a simple read/delete/write implementation of "update".  Good luck.
+ * -- pjones */
+static int
+__attribute__((unused))
+generic_append_variable(efi_guid_t guid, const char *name,
+		       uint8_t *new_data, size_t new_data_size,
+		       uint32_t new_attributes)
+{
+	int rc;
+	uint8_t *data = NULL;
+	size_t data_size = 0;
+	uint32_t attributes = 0;
+
+	rc = efi_get_variable(guid, name, &data, &data_size, &attributes);
+	if (rc > 0) {
+		if ((attributes | EFI_VARIABLE_APPEND_WRITE) !=
+				(new_attributes | EFI_VARIABLE_APPEND_WRITE)) {
+			free(data);
+			errno = EINVAL;
+			return -1;
+		}
+		uint8_t *d = malloc(data_size + new_data_size);
+		size_t ds = data_size + new_data_size;
+		memcpy(d, data, data_size);
+		memcpy(d + data_size, new_data, new_data_size);
+		attributes &= ~EFI_VARIABLE_APPEND_WRITE;
+		rc = efi_del_variable(guid, name);
+		if (rc < 0) {
+			free(data);
+			free(d);
+			return rc;
+		}
+		/* if this doesn't work, we accidentally deleted.  There's
+		 * really not much to do about it, so return the error and
+		 * let our caller attempt to clean up :/
+		 */
+		rc = efi_set_variable(guid, name, d, ds, attributes);
+		free(d);
+		free(data);
+		return rc;
+	} else if (rc == ENOENT) {
+		data = new_data;
+		data_size = new_data_size;
+		attributes = new_attributes & ~EFI_VARIABLE_APPEND_WRITE;
+		rc = efi_set_variable(guid, name, data, data_size, attributes);
+		return rc;
+	}
+	return rc;
 }
 
 #endif /* LIBEFIVAR_GENERIC_NEXT_VARIABLE_NAME_H */

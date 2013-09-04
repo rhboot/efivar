@@ -26,6 +26,7 @@
 
 #include "efivar.h"
 #include "lib.h"
+#include "generics.h"
 
 static int default_probe(void)
 {
@@ -46,6 +47,16 @@ efi_set_variable(efi_guid_t guid, const char *name, uint8_t *data,
 		return -ENOSYS;
 	return ops->set_variable(guid, name, data, data_size,
 						attributes);
+}
+
+int
+efi_append_variable(efi_guid_t guid, const char *name, uint8_t *data,
+			size_t data_size, uint32_t attributes)
+{
+	if (!ops->append_variable)
+		return generic_append_variable(guid, name, data, data_size,
+						attributes);
+	return ops->append_variable(guid, name, data, data_size, attributes);
 }
 
 int

@@ -213,7 +213,7 @@ efivarfs_set_variable(efi_guid_t guid, const char *name, uint8_t *data,
 
 	int fd = -1;
 
-	if (!access(path, F_OK)) {
+	if (!access(path, F_OK) && !(attributes | EFI_VARIABLE_APPEND_WRITE)) {
 		rc = efi_del_variable(guid, name);
 		if (rc < 0)
 			goto err;
@@ -255,6 +255,14 @@ err:
 }
 
 static int
+efivarfs_append_variable(efi_guid_t guid, const char *name, uint8_t *data,
+	size_t data_size, uint32_t attributes)
+{
+	attributes |= EFI_VARIABLE_APPEND_WRITE;
+	return efivarfs_set_variable(guid, name, data, data_size, attributes);
+}
+
+static int
 efivarfs_get_next_variable_name(efi_guid_t **guid, char **name)
 {
 	return generic_get_next_variable_name(EFIVARS_PATH, guid, name);
@@ -263,6 +271,7 @@ efivarfs_get_next_variable_name(efi_guid_t **guid, char **name)
 struct efi_var_operations efivarfs_ops = {
 	.probe = efivarfs_probe,
 	.set_variable = efivarfs_set_variable,
+	.append_variable = efivarfs_append_variable,
 	.del_variable = efivarfs_del_variable,
 	.get_variable = efivarfs_get_variable,
 	.get_variable_attributes = efivarfs_get_variable_attributes,
