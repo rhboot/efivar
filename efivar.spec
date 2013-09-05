@@ -1,6 +1,6 @@
 Name:           efivar
-Version:        0.4
-Release:        0.2%{?dist}
+Version:        0.5
+Release:        0.1%{?dist}
 Summary:        Tools to manage UEFI variables
 License:        LGPLv2.1
 URL:            https://github.com/vathpela/libefivar
@@ -62,6 +62,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_libdir}/*.so.*
 
 %changelog
+* Thu Sep 05 2013 Peter Jones <pjones@redhat.com> - 0.5-0.1
+- Update to 0.5
+
 * Mon Jun 17 2013 Peter Jones <pjones@redhat.com> - 0.4-0.2
 - Fix ldconfig invocation
 
