@@ -7,7 +7,7 @@ URL:            https://github.com/vathpela/libefivar
 BuildRequires:	popt-devel
 # this archive is built from the tag corresponding with %{version}
 # using the "archive" make target in the repository.
-Source0:        %{name}-%{version}.tar.bz2
+Source0:        %{name}-%{version}.tar.xz
 
 %description
 efivar provides a simple command line interface to the UEFI variable facility.
