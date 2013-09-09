@@ -34,6 +34,10 @@
 
 #define EFIVARS_PATH "/sys/firmware/efi/efivars/"
 
+#ifndef EFIVARFS_MAGIC
+#  define EFIVARFS_MAGIC 0xde5e81e4
+#endif
+
 typedef struct efi_variable_t {
 	uint32_t	Attributes;
 	uint8_t		Data[];
