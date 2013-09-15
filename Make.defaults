@@ -11,8 +11,8 @@ DESTDIR ?= ""
 
 ARCH = $(shell uname -m)
 OPT_FLAGS ?= -O0 -g
-CFLAGS	?= ${OPT_FLAGS} -fpic -Wall -fshort-wchar -fno-strict-aliasing -fno-merge-constants -std=gnu99 -D_GNU_SOURCE -I${TOPDIR}/src/
 CCLDFLAGS ?= ${OPT_FLAGS} -fpic -Wall -fshort-wchar -fno-strict-aliasing -fno-merge-constants -std=gnu99
+CFLAGS	?= ${CCLDFLAGS} -D_GNU_SOURCE -I${TOPDIR}/src/
 LIBFLAGS ?= -shared
 
 SONAME_VERSION := 0
