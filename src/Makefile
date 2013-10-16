@@ -11,7 +11,7 @@ CMAKETARGETS = EfiVarConfig.cmake EfiVarConfigVersion.cmake
 BINTARGETS = efivar
 INCTARGETS = efivar.h
 all : $(LIBTARGETS) $(PCTARGETS) $(CMAKETARGETS) $(BINTARGETS) $(INCTARGETS)
-	@make -C test TOPDIR=$(TOPDIR) SRCDIR=$(SRCDIR)/test $@
+	@$(MAKE) -C test TOPDIR=$(TOPDIR) SRCDIR=$(SRCDIR)/test $@
 
 OBJECTS = lib.o vars.o efivarfs.o guid.o
 DEPS = .lib.c.P .efivar.c.P .efivar.h.P .vars.c.P .lib.h.P \
@@ -45,7 +45,7 @@ deps : $(DEPS)
 
 clean : 
 	@rm -rfv *~ *.o *.a *.so *.so.$(SONAME_VERSION) .*.c.P .*.h.P $(CMAKETARGETS)
-	@make -C test TOPDIR=$(TOPDIR) SRCDIR=$(TOPDIR)/src/ $@
+	@$(MAKE) -C test TOPDIR=$(TOPDIR) SRCDIR=$(TOPDIR)/src/ $@
 
 install : all
 	$(INSTALL) -d -m 755 $(DESTDIR)$(libdir)
@@ -61,7 +61,7 @@ install : all
 	$(foreach x, $(wildcard *.so.$(SONAME_VERSION)), ln -s $(x) $(patsubst %.so.$(SONAME_VERSION),%.so,$(DESTDIR)$(libdir)/$(x));)
 
 test :all
-	make -C test TOPDIR=$(TOPDIR) SRCDIR=$(TOPDIR)/src/ $@
+	$(MAKE) -C test TOPDIR=$(TOPDIR) SRCDIR=$(TOPDIR)/src/ $@
 
 .PHONY: all deps clean install test
 
