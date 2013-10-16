@@ -57,6 +57,7 @@ rm -rf $RPM_BUILD_ROOT
 %{_includedir}/*
 %{_libdir}/*.so
 %{_libdir}/pkgconfig/*.pc
+%{_libdir}/cmake/EfiVar/*.cmake
 
 %files libs
 %{_libdir}/*.so.*
