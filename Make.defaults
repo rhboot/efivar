@@ -1,13 +1,9 @@
-CC	= gcc
-AS	= as
-LD	= ld
 INSTALL ?= install
 libdir	?= /usr/lib64/
 mandir	?= /usr/share/man/
 includedir	?= /usr/include/
 bindir	?= /usr/bin/
 PCDIR	?= $(libdir)/pkgconfig/
-DESTDIR ?= ""
 
 ARCH = $(shell uname -m)
 OPT_FLAGS ?= -O0 -g
