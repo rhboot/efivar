@@ -48,7 +48,7 @@ text_to_guid(const char *text, efi_guid_t *guid)
 	char eightbytes[9] = "";
 	char fourbytes[5] = "";
 	char twobytes[3] = "";
-	uint32_t value;
+	unsigned long value;
 
 	if (check_sanity(text, strlen(text)) < 0)
 		return -1;
