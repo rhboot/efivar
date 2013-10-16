@@ -48,7 +48,6 @@ text_to_guid(const char *text, efi_guid_t *guid)
 	char eightbytes[9] = "";
 	char fourbytes[5] = "";
 	char twobytes[3] = "";
-	unsigned long value;
 
 	if (check_sanity(text, strlen(text)) < 0)
 		return -1;
@@ -58,101 +57,70 @@ text_to_guid(const char *text, efi_guid_t *guid)
 	strncpy(eightbytes, text, 8);
 	if (check_segment_sanity(eightbytes, 8) < 0)
 		return -1;
-	value = strtoul(eightbytes, NULL, 16);
-	if (value == ULONG_MAX && errno == ERANGE)
-		return -1;
-	guid->a = value;
+	guid->a = (uint32_t)strtoul(eightbytes, NULL, 16);
 
 	/* 84be9c3e-8a32-42c0-891c-4cd3b072becc
 	 *          ^ */
 	strncpy(fourbytes, text+9, 4);
 	if (check_segment_sanity(fourbytes, 4) < 0)
 		return -1;
-	value = strtoul(fourbytes, NULL, 16);
-	if (value == ULONG_MAX && errno == ERANGE)
-		return -1;
-	guid->b = value & 0xffffUL;
+	guid->b = (uint16_t)strtoul(fourbytes, NULL, 16);
 
 	/* 84be9c3e-8a32-42c0-891c-4cd3b072becc
 	 *               ^ */
 	strncpy(fourbytes, text+14, 4);
 	if (check_segment_sanity(fourbytes, 4) < 0)
 		return -1;
-	value = strtoul(fourbytes, NULL, 16);
-	if (value == ULONG_MAX && errno == ERANGE)
-		return -1;
-	guid->c = value & 0xffffUL;
+	guid->c = (uint16_t)strtoul(fourbytes, NULL, 16);
 
 	/* 84be9c3e-8a32-42c0-891c-4cd3b072becc
 	 *                    ^ */
 	strncpy(fourbytes, text+19, 4);
 	if (check_segment_sanity(fourbytes, 4) < 0)
 		return -1;
-	value = strtoul(fourbytes, NULL, 16);
-	if (value == ULONG_MAX && errno == ERANGE)
-		return -1;
-	guid->d = value & 0xffffUL;
-	guid->d = bswap_16(guid->d);
+	guid->d = bswap_16((uint16_t)strtoul(fourbytes, NULL, 16));
 
 	/* 84be9c3e-8a32-42c0-891c-4cd3b072becc
 	 *                         ^ */
 	strncpy(twobytes, text+24, 2);
 	if (check_segment_sanity(twobytes, 2) < 0)
 		return -1;
-	value = strtoul(twobytes, NULL, 16);
-	if (value == ULONG_MAX && errno == ERANGE)
-		return -1;
-	guid->e[0] = value & 0xffUL;
+	guid->e[0] = (uint8_t)strtoul(twobytes, NULL, 16);
 
 	/* 84be9c3e-8a32-42c0-891c-4cd3b072becc
 	 *                           ^ */
 	strncpy(twobytes, text+26, 2);
 	if (check_segment_sanity(twobytes, 2) < 0)
 		return -1;
-	value = strtoul(twobytes, NULL, 16);
-	if (value == ULONG_MAX && errno == ERANGE)
-		return -1;
-	guid->e[1] = value & 0xffUL;
+	guid->e[1] = (uint8_t)strtoul(twobytes, NULL, 16);
 
 	/* 84be9c3e-8a32-42c0-891c-4cd3b072becc
 	 *                             ^ */
 	strncpy(twobytes, text+28, 2);
 	if (check_segment_sanity(twobytes, 2) < 0)
 		return -1;
-	value = strtoul(twobytes, NULL, 16);
-	if (value == ULONG_MAX && errno == ERANGE)
-		return -1;
-	guid->e[2] = value & 0xffUL;
+	guid->e[2] = (uint8_t)strtoul(twobytes, NULL, 16);
 
 	/* 84be9c3e-8a32-42c0-891c-4cd3b072becc
 	 *                               ^ */
 	strncpy(twobytes, text+30, 2);
 	if (check_segment_sanity(twobytes, 2) < 0)
 		return -1;
-	value = strtoul(twobytes, NULL, 16);
-	if (value == ULONG_MAX && errno == ERANGE)
-		return -1;
-	guid->e[3] = value & 0xffUL;
+	guid->e[3] = (uint8_t)strtoul(twobytes, NULL, 16);
 
 	/* 84be9c3e-8a32-42c0-891c-4cd3b072becc
 	 *                                 ^ */
 	strncpy(twobytes, text+32, 2);
 	if (check_segment_sanity(twobytes, 2) < 0)
 		return -1;
-	value = strtoul(twobytes, NULL, 16);
-	if (value == ULONG_MAX && errno == ERANGE)
-		return -1;
-	guid->e[4] = value & 0xffUL;
+	guid->e[4] = (uint8_t)strtoul(twobytes, NULL, 16);
 
 	/* 84be9c3e-8a32-42c0-891c-4cd3b072becc
 	 *                                   ^ */
 	strncpy(twobytes, text+34, 2);
 	if (check_segment_sanity(twobytes, 2) < 0)
 		return -1;
-	value = strtoul(twobytes, NULL, 16);
-	if (value == ULONG_MAX && errno == ERANGE)
-		return -1;
-	guid->e[5] = value & 0xffUL;
+	guid->e[5] = (uint8_t)strtoul(twobytes, NULL, 16);
 
 	return 0;
 }
