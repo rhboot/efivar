@@ -1,13 +1,13 @@
 Name:           efivar
-Version:        0.6
+Version:        0.7
 Release:        1%{?dist}
 Summary:        Tools to manage UEFI variables
 License:        LGPLv2.1
-URL:            https://github.com/vathpela/libefivar
+URL:            https://github.com/vathpela/efivar
 BuildRequires:	popt-devel
 # this archive is built from the tag corresponding with %{version}
 # using the "archive" make target in the repository.
-Source0:        %{name}-%{version}.tar.xz
+Source0:        https://github.com/vathpela/%{name}/archive/%{version}.tar.gz
 
 %description
 efivar provides a simple command line interface to the UEFI variable facility.
@@ -62,6 +62,10 @@ rm -rf $RPM_BUILD_ROOT
 %{_libdir}/*.so.*
 
 %changelog
+* Fri Oct 25 2013 Peter Jones <pjones@redhat.com> - 0.7-1
+- Update package to 0.7
+- adds --append support to the binary.
+
 * Fri Sep 06 2013 Peter Jones <pjones@redhat.com> - 0.6-1
 - Update package to 0.6
 - fixes to documentation from lersek
