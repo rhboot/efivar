@@ -17,15 +17,21 @@
  */
 
 #include <ctype.h>
+#include <fcntl.h>
 #include <popt.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <sys/mman.h>
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <unistd.h>
 
 #include "efivar.h"
 #include "guid.h"
 
 #define ACTION_LIST	0x1
 #define ACTION_PRINT	0x2
+#define ACTION_APPEND	0x4
 
 #define GUID_FORMAT "%08x-%04x-%04x-%04x-%02x%02x%02x%02x%02x%02x"
 
@@ -59,37 +65,55 @@ list_all_variables(void)
 }
 
 static void
-show_variable(char *guid_name)
+parse_name(const char *guid_name, char **name, efi_guid_t *guid)
 {
-	efi_guid_t guid;
-	char *name;
-
 	int guid_len = strlen("84be9c3e-8a32-42c0-891c-4cd3b072becc");
+	char guid_buf[guid_len + 1];
+	char *name_buf = NULL;
+	int name_len;
+
 	/* it has to be at least the length of the guid, a dash, and one more
 	 * character */
 	if (strlen(guid_name) < guid_len + 2) {
 		errno = -EINVAL;
-		fprintf(stderr, "efivar: show variable: %m\n");
+		fprintf(stderr, "efivar: invalid name \"%s\"\n", guid_name);
 		exit(1);
 	}
 
-	char c = guid_name[guid_len];
-	guid_name[guid_len] = '\0';
+	strncpy(guid_buf, guid_name, guid_len);
 
-	int rc = text_to_guid(guid_name, &guid);
-	guid_name[guid_len] = c;
+	name_len = (strlen(guid_name) + 1) - (guid_len + 2);
+	name_buf = calloc(1, name_len);
+	if (!name_buf) {
+		fprintf(stderr, "efivar: %m\n");
+		exit(1);
+	}
+	strncpy(name_buf, guid_name + guid_len + 1, name_len);
+
+	int rc = text_to_guid(guid_buf, guid);
 	if (rc < 0) {
 		errno = EINVAL;
-		fprintf(stderr, "efivar: show variable: %m\n");
+		fprintf(stderr, "efivar: invalid name \"%s\"\n", guid_name);
 		exit(1);
 	}
 
-	name = guid_name + guid_len + 1;
+	*name = name_buf;
+}
+
+static void
+show_variable(char *guid_name)
+{
+	efi_guid_t guid;
+	char *name = NULL;
+	int rc;
 
 	uint8_t *data = NULL;
 	size_t data_size = 0;
 	uint32_t attributes;
 
+	parse_name(guid_name, &name, &guid);
+
+	errno = 0;
 	rc = efi_get_variable(guid, name, &data, &data_size, &attributes);
 	if (rc < 0) {
 		fprintf(stderr, "efivar: show variable: %m\n");
@@ -141,22 +165,99 @@ show_variable(char *guid_name)
 	}
 }
 
+static void
+append_variable(const char *guid_name, void *data, size_t data_size)
+{
+	efi_guid_t guid;
+	char *name = NULL;
+	int rc;
+	uint8_t *old_data = NULL;
+	size_t old_data_size = 0;
+	uint32_t old_attributes;
+
+	parse_name(guid_name, &name, &guid);
+
+	rc = efi_get_variable(guid, name, &old_data, &old_data_size,
+				&old_attributes);
+	if (rc < 0) {
+		fprintf(stderr, "efivar: %m\n");
+		exit(1);
+	}
+
+	rc = efi_append_variable(guid, name, data, data_size,
+				old_attributes);
+	if (rc < 0) {
+		fprintf(stderr, "efivar: %m\n");
+		exit(1);
+	}
+}
+
+static void
+validate_name(const char *name)
+{
+	if (name == NULL) {
+		fprintf(stderr, "Invalid variable name\n");
+		exit(1);
+	}
+}
+
+static void
+prepare_data(const char *filename, void **data, size_t *data_size)
+{
+	int fd = -1;
+	void *buf;
+	size_t buflen = 0;
+	struct stat statbuf;
+	int rc;
+
+	fd = open(filename, O_RDONLY);
+	if (fd < 0)
+		goto err;
+
+	memset(&statbuf, '\0', sizeof (statbuf));
+	rc = fstat(fd, &statbuf);
+	if (rc < 0)
+		goto err;
+
+	buflen = statbuf.st_size;
+	buf = mmap(NULL, buflen, PROT_READ, MAP_PRIVATE|MAP_POPULATE, fd, 0);
+	if (!buf)
+		goto err;
+
+	*data = buf;
+	*data_size = buflen;
+
+	return;
+err:
+	fprintf(stderr, "Could not use \"%s\": %m\n", filename);
+	exit(1);
+}
+
 int main(int argc, char *argv[])
 {
 	int action = 0;
 	char *name = NULL;
+	char *file = NULL;
 	poptContext optCon;
 	struct poptOption options[] = {
 		{NULL, '\0', POPT_ARG_INTL_DOMAIN, "efivar" },
 		{"list", 'l', POPT_ARG_VAL, &action,
 		 ACTION_LIST, "list current variables", NULL },
-		{"print", 'p', POPT_ARG_STRING, &name, 0,
-		 "variable to print, in the form 8be4df61-93ca-11d2-aa0d-00e098032b8c-Boot0000", "<guid-name>" },
+		{"print", 'p', POPT_ARG_VAL, &action,
+		 ACTION_PRINT, "print variable specified by --name", NULL },
+		{"name", 'n', POPT_ARG_STRING, &name, 0,
+		 "variable to manipulate, in the form 8be4df61-93ca-11d2-aa0d-00e098032b8c-Boot0000", "<guid-name>" },
+		{"append", 'a', POPT_ARG_VAL, &action,
+		 ACTION_APPEND, "append to variable specified by --name", NULL },
+		{"fromfile", 'f', POPT_ARG_STRING, &file, 0,
+		 "use data from <file>", "<file>" },
 		POPT_AUTOALIAS
 		POPT_AUTOHELP
 		POPT_TABLEEND
 	};
 	int rc;
+	void *data = NULL;
+	size_t data_size = 0;
 
 	optCon = poptGetContext("efivar", argc, (const char **)argv, options,0);
 	
@@ -192,8 +293,13 @@ int main(int argc, char *argv[])
 			list_all_variables();
 			break;
 		case ACTION_PRINT:
+			validate_name(name);
 			show_variable(name);
 			break;
+		case ACTION_APPEND:
+			validate_name(name);
+			prepare_data(file, &data, &data_size);
+			append_variable(name, data, data_size);
 	};
 
 	return 0;
