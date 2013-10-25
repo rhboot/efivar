@@ -7,7 +7,7 @@
 *.S
 *.so
 *.so.?
-*.tar.bz2
+*.tar.*
 .*.c.P
 .*.h.P
 core.*
