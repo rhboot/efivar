@@ -4,9 +4,9 @@ Release:        1%{?dist}
 Summary:        Tools to manage UEFI variables
 License:        LGPLv2.1
 URL:            https://github.com/vathpela/efivar
-BuildRequires:	popt-devel
-# this archive is built from the tag corresponding with %{version}
-# using the "archive" make target in the repository.
+Requires:       %{name}-libs = %{version}-%{release}
+
+BuildRequires:  popt-devel
 Source0:        https://github.com/vathpela/%{name}/archive/%{version}.tar.gz
 
 %description
@@ -19,7 +19,8 @@ Summary: Library to manage UEFI variables
 Library to allow for the simple manipulation of UEFI variables.
 
 %package devel
-Summary: development headers for libefivar
+Summary: Development headers for libefivar
+Requires: %{name}-libs = %{version}-%{release}
 
 %description devel
 development headers required to use libefivar.
