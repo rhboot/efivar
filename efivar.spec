@@ -49,7 +49,7 @@ rm -rf $RPM_BUILD_ROOT
 %postun libs -p /sbin/ldconfig
 
 %files
-%doc
+%doc COPYING README
 %{_bindir}/efivar
 %{_mandir}/man1/*
 
