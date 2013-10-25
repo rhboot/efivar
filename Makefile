@@ -1,7 +1,7 @@
 TOPDIR = $(shell echo $$PWD)
 
 SUBDIRS := src docs
-VERSION := 0.6
+VERSION := 0.7
 
 all : $(SUBDIRS)
 
@@ -34,8 +34,10 @@ test-archive:
 	@rm -rf /tmp/efivar-$(VERSION)
 	@echo "The archive is in efivar-$(VERSION).tar.xz"
 
-archive:
+tag:
 	git tag $(GITTAG) refs/heads/master
+
+archive: tag
 	@rm -rf /tmp/efivar-$(VERSION) /tmp/efivar-$(VERSION)-tmp
 	@mkdir -p /tmp/efivar-$(VERSION)-tmp
 	@git archive --format=tar $(GITTAG) | ( cd /tmp/efivar-$(VERSION)-tmp/ ; tar x )
