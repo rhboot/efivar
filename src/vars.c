@@ -75,14 +75,14 @@ read_fd(int fd, uint8_t **buf, size_t *bufsize)
 static int
 get_size_from_file(const char *filename, size_t *retsize)
 {
+	uint8_t *buf = NULL;
+	size_t bufsize = -1;
 	int errno_value;
 	int ret = -1;
 	int fd = open(filename, O_RDONLY);
 	if (fd < 0)
 		goto err;
 
-	uint8_t *buf = NULL;
-	size_t bufsize = -1;
 	int rc = read_fd(fd, &buf, &bufsize);
 	if (rc < 0)
 		goto err;
@@ -170,7 +170,8 @@ vars_get_variable(efi_guid_t guid, const char *name, uint8_t **data,
 {
 	int errno_value;
 	int ret = -1;
-
+	uint8_t *buf = NULL;
+	size_t bufsize = -1;
 	char *path;
 	int rc = asprintf(&path, VARS_PATH "%s-" GUID_FORMAT "/raw_var",
 			  name, guid.a, guid.b, guid.c, bswap_16(guid.d),
@@ -183,8 +184,6 @@ vars_get_variable(efi_guid_t guid, const char *name, uint8_t **data,
 	if (fd < 0)
 		goto err;
 
-	uint8_t *buf = NULL;
-	size_t bufsize = -1;
 	rc = read_fd(fd, &buf, &bufsize);
 	if (rc < 0)
 		goto err;

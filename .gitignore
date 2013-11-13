@@ -4,6 +4,7 @@
 *.E
 *.o
 *.pc
+*.cmake
 *.S
 *.so
 *.so.?
