@@ -49,8 +49,8 @@ static const char *attribute_names[] = {
 static void
 list_all_variables(void)
 {
-	efi_guid_t *guid;
-	char *name;
+	efi_guid_t *guid = NULL;
+	char *name = NULL;
 	int rc;
 	while ((rc = efi_get_next_variable_name(&guid, &name)) > 0)
 		 printf(GUID_FORMAT "-%s\n",
@@ -80,6 +80,7 @@ parse_name(const char *guid_name, char **name, efi_guid_t *guid)
 		exit(1);
 	}
 
+	memset(guid_buf, 0, sizeof(guid_buf));
 	strncpy(guid_buf, guid_name, guid_len);
 
 	name_len = (strlen(guid_name) + 1) - (guid_len + 2);
