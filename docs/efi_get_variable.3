@@ -78,7 +78,9 @@ translates from an efi_guid_t to a well known name.  If the supplied GUID does n
 .SH "RETURN VALUE"
 \fBefi_variables_supported\fR() returns true if variables are supported on the running hardware, and false if they are not.
 .PP
-\fBefi_get_next_variable_name\fR() returns 0 when iteration has completed, 1 when iteration has not completed, and -1 on error.
+\fBefi_get_next_variable_name\fR() returns 0 when iteration has completed, 1 when iteration has not completed, and -1 on error.  In the event of an error,
+.IR errno (3)
+is set appropriately.
 .PP
 \fBefi_del_variable\fR(), \fBefi_get_variable\fR(), \fBefi_get_variable_attributes\fR(), \fBefi_get_variable_size\fR(), \fBefi_append_variable\fR(), \fBefi_set_variable\fR(), \fBefi_str_to_guid\fR(), \fBefi_guid_to_str\fR(), \fBefi_name_to_guid\fR(), and \fBefi_guid_to_name\fR() return negative on error and zero on success.
 .SH AUTHORS
