@@ -12,7 +12,7 @@ INCTARGETS = efivar.h
 all : $(LIBTARGETS) $(PCTARGETS) $(BINTARGETS) $(INCTARGETS)
 	@$(MAKE) -C test TOPDIR=$(TOPDIR) SRCDIR=$(SRCDIR)/test $@
 
-OBJECTS = lib.o vars.o efivarfs.o guid.o
+OBJECTS = lib.o vars.o efivarfs.o guid.o guidlist.o
 DEPS = .lib.c.P .efivar.c.P .efivar.h.P .vars.c.P .lib.h.P \
 	.generics.h.P .guid.h.P .guid.c.P
 
@@ -27,6 +27,14 @@ efivar.pc : efivar.pc.in
 	sed -e "s,@@VERSION@@,$(VERSION),g" \
 	    -e "s,@@LIBDIR@@,$(libdir),g" \
 		efivar.pc.in > efivar.pc
+
+makeguids : makeguids.o guid.o
+
+guidlist.o : makeguids guids.txt
+	./makeguids guids.txt guids.bin names.bin
+	$(CC) $(CFLAGS) -c -o guidlist.o guids.S
+
+.INTERMEDIA: guids.bin names.bin
 
 deps : $(DEPS)
 

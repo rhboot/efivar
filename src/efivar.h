@@ -61,4 +61,7 @@ extern int efi_get_next_variable_name(efi_guid_t **guid, char **name);
 extern int efi_str_to_guid(const char *s, efi_guid_t *guid);
 extern int efi_guid_to_str(const efi_guid_t *guid, char **sp);
 
+extern int efi_guid_to_name(efi_guid_t *guid, char **name);
+extern int efi_name_to_guid(const char *name, efi_guid_t *guid);
+
 #endif /* EFIVAR_H */

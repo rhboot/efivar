@@ -33,6 +33,10 @@ manipulate UEFI variables
 \fBint efi_str_to_guid(const char *\fR\fIs\fR\fB, efi_guid_t *\fR\fIguid\fR\fB);\fR
 
 \fBint efi_guid_to_str(const efi_guid_t *\fR\fIguid\fR\fB, char **\fR\fIsp\fR\fB);\fR
+
+\fBint efi_name_to_guid(const char *\fR\fIname\fR\fB, efi_guid_t *\fR\fIguid\fR\fB);\fR
+
+\fBint efi_guid_to_name(efi_guid_t *\fR\fIguid\fR\fB, char **\fR\fIname\fR\fB);\fR
 .fi
 .SH DESCRIPTION
 .BR efi_variables_supported ()
@@ -65,12 +69,18 @@ parses a UEFI GUID from string form to an efi_guid_t the caller provides
 .BR efi_guid_to_str ()
 allocates a suitable string and populates it with string representation of a UEFI GUID.  It is the caller's responsibility to free this string.
 .PP
+.BR efi_name_to_guid ()
+translates from a well known name to an efi_guid_t the caller provides.
+.PP
+.BR efi_guid_to_name ()
+translates from an efi_guid_t to a well known name.  If the supplied GUID does not have a well known name, this function is equivalent to \fBefi_guid_to_str\fR().
+.PP
 .SH "RETURN VALUE"
 \fBefi_variables_supported\fR() returns true if variables are supported on the running hardware, and false if they are not.
 .PP
 \fBefi_get_next_variable_name\fR() returns 0 when iteration has completed, 1 when iteration has not completed, and -1 on error.
 .PP
-\fBefi_del_variable\fR(), \fBefi_get_variable\fR(), \fBefi_get_variable_attributes\fR(), \fBefi_get_variable_size\fR(), \fBefi_append_variable\fR(), \fBefi_set_variable\fR(), \fBefi_str_to_guid\fR(), and \fBefi_guid_to_str\fR() return negative on error and zero on success.
+\fBefi_del_variable\fR(), \fBefi_get_variable\fR(), \fBefi_get_variable_attributes\fR(), \fBefi_get_variable_size\fR(), \fBefi_append_variable\fR(), \fBefi_set_variable\fR(), \fBefi_str_to_guid\fR(), \fBefi_guid_to_str\fR(), \fBefi_name_to_guid\fR(), and \fBefi_guid_to_name\fR() return negative on error and zero on success.
 .SH AUTHORS
 .nf
 Peter Jones <pjones@redhat.com>

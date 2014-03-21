@@ -1,12 +1,31 @@
+/*
+ * libefivar - library for the manipulation of EFI variables
+ * Copyright 2012-2013 Red Hat, Inc.
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation; either
+ * version 2.1 of the License.
+ * 
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+ * 
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with this library.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
 #ifndef LIBEFIVAR_GUID_H
 #define LIBEFIVAR_GUID_H 1
 
+#include <endian.h>
 #include <errno.h>
 #include <limits.h>
 #include <stdlib.h>
 #include <string.h>
 
-static int
+static inline int
 check_sanity(const char *text, size_t len)
 {
 	errno = EINVAL;
@@ -21,7 +40,7 @@ check_sanity(const char *text, size_t len)
 	return 0;
 }
 
-static int
+static inline int
 check_segment_sanity(const char *text, size_t len)
 {
 	for(int i = 0; i < len; i++) {
@@ -38,7 +57,8 @@ check_segment_sanity(const char *text, size_t len)
 	return 0;
 }
 
-static int
+static inline int
+__attribute__((unused))
 text_to_guid(const char *text, efi_guid_t *guid)
 {
 	/* these variables represent the length of the /string/ they hold,
@@ -124,5 +144,10 @@ text_to_guid(const char *text, efi_guid_t *guid)
 
 	return 0;
 }
+
+struct guidname {
+	efi_guid_t guid;
+	char name[40];
+};
 
 #endif /* LIBEFIVAR_GUID */
