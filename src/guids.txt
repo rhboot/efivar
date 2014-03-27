@@ -2,6 +2,7 @@
 093e0fae-a6c4-4f50-9f1b-d41e2b89c19a	sha512	SHA-512
 0abba7dc-e516-4167-bbf5-4d9d1c739416	redhat	Red Hat
 0b6e5233-a65c-44c9-9407-d9ab83bfc8bd	sha224	SHA-224
+3bd2a492-96c0-4079-b420-fcf98ef103ed	x509_sha256	SHA256 hash of X.509 Certificate
 3c5766e8-269c-4e34-aa14-ed776e85b3b6	rsa2048	RSA 2048
 3CC24E96-22C7-41D8-8863-8E39DCDCC2CF	lenovo	Lenovo
 4aafd29d-68df-49ee-8aa9-347d375665a7	pkcs7_cert	PKCS7 Certificate
