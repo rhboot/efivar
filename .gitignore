@@ -5,6 +5,7 @@
 *.o
 *.pc
 *.S
+!src/guids.S
 *.so
 *.so.?
 *.tar.*
