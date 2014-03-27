@@ -101,28 +101,28 @@ main(int argc, char *argv[])
 	for (line = 1; guidstr - inbuf < inlen; line++) {
 		char *symbol = strchr(guidstr, '\t');
 		if (symbol == NULL)
-			err(1, "makeguids: \"%s\": invalid data on line %d",
+			err(1, "makeguids: \"%s\": 1 invalid data on line %d",
 				argv[1], line);
 		*symbol = '\0';
 		symbol += 1;
 
 		char *name = strchr(symbol, '\t');
 		if (name == NULL)
-			err(1, "makeguids: \"%s\": invalid data on line %d",
+			err(1, "makeguids: \"%s\": 2 invalid data on line %d",
 				argv[1], line);
 		*name = '\0';
 		name += 1;
 
 		char *end = strchr(name, '\n');
 		if (end == NULL)
-			err(1, "makeguids: \"%s\": invalid data on line %d",
+			err(1, "makeguids: \"%s\": 3 invalid data on line %d",
 				argv[1], line);
 		*end = '\0';
 
 		efi_guid_t guid;
 		rc = efi_str_to_guid(guidstr, &guid);
 		if (rc < 0)
-			err(1, "makeguids: \"%s\": invalid data on line %d",
+			err(1, "makeguids: \"%s\": 4 invalid data on line %d",
 				argv[1], line);
 
 		memcpy(&outbuf[line-1].guid, &guid, sizeof(guid));

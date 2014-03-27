@@ -47,14 +47,14 @@ guidlist.o : efivar-guids.h
 guid-symbols.o : guid-symbols.S
 	$(CC) $(CFLAGS) -c -o $@ $<
 
-.INTERMEDIA: guids.bin names.bin guid-symbols.S
+.INTERMEDIATE: guids.bin names.bin guid-symbols.S
 
 deps : $(DEPS)
 
 -include $(DEPS)
 
 clean : 
-	@rm -rfv *~ *.o *.a *.so *.so.$(SONAME_VERSION) .*.c.P .*.h.P $(PCTARGETS) $(BINTARGETS) efivar-guids.h
+	@rm -rfv *~ *.o *.a *.so *.so.$(SONAME_VERSION) .*.c.P .*.h.P $(PCTARGETS) $(BINTARGETS) *.bin efivar-guids.h guid-symbols.S makeguids
 	@$(MAKE) -C test TOPDIR=$(TOPDIR) SRCDIR=$(TOPDIR)/src/ $@
 
 install : all
