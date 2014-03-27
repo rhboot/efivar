@@ -1,13 +1,13 @@
 Name:           efivar
 Version:        0.7
-Release:        1%{?dist}
+Release:        0.1%{?dist}
 Summary:        Tools to manage UEFI variables
 License:        LGPLv2.1
 URL:            https://github.com/vathpela/efivar
 Requires:       %{name}-libs = %{version}-%{release}
 
-BuildRequires:  popt-devel
-Source0:        https://github.com/vathpela/%{name}/archive/%{version}.tar.gz
+BuildRequires:  popt-devel git
+Source0:        https://github.com/vathpela/%{name}/archive/efivar-%{version}.tar.xz
 
 %description
 efivar provides a simple command line interface to the UEFI variable facility.

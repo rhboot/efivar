@@ -56,10 +56,12 @@ cmpnamep(const void *p1, const void *p2)
 int
 main(int argc, char *argv[])
 {
-	if (argc != 4)
+	if (argc != 6)
 		exit(1);
 	
 	int in, guidout, nameout;
+
+	FILE *symout, *header;
 
 	in = open(argv[1], O_RDONLY);
 	if (in < 0)
@@ -72,6 +74,16 @@ main(int argc, char *argv[])
 	nameout = open(argv[3], O_WRONLY|O_CREAT|O_TRUNC, 0644);
 	if (nameout < 0)
 		err(1, "makeguids: could not open \"%s\"", argv[3]);
+
+	symout = fopen(argv[4], "w");
+	if (symout == NULL)
+		err(1, "makeguids: could not open \"%s\"", argv[4]);
+	chmod(argv[4], 0644);
+
+	header = fopen(argv[5], "w");
+	if (header == NULL)
+		err(1, "makeguids: could not open \"%s\"", argv[5]);
+	chmod(argv[5], 0644);
 
 	char *inbuf = NULL;
 	size_t inlen = 0;
@@ -87,7 +99,14 @@ main(int argc, char *argv[])
 	char *guidstr = inbuf;
 	int line;
 	for (line = 1; guidstr - inbuf < inlen; line++) {
-		char *name = strchr(guidstr, '\t');
+		char *symbol = strchr(guidstr, '\t');
+		if (symbol == NULL)
+			err(1, "makeguids: \"%s\": invalid data on line %d",
+				argv[1], line);
+		*symbol = '\0';
+		symbol += 1;
+
+		char *name = strchr(symbol, '\t');
 		if (name == NULL)
 			err(1, "makeguids: \"%s\": invalid data on line %d",
 				argv[1], line);
@@ -107,11 +126,44 @@ main(int argc, char *argv[])
 				argv[1], line);
 
 		memcpy(&outbuf[line-1].guid, &guid, sizeof(guid));
-		strncpy(outbuf[line-1].name, name, 39);
+		strcpy(outbuf[line-1].symbol, "efi_guid_");
+		strncat(outbuf[line-1].symbol, symbol,
+					255 - strlen("efi_guid_"));
+		strncpy(outbuf[line-1].name, name, 255);
 
 		guidstr = end+1;
 	}
 	printf("%d lines\n", line-1);
+
+	fprintf(header, "#ifndef EFIVAR_GUIDS_H\n#define EFIVAR_GUIDS_H 1\n\n");
+
+	for (int i = 0; i < line-1; i++) {
+		fprintf(symout, "\t.globl %s\n"
+				"\t.data\n"
+				"\t.align 1\n"
+				"\t.type %s, @object\n"
+				"\t.size %s, %s_end - %s\n"
+				"%s:\n",
+			outbuf[i].symbol,
+			outbuf[i].symbol,
+			outbuf[i].symbol,
+			outbuf[i].symbol,
+			outbuf[i].symbol,
+			outbuf[i].symbol);
+
+		uint8_t *guid_data = (uint8_t *) &outbuf[i].guid;
+		for (int j = 0; j < sizeof (efi_guid_t); j++)
+			fprintf(symout,"\t.byte 0x%02x\n", guid_data[j]);
+
+		fprintf(symout, "%s_end:\n", outbuf[i].symbol);
+
+		fprintf(header, "extern efi_guid_t %s;\n", outbuf[i].symbol);
+	}
+
+	fprintf(header, "\n#endif /* EFIVAR_GUIDS_H */\n");
+	fclose(header);
+	fclose(symout);
+
 	qsort(outbuf, line-1, sizeof (struct guidname), cmpguidp);
 	rc = write(guidout, outbuf, sizeof (struct guidname) * (line - 1));
 	if (rc < 0)

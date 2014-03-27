@@ -37,6 +37,8 @@ manipulate UEFI variables
 \fBint efi_name_to_guid(const char *\fR\fIname\fR\fB, efi_guid_t *\fR\fIguid\fR\fB);\fR
 
 \fBint efi_guid_to_name(efi_guid_t *\fR\fIguid\fR\fB, char **\fR\fIname\fR\fB);\fR
+
+\fBint efi_guid_to_symbol(efi_guid_t *\fR\fIguid\fR\fB, char **\fR\fIsymbol\fR\fB);\fR
 .fi
 .SH DESCRIPTION
 .BR efi_variables_supported ()
@@ -74,6 +76,9 @@ translates from a well known name to an efi_guid_t the caller provides.
 .PP
 .BR efi_guid_to_name ()
 translates from an efi_guid_t to a well known name.  If the supplied GUID does not have a well known name, this function is equivalent to \fBefi_guid_to_str\fR().
+.PP
+.BR efi_guid_to_symbol ()
+translates from an efi_guid_t to a unique (within libefivar) C-sytle symbol name.  These symbol names are useful for printing as a unique, easily parsed identifier, and are also provide by the library and its header files.
 .PP
 .SH "RETURN VALUE"
 \fBefi_variables_supported\fR() returns true if variables are supported on the running hardware, and false if they are not.

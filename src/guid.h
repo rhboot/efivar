@@ -147,7 +147,8 @@ text_to_guid(const char *text, efi_guid_t *guid)
 
 struct guidname {
 	efi_guid_t guid;
-	char name[40];
+	char symbol[256];
+	char name[256];
 };
 
 #endif /* LIBEFIVAR_GUID */

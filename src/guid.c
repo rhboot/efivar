@@ -79,9 +79,30 @@ int efi_guid_to_name(efi_guid_t *guid, char **name)
 			sizeof (well_known_guids[0]), cmpguidp);
 	if (result != NULL) {
 		*name = strndup(result->name, sizeof (result->name) -1);
-		return name ? 0 : -1;
+		return *name ? strlen(*name) : -1;
 	}
 	return efi_guid_to_str(guid, name);
+}
+
+int efi_guid_to_symbol(efi_guid_t *guid, char **symbol)
+{
+	intptr_t end = (intptr_t)&well_known_guids_end;
+	intptr_t start = (intptr_t)&well_known_guids;
+	size_t nmemb = (end - start) / sizeof (well_known_guids[0]);
+
+	struct guidname key;
+	memset(&key, '\0', sizeof (key));
+	memcpy(&key.guid, guid, sizeof (*guid));
+
+	struct guidname *result;
+	result = bsearch(&key, well_known_guids, nmemb,
+			sizeof (well_known_guids[0]), cmpguidp);
+	if (result != NULL) {
+		*symbol = strndup(result->symbol, sizeof (result->symbol) -1);
+		return *symbol ? strlen(*symbol) : -1;
+	}
+	errno = EINVAL;
+	return -1;
 }
 
 int efi_name_to_guid(const char *name, efi_guid_t *guid)

@@ -14,10 +14,10 @@
 	$(CC) $(CFLAGS) $(CPPFLAGS) -c -o $@ $<
 
 .%.c.P : %.c
-	$(CC) $(CFLAGS) $(CPPFLAGS) -M -MM -MF $@ $^
+	$(CC) $(CFLAGS) $(CPPFLAGS) -DEFIVAR_BUILD_ENVIRONMENT -M -MM -MF $@ $^
 
 .%.h.P : %.h
-	$(CC) $(CFLAGS) $(CPPFLAGS) -M -MM -MF $@ $^
+	$(CC) $(CFLAGS) $(CPPFLAGS) -DEFIVAR_BUILD_ENVIRONMENT -M -MM -MF $@ $^
 
 %.S: %.c
 	$(CC) $(CFLAGS) $(CPPFLAGS) -S $< -o $@

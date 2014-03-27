@@ -8,11 +8,11 @@ include $(TOPDIR)/Make.defaults
 LIBTARGETS = libefivar.so.0
 PCTARGETS = efivar.pc
 BINTARGETS = efivar
-INCTARGETS = efivar.h
+INCTARGETS = efivar.h efivar-guids.h
 all : $(LIBTARGETS) $(PCTARGETS) $(BINTARGETS) $(INCTARGETS)
 	@$(MAKE) -C test TOPDIR=$(TOPDIR) SRCDIR=$(SRCDIR)/test $@
 
-OBJECTS = lib.o vars.o efivarfs.o guid.o guidlist.o
+OBJECTS = lib.o vars.o efivarfs.o guid.o guidlist.o guid-symbols.o
 DEPS = .lib.c.P .efivar.c.P .efivar.h.P .vars.c.P .lib.h.P \
 	.generics.h.P .guid.h.P .guid.c.P
 
@@ -28,20 +28,34 @@ efivar.pc : efivar.pc.in
 	    -e "s,@@LIBDIR@@,$(libdir),g" \
 		efivar.pc.in > efivar.pc
 
-makeguids : makeguids.o guid.o
+# $(OBJECTS) : %.o : %.c efivar-guids.h
+efivar.h : efivar-guids.h
 
-guidlist.o : makeguids guids.txt
-	./makeguids guids.txt guids.bin names.bin
+fakeguid.o : guid.c
+	$(CC) $(CFLAGS) -DEFIVAR_BUILD_ENVIRONMENT -c -o $@ $^
+
+makeguids.o : makeguids.c
+	$(CC) $(CFLAGS) -DEFIVAR_BUILD_ENVIRONMENT -c -o $@ $^
+
+makeguids : makeguids.o fakeguid.o
+
+efivar-guids.h : makeguids guids.txt
+	./makeguids guids.txt guids.bin names.bin guid-symbols.S efivar-guids.h
+
+guidlist.o : efivar-guids.h
 	$(CC) $(CFLAGS) -c -o guidlist.o guids.S
 
-.INTERMEDIA: guids.bin names.bin
+guid-symbols.o : guid-symbols.S
+	$(CC) $(CFLAGS) -c -o $@ $<
+
+.INTERMEDIA: guids.bin names.bin guid-symbols.S
 
 deps : $(DEPS)
 
 -include $(DEPS)
 
 clean : 
-	@rm -rfv *~ *.o *.a *.so *.so.$(SONAME_VERSION) .*.c.P .*.h.P $(PCTARGETS) $(BINTARGETS)
+	@rm -rfv *~ *.o *.a *.so *.so.$(SONAME_VERSION) .*.c.P .*.h.P $(PCTARGETS) $(BINTARGETS) efivar-guids.h
 	@$(MAKE) -C test TOPDIR=$(TOPDIR) SRCDIR=$(TOPDIR)/src/ $@
 
 install : all

@@ -30,6 +30,10 @@ typedef struct {
 	uint8_t		e[6];
 } efi_guid_t;
 
+#ifndef EFIVAR_BUILD_ENVIRONMENT
+#include "efivar-guids.h"
+#endif
+
 #define EFI_GUID(a,b,c,d,e0,e1,e2,e3,e4,e5) \
 ((efi_guid_t) {(a), (b), (c), bswap_16(d), { (e0), (e1), (e2), (e3), (e4), (e5) }})
 
@@ -61,6 +65,7 @@ extern int efi_get_next_variable_name(efi_guid_t **guid, char **name);
 extern int efi_str_to_guid(const char *s, efi_guid_t *guid);
 extern int efi_guid_to_str(const efi_guid_t *guid, char **sp);
 
+extern int efi_guid_to_symbol(efi_guid_t *guid, char **symbol);
 extern int efi_guid_to_name(efi_guid_t *guid, char **name);
 extern int efi_name_to_guid(const char *name, efi_guid_t *guid);
 
