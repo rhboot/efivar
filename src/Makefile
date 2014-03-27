@@ -28,7 +28,6 @@ efivar.pc : efivar.pc.in
 	    -e "s,@@LIBDIR@@,$(libdir),g" \
 		efivar.pc.in > efivar.pc
 
-# $(OBJECTS) : %.o : %.c efivar-guids.h
 efivar.h : efivar-guids.h
 
 fakeguid.o : guid.c
