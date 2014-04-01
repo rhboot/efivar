@@ -1,5 +1,5 @@
 Name:           efivar
-Version:        0.7
+Version:        0.8
 Release:        0.1%{?dist}
 Summary:        Tools to manage UEFI variables
 License:        LGPLv2.1
@@ -63,6 +63,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_libdir}/*.so.*
 
 %changelog
+* Tue Apr 01 2014 Peter Jones <pjones@redhat.com> - 0.8-0.1
+- Update package to 0.8 as well.
+
 * Fri Oct 25 2013 Peter Jones <pjones@redhat.com> - 0.7-1
 - Update package to 0.7
 - adds --append support to the binary.
