@@ -28,7 +28,7 @@ development headers required to use libefivar.
 %prep
 %setup -q -n %{name}-%{version}
 git init
-git config user.email "shim-owner@fedoraproject.org"
+git config user.email "%{name}-owner@fedoraproject.org"
 git config user.name "Fedora Ninjas"
 git add .
 git commit -a -q -m "%{version} baseline."
