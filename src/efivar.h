@@ -69,4 +69,18 @@ extern int efi_guid_to_symbol(efi_guid_t *guid, char **symbol);
 extern int efi_guid_to_name(efi_guid_t *guid, char **name);
 extern int efi_name_to_guid(const char *name, efi_guid_t *guid);
 
+static inline int
+__attribute__ ((unused))
+efi_guid_cmp(const efi_guid_t *a, const efi_guid_t *b)
+{
+	return memcmp(a, b, sizeof (efi_guid_t));
+}
+
+static inline int
+__attribute__ ((unused))
+efi_guid_is_empty(const efi_guid_t *guid)
+{
+	return !efi_guid_cmp(guid,&efi_guid_empty);
+}
+
 #endif /* EFIVAR_H */
