@@ -79,7 +79,7 @@ int efi_guid_to_name(efi_guid_t *guid, char **name)
 			sizeof (well_known_guids[0]), cmpguidp);
 	if (result != NULL) {
 		*name = strndup(result->name, sizeof (result->name) -1);
-		return *name ? strlen(*name) : -1;
+		return *name ? (int)strlen(*name) : -1;
 	}
 	return efi_guid_to_str(guid, name);
 }
@@ -99,7 +99,7 @@ int efi_guid_to_symbol(efi_guid_t *guid, char **symbol)
 			sizeof (well_known_guids[0]), cmpguidp);
 	if (result != NULL) {
 		*symbol = strndup(result->symbol, sizeof (result->symbol) -1);
-		return *symbol ? strlen(*symbol) : -1;
+		return *symbol ? (int)strlen(*symbol) : -1;
 	}
 	errno = EINVAL;
 	return -1;

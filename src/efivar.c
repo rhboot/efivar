@@ -67,7 +67,7 @@ list_all_variables(void)
 static void
 parse_name(const char *guid_name, char **name, efi_guid_t *guid)
 {
-	int guid_len = strlen("84be9c3e-8a32-42c0-891c-4cd3b072becc");
+	unsigned int guid_len = strlen("84be9c3e-8a32-42c0-891c-4cd3b072becc");
 	char guid_buf[guid_len + 1];
 	char *name_buf = NULL;
 	int name_len;

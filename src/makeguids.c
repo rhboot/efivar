@@ -97,8 +97,8 @@ main(int argc, char *argv[])
 		err(1, "makeguids");
 	
 	char *guidstr = inbuf;
-	int line;
-	for (line = 1; guidstr - inbuf < inlen; line++) {
+	unsigned int line;
+	for (line = 1; (uintptr_t)guidstr - (uintptr_t)inbuf < inlen; line++) {
 		char *symbol = strchr(guidstr, '\t');
 		if (symbol == NULL)
 			err(1, "makeguids: \"%s\": 1 invalid data on line %d",
@@ -137,7 +137,7 @@ main(int argc, char *argv[])
 
 	fprintf(header, "#ifndef EFIVAR_GUIDS_H\n#define EFIVAR_GUIDS_H 1\n\n");
 
-	for (int i = 0; i < line-1; i++) {
+	for (unsigned int i = 0; i < line-1; i++) {
 		fprintf(symout, "\t.globl %s\n"
 				"\t.data\n"
 				"\t.align 1\n"
@@ -152,7 +152,7 @@ main(int argc, char *argv[])
 			outbuf[i].symbol);
 
 		uint8_t *guid_data = (uint8_t *) &outbuf[i].guid;
-		for (int j = 0; j < sizeof (efi_guid_t); j++)
+		for (unsigned int j = 0; j < sizeof (efi_guid_t); j++)
 			fprintf(symout,"\t.byte 0x%02x\n", guid_data[j]);
 
 		fprintf(symout, "%s_end:\n", outbuf[i].symbol);

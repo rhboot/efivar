@@ -43,7 +43,7 @@ check_sanity(const char *text, size_t len)
 static inline int
 check_segment_sanity(const char *text, size_t len)
 {
-	for(int i = 0; i < len; i++) {
+	for(unsigned int i = 0; i < len; i++) {
 		if (text[i] >= '0' && text[i] <= '9')
 			continue;
 		/* "| 0x20" is tolower() without having to worry about

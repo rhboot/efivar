@@ -87,11 +87,15 @@ get_size_from_file(const char *filename, size_t *retsize)
 	if (rc < 0)
 		goto err;
 
-	*retsize = strtoll((char *)buf, NULL, 0);
-	if ((*retsize == LLONG_MIN || *retsize == LLONG_MAX) && errno == ERANGE)
+	long long size = strtoll((char *)buf, NULL, 0);
+	if ((size == LLONG_MIN || size == LLONG_MAX) && errno == ERANGE) {
 		*retsize = -1;
-	else
+	} else if (size < 0) {
+		*retsize = -1;
+	} else {
+		*retsize = (size_t)size;
 		ret = 0;
+	}
 err:
 	errno_value = errno;
 

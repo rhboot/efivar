@@ -7,7 +7,7 @@ PCDIR	?= $(libdir)/pkgconfig/
 
 ARCH = $(shell uname -m)
 ccldflags = -fpic -Wall -fshort-wchar -fno-strict-aliasing -fno-merge-constants -std=gnu99
-CFLAGS = -O0 -g
+CFLAGS = -O0 -g -Wsign-compare -Werror
 CCLDFLAGS += $(ccldflags) $(LDFLAGS) $(OPT_FLAGS)
 CFLAGS += $(CCLDFLAGS) -D_GNU_SOURCE -I${TOPDIR}/src/
 LIBFLAGS += -shared
