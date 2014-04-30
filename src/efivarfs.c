@@ -6,12 +6,12 @@
  * modify it under the terms of the GNU Lesser General Public
  * License as published by the Free Software Foundation; either
  * version 2.1 of the License.
- * 
+ *
  * This library is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * Lesser General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Lesser General Public License
  * along with this library.  If not, see <http://www.gnu.org/licenses/>.
  */
@@ -58,7 +58,7 @@ efivarfs_probe(void)
 				return 1;
 		}
 	}
-	
+
 	return 0;
 }
 
@@ -77,11 +77,11 @@ efivarfs_get_variable_size(efi_guid_t guid, const char *name, size_t *size)
 	int rc = 0;
 	int ret = -1;
 	typeof(errno) errno_value;
-	
+
 	rc = make_efivarfs_path(&path, guid, name);
 	if (rc < 0)
 		goto err;
-	
+
 	struct stat statbuf;
 	rc = stat(path, &statbuf);
 	if (rc < 0)
