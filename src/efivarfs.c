@@ -217,23 +217,10 @@ efivarfs_set_variable(efi_guid_t guid, const char *name, uint8_t *data,
 	fd = open(path, O_WRONLY|O_CREAT, 0600);
 	if (fd < 0)
 		goto err;
-	
-	rc = ftruncate(fd, data_size + sizeof (attributes));
-	if (rc < 0)
-		goto err;
 
-#if 1
 	memcpy(buf, &attributes, sizeof (attributes));
 	memcpy(buf + sizeof (attributes), data, data_size);
 	rc = write(fd, buf, sizeof (attributes) + data_size);
-#else
-	struct iovec iovs[] = {
-		{ &attributes, sizeof (attributes) },
-		{ data, data_size }
-	};
-
-	rc = writev(fd, &iovs[0], 2);
-#endif
 	if (rc >= 0)
 		ret = 0;
 err:
