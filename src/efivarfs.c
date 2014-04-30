@@ -31,6 +31,7 @@
 
 #include "lib.h"
 #include "generics.h"
+#include "util.h"
 
 #define EFIVARS_PATH "/sys/firmware/efi/efivars/"
 
@@ -126,8 +127,7 @@ efivarfs_get_variable(efi_guid_t guid, const char *name, uint8_t **data,
 {
 	typeof(errno) errno_value;
 	int ret = -1;
-	struct stat statbuf;
-	off_t size = 0;
+	size_t size = 0;
 	uint32_t ret_attributes = 0;
 	uint8_t *ret_data;
 
@@ -140,15 +140,6 @@ efivarfs_get_variable(efi_guid_t guid, const char *name, uint8_t **data,
 	if (fd < 0)
 		goto err;
 
-	rc = stat(path, &statbuf);
-	if (rc < 0)
-		goto err;
-
-	size = statbuf.st_size - sizeof (*attributes);
-	ret_data = malloc(size);
-	if (!ret_data)
-		goto err;
-
 	rc = read(fd, &ret_attributes, sizeof (ret_attributes));
 	if (rc < 0) {
 read_err:
@@ -158,7 +149,7 @@ read_err:
 		goto err;
 	}
 
-	rc = read(fd, ret_data, size);
+	rc = read_file(fd, (char **)&ret_data, &size);
 	if (rc < 0)
 		goto read_err;
 
