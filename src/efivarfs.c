@@ -141,17 +141,12 @@ efivarfs_get_variable(efi_guid_t guid, const char *name, uint8_t **data,
 		goto err;
 
 	rc = read(fd, &ret_attributes, sizeof (ret_attributes));
-	if (rc < 0) {
-read_err:
-		errno_value = errno;
-		free(ret_data);
-		errno = errno_value;
+	if (rc < 0)
 		goto err;
-	}
 
 	rc = read_file(fd, (char **)&ret_data, &size);
 	if (rc < 0)
-		goto read_err;
+		goto err;
 
 	*attributes = ret_attributes;
 	*data = ret_data;
