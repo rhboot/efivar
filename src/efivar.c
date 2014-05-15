@@ -167,23 +167,22 @@ show_variable(char *guid_name)
 }
 
 static void
-append_variable(const char *guid_name, void *data, size_t data_size)
+append_variable(const char *guid_name, void *data, size_t data_size, int attrib)
 {
 	efi_guid_t guid;
 	char *name = NULL;
 	int rc;
 	uint8_t *old_data = NULL;
 	size_t old_data_size = 0;
-	uint32_t old_attributes;
+	uint32_t old_attributes = 0;
 
 	parse_name(guid_name, &name, &guid);
 
 	rc = efi_get_variable(guid, name, &old_data, &old_data_size,
 				&old_attributes);
-	if (rc < 0) {
-		fprintf(stderr, "efivar: %m\n");
-		exit(1);
-	}
+
+	if (attrib != 0)
+		old_attributes = attrib;
 
 	rc = efi_append_variable(guid, name, data, data_size,
 				old_attributes);
@@ -239,6 +238,7 @@ int main(int argc, char *argv[])
 	int action = 0;
 	char *name = NULL;
 	char *file = NULL;
+	int attributes = 0;
 	poptContext optCon;
 	struct poptOption options[] = {
 		{NULL, '\0', POPT_ARG_INTL_DOMAIN, "efivar" },
@@ -252,6 +252,8 @@ int main(int argc, char *argv[])
 		 ACTION_APPEND, "append to variable specified by --name", NULL },
 		{"fromfile", 'f', POPT_ARG_STRING, &file, 0,
 		 "use data from <file>", "<file>" },
+		{"attributes", 't', POPT_ARG_INT, &attributes, 0,
+		"attributes to use on append", "<attributes>" },
 		POPT_AUTOALIAS
 		POPT_AUTOHELP
 		POPT_TABLEEND
@@ -297,10 +299,10 @@ int main(int argc, char *argv[])
 			validate_name(name);
 			show_variable(name);
 			break;
-		case ACTION_APPEND:
+		case ACTION_APPEND | ACTION_PRINT:
 			validate_name(name);
 			prepare_data(file, &data, &data_size);
-			append_variable(name, data, data_size);
+			append_variable(name, data, data_size, attributes);
 	};
 
 	return 0;
