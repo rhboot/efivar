@@ -26,3 +26,7 @@ well_known_names:
 	.size	well_known_names_end, 1
 well_known_names_end:
 	.byte 0
+
+#if defined(__linux__) && defined(__ELF__)
+.section .note.GNU-stack,"",%progbits
+#endif

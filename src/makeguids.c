@@ -161,6 +161,7 @@ main(int argc, char *argv[])
 	}
 
 	fprintf(header, "\n#endif /* EFIVAR_GUIDS_H */\n");
+	fprintf(symout, "#if defined(__linux__) && defined(__ELF__)\n.section .note.GNU-stack,\"\",%%progbits\n#endif");
 	fclose(header);
 	fclose(symout);
 
