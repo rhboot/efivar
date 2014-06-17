@@ -35,7 +35,7 @@ test-archive:
 	@echo "The archive is in efivar-$(VERSION).tar.xz"
 
 tag:
-	git tag $(GITTAG) refs/heads/master
+	git tag efivar-$(GITTAG) refs/heads/master
 
 archive: tag
 	@rm -rf /tmp/efivar-$(VERSION) /tmp/efivar-$(VERSION)-tmp
