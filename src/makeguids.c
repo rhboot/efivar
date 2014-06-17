@@ -140,7 +140,7 @@ main(int argc, char *argv[])
 	for (unsigned int i = 0; i < line-1; i++) {
 		fprintf(symout, "\t.globl %s\n"
 				"\t.data\n"
-				"\t.align 1\n"
+				"\t.balign 1\n"
 				"\t.type %s, @object\n"
 				"\t.size %s, %s_end - %s\n"
 				"%s:\n",
