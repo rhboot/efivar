@@ -141,7 +141,7 @@ main(int argc, char *argv[])
 		fprintf(symout, "\t.globl %s\n"
 				"\t.data\n"
 				"\t.balign 1\n"
-				"\t.type %s, @object\n"
+				"\t.type %s, %%object\n"
 				"\t.size %s, %s_end - %s\n"
 				"%s:\n",
 			outbuf[i].symbol,
