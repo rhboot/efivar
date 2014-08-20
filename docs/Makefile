@@ -22,6 +22,8 @@ all :
 
 clean :
 
+test :
+
 install :
 	$(INSTALL) -d -m 755 $(DESTDIR)$(mandir)/man1
 	$(foreach x, $(MAN1TARGETS), $(INSTALL) -m 644 $(x) $(DESTDIR)/$(mandir)/man1/;)
