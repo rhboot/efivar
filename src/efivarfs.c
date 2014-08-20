@@ -209,7 +209,10 @@ efivarfs_set_variable(efi_guid_t guid, const char *name, uint8_t *data,
 			goto err;
 	}
 
-	fd = open(path, O_WRONLY|O_CREAT, 0600);
+	int flags = O_WRONLY;
+	if (!(attributes & EFI_VARIABLE_APPEND_WRITE))
+		flags |= O_CREAT|O_EXCL;
+	fd = open(path, flags, 0600);
 	if (fd < 0)
 		goto err;
 
