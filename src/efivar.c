@@ -265,8 +265,8 @@ int main(int argc, char *argv[])
 	optCon = poptGetContext("efivar", argc, (const char **)argv, options,0);
 
 	rc = poptReadDefaultConfig(optCon, 0);
-	if (rc < 0) {
-		fprintf(stderr, "efivar: poprReadDefaultConfig failed: %s\n",
+	if (rc < 0 && !(rc == POPT_ERROR_ERRNO && errno == ENOENT)) {
+		fprintf(stderr, "efivar: poptReadDefaultConfig failed: %s\n",
 			poptStrerror(rc));
 		exit(1);
 	}
