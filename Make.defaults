@@ -4,14 +4,23 @@ mandir	?= /usr/share/man/
 includedir	?= /usr/include/
 bindir	?= /usr/bin/
 PCDIR	?= $(libdir)/pkgconfig/
-CC	?= gcc
-CCLD	?= gcc
+CC	:= $(if $(filter default,$(origin CC)),gcc,$(CC))
+CCLD	:= $(if $(filter undefined,$(origin CCLD)),$(CC),$(CCLD))
+CFLAGS	?= -O0 -g
 
 ARCH = $(shell uname -m)
-ccldflags = -fpic -Wall -fshort-wchar -fno-strict-aliasing -fno-merge-constants -std=gnu99
-CFLAGS = -O0 -g -Wsign-compare -Wmaybe-uninitialized -Wall -Werror
-CCLDFLAGS += $(ccldflags) $(LDFLAGS) $(OPT_FLAGS)
-CFLAGS += $(ccldflags) -D_GNU_SOURCE -I${TOPDIR}/src/
+clang_cflags =
+gcc_cflags = -Wmaybe-uninitialized
+cflags	:= $(CFLAGS) \
+	-Wall -fshort-wchar -fno-strict-aliasing -std=gnu11 -Wsign-compare \
+	-fPIC -D_GNU_SOURCE -I${TOPDIR}/src/ \
+	$(if $(filter $(CC),clang),$(clang_cflags),) \
+	$(if $(filter $(CC),gcc),$(gcc_cflags),)
+clang_ccldflags =
+gcc_ccldflags = -fno-merge-constants
+ccldflags := $(cflags) $(CCLDFLAGS) $(LDFLAGS) \
+	$(if $(filter $(CCLD),clang),$(clang_ccldflags),) \
+	$(if $(filter $(CCLD),gcc),$(gcc_ccldflags),)
 LIBFLAGS += -shared
 
 SONAME_VERSION := 0

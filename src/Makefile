@@ -21,7 +21,7 @@ libefivar.a :: $(OBJECTS)
 libefivar.so.$(SONAME_VERSION) :: $(OBJECTS)
 
 efivar : efivar.o libefivar.so
-	$(CCLD) $(CCLDFLAGS) -L. -lefivar -o $@ $^ -lpopt
+	$(CCLD) $(ccldflags) -L. -lefivar -o $@ $^ -lpopt
 
 efivar.pc : efivar.pc.in
 	sed -e "s,@@VERSION@@,$(VERSION),g" \
@@ -31,10 +31,10 @@ efivar.pc : efivar.pc.in
 efivar.h : efivar-guids.h
 
 fakeguid.o : guid.c
-	$(CC) $(CFLAGS) -DEFIVAR_BUILD_ENVIRONMENT -c -o $@ $^
+	$(CC) $(cflags) -DEFIVAR_BUILD_ENVIRONMENT -c -o $@ $^
 
 makeguids.o : makeguids.c
-	$(CC) $(CFLAGS) -DEFIVAR_BUILD_ENVIRONMENT -c -o $@ $^
+	$(CC) $(cflags) -DEFIVAR_BUILD_ENVIRONMENT -c -o $@ $^
 
 makeguids : makeguids.o fakeguid.o
 
@@ -42,10 +42,10 @@ efivar-guids.h : makeguids guids.txt
 	./makeguids guids.txt guids.bin names.bin guid-symbols.S efivar-guids.h
 
 guidlist.o : efivar-guids.h
-	$(CC) $(CFLAGS) -c -o guidlist.o guids.S
+	$(CC) $(cflags) -c -o guidlist.o guids.S
 
 guid-symbols.o : guid-symbols.S
-	$(CC) $(CFLAGS) -c -o $@ $<
+	$(CC) $(cflags) -c -o $@ $<
 
 .INTERMEDIATE: guids.bin names.bin guid-symbols.S
 
