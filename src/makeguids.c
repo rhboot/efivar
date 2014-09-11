@@ -58,7 +58,7 @@ main(int argc, char *argv[])
 {
 	if (argc != 6)
 		exit(1);
-	
+
 	int in, guidout, nameout;
 
 	FILE *symout, *header;
@@ -90,12 +90,12 @@ main(int argc, char *argv[])
 	int rc = read_file(in, &inbuf, &inlen);
 	if (rc < 0)
 		err(1, "makeguids: could not read \"%s\"", argv[1]);
-	
+
 	/* strictly speaking, this *has* to be too large. */
 	struct guidname *outbuf = calloc(inlen, sizeof (char));
 	if (!outbuf)
 		err(1, "makeguids");
-	
+
 	char *guidstr = inbuf;
 	unsigned int line;
 	for (line = 1; (uintptr_t)guidstr - (uintptr_t)inbuf < inlen; line++) {

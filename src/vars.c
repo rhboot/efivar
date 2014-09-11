@@ -246,7 +246,7 @@ vars_del_variable(efi_guid_t guid, const char *name)
 	fd = open(VARS_PATH "del_var", O_WRONLY);
 	if (fd < 0)
 		goto err;
-	
+
 	rc = write(fd, buf, buf_size);
 	if (rc >= 0)
 		ret = 0;
@@ -317,7 +317,7 @@ vars_set_variable(efi_guid_t guid, const char *name, uint8_t *data,
 		ret = 0;
 err:
 	errno_value = errno;
-	
+
 	if (path)
 		free(path);
 

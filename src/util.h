@@ -49,4 +49,5 @@ read_file(int fd, char **bufp, size_t *lenptr) {
     return 0;
 }
 
+
 #endif /* EFIVAR_UTIL_H */

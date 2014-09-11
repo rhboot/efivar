@@ -101,7 +101,7 @@ int do_test(struct test *test)
 	rc = efi_set_variable(TEST_GUID, test->name,
 			      testdata, test->size,
 			      EFI_VARIABLE_BOOTSERVICE_ACCESS |
-			      EFI_VARIABLE_RUNTIME_ACCESS | 
+			      EFI_VARIABLE_RUNTIME_ACCESS |
 			      EFI_VARIABLE_NON_VOLATILE);
 	if (rc < 0) {
 		report_error(test, ret, rc, "set test failed: %m\n");
@@ -156,7 +156,7 @@ int do_test(struct test *test)
 	rc = efi_set_variable(TEST_GUID, test->name,
 			      testdata, test->size,
 			      EFI_VARIABLE_BOOTSERVICE_ACCESS |
-			      EFI_VARIABLE_RUNTIME_ACCESS | 
+			      EFI_VARIABLE_RUNTIME_ACCESS |
 			      EFI_VARIABLE_NON_VOLATILE);
 	if (rc < 0) {
 		report_error(test, ret, rc, "set test failed: %m\n");
