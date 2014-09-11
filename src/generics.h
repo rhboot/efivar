@@ -115,7 +115,7 @@ generic_append_variable(efi_guid_t guid, const char *name,
 	uint32_t attributes = 0;
 
 	rc = efi_get_variable(guid, name, &data, &data_size, &attributes);
-	if (rc > 0) {
+	if (rc >= 0) {
 		if ((attributes | EFI_VARIABLE_APPEND_WRITE) !=
 				(new_attributes | EFI_VARIABLE_APPEND_WRITE)) {
 			free(data);
