@@ -50,7 +50,9 @@ rm -rf $RPM_BUILD_ROOT
 %postun libs -p /sbin/ldconfig
 
 %files
-%doc COPYING README
+%{!?_licensedir:%global license %%doc}
+%license COPYING
+%doc README
 %{_bindir}/efivar
 %{_mandir}/man1/*
 
