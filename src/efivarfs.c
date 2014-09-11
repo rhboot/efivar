@@ -216,8 +216,11 @@ efivarfs_set_variable(efi_guid_t guid, const char *name, uint8_t *data,
 	memcpy(buf, &attributes, sizeof (attributes));
 	memcpy(buf + sizeof (attributes), data, data_size);
 	rc = write(fd, buf, sizeof (attributes) + data_size);
-	if (rc >= 0)
+	if (rc >= 0) {
 		ret = 0;
+	} else {
+		unlink(path);
+	}
 err:
 	errno_value = errno;
 
