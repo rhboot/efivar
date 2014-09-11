@@ -60,6 +60,7 @@ main(int argc, char *argv[])
 		exit(1);
 
 	int in, guidout, nameout;
+	int rc;
 
 	FILE *symout, *header;
 
@@ -78,16 +79,20 @@ main(int argc, char *argv[])
 	symout = fopen(argv[4], "w");
 	if (symout == NULL)
 		err(1, "makeguids: could not open \"%s\"", argv[4]);
-	chmod(argv[4], 0644);
+	rc = chmod(argv[4], 0644);
+	if (rc < 0)
+		warn("makeguids: chmod(%s, 0644)", argv[4]);
 
 	header = fopen(argv[5], "w");
 	if (header == NULL)
 		err(1, "makeguids: could not open \"%s\"", argv[5]);
-	chmod(argv[5], 0644);
+	rc = chmod(argv[5], 0644);
+	if (rc < 0)
+		warn("makeguids: chmod(%s, 0644)", argv[5]);
 
 	char *inbuf = NULL;
 	size_t inlen = 0;
-	int rc = read_file(in, (uint8_t **)&inbuf, &inlen);
+	rc = read_file(in, (uint8_t **)&inbuf, &inlen);
 	if (rc < 0)
 		err(1, "makeguids: could not read \"%s\"", argv[1]);
 
