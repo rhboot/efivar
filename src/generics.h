@@ -2,6 +2,7 @@
 #define LIBEFIVAR_GENERIC_NEXT_VARIABLE_NAME_H 1
 
 #include <dirent.h>
+#include <err.h>
 #include <errno.h>
 #include <fcntl.h>
 #include <limits.h>
@@ -48,8 +49,14 @@ generic_get_next_variable_name(char *path, efi_guid_t **guid, char **name)
 			return -1;
 		}
 		int flags = fcntl(fd, F_GETFD);
-		flags |= FD_CLOEXEC;
-		fcntl(fd, F_SETFD, flags);
+		if (flags < 0) {
+			warn("fcntl(fd, F_GETFD) failed");
+		} else {
+			flags |= FD_CLOEXEC;
+			if (fcntl(fd, F_SETFD, flags) < 0)
+				warn("fcntl(fd, F_SETFD, "
+					"flags | FD_CLOEXEC) failed");
+		}
 
 		*guid = NULL;
 		*name = NULL;
