@@ -118,7 +118,7 @@ int do_test(struct test *test)
 		report_error(test, ret, rc, "get size test failed: %m\n");
 
 	if (datasize != test->size)
-		report_error(test, ret, rc, "get size test failed: wrong size\n");
+		report_error(test, ret, -1, "get size test failed: wrong size: %zd should be %zd\n", datasize, test->size);
 
 	printf("testing efi_get_variable()\n");
 	rc = efi_get_variable(TEST_GUID, test->name, &data, &datasize,
@@ -127,7 +127,7 @@ int do_test(struct test *test)
 		report_error(test, ret, rc, "get test failed: %m\n");
 
 	if (datasize != test->size)
-		report_error(test, ret, rc, "get test failed: wrong size\n");
+		report_error(test, ret, -1, "get size test failed: wrong size: %zd should be %zd\n", datasize, test->size);
 
 	if (testdata != NULL && test->size > 0)
 		if (memcmp(data, testdata, test->size))
@@ -166,6 +166,7 @@ int do_test(struct test *test)
 		report_error(test, ret, rc, "set test failed: %m\n");
 	}
 
+	printf("testing efi_append_variable()\n");
 	rc = efi_append_variable(TEST_GUID, test->name,
 				testdata, test->size,
 				EFI_VARIABLE_APPEND_WRITE |
@@ -183,7 +184,7 @@ int do_test(struct test *test)
 		report_error(test, ret, rc, "get test failed: %m\n");
 
 	if (datasize != test->size * 2)
-		report_error(test, ret, rc, "get test failed: wrong size\n");
+		report_error(test, ret, -1, "get size test failed: wrong size: %zd should be %zd (append may be at fault)\n", datasize, test->size * 2);
 
 	if (memcmp(data, testdata, test->size))
 		report_error(test, ret, rc, "get test failed: bad data\n");
