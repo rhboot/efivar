@@ -227,8 +227,11 @@ prepare_data(const char *filename, void **data, size_t *data_size)
 	*data = buf;
 	*data_size = buflen;
 
+	close(fd);
 	return;
 err:
+	if (fd >= 0)
+		close(fd);
 	fprintf(stderr, "Could not use \"%s\": %m\n", filename);
 	exit(1);
 }
