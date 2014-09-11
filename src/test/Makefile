@@ -1,4 +1,4 @@
-SRCDIR = .
+SRCDIR = $(realpath .)
 TOPDIR = $(realpath $(SRCDIR)/../..)
 
 include $(TOPDIR)/Make.defaults
