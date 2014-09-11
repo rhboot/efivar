@@ -13,16 +13,17 @@
 
 #define TEST_GUID EFI_GUID(0x84be9c3e,0x8a32,0x42c0,0x891c,0x4c,0xd3,0xb0,0x72,0xbe,0xcc)
 
-unsigned int get_random_bytes(size_t size, uint8_t **data)
+uint8_t *
+__attribute__((malloc))
+__attribute__((alloc_size(1)))
+get_random_bytes(size_t size)
 {
-	int ret = -1;
+	uint8_t *ret = NULL;
 	int errno_saved = 0;
 	int fd = -1;
 
-	if (!size) {
-		*data = NULL;
-		return 0;
-	}
+	if (!size)
+		return ret;
 
 	uint8_t *retdata = malloc(size);
 	if (!retdata)
@@ -36,9 +37,8 @@ unsigned int get_random_bytes(size_t size, uint8_t **data)
 	if (rc < 0)
 		goto fail;
 
-	*data = retdata;
+	ret = retdata;
 	retdata = NULL;
-	ret = 0;
 fail:
 	errno_saved = errno;
 
@@ -85,15 +85,17 @@ static void print_error(int line, struct test *test, int rc, char *fmt, ...)
 
 int do_test(struct test *test)
 {
-	int rc;
+	int rc = -1;
 	errno = 0;
 
 	uint8_t *testdata = NULL;
 	uint8_t *data = NULL;
 
-	rc = get_random_bytes(test->size, &testdata);
-	if (rc < 0)
-		return rc;
+	testdata = get_random_bytes(test->size);
+	if (testdata == NULL && errno != 0) {
+		perror(test->name);
+		return -1;
+	}
 
 	int ret = 0;
 
