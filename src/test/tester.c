@@ -129,8 +129,10 @@ int do_test(struct test *test)
 	if (datasize != test->size)
 		report_error(test, ret, rc, "get test failed: wrong size\n");
 
-	if (memcmp(data, testdata, test->size))
-		report_error(test, ret, rc, "get test failed: bad data\n");
+	if (testdata != NULL && test->size > 0)
+		if (memcmp(data, testdata, test->size))
+			report_error(test, ret, rc,
+					"get test failed: bad data\n");
 
 	free(data);
 	data = NULL;
