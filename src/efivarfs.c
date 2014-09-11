@@ -203,7 +203,7 @@ efivarfs_set_variable(efi_guid_t guid, const char *name, uint8_t *data,
 
 	int fd = -1;
 
-	if (!access(path, F_OK) && !(attributes | EFI_VARIABLE_APPEND_WRITE)) {
+	if (!access(path, F_OK) && !(attributes & EFI_VARIABLE_APPEND_WRITE)) {
 		rc = efi_del_variable(guid, name);
 		if (rc < 0)
 			goto err;
