@@ -27,6 +27,7 @@
 
 #include "lib.h"
 #include "generics.h"
+#include "util.h"
 
 #define VARS_PATH "/sys/firmware/efi/vars/"
 
@@ -40,39 +41,6 @@ typedef struct efi_variable_t {
 } __attribute__((packed)) efi_variable_t;
 
 static int
-read_fd(int fd, uint8_t **buf, size_t *bufsize)
-{
-	uint8_t *p;
-	size_t size = 4096;
-	int s = 0, filesize = 0;
-
-	if (!(*buf = calloc(4096, sizeof (char))))
-		return -1;
-
-	do {
-		p = *buf + filesize;
-		s = read(fd, p, 4096 - s);
-		if (s < 0)
-			break;
-		filesize += s;
-		/* only exit for empty reads */
-		if (s == 0)
-			break;
-		else if (s == 4096) {
-			*buf = realloc(*buf, size + 4096);
-			memset(*buf + size, '\0', 4096);
-			size += s;
-			s = 0;
-		} else {
-			size += s;
-		}
-	} while (1);
-
-	*bufsize = filesize;
-	return 0;
-}
-
-static int
 get_size_from_file(const char *filename, size_t *retsize)
 {
 	uint8_t *buf = NULL;
@@ -83,7 +51,7 @@ get_size_from_file(const char *filename, size_t *retsize)
 	if (fd < 0)
 		goto err;
 
-	int rc = read_fd(fd, &buf, &bufsize);
+	int rc = read_file(fd, &buf, &bufsize);
 	if (rc < 0)
 		goto err;
 
@@ -188,7 +156,7 @@ vars_get_variable(efi_guid_t guid, const char *name, uint8_t **data,
 	if (fd < 0)
 		goto err;
 
-	rc = read_fd(fd, &buf, &bufsize);
+	rc = read_file(fd, &buf, &bufsize);
 	if (rc < 0)
 		goto err;
 
@@ -238,7 +206,7 @@ vars_del_variable(efi_guid_t guid, const char *name)
 	if (fd < 0)
 		goto err;
 
-	rc = read_fd(fd, &buf, &buf_size);
+	rc = read_file(fd, &buf, &buf_size);
 	if (rc < 0 || buf_size != sizeof(efi_variable_t))
 		goto err;
 

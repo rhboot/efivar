@@ -144,7 +144,7 @@ efivarfs_get_variable(efi_guid_t guid, const char *name, uint8_t **data,
 	if (rc < 0)
 		goto err;
 
-	rc = read_file(fd, (char **)&ret_data, &size);
+	rc = read_file(fd, &ret_data, &size);
 	if (rc < 0)
 		goto err;
 

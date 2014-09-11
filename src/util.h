@@ -19,34 +19,59 @@
 #ifndef EFIVAR_UTIL_H
 #define EFIVAR_UTIL_H 1
 
-#include <string.h>
+#include <errno.h>
 #include <stdio.h>
-#include <unistd.h>
 #include <stdlib.h>
+#include <string.h>
+#include <unistd.h>
 
 static inline int
-__attribute__ ((unused))
-read_file(int fd, char **bufp, size_t *lenptr) {
-    int alloced = 0, size = 0, i = 0;
-    char * buf = NULL;
+__attribute__((unused))
+read_file(int fd, uint8_t **buf, size_t *bufsize)
+{
+	uint8_t *p;
+	size_t size = 4096;
+	int s = 0, filesize = 0;
 
-    do {
-	size += i;
-	if ((size + 1024) > alloced) {
-	    alloced += 4096;
-	    buf = realloc(buf, alloced + 1);
-	}
-    } while ((i = read(fd, buf + size, 1024)) > 0);
+	uint8_t *newbuf;
+	if (!(newbuf = calloc(size, sizeof (uint8_t))))
+		return -1;
+	*buf = newbuf;
 
-    if (i < 0) {
-        free(buf);
-	return -1;
-    }
+	do {
+		p = *buf + filesize;
+		s = read(fd, p, 4096 - s);
+		if (s < 0 && errno == EAGAIN) {
+			continue;
+		} else if (s < 0) {
+			free(*buf);
+			*buf = NULL;
+			*bufsize = 0;
+			break;
+		}
+		filesize += s;
+		/* only exit for empty reads */
+		if (s == 0) {
+			break;
+		} else if (s == 4096) {
+			newbuf = realloc(*buf, size + 4096);
+			if (newbuf == NULL) {
+				free(*buf);
+				*buf = NULL;
+				*bufsize = 0;
+				return -1;
+			}
+			*buf = newbuf;
+			memset(*buf + size, '\0', 4096);
+			size += s;
+			s = 0;
+		} else {
+			size += s;
+		}
+	} while (1);
 
-    *bufp = buf;
-    *lenptr = size;
-
-    return 0;
+	*bufsize = filesize;
+	return 0;
 }
 
 

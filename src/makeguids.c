@@ -87,7 +87,7 @@ main(int argc, char *argv[])
 
 	char *inbuf = NULL;
 	size_t inlen = 0;
-	int rc = read_file(in, &inbuf, &inlen);
+	int rc = read_file(in, (uint8_t **)&inbuf, &inlen);
 	if (rc < 0)
 		err(1, "makeguids: could not read \"%s\"", argv[1]);
 
