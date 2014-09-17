@@ -5,7 +5,7 @@ Summary:        Tools to manage UEFI variables
 License:        LGPLv2.1
 URL:            https://github.com/vathpela/efivar
 Requires:       %{name}-libs = %{version}-%{release}
-ExclusiveArch:	i386 x86_64 aarch64
+ExclusiveArch:	%{ix86} x86_64 aarch64
 
 BuildRequires:  popt-devel git
 Source0:        https://github.com/vathpela/efivar/releases/download/efivar-%{version}/efivar-%{version}.tar.bz2
