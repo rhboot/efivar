@@ -248,6 +248,21 @@ efivarfs_get_next_variable_name(efi_guid_t **guid, char **name)
 	return generic_get_next_variable_name(EFIVARS_PATH, guid, name);
 }
 
+static int
+efivarfs_chmod_variable(efi_guid_t guid, const char *name, mode_t mode)
+{
+	char *path;
+	int rc = make_efivarfs_path(&path, guid, name);
+	if (rc < 0)
+		return -1;
+
+	rc = chmod(path, mode);
+	int saved_errno = errno;
+	free(path);
+	errno = saved_errno;
+	return -1;
+}
+
 struct efi_var_operations efivarfs_ops = {
 	.probe = efivarfs_probe,
 	.set_variable = efivarfs_set_variable,
@@ -257,6 +272,5 @@ struct efi_var_operations efivarfs_ops = {
 	.get_variable_attributes = efivarfs_get_variable_attributes,
 	.get_variable_size = efivarfs_get_variable_size,
 	.get_next_variable_name = efivarfs_get_next_variable_name,
+	.chmod_variable = efivarfs_chmod_variable,
 };
-
-

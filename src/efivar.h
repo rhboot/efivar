@@ -21,6 +21,8 @@
 #include <errno.h>
 #include <stdint.h>
 #include <string.h>
+#include <sys/stat.h>
+#include <sys/types.h>
 #include <unistd.h>
 #include <byteswap.h>
 
@@ -63,6 +65,8 @@ extern int efi_append_variable(efi_guid_t guid, const char *name,
 			       uint8_t *data, size_t data_size,
 			       uint32_t attributes);
 extern int efi_get_next_variable_name(efi_guid_t **guid, char **name);
+extern int efi_chmod_variable(efi_guid_t guid, const char *name, mode_t mode)
+			      __attribute__ ((__nonnull__ (2)));
 
 extern int efi_str_to_guid(const char *s, efi_guid_t *guid);
 extern int efi_guid_to_str(const efi_guid_t *guid, char **sp);

@@ -112,6 +112,17 @@ efi_get_next_variable_name(efi_guid_t **guid, char **name)
 }
 
 int
+__attribute__ ((__nonnull__ (2)))
+efi_chmod_variable(efi_guid_t guid, const char *name, mode_t mode)
+{
+	if (!ops->chmod_variable) {
+		errno = ENOSYS;
+		return -1;
+	}
+	return ops->chmod_variable(guid, name, mode);
+}
+
+int
 efi_variables_supported(void)
 {
 	if (ops == &default_ops)

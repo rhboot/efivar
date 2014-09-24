@@ -38,6 +38,7 @@ struct efi_var_operations {
 	int (*append_variable)(efi_guid_t guid, const char *name,
 			       uint8_t *data, size_t data_size,
 			       uint32_t attributes);
+	int (*chmod_variable)(efi_guid_t guid, const char *name, mode_t mode);
 };
 
 typedef unsigned long efi_status_t;

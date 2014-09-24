@@ -6,12 +6,12 @@
  * modify it under the terms of the GNU Lesser General Public
  * License as published by the Free Software Foundation; either
  * version 2.1 of the License.
- * 
+ *
  * This library is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * Lesser General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Lesser General Public License
  * along with this library.  If not, see <http://www.gnu.org/licenses/>.
  */
@@ -235,6 +235,65 @@ err:
 }
 
 static int
+_vars_chmod_variable(char *path, mode_t mode)
+{
+	mode_t mask = umask(umask(0));
+	size_t len = strlen(path);
+	char c = path[len - 5];
+	path[len - 5] = '\0';
+
+	char *files[] = {
+		"", "attributes", "data", "guid", "raw_var", "size", NULL
+		};
+
+	int saved_errno = 0;
+	int ret = 0;
+	for (int i = 0; files[i] != NULL; i++) {
+		char *new_path = NULL;
+		int rc = asprintf(&new_path, "%s/%s", path, files[i]);
+		if (rc > 0) {
+			rc = chmod(new_path, mode & ~mask);
+			if (rc < 0) {
+				if (saved_errno == 0)
+					saved_errno = errno;
+				ret = -1;
+			}
+			free(new_path);
+		} else if (ret < 0) {
+			if (saved_errno == 0)
+				saved_errno = errno;
+			ret = -1;
+		}
+	}
+	path[len - 5] = c;
+	errno = saved_errno;
+	return ret;
+}
+
+static int
+vars_chmod_variable(efi_guid_t guid, const char *name, mode_t mode)
+{
+	if (strlen(name) > 1024) {
+		errno = EINVAL;
+		return -1;
+	}
+
+	char *path;
+	int rc = asprintf(&path, VARS_PATH "%s-" GUID_FORMAT,
+			  name, guid.a, guid.b, guid.c, bswap_16(guid.d),
+			  guid.e[0], guid.e[1], guid.e[2], guid.e[3],
+			  guid.e[4], guid.e[5]);
+	if (rc < 0)
+		return -1;
+
+	rc = _vars_chmod_variable(path, mode);
+	int saved_errno = errno;
+	free(path);
+	errno = saved_errno;
+	return rc;
+}
+
+static int
 vars_set_variable(efi_guid_t guid, const char *name, uint8_t *data,
 		 size_t data_size, uint32_t attributes)
 {
@@ -310,4 +369,5 @@ struct efi_var_operations vars_ops = {
 	.get_variable_attributes = vars_get_variable_attributes,
 	.get_variable_size = vars_get_variable_size,
 	.get_next_variable_name = vars_get_next_variable_name,
+	.chmod_variable = vars_chmod_variable,
 };
