@@ -62,8 +62,10 @@ efi_append_variable(efi_guid_t guid, const char *name, uint8_t *data,
 int
 efi_del_variable(efi_guid_t guid, const char *name)
 {
-	if (!ops->del_variable)
-		return -ENOSYS;
+	if (!ops->del_variable) {
+		errno = ENOSYS;
+		return -1;
+	}
 	return ops->del_variable(guid, name);
 }
 
@@ -71,8 +73,10 @@ int
 efi_get_variable(efi_guid_t guid, const char *name, uint8_t **data,
 		  size_t *data_size, uint32_t *attributes)
 {
-	if (!ops->get_variable)
-		return -ENOSYS;
+	if (!ops->get_variable) {
+		errno = ENOSYS;
+		return -1;
+	}
 	return ops->get_variable(guid, name, data, data_size, attributes);
 }
 
@@ -80,24 +84,30 @@ int
 efi_get_variable_attributes(efi_guid_t guid, const char *name,
 			    uint32_t *attributes)
 {
-	if (!ops->get_variable_attributes)
-		return -ENOSYS;
+	if (!ops->get_variable_attributes) {
+		errno = ENOSYS;
+		return -1;
+	}
 	return ops->get_variable_attributes(guid, name, attributes);
 }
 
 int
 efi_get_variable_size(efi_guid_t guid, const char *name, size_t *size)
 {
-	if (!ops->get_variable_size)
-		return -ENOSYS;
+	if (!ops->get_variable_size) {
+		errno = ENOSYS;
+		return -1;
+	}
 	return ops->get_variable_size(guid, name, size);
 }
 
 int
 efi_get_next_variable_name(efi_guid_t **guid, char **name)
 {
-	if (!ops->get_next_variable_name)
-		return -ENOSYS;
+	if (!ops->get_next_variable_name) {
+		errno = ENOSYS;
+		return -1;
+	}
 	return ops->get_next_variable_name(guid, name);
 }
 
@@ -106,7 +116,6 @@ efi_variables_supported(void)
 {
 	if (ops == &default_ops)
 		return 0;
-	
 	return 1;
 }
 
