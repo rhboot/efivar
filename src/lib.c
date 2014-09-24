@@ -15,7 +15,6 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this library.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 #include <errno.h>
 #include <fcntl.h>
 #include <stdlib.h>
@@ -50,6 +49,7 @@ efi_set_variable(efi_guid_t guid, const char *name, uint8_t *data,
 }
 
 int
+__attribute__ ((__nonnull__ (2, 3)))
 efi_append_variable(efi_guid_t guid, const char *name, uint8_t *data,
 			size_t data_size, uint32_t attributes)
 {
@@ -60,6 +60,7 @@ efi_append_variable(efi_guid_t guid, const char *name, uint8_t *data,
 }
 
 int
+__attribute__ ((__nonnull__ (2)))
 efi_del_variable(efi_guid_t guid, const char *name)
 {
 	if (!ops->del_variable) {
@@ -70,6 +71,7 @@ efi_del_variable(efi_guid_t guid, const char *name)
 }
 
 int
+__attribute__ ((__nonnull__ (2, 3, 4, 5)))
 efi_get_variable(efi_guid_t guid, const char *name, uint8_t **data,
 		  size_t *data_size, uint32_t *attributes)
 {
@@ -81,6 +83,7 @@ efi_get_variable(efi_guid_t guid, const char *name, uint8_t **data,
 }
 
 int
+__attribute__ ((__nonnull__ (2, 3)))
 efi_get_variable_attributes(efi_guid_t guid, const char *name,
 			    uint32_t *attributes)
 {
@@ -92,6 +95,7 @@ efi_get_variable_attributes(efi_guid_t guid, const char *name,
 }
 
 int
+__attribute__ ((__nonnull__ (2, 3)))
 efi_get_variable_size(efi_guid_t guid, const char *name, size_t *size)
 {
 	if (!ops->get_variable_size) {
@@ -102,6 +106,7 @@ efi_get_variable_size(efi_guid_t guid, const char *name, size_t *size)
 }
 
 int
+__attribute__ ((__nonnull__ (1, 2)))
 efi_get_next_variable_name(efi_guid_t **guid, char **name)
 {
 	if (!ops->get_next_variable_name) {

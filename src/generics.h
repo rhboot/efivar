@@ -111,7 +111,7 @@ close_dir(void)
 /* this is a simple read/delete/write implementation of "update".  Good luck.
  * -- pjones */
 static int
-__attribute__((unused))
+__attribute__((__unused__))
 generic_append_variable(efi_guid_t guid, const char *name,
 		       uint8_t *new_data, size_t new_data_size,
 		       uint32_t new_attributes)

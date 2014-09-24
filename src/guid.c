@@ -6,12 +6,12 @@
  * modify it under the terms of the GNU Lesser General Public
  * License as published by the Free Software Foundation; either
  * version 2.1 of the License.
- * 
+ *
  * This library is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * Lesser General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Lesser General Public License
  * along with this library.  If not, see <http://www.gnu.org/licenses/>.
  */
@@ -24,12 +24,16 @@
 
 #define GUID_FORMAT "%08x-%04x-%04x-%04x-%02x%02x%02x%02x%02x%02x"
 
-int efi_str_to_guid(const char *s, efi_guid_t *guid)
+int
+__attribute__ ((__nonnull__ (1, 2)))
+efi_str_to_guid(const char *s, efi_guid_t *guid)
 {
 	return text_to_guid(s, guid);
 }
 
-int efi_guid_to_str(const efi_guid_t *guid, char **sp)
+int
+__attribute__ ((__nonnull__ (1)))
+efi_guid_to_str(const efi_guid_t *guid, char **sp)
 {
 	char *ret = NULL;
 	int rc;
@@ -47,6 +51,7 @@ extern struct guidname well_known_guids[], well_known_names[];
 extern char well_known_guids_end, well_known_names_end;
 
 static int
+__attribute__ ((__nonnull__ (1, 2)))
 cmpguidp(const void *p1, const void *p2)
 {
 	struct guidname *gn1 = (struct guidname *)p1;
@@ -56,6 +61,7 @@ cmpguidp(const void *p1, const void *p2)
 }
 
 static int
+__attribute__ ((__nonnull__ (1, 2)))
 cmpnamep(const void *p1, const void *p2)
 {
 	struct guidname *gn1 = (struct guidname *)p1;
@@ -64,7 +70,9 @@ cmpnamep(const void *p1, const void *p2)
 	return memcmp(gn1->name, gn2->name, sizeof (gn1->name));
 }
 
-int efi_guid_to_name(efi_guid_t *guid, char **name)
+int
+__attribute__ ((__nonnull__ (1, 2)))
+efi_guid_to_name(efi_guid_t *guid, char **name)
 {
 	intptr_t end = (intptr_t)&well_known_guids_end;
 	intptr_t start = (intptr_t)&well_known_guids;
@@ -84,7 +92,9 @@ int efi_guid_to_name(efi_guid_t *guid, char **name)
 	return efi_guid_to_str(guid, name);
 }
 
-int efi_guid_to_symbol(efi_guid_t *guid, char **symbol)
+int
+__attribute__ ((__nonnull__ (1, 2)))
+efi_guid_to_symbol(efi_guid_t *guid, char **symbol)
 {
 	intptr_t end = (intptr_t)&well_known_guids_end;
 	intptr_t start = (intptr_t)&well_known_guids;
@@ -105,7 +115,9 @@ int efi_guid_to_symbol(efi_guid_t *guid, char **symbol)
 	return -1;
 }
 
-int efi_name_to_guid(const char *name, efi_guid_t *guid)
+int
+__attribute__ ((__nonnull__ (1, 2)))
+efi_name_to_guid(const char *name, efi_guid_t *guid)
 {
 	intptr_t end = (intptr_t)&well_known_names_end;
 	intptr_t start = (intptr_t)&well_known_names;
