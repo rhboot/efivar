@@ -73,7 +73,7 @@ iterates across the currently extant variables, passing back a guid and name.
 parses a UEFI GUID from string form to an efi_guid_t the caller provides
 .PP
 .BR efi_guid_to_str ()
-allocates a suitable string and populates it with string representation of a UEFI GUID.  It is the caller's responsibility to free this string.
+Creates a string representation of a UEFI GUID.  If sp is NULL, it returns how big the string would be.  If sp is not NULL but *sp is NULL, it allocates a string and returns it with.  It is the caller's responsibility to free this string.  If sp is not NULL and *sp is not NULL, \fBefi_guid_to_str\fR() assumes there is an allocation of suitable size and uses it.
 .PP
 .BR efi_name_to_guid ()
 translates from a well known name to an efi_guid_t the caller provides.
