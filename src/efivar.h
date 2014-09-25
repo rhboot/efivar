@@ -19,6 +19,7 @@
 #define EFIVAR_H 1
 
 #include <errno.h>
+#include <stdarg.h>
 #include <stdint.h>
 #include <string.h>
 #include <sys/stat.h>
@@ -65,8 +66,33 @@ extern int efi_del_variable(efi_guid_t guid, const char *name)
 				__attribute__ ((__nonnull__ (2)));
 extern int _efi_set_variable(efi_guid_t guid, const char *name,
 			     uint8_t *data, size_t data_size,
-			     uint32_t attributes)
+			     uint32_t attributes, mode_t mode)
 			    __attribute__ ((__nonnull__ (2, 3)));
+extern int _efi_set_variable_variadic(efi_guid_t guid, const char *name,
+				      uint8_t *data, size_t data_size,
+				      uint32_t attributes, ...);
+				     __attribute__ ((__nonnull__ (2, 3)))
+extern inline int
+__attribute__ ((__gnu_inline__))
+__attribute__ ((__artificial__))
+efi_set_variable(efi_guid_t guid, const char *name,
+			       uint8_t *data, size_t data_size,
+			       uint32_t attributes, ...)
+{
+	if (__builtin_va_arg_pack_len() != 0 &&
+			__builtin_va_arg_pack_len() != 1) {
+		errno = EINVAL;
+		return -1;
+	}
+
+	if (__va_arg_pack_len() == 0)
+		return _efi_set_variable(guid, name, data, data_size,
+					 attributes, 0644);
+
+	return _efi_set_variable_variadic(guid, name, data, data_size,
+					  attributes, __builtin_va_arg_pack());
+}
+
 extern int efi_append_variable(efi_guid_t guid, const char *name,
 			       uint8_t *data, size_t data_size,
 			       uint32_t attributes)

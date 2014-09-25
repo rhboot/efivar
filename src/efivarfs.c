@@ -185,7 +185,7 @@ efivarfs_del_variable(efi_guid_t guid, const char *name)
 
 static int
 efivarfs_set_variable(efi_guid_t guid, const char *name, uint8_t *data,
-		 size_t data_size, uint32_t attributes)
+		      size_t data_size, uint32_t attributes, mode_t mode)
 {
 	uint8_t buf[sizeof (attributes) + data_size];
 	typeof(errno) errno_value;
@@ -209,7 +209,7 @@ efivarfs_set_variable(efi_guid_t guid, const char *name, uint8_t *data,
 			goto err;
 	}
 
-	fd = open(path, O_WRONLY|O_CREAT, 0600);
+	fd = open(path, O_WRONLY|O_CREAT, mode);
 	if (fd < 0)
 		goto err;
 
@@ -239,7 +239,7 @@ efivarfs_append_variable(efi_guid_t guid, const char *name, uint8_t *data,
 	size_t data_size, uint32_t attributes)
 {
 	attributes |= EFI_VARIABLE_APPEND_WRITE;
-	return efivarfs_set_variable(guid, name, data, data_size, attributes);
+	return efivarfs_set_variable(guid, name, data, data_size, attributes, 0);
 }
 
 static int

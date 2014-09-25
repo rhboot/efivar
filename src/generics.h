@@ -112,6 +112,7 @@ close_dir(void)
  * -- pjones */
 static int
 __attribute__((__unused__))
+__attribute__((__flatten__))
 generic_append_variable(efi_guid_t guid, const char *name,
 		       uint8_t *new_data, size_t new_data_size,
 		       uint32_t new_attributes)
@@ -144,7 +145,7 @@ generic_append_variable(efi_guid_t guid, const char *name,
 		 * really not much to do about it, so return the error and
 		 * let our caller attempt to clean up :/
 		 */
-		rc = efi_set_variable(guid, name, d, ds, attributes);
+		rc = _efi_set_variable(guid, name, d, ds, attributes, 0);
 		free(d);
 		free(data);
 		return rc;
@@ -152,7 +153,7 @@ generic_append_variable(efi_guid_t guid, const char *name,
 		data = new_data;
 		data_size = new_data_size;
 		attributes = new_attributes & ~EFI_VARIABLE_APPEND_WRITE;
-		rc = efi_set_variable(guid, name, data, data_size, attributes);
+		rc = _efi_set_variable(guid, name, data, data_size, attributes, 0);
 		return rc;
 	}
 	return rc;

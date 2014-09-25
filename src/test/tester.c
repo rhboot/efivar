@@ -71,16 +71,18 @@ static void print_error(int line, struct test *test, int rc, char *fmt, ...)
 
 #define report_error(test, ret, rc, ...) ({			\
 		__typeof(errno) __errno_saved = errno;		\
-		if (test->result != rc)				\
-			print_error(__LINE__, test, rc, __VA_ARGS__);	\
 		free(testdata);					\
-		ret = -1;					\
 		if (data) {					\
 			free(data);				\
 			data = NULL;				\
 		}						\
+		if (test->result != rc) {				\
+			print_error(__LINE__, test, rc, __VA_ARGS__);	\
+			ret = -1;					\
+			errno = __errno_saved;				\
+			goto fail;					\
+		}							\
 		errno = __errno_saved;				\
-		goto fail;					\
 	})
 
 int do_test(struct test *test)
@@ -157,6 +159,16 @@ int do_test(struct test *test)
 	if (rc < 0)
 		report_error(test, ret, rc, "del test failed: %m\n");
 
+	printf("testing efi_set_variable() with too many arguments\n");
+	rc = efi_set_variable(TEST_GUID, test->name,
+			      testdata, test->size,
+			      EFI_VARIABLE_BOOTSERVICE_ACCESS |
+			      EFI_VARIABLE_RUNTIME_ACCESS |
+			      EFI_VARIABLE_NON_VOLATILE, 0644, 1);
+	if (rc < 0) {
+		report_error(test, ret, -1, "set test failed: %m\n");
+	}
+
 	rc = efi_set_variable(TEST_GUID, test->name,
 			      testdata, test->size,
 			      EFI_VARIABLE_BOOTSERVICE_ACCESS |
@@ -193,8 +205,10 @@ int do_test(struct test *test)
 
 	printf("testing efi_del_variable()\n");
 	rc = efi_del_variable(TEST_GUID, test->name);
-	if (rc < 0)
+	if (rc < 0 && test->size != 0)
 		report_error(test, ret, rc, "del test failed: %m\n");
+	else
+		ret = test->result;
 
 	free(data);
 	free(testdata);

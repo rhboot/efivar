@@ -28,6 +28,10 @@ manipulate UEFI variables
 				 void *\fR\fIdata\fR\fB, size_t \fR\fIdata_size\fR\fB,
 				 uint32_t \fR\fIattributes\fR\fB);\fR
 
+\fBint efi_set_variable(efi_guid_t \fR\fIguid\fR\fB, const char *\fR\fIname\fR\fB,
+				 void *\fR\fIdata\fR\fB, size_t \fR\fIdata_size\fR\fB,
+				 uint32_t \fR\fIattributes\fR\fB, mode_t \fR\fImode\fR\fB);\fR
+
 \fBint efi_get_next_variable_name(efi_guid_t **\fR\fIguid\fR\fB, char **\fR\fIname\fR\fB);\fR
 
 \fBint efi_str_to_guid(const char *\fR\fIs\fR\fB, efi_guid_t *\fR\fIguid\fR\fB);\fR
@@ -60,7 +64,7 @@ gets the size of the data for the variable specified by \fIguid\fR and \fIname\f
 appends \fIdata\fR of size \fIsize\fR to the variable specified by \fIguid\fR and \fIname\fR.
 .PP
 .BR efi_set_variable ()
-sets the variable specified by \fIguid\fR and \fIname\fR.
+sets the variable specified by \fIguid\fR and \fIname\fR.  If the optional \fImode\fR parameter is given, it will use those permissions to create the file, subject to umask.
 .PP
 .BR efi_get_next_variable_name ()
 iterates across the currently extant variables, passing back a guid and name.

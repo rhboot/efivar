@@ -39,14 +39,26 @@ struct efi_var_operations default_ops = {
 struct efi_var_operations *ops = NULL;
 
 int
-efi_set_variable(efi_guid_t guid, const char *name, uint8_t *data,
-		 size_t data_size, uint32_t attributes)
+__attribute__ ((__nonnull__ (2, 3)))
+_efi_set_variable(efi_guid_t guid, const char *name, uint8_t *data,
+		 size_t data_size, uint32_t attributes, mode_t mode)
 {
-	if (!ops->set_variable)
-		return -ENOSYS;
-	return ops->set_variable(guid, name, data, data_size,
-						attributes);
+	return ops->set_variable(guid, name, data, data_size, attributes, mode);
 }
+
+int
+__attribute__ ((__nonnull__ (2, 3)))
+_efi_set_variable_variadic(efi_guid_t guid, const char *name, uint8_t *data,
+                 size_t data_size, uint32_t attributes, ...)
+{
+	va_list ap;
+	va_start(ap, attributes);
+	mode_t mode = va_arg(ap, mode_t);
+	va_end(ap);
+	return ops->set_variable(guid, name, data, data_size, attributes, mode);
+}
+extern typeof(_efi_set_variable_variadic) efi_set_variable
+	__attribute__ ((alias ("_efi_set_variable_variadic")));
 
 int
 __attribute__ ((__nonnull__ (2, 3)))

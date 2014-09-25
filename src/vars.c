@@ -295,9 +295,10 @@ vars_chmod_variable(efi_guid_t guid, const char *name, mode_t mode)
 
 static int
 vars_set_variable(efi_guid_t guid, const char *name, uint8_t *data,
-		 size_t data_size, uint32_t attributes)
+		 size_t data_size, uint32_t attributes, mode_t mode)
 {
 	int errno_value;
+	size_t len;
 	int ret = -1;
 
 	if (strlen(name) > 1024) {
@@ -317,6 +318,7 @@ vars_set_variable(efi_guid_t guid, const char *name, uint8_t *data,
 	if (rc < 0)
 		return -1;
 
+	len = rc;
 	int fd = -1;
 
 	if (!access(path, F_OK)) {
@@ -338,10 +340,15 @@ vars_set_variable(efi_guid_t guid, const char *name, uint8_t *data,
 	fd = open(VARS_PATH "new_var", O_WRONLY);
 	if (fd < 0)
 		goto err;
-
 	rc = write(fd, &var, sizeof(var));
 	if (rc >= 0)
 		ret = 0;
+
+	/* this is inherently racy, but there's no way to do it correctly with
+	 * this kernel API.  Fortunately, all directory contents get created
+	 * with root.root ownership and an effective umask of 177 */
+	path[len-5] = '\0';
+	_vars_chmod_variable(path, mode);
 err:
 	errno_value = errno;
 

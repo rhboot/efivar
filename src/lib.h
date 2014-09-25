@@ -26,7 +26,7 @@
 struct efi_var_operations {
 	int (*probe)(void);
 	int (*set_variable)(efi_guid_t guid, const char *name, uint8_t *data,
-			    size_t data_size, uint32_t attributes);
+			    size_t data_size, uint32_t attributes, mode_t mode);
 	int (*del_variable)(efi_guid_t guid, const char *name);
 	int (*get_variable)(efi_guid_t guid, const char *name, uint8_t **data,
 			    size_t *data_size, uint32_t *attributes);
