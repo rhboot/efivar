@@ -12,8 +12,8 @@ ARCH = $(shell uname -m)
 clang_cflags =
 gcc_cflags = -Wmaybe-uninitialized
 cflags	:= $(CFLAGS) \
-	-Wall -fshort-wchar -fno-strict-aliasing -std=gnu11 -Wsign-compare \
-	-fPIC -D_GNU_SOURCE -I${TOPDIR}/src/ \
+	-Wall -Wsign-compare -std=gnu11 -fshort-wchar -fPIC \
+	-D_GNU_SOURCE -I${TOPDIR}/src/ \
 	$(if $(filter $(CC),clang),$(clang_cflags),) \
 	$(if $(filter $(CC),gcc),$(gcc_cflags),)
 clang_ccldflags =
