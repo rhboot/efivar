@@ -182,4 +182,6 @@ main(int argc, char *argv[])
 	close(in);
 	close(guidout);
 	close(nameout);
+
+	return 0;
 }
