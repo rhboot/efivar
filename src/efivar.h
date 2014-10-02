@@ -113,6 +113,8 @@ extern int efi_guid_to_name(efi_guid_t *guid, char **name)
 			   __attribute__ ((__nonnull__ (1, 2)));
 extern int efi_name_to_guid(const char *name, efi_guid_t *guid)
 			   __attribute__ ((__nonnull__ (1, 2)));
+extern int efi_symbol_to_guid(const char *symbol, efi_guid_t *guid)
+			     __attribute__ ((__nonnull__ (1, 2)));
 
 static inline int
 __attribute__ ((unused))

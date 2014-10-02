@@ -15,13 +15,14 @@ all : $(LIBTARGETS) $(PCTARGETS) $(BINTARGETS) $(INCTARGETS)
 OBJECTS = lib.o vars.o efivarfs.o guid.o guidlist.o guid-symbols.o
 DEPS = .lib.c.P .efivar.c.P .efivar.h.P .vars.c.P .lib.h.P \
 	.generics.h.P .guid.h.P .guid.c.P
+LIBS = dl
 
 libefivar.a :: $(OBJECTS)
 
 libefivar.so.$(SONAME_VERSION) :: $(OBJECTS)
 
 efivar : efivar.o libefivar.so
-	$(CCLD) $(ccldflags) -L. -lefivar -o $@ $^ -lpopt
+	$(CCLD) $(ccldflags) -L. -lefivar -o $@ $^ -lpopt $(foreach lib,$(LIBS),-l$(lib))
 
 efivar.pc : efivar.pc.in
 	sed -e "s,@@VERSION@@,$(VERSION),g" \

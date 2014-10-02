@@ -16,6 +16,7 @@
  * along with this library.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include <dlfcn.h>
 #include <errno.h>
 #include <stdio.h>
 
@@ -130,15 +131,41 @@ efi_guid_to_symbol(efi_guid_t *guid, char **symbol)
 
 int
 __attribute__ ((__nonnull__ (1, 2)))
+efi_symbol_to_guid(const char *symbol, efi_guid_t *guid)
+{
+	void *dlh = dlopen(NULL, RTLD_LAZY);
+	if (!dlh)
+		return -1;
+
+	void *sym = dlsym(dlh, symbol);
+	dlclose(dlh);
+	if (!sym)
+		return -1;
+
+	memcpy(guid, sym, sizeof(*guid));
+	return 0;
+}
+
+int
+__attribute__ ((__nonnull__ (1, 2)))
 efi_name_to_guid(const char *name, efi_guid_t *guid)
 {
 	intptr_t end = (intptr_t)&well_known_names_end;
 	intptr_t start = (intptr_t)&well_known_names;
 	size_t nmemb = (end - start) / sizeof (well_known_names[0]);
+	size_t namelen = strnlen(name, 39);
 
 	struct guidname key;
 	memset(&key, '\0', sizeof (key));
-	memcpy(&key.name, name, strnlen(name, 39));
+	memcpy(key.name, name, namelen);
+
+	if (namelen > 2 && name[0] == '{' && name[namelen] == '}') {
+		namelen -= 2;
+		memcpy(key.name, name + 1, namelen);
+		memset(key.name + namelen, '\0', sizeof(key) - namelen);
+	}
+
+	key.name[sizeof(key.name) - 1] = '\0';
 
 	struct guidname *result;
 	result = bsearch(&key, well_known_names, nmemb,
@@ -146,7 +173,15 @@ efi_name_to_guid(const char *name, efi_guid_t *guid)
 	if (result != NULL) {
 		memcpy(guid, &result->guid, sizeof (*guid));
 		return 0;
+	} else {
+		char tmpname[sizeof(key.name) + 9];
+		strcpy(tmpname, "efi_guid_");
+		memcpy(tmpname+9, key.name, sizeof (key.name));
+		int rc = efi_symbol_to_guid(tmpname, guid);
+		if (rc >= 0)
+			return rc;
 	}
+
 	errno = ENOENT;
 	return -1;
 }
