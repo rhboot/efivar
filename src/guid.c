@@ -61,8 +61,8 @@ efi_guid_to_str(const efi_guid_t *guid, char **sp)
 	return rc;
 }
 
-extern struct guidname well_known_guids[], well_known_names[];
-extern char well_known_guids_end, well_known_names_end;
+extern struct guidname efi_well_known_guids[], efi_well_known_names[];
+extern char efi_well_known_guids_end, efi_well_known_names_end;
 
 static int
 __attribute__ ((__nonnull__ (1, 2)))
@@ -88,17 +88,17 @@ int
 __attribute__ ((__nonnull__ (1, 2)))
 efi_guid_to_name(efi_guid_t *guid, char **name)
 {
-	intptr_t end = (intptr_t)&well_known_guids_end;
-	intptr_t start = (intptr_t)&well_known_guids;
-	size_t nmemb = (end - start) / sizeof (well_known_guids[0]);
+	intptr_t end = (intptr_t)&efi_well_known_guids_end;
+	intptr_t start = (intptr_t)&efi_well_known_guids;
+	size_t nmemb = (end - start) / sizeof (efi_well_known_guids[0]);
 
 	struct guidname key;
 	memset(&key, '\0', sizeof (key));
 	memcpy(&key.guid, guid, sizeof (*guid));
 
 	struct guidname *result;
-	result = bsearch(&key, well_known_guids, nmemb,
-			sizeof (well_known_guids[0]), cmpguidp);
+	result = bsearch(&key, efi_well_known_guids, nmemb,
+			sizeof (efi_well_known_guids[0]), cmpguidp);
 	if (result != NULL) {
 		*name = strndup(result->name, sizeof (result->name) -1);
 		return *name ? (int)strlen(*name) : -1;
@@ -110,17 +110,17 @@ int
 __attribute__ ((__nonnull__ (1, 2)))
 efi_guid_to_symbol(efi_guid_t *guid, char **symbol)
 {
-	intptr_t end = (intptr_t)&well_known_guids_end;
-	intptr_t start = (intptr_t)&well_known_guids;
-	size_t nmemb = (end - start) / sizeof (well_known_guids[0]);
+	intptr_t end = (intptr_t)&efi_well_known_guids_end;
+	intptr_t start = (intptr_t)&efi_well_known_guids;
+	size_t nmemb = (end - start) / sizeof (efi_well_known_guids[0]);
 
 	struct guidname key;
 	memset(&key, '\0', sizeof (key));
 	memcpy(&key.guid, guid, sizeof (*guid));
 
 	struct guidname *result;
-	result = bsearch(&key, well_known_guids, nmemb,
-			sizeof (well_known_guids[0]), cmpguidp);
+	result = bsearch(&key, efi_well_known_guids, nmemb,
+			sizeof (efi_well_known_guids[0]), cmpguidp);
 	if (result != NULL) {
 		*symbol = strndup(result->symbol, sizeof (result->symbol) -1);
 		return *symbol ? (int)strlen(*symbol) : -1;
@@ -150,9 +150,9 @@ int
 __attribute__ ((__nonnull__ (1, 2)))
 efi_name_to_guid(const char *name, efi_guid_t *guid)
 {
-	intptr_t end = (intptr_t)&well_known_names_end;
-	intptr_t start = (intptr_t)&well_known_names;
-	size_t nmemb = (end - start) / sizeof (well_known_names[0]);
+	intptr_t end = (intptr_t)&efi_well_known_names_end;
+	intptr_t start = (intptr_t)&efi_well_known_names;
+	size_t nmemb = (end - start) / sizeof (efi_well_known_names[0]);
 	size_t namelen = strnlen(name, 39);
 
 	struct guidname key;
@@ -168,8 +168,8 @@ efi_name_to_guid(const char *name, efi_guid_t *guid)
 	key.name[sizeof(key.name) - 1] = '\0';
 
 	struct guidname *result;
-	result = bsearch(&key, well_known_names, nmemb,
-			sizeof (well_known_names[0]), cmpnamep);
+	result = bsearch(&key, efi_well_known_names, nmemb,
+			sizeof (efi_well_known_names[0]), cmpnamep);
 	if (result != NULL) {
 		memcpy(guid, &result->guid, sizeof (*guid));
 		return 0;

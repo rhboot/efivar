@@ -27,13 +27,13 @@
 #include "util.h"
 #include "guid.h"
 
-struct guidname well_known_guids[] = {
+struct guidname efi_well_known_guids[] = {
 };
-char well_known_guids_end;
+char efi_well_known_guids_end;
 
-struct guidname well_known_names[] = {
+struct guidname efi_well_known_names[] = {
 };
-char well_known_names_end;
+char efi_well_known_names_end;
 
 static int
 cmpguidp(const void *p1, const void *p2)
