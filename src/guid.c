@@ -23,7 +23,6 @@
 #include "efivar.h"
 #include "guid.h"
 
-#define GUID_FORMAT "%08x-%04x-%04x-%04x-%02x%02x%02x%02x%02x%02x"
 #define GUID_LENGTH_WITH_NUL 37
 
 int

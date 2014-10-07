@@ -29,9 +29,10 @@
 #include "efivar.h"
 #include "guid.h"
 
-#define ACTION_LIST	0x1
-#define ACTION_PRINT	0x2
-#define ACTION_APPEND	0x4
+#define ACTION_LIST		0x1
+#define ACTION_PRINT		0x2
+#define ACTION_APPEND		0x4
+#define ACTION_LIST_GUIDS	0x8
 
 #define GUID_FORMAT "%08x-%04x-%04x-%04x-%02x%02x%02x%02x%02x%02x"
 
@@ -54,7 +55,7 @@ list_all_variables(void)
 	int rc;
 	while ((rc = efi_get_next_variable_name(&guid, &name)) > 0)
 		 printf(GUID_FORMAT "-%s\n",
-		 	guid->a, guid->b, guid->c, bswap_16(guid->d),
+			guid->a, guid->b, guid->c, bswap_16(guid->d),
 			guid->e[0], guid->e[1], guid->e[2], guid->e[3],
 			guid->e[4], guid->e[5], name);
 
@@ -122,7 +123,7 @@ show_variable(char *guid_name)
 	}
 
 	printf("GUID: "GUID_FORMAT "\n",
-		 	guid.a, guid.b, guid.c, bswap_16(guid.d),
+			guid.a, guid.b, guid.c, bswap_16(guid.d),
 			guid.e[0], guid.e[1], guid.e[2], guid.e[3],
 			guid.e[4], guid.e[5]);
 	printf("Name: \"%s\"\n", name);
@@ -257,6 +258,8 @@ int main(int argc, char *argv[])
 		 "use data from <file>", "<file>" },
 		{"attributes", 't', POPT_ARG_INT, &attributes, 0,
 		 "attributes to use on append", "<attributes>" },
+		{"list-guids", 'L', POPT_ARG_VAL, &action,
+		 ACTION_LIST_GUIDS, "show internal guid list", NULL },
 		POPT_AUTOALIAS
 		POPT_AUTOHELP
 		POPT_TABLEEND
@@ -306,6 +309,23 @@ int main(int argc, char *argv[])
 			validate_name(name);
 			prepare_data(file, &data, &data_size);
 			append_variable(name, data, data_size, attributes);
+		case ACTION_LIST_GUIDS: {
+			extern struct guidname efi_well_known_guids;
+			extern struct guidname efi_well_known_guids_end;
+
+			for (struct guidname *guid = &efi_well_known_guids;
+			     guid != &efi_well_known_guids_end;
+			     guid++)
+			{
+				printf(GUID_FORMAT " %s %s\n",
+					guid->guid.a, guid->guid.b,
+					guid->guid.c, bswap_16(guid->guid.d),
+					guid->guid.e[0], guid->guid.e[1],
+					guid->guid.e[2], guid->guid.e[3],
+					guid->guid.e[4], guid->guid.e[5],
+					guid->symbol, guid->name);
+			}
+		}
 	};
 
 	return 0;

@@ -25,6 +25,8 @@
 #include <stdlib.h>
 #include <string.h>
 
+#define GUID_FORMAT "%08x-%04x-%04x-%04x-%02x%02x%02x%02x%02x%02x"
+
 static inline int
 check_sanity(const char *text, size_t len)
 {
