@@ -40,7 +40,7 @@ tag:
 archive: tag
 	@rm -rf /tmp/efivar-$(VERSION) /tmp/efivar-$(VERSION)-tmp
 	@mkdir -p /tmp/efivar-$(VERSION)-tmp
-	@git archive --format=tar efivar-$(GITTAG) | ( cd /tmp/efivar-$(VERSION)-tmp/ ; tar x )
+	@git archive --format=tar $(GITTAG) | ( cd /tmp/efivar-$(VERSION)-tmp/ ; tar x )
 	@mv /tmp/efivar-$(VERSION)-tmp/ /tmp/efivar-$(VERSION)/
 	@dir=$$PWD; cd /tmp; tar -c --bzip2 -f $$dir/efivar-$(VERSION).tar.bz2 efivar-$(VERSION)
 	@rm -rf /tmp/efivar-$(VERSION)
