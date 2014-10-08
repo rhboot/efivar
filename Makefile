@@ -1,7 +1,7 @@
 TOPDIR = $(shell echo $$PWD)
 
 SUBDIRS := src docs
-VERSION := 0.13
+VERSION := 0.14
 
 all : $(SUBDIRS)
 

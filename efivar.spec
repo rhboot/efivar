@@ -1,5 +1,5 @@
 Name:           efivar
-Version:        0.13
+Version:        0.14
 Release:        1%{?dist}
 Summary:        Tools to manage UEFI variables
 License:        LGPLv2.1
@@ -66,6 +66,10 @@ rm -rf $RPM_BUILD_ROOT
 %{_libdir}/*.so.*
 
 %changelog
+* Wed Oct 08 2014 Peter Jones <pjones@redhat.com> - 0.14-1
+- Update to 0.14
+- add efi_id_guid_to_guid() and efi_guid_to_id_guid()
+
 * Tue Oct 07 2014 Peter Jones <pjones@redhat.com> - 0.13-1
 - Update to 0.13
 
