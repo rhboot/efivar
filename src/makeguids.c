@@ -27,6 +27,9 @@
 #include "util.h"
 #include "guid.h"
 
+efi_guid_t efi_guid_zero = {0};
+efi_guid_t efi_guid_empty = {0};
+
 struct guidname efi_well_known_guids[] = {
 };
 char efi_well_known_guids_end;
@@ -143,6 +146,15 @@ main(int argc, char *argv[])
 	fprintf(header, "#ifndef EFIVAR_GUIDS_H\n#define EFIVAR_GUIDS_H 1\n\n");
 
 	for (unsigned int i = 0; i < line-1; i++) {
+		if (!strcmp(outbuf[i].symbol, "efi_guid_zero"))
+			fprintf(symout, "\t.globl %s\n"
+					"\t.data\n"
+					"\t.balign 1\n"
+					"\t.type %s, %%object\n"
+					"\t.size %s, %s_end - %s\n",
+				"efi_guid_empty", "efi_guid_empty",
+				"efi_guid_empty", "efi_guid_empty",
+				"efi_guid_empty");
 		fprintf(symout, "\t.globl %s\n"
 				"\t.data\n"
 				"\t.balign 1\n"
@@ -155,12 +167,18 @@ main(int argc, char *argv[])
 			outbuf[i].symbol,
 			outbuf[i].symbol,
 			outbuf[i].symbol);
+		if (!strcmp(outbuf[i].symbol, "efi_guid_zero"))
+			fprintf(symout, "efi_guid_empty:\n");
 
 		uint8_t *guid_data = (uint8_t *) &outbuf[i].guid;
 		for (unsigned int j = 0; j < sizeof (efi_guid_t); j++)
 			fprintf(symout,"\t.byte 0x%02x\n", guid_data[j]);
 
 		fprintf(symout, "%s_end:\n", outbuf[i].symbol);
+		if (!strcmp(outbuf[i].symbol, "efi_guid_zero")) {
+			fprintf(symout, "efi_guid_empty_end:\n");
+			fprintf(header, "extern efi_guid_t efi_guid_empty;\n");
+		}
 
 		fprintf(header, "extern efi_guid_t %s;\n", outbuf[i].symbol);
 	}
