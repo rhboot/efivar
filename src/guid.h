@@ -70,8 +70,19 @@ text_to_guid(const char *text, efi_guid_t *guid)
 	char eightbytes[9] = "";
 	char fourbytes[5] = "";
 	char twobytes[3] = "";
+	size_t textlen = strlen(text);
+	size_t guidlen = strlen("84be9c3e-8a32-42c0-891c-4cd3b072becc");
 
-	if (check_sanity(text, strlen(text)) < 0)
+	if (textlen == guidlen + 2) {
+		if (text[0] != '{' || text[textlen - 1] != '}') {
+			errno = EINVAL;
+			return -1;
+		}
+		text++;
+		textlen -= 2;
+	}
+
+	if (check_sanity(text, textlen) < 0)
 		return -1;
 
 	/* 84be9c3e-8a32-42c0-891c-4cd3b072becc

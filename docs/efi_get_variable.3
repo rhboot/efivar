@@ -40,7 +40,11 @@ manipulate UEFI variables
 
 \fBint efi_name_to_guid(const char *\fR\fIname\fR\fB, efi_guid_t *\fR\fIguid\fR\fB);\fR
 
+\fBint efi_id_guid_to_guid(const char *\fR\fIid_guid\fR\fB, efi_guid_t *\fR\fIguid\fR\fB);\fR
+
 \fBint efi_guid_to_name(efi_guid_t *\fR\fIguid\fR\fB, char **\fR\fIname\fR\fB);\fR
+
+\fBint efi_guid_to_id_guid(efi_guid_t *\fR\fIguid\fR\fB, char **\fR\fIid_guid\fR\fB);\fR
 
 \fBint efi_guid_to_symbol(efi_guid_t *\fR\fIguid\fR\fB, char **\fR\fIsymbol\fR\fB);\fR
 \fBint efi_symbol_to_guid(const char *\fR\fIsymbol\fR\fB, efi_guid_t *\fR\fIguid\fR\fB);\fR
@@ -81,6 +85,12 @@ translates from a well known name to an efi_guid_t the caller provides.
 .PP
 .BR efi_guid_to_name ()
 translates from an efi_guid_t to a well known name.  If the supplied GUID does not have a well known name, this function is equivalent to \fBefi_guid_to_str\fR().
+.PP
+.BR efi_guid_to_id_guid ()
+translates from an efi_guid_t to an {ID GUID}.  If the supplied GUID has a well known name, the {ID GUID} will be of the form "{name_here}".  If not, it will be of the form "{66b2af1c-6211-4082-95cb-9f73a4795a7e}".
+.PP
+.BR efi_id_guid_to_guid ()
+translates from an {ID GUID} to an efi_guid_t the caller provides.
 .PP
 .BR efi_guid_to_symbol ()
 translates from an efi_guid_t to a unique (within libefivar) C-sytle symbol name.  These symbol names are useful for printing as a unique, easily parsed identifier, and are also provide by the library and its header files.

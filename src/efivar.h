@@ -106,13 +106,16 @@ extern int efi_str_to_guid(const char *s, efi_guid_t *guid)
 			  __attribute__ ((__nonnull__ (1, 2)));
 extern int efi_guid_to_str(const efi_guid_t *guid, char **sp)
 			  __attribute__ ((__nonnull__ (1)));
-
+extern int efi_guid_to_id_guid(const efi_guid_t *guid, char **sp)
+			      __attribute__ ((__nonnull__ (1)));
 extern int efi_guid_to_symbol(efi_guid_t *guid, char **symbol)
 			     __attribute__ ((__nonnull__ (1, 2)));
 extern int efi_guid_to_name(efi_guid_t *guid, char **name)
 			   __attribute__ ((__nonnull__ (1, 2)));
 extern int efi_name_to_guid(const char *name, efi_guid_t *guid)
 			   __attribute__ ((__nonnull__ (1, 2)));
+extern int efi_id_guid_to_guid(const char *name, efi_guid_t *guid)
+			      __attribute__ ((__nonnull__ (1, 2)));
 extern int efi_symbol_to_guid(const char *symbol, efi_guid_t *guid)
 			     __attribute__ ((__nonnull__ (1, 2)));
 

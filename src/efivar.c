@@ -34,8 +34,6 @@
 #define ACTION_APPEND		0x4
 #define ACTION_LIST_GUIDS	0x8
 
-#define GUID_FORMAT "%08x-%04x-%04x-%04x-%02x%02x%02x%02x%02x%02x"
-
 static const char *attribute_names[] = {
 	"Non-Volatile",
 	"Boot Service Access",
@@ -68,37 +66,58 @@ list_all_variables(void)
 static void
 parse_name(const char *guid_name, char **name, efi_guid_t *guid)
 {
-	unsigned int guid_len = strlen("84be9c3e-8a32-42c0-891c-4cd3b072becc");
-	char guid_buf[guid_len + 1];
-	char *name_buf = NULL;
-	int name_len;
+	unsigned int guid_len = sizeof("84be9c3e-8a32-42c0-891c-4cd3b072becc");
+	char guid_buf[guid_len + 2];
+	int rc;
+	off_t name_pos = 0;
 
-	/* it has to be at least the length of the guid, a dash, and one more
-	 * character */
-	if (strlen(guid_name) < guid_len + 2) {
-		errno = -EINVAL;
-		fprintf(stderr, "efivar: invalid name \"%s\"\n", guid_name);
-		exit(1);
+	const char *left, *right;
+
+	left = strchr(guid_name, '{');
+	right = strchr(guid_name, '}');
+	if (left && right) {
+		if (right[1] != '-' || right[2] == '\0') {
+bad_name:
+			errno = -EINVAL;
+			fprintf(stderr, "efivar: invalid name \"%s\"\n", guid_name);
+			exit(1);
+		}
+		name_pos = right + 1 - guid_name;
+
+		strncpy(guid_buf, guid_name, name_pos);
+		guid_buf[name_pos++] = '\0';
+
+		rc = efi_id_guid_to_guid(guid_buf, guid);
+		if (rc < 0)
+			goto bad_name;
+	} else {
+		/* it has to be at least the length of the guid, a dash, and
+		 * one more character */
+		if (strlen(guid_name) < guid_len + 2)
+			goto bad_name;
+		name_pos = guid_len - 1;
+
+		if (guid_name[name_pos] != '-' || guid_name[name_pos+1] == '\0')
+			goto bad_name;
+		name_pos++;
+
+		memset(guid_buf, 0, sizeof(guid_buf));
+		strncpy(guid_buf, guid_name, guid_len - 1);
+
+		rc = text_to_guid(guid_buf, guid);
+		if (rc < 0)
+			goto bad_name;
 	}
 
-	memset(guid_buf, 0, sizeof(guid_buf));
-	strncpy(guid_buf, guid_name, guid_len);
-
-	name_len = (strlen(guid_name) + 1) - (guid_len + 2);
+	char *name_buf = NULL;
+	int name_len;
+	name_len = strlen(guid_name + name_pos) + 1;
 	name_buf = calloc(1, name_len);
 	if (!name_buf) {
 		fprintf(stderr, "efivar: %m\n");
 		exit(1);
 	}
-	strncpy(name_buf, guid_name + guid_len + 1, name_len);
-
-	int rc = text_to_guid(guid_buf, guid);
-	if (rc < 0) {
-		errno = EINVAL;
-		fprintf(stderr, "efivar: invalid name \"%s\"\n", guid_name);
-		exit(1);
-	}
-
+	strncpy(name_buf, guid_name + name_pos, name_len);
 	*name = name_buf;
 }
 
@@ -317,12 +336,13 @@ int main(int argc, char *argv[])
 			     guid != &efi_well_known_guids_end;
 			     guid++)
 			{
-				printf(GUID_FORMAT " %s %s\n",
+				printf("{"GUID_FORMAT"} {%s} %s %s\n",
 					guid->guid.a, guid->guid.b,
 					guid->guid.c, bswap_16(guid->guid.d),
 					guid->guid.e[0], guid->guid.e[1],
 					guid->guid.e[2], guid->guid.e[3],
 					guid->guid.e[4], guid->guid.e[5],
+					guid->symbol + strlen("efi_guid_"),
 					guid->symbol, guid->name);
 			}
 		}
