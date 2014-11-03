@@ -41,7 +41,10 @@ read_file(int fd, uint8_t **buf, size_t *bufsize)
 
 	do {
 		p = *buf + filesize;
-		s = read(fd, p, 4096 - s);
+		/* size - filesize shouldn't exceed SSIZE_MAX because we're
+		 * only allocating 4096 bytes at a time and we're checking that
+		 * before doing so. */
+		s = read(fd, p, size - filesize);
 		if (s < 0 && errno == EAGAIN) {
 			continue;
 		} else if (s < 0) {
@@ -54,9 +57,9 @@ read_file(int fd, uint8_t **buf, size_t *bufsize)
 		}
 		filesize += s;
 		/* only exit for empty reads */
-		if (s == 0) {
+		if (s == 0)
 			break;
-		} else if (s == 4096) {
+		if (filesize >= size) {
 			/* See if we're going to overrun and return an error
 			 * instead. */
 			if (size > (size_t)-1 - 4096) {
@@ -77,16 +80,12 @@ read_file(int fd, uint8_t **buf, size_t *bufsize)
 			}
 			*buf = newbuf;
 			memset(*buf + size, '\0', 4096);
-			size += s;
-			s = 0;
-		} else {
-			size += s;
+			size += 4096;
 		}
 	} while (1);
 
 	*bufsize = filesize;
 	return 0;
 }
-
 
 #endif /* EFIVAR_UTIL_H */
