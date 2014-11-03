@@ -57,6 +57,15 @@ read_file(int fd, uint8_t **buf, size_t *bufsize)
 		if (s == 0) {
 			break;
 		} else if (s == 4096) {
+			/* See if we're going to overrun and return an error
+			 * instead. */
+			if (size > (size_t)-1 - 4096) {
+				free(*buf);
+				*buf = NULL;
+				*bufsize = 0;
+				errno = ENOMEM;
+				return -1;
+			}
 			newbuf = realloc(*buf, size + 4096);
 			if (newbuf == NULL) {
 				int saved_errno = errno;
