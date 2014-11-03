@@ -45,10 +45,12 @@ read_file(int fd, uint8_t **buf, size_t *bufsize)
 		if (s < 0 && errno == EAGAIN) {
 			continue;
 		} else if (s < 0) {
+			int saved_errno = errno;
 			free(*buf);
 			*buf = NULL;
 			*bufsize = 0;
-			break;
+			errno = saved_errno;
+			return -1;
 		}
 		filesize += s;
 		/* only exit for empty reads */
@@ -57,9 +59,11 @@ read_file(int fd, uint8_t **buf, size_t *bufsize)
 		} else if (s == 4096) {
 			newbuf = realloc(*buf, size + 4096);
 			if (newbuf == NULL) {
+				int saved_errno = errno;
 				free(*buf);
 				*buf = NULL;
 				*bufsize = 0;
+				errno = saved_errno;
 				return -1;
 			}
 			*buf = newbuf;
