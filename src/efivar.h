@@ -127,7 +127,7 @@ efi_guid_cmp(const efi_guid_t *a, const efi_guid_t *b)
 	return memcmp(a, b, sizeof (efi_guid_t));
 }
 
-extern efi_guid_t efi_guid_zero;
+extern const efi_guid_t efi_guid_zero;
 
 static inline int
 __attribute__ ((unused))

@@ -27,8 +27,8 @@
 #include "util.h"
 #include "guid.h"
 
-efi_guid_t efi_guid_zero = {0};
-efi_guid_t efi_guid_empty = {0};
+efi_guid_t const efi_guid_zero = {0};
+efi_guid_t const efi_guid_empty = {0};
 
 struct guidname efi_well_known_guids[] = {
 };
@@ -177,10 +177,10 @@ main(int argc, char *argv[])
 		fprintf(symout, "%s_end:\n", outbuf[i].symbol);
 		if (!strcmp(outbuf[i].symbol, "efi_guid_zero")) {
 			fprintf(symout, "efi_guid_empty_end:\n");
-			fprintf(header, "extern efi_guid_t efi_guid_empty;\n");
+			fprintf(header, "extern const efi_guid_t efi_guid_empty;\n");
 		}
 
-		fprintf(header, "extern efi_guid_t %s;\n", outbuf[i].symbol);
+		fprintf(header, "extern const efi_guid_t %s;\n", outbuf[i].symbol);
 	}
 
 	fprintf(header, "\n#endif /* EFIVAR_GUIDS_H */\n");
