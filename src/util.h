@@ -31,7 +31,8 @@ read_file(int fd, uint8_t **buf, size_t *bufsize)
 {
 	uint8_t *p;
 	size_t size = 4096;
-	int s = 0, filesize = 0;
+	size_t filesize = 0;
+	ssize_t s = 0;
 
 	uint8_t *newbuf;
 	if (!(newbuf = calloc(size, sizeof (uint8_t))))
