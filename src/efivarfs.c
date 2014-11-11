@@ -39,11 +39,6 @@
 #  define EFIVARFS_MAGIC 0xde5e81e4
 #endif
 
-typedef struct efi_variable_t {
-	uint32_t	Attributes;
-	uint8_t		Data[];
-} __attribute__((packed)) efi_variable_t;
-
 static int
 efivarfs_probe(void)
 {
