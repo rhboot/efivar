@@ -52,6 +52,9 @@ typedef struct {
 #define EFI_VARIABLE_TIME_BASED_AUTHENTICATED_WRITE_ACCESS 0x0000000000000020
 #define EFI_VARIABLE_APPEND_WRITE	0x0000000000000040
 
+#define EFI_VARIABLE_HAS_AUTH_HEADER	0x0000000100000000
+#define EFI_VARIABLE_HAS_SIGNATURE	0x0000000200000000
+
 extern int efi_variables_supported(void);
 extern int efi_get_variable_size(efi_guid_t guid, const char *name,
 				 size_t *size)
@@ -141,5 +144,44 @@ efi_guid_is_empty(const efi_guid_t *guid)
 __attribute__ ((unused))
 __attribute__ ((__nonnull__ (1)))
 __attribute__ ((weak, alias ("efi_guid_is_zero")));
+
+
+/* import / export functions */
+typedef struct efi_variable efi_variable_t;
+
+extern ssize_t efi_variable_import(uint8_t *data, size_t size,
+				efi_variable_t **var)
+			__attribute__((__nonnull__ (1, 3)));
+extern ssize_t efi_variable_export(efi_variable_t *var, uint8_t *data,
+				size_t size)
+			__attribute__((__nonnull__ (1)));
+
+extern efi_variable_t *efi_variable_alloc(void);
+extern void efi_variable_free(efi_variable_t *var, int free_data);
+
+extern int efi_variable_set_name(efi_variable_t *var, char *name)
+			__attribute__((__nonnull__ (1, 2)));
+extern char *efi_variable_get_name(efi_variable_t *var)
+			__attribute__((__nonnull__ (1)));
+
+extern int efi_variable_set_guid(efi_variable_t *var, efi_guid_t *guid)
+			__attribute__((__nonnull__ (1, 2)));
+extern int efi_variable_get_guid(efi_variable_t *var, efi_guid_t **guid)
+			__attribute__((__nonnull__ (1, 2)));
+
+extern int efi_variable_set_data(efi_variable_t *var, uint8_t *data,
+				size_t size)
+			__attribute__((__nonnull__ (1, 2)));
+extern ssize_t efi_variable_get_data(efi_variable_t *var, uint8_t **data,
+				size_t *size)
+			__attribute__((__nonnull__ (1, 2, 3)));
+
+extern int efi_variable_set_attributes(efi_variable_t *var, uint64_t attrs)
+			__attribute__((__nonnull__ (1)));
+extern int efi_variable_get_attributes(efi_variable_t *var, uint64_t *attrs)
+			__attribute__((__nonnull__ (1, 2)));
+
+extern int efi_variable_realize(efi_variable_t *var)
+			__attribute__((__nonnull__ (1)));
 
 #endif /* EFIVAR_H */

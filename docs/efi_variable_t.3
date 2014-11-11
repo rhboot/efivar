@@ -1,0 +1,82 @@
+.TH EFI_VARIABLE_T 3 "Thu Aug 20 2012"
+.SH NAME
+efi_variable_t,
+efi_variable_import, efi_variable_export, efi_variable_alloc,
+efi_variable_free, efi_variable_set_name, efi_variable_get_name,
+efi_variable_set_guid, efi_variable_get_guid,
+efi_variable_set_data, efi_variable_get_data,
+efi_variable_set_attributes, efi_variable_get_attributes,
+efi_variable_realize \- 
+utility functions to import and export UEFI variables to files.
+.SH SYNOPSIS
+.nf
+.B #include <efivar.h>
+.sp
+\fItypedef struct efi_variable \fR\fBefi_variable_t\fR\fI;\fR
+
+\fIssize_t \fR\fBefi_variable_import\fR(\fIuint8_t *\fR\fBdata\fR, \fIsize_t\fR \fBsize\fR, \fIefi_variable_t **\fR\fBvar\fR);
+\fIssize_t \fR\fBefi_variable_export\fR(\fIefi_variable_t *\fR\fBvar\fR, \fIuint8_t **\fR\fBdata\fR, \fIsize_t *\fR\fBsize\fR);
+
+\fIefi_variable_t *\fR\fBefi_variable_alloc\fR(\fIvoid\fR);
+\fIvoid \fR\fBefi_variable_free\fR(\fIefi_variable_t *\fR\fBvar\fR, \fIint \fR\fBfree_data\fR);
+
+\fIint \fR\fBefi_variable_set_name\fR(\fIefi_variable_t *\fR\fBvar\fR, \fIchar *\fR\fBname\fR);
+\fIchar *\fR\fBefi_variable_get_name\fR(\fIefi_variable_t *\fR\fBvar\fR);
+
+\fIint \fR\fBefi_variable_set_guid\fR(\fIefi_variable_t *\fR\fBvar\fR, \fIefi_guid_t *\fR\fBguid\fR);
+\fIint \fR\fBefi_variable_get_guid\fR(\fIefi_variable_t *\fR\fBvar\fR, \fIefi_guid_t **\fR\fBguid\fR);
+
+\fIint \fR\fBefi_variable_set_data\fR(\fIefi_variable_t *\fR\fBvar\fR, \fIuint8_t *\fR\fBdata\fR, \fIsize_t \fR\fBsize\fR);
+\fIint \fR\fBefi_variable_get_data\fR(\fIefi_variable_t *\fR\fBvar\fR, \fIuint8_t **\fR\fBdata\fR, \fIsize_t *\fR\fBsize\fR);
+
+\fI#define\fR \fBEFI_VARIABLE_NON_VOLATILE\fR \fI0x0000000000000001\fR
+\fI#define\fR \fBEFI_VARIABLE_BOOTSERVICE_ACCESS\fR \fI0x0000000000000002\fR
+\fI#define\fR \fBEFI_VARIABLE_RUNTIME_ACCESS\fR \fI0x0000000000000004\fR
+\fI#define\fR \fBEFI_VARIABLE_HARDWARE_ERROR_RECORD\fR \fI0x0000000000000008\fR
+\fI#define\fR \fBEFI_VARIABLE_AUTHENTICATED_WRITE_ACCESS\fR \fI0x0000000000000010\fR
+\fI#define\fR \fBEFI_VARIABLE_TIME_BASED_AUTHENTICATED_WRITE_ACCESS\fR \fI0x0000000000000020\fR
+\fI#define\fR \fBEFI_VARIABLE_APPEND_WRITE\fR \fI0x0000000000000040\fR
+\fI#define\fR \fBEFI_VARIABLE_HAS_AUTH_HEADER\fR \fI0x0000000100000000\fR
+\fI#define\fR \fBEFI_VARIABLE_HAS_SIGNATURE\fR \fI0x0000000200000000\fR
+
+\fIint \fR\fBefi_variable_set_attributes\fR(\fIefi_variable_t *\fR\fBvar\fR, \fIuint64_t \fR\fBattrs\fR);
+\fIint \fR\fBefi_variable_get_attributes\fR(\fIefi_variable_t *\fR\fBvar\fR, \fIuint64_t *\fR\fBattrs\fR);
+
+\fIint \fR\fBefi_variable_realize\fR(\fIefi_variable_t *\fR\fBvar\fR);
+.fi
+.SH DESCRIPTION
+\fBefi_variable_t\fR is an opaque data type used to store in-memory for use with this API.
+.PP
+\fBefi_variable_import\fR() is used to import raw data read from a file.  This function returns the amount of data consumed with this variable, and may be used successively, using its return code as an offset, to parse a list of variables.  Note that the internal guid, name, and data values are allocated separately, and must be freed either individually or using the \fBfree_data\fR parameter of \fBefi_variable_free\fR().  \fB_get\fR() accessors for those values return data suitable for freeing individually, except in such cases where a \fB_set\fR() accessor has been passed an object already unsuitable for that.
+.PP
+\fBefi_variable_export\fR() is used to marshall \fBefi_variable_t\fR objects into linear data which can be written to a file.  If \fBdata\fR or \fBsize\fR parameters are not provided, this function will return how much storage a caller must allocate.  Otherwise, \fBefi_variable_export\fR() will use the storage referred to as its buffer; if \fBsize\fR is smaller than the amount of needed storage , the buffer will not be modified, and the difference between the needed space and \fBsize\fR will be returned.
+.PP
+\fBefi_variable_alloc\fR() is used to allocate an unpopulated \fBefi_variable_t\fR object suitable to be used throughout this API.
+\fBefi_variable_free\fR() is used to free an \fBefi_variable_t\fR object, and if \fBfree_data\fR is nonzero, to free its constituent data.
+.PP
+Each pair of \fB_set\fR() and \fB_get\fR() accessors have essentially the same semantics.  Neither operation performs any memory management, including freeing of previously set values or values set by \fBefi_variable_import\fR(), and so in some cases it may be necessary to use a \fB_get\fR() accessor to retrieve an object to be freed.  In cases where no value has been set, \fB_get\fR() accessors will set \fBerrno\fR to \fBENOENT\fR and return a negative value or NULL.
+.PP
+\fBefi_variable_set_name\fR() and \fBefi_variable_get_name\fR() are used to set and retrieve the name of the variable referred to by the \fBefi_variable_t\fR object.
+.PP
+\fBefi_variable_set_guid\fR() and \fBefi_variable_get_guid\fR() are used to set and retrieve the Vendor GUID value of the variable referred to by the \fBefi_variable_t\fR object.
+.PP
+\fBefi_variable_set_data\fR() and \fBefi_variable_get_data\fR() are used to set and retrieve an \fBefi_variable_t\fR object's variable data.
+.PP
+\fBefi_variable_set_attributes\fR() and \fBefi_variable_get_attributes\fR are used to set and retrieve an \fBefi_variable_t\fR object's attributes.  All bits except \fBEFI_VARIABLE_HAS_AUTH_HEADER\fR and \fBEFI_VARIABLE_HAS_SIGNATURE\fR are defined in the UEFI specification and should be used accordingly.  \fBEFI_VARIABLE_HAS_AUTH_HEADER\fR should be used by applications to track whether the variable data contents include an authentication header.  \fBEFI_VARIABLE_HAS_SIGNATURE\fR should be used by applications to track if the variable's data contents include a signature, and should not be set unless \fBEFI_VARIABLE_HAS_AUTH_HEADER\fR is also set.  These attributes are used to track if an exported variable is in a state of partial construction, for example if an authenticated variable has been created but is intended to be signed at a later date.
+.PP
+\fBefi_variable_realize\fR() is a convenience function to set or append a UEFI variable on the running system from an \fBefi_variable_t\fR object.  its return codes are the same as \fBefi_append_variable\fR(3) if EFI_VARIABLE_APPEND_WRITE is set, and \fBefi_set_variable\fR() if that bit is not set.  Additionally, in the case that any of the authentication bits are set, \fBefi_variable_realize\fR() will return error and set \fBerrno\fR to \fBEPERM\fR unless both \fBEFI_VARIABLE_HAS_AUTH_HEADER\fR and \fBEFI_VARIABLE_HAS_SIGNATURE\fR attribute bits are been set.
+.PP
+.SH "RETURN VALUE"
+\fBefi_variable_import\fR() returns 0 on success, and -1 on failure.  In cases where it cannot parse the data, \fBerrno\fR will be set to \fBEINVAL\fR.  In cases where memory has been exhausted, \fBerrno\fR will be set to \fBENOMEM\fR.
+.PP
+\fBefi_variable_import\fR() returns the size of the buffer data on success, or a negative value in the case of an error.  If \fBdata\fR or \fBsize\fR parameters are not provided, this function will return how much storage is a caller must allocate.  Otherwise, this function will use the storage provided in \fBdata\fR; if \fBsize\fR is less than the needed space, the buffer will not be modified, and the return value will be the difficiency in size.
+.PP
+\fBefi_variable_alloc\fR() returns a newly allocated \fBefi_variable_t\fR object, but does not peform any allocation for that object's \fBname\fR, \fBguid\fR, or \fBdata\fR.  In the case that memory is exhausted, \fBNULL\fR will be returned, and \fBerrno\fR will be set to \fBENOMEM\fR.
+.PP
+\fBefi_variable_get_name\fR() returns a pointer the NUL-terminated string containing the \fBefi_variable_t\fR object's name information.  
+.PP
+\fBefi_variable_set_name\fR(), \fBefi_variable_set_guid\fR(), \fBefi_variable_get_guid\fR(), \fBefi_variable_set_data\fR(), \fBefi_variable_get_data\fR(), \fBefi_variable_set_attributes\fR(), \fBefi_variable_get_attributes\fR(), and \fBefi_variable_realize\fR() return 0 on success and -1 on error.
+.SH AUTHORS
+.nf
+Peter Jones <pjones@redhat.com>
+.fi

@@ -12,9 +12,9 @@ INCTARGETS = efivar.h efivar-guids.h
 all : $(LIBTARGETS) $(PCTARGETS) $(BINTARGETS) $(INCTARGETS)
 	@$(MAKE) -C test TOPDIR=$(TOPDIR) SRCDIR=$(SRCDIR)/test $@
 
-OBJECTS = lib.o vars.o efivarfs.o guid.o guidlist.o guid-symbols.o
+OBJECTS = lib.o vars.o efivarfs.o guid.o guidlist.o guid-symbols.o export.o
 DEPS = .lib.c.P .efivar.c.P .efivar.h.P .vars.c.P .lib.h.P \
-	.generics.h.P .guid.h.P .guid.c.P
+	.generics.h.P .guid.h.P .guid.c.P .export.c.P efivarfs.c.P
 LIBS = dl
 
 libefivar.a :: $(OBJECTS)
