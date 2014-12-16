@@ -34,7 +34,7 @@
 typedef struct efi_kernel_variable_t {
 	uint16_t	VariableName[1024/sizeof(uint16_t)];
 	efi_guid_t	VendorGuid;
-	uint64_t	DataSize;
+	unsigned long	DataSize;
 	uint8_t		Data[1024];
 	efi_status_t	Status;
 	uint32_t	Attributes;
