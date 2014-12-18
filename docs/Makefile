@@ -10,6 +10,7 @@ MAN3TARGETS = efi_append_variable.3 \
 	     efi_get_variable.3 \
 	     efi_get_variable_attributes.3 \
 	     efi_get_variable_size.3 \
+	     efi_guid_to_id_guid.3 \
 	     efi_guid_to_name.3 \
 	     efi_guid_to_str.3 \
 	     efi_guid_to_symbol.3 \
