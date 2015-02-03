@@ -28,10 +28,24 @@
 #define GUID_FORMAT "%08x-%04x-%04x-%04x-%02x%02x%02x%02x%02x%02x"
 
 static inline int
+real_isspace(char c)
+{
+	char spaces[] = " \f\n\r\t\v";
+	for (int i = 0; spaces[i] != '\0'; i++)
+		if (c == spaces[i])
+			return 1;
+	return 0;
+}
+
+static inline int
 check_sanity(const char *text, size_t len)
 {
+	size_t sl = strlen("84be9c3e-8a32-42c0-891c-4cd3b072becc");
+
 	errno = EINVAL;
-	if (len != strlen("84be9c3e-8a32-42c0-891c-4cd3b072becc"))
+	if (len < sl)
+		return -1;
+	else if (len > sl && !real_isspace(text[sl]))
 		return -1;
 
 	if (text[8] != '-' || text[13] != '-' || text[18] != '-' ||
