@@ -33,6 +33,7 @@ static int default_probe(void)
 }
 
 struct efi_var_operations default_ops = {
+		.name = "default",
 		.probe = default_probe,
 	};
 
@@ -158,9 +159,16 @@ libefivar_init(void)
 		&default_ops,
 		NULL
 	};
+	char *ops_name = getenv("LIBEFIVAR_OPS");
 	for (int i = 0; ops_list[i] != NULL; i++)
 	{
-		if (ops_list[i]->probe()) {
+		if (ops_name != NULL) {
+			if (!strcmp(ops_list[i]->name, ops_name) ||
+					!strcmp(ops_list[i]->name, "default")) {
+				ops = ops_list[i];
+				break;
+			}
+		} else if (ops_list[i]->probe()) {
 			ops = ops_list[i];
 			break;
 		}

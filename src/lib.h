@@ -21,9 +21,12 @@
 
 #include "efivar.h"
 
+#include <dirent.h>
+
 #define GUID_FORMAT "%08x-%04x-%04x-%04x-%02x%02x%02x%02x%02x%02x"
 
 struct efi_var_operations {
+	char name[NAME_MAX];
 	int (*probe)(void);
 	int (*set_variable)(efi_guid_t guid, const char *name, uint8_t *data,
 			    size_t data_size, uint32_t attributes, mode_t mode);

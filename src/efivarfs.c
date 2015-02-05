@@ -259,6 +259,7 @@ efivarfs_chmod_variable(efi_guid_t guid, const char *name, mode_t mode)
 }
 
 struct efi_var_operations efivarfs_ops = {
+	.name = "efivarfs",
 	.probe = efivarfs_probe,
 	.set_variable = efivarfs_set_variable,
 	.append_variable = efivarfs_append_variable,

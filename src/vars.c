@@ -528,6 +528,7 @@ vars_get_next_variable_name(efi_guid_t **guid, char **name)
 }
 
 struct efi_var_operations vars_ops = {
+	.name = "vars",
 	.probe = vars_probe,
 	.set_variable = vars_set_variable,
 	.del_variable = vars_del_variable,
