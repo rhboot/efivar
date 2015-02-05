@@ -15,6 +15,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this library.  If not, see <http://www.gnu.org/licenses/>.
  */
+#include <dirent.h>
 #include <errno.h>
 #include <fcntl.h>
 #include <limits.h>
@@ -36,7 +37,7 @@ typedef struct efi_kernel_variable_32_t {
 	efi_guid_t	VendorGuid;
 	uint32_t	DataSize;
 	uint8_t		Data[1024];
-	efi_status_t	Status;
+	uint32_t	Status;
 	uint32_t	Attributes;
 } __attribute__((packed)) efi_kernel_variable_32_t;
 
@@ -45,33 +46,119 @@ typedef struct efi_kernel_variable_64_t {
 	efi_guid_t	VendorGuid;
 	uint64_t	DataSize;
 	uint8_t		Data[1024];
-	efi_status_t	Status;
+	uint64_t	Status;
 	uint32_t	Attributes;
 } __attribute__((packed)) efi_kernel_variable_64_t;
 
+static ssize_t
+get_file_data_size(int dfd, char *name)
+{
+	char raw_var[NAME_MAX + 9];
+
+	memset(raw_var, '\0', sizeof (raw_var));
+	strncpy(raw_var, name, NAME_MAX);
+	strcat(raw_var, "/raw_var");
+
+	int fd = openat(dfd, raw_var, O_RDONLY);
+	if (fd < 0)
+		return -1;
+
+	char buf[4096];
+	ssize_t sz, total = 0;
+	int tries = 5;
+	while (1) {
+		sz = read(fd, buf, 4096);
+		if (sz < 0 && (errno == EAGAIN || errno == EINTR)) {
+			if (tries--)
+				continue;
+			total = -1;
+			break;
+		}
+
+		if (sz < 0) {
+			int saved_errno = errno;
+			close(fd);
+			errno = saved_errno;
+			return -1;
+		}
+
+		if (sz == 0)
+			break;
+		total += sz;
+	}
+	close(fd);
+	return total;
+}
+
 /*
- * Is there a better way to know if you're on a 64-bit kernel than this?
+ * Determine which ABI the kernel has given us.
+ *
+ * We have two situations - before and after kernel's commit e33655a38.
+ * Before hand, the situation is like:
+ * 64-on-64 - 64-bit DataSize and status
+ * 32-on-32 - 32-bit DataSize and status
+ * 32-on-64 - 64-bit DataSize and status
+ *
+ * After it's like this if CONFIG_COMPAT is enabled:
+ * 64-on-64 - 64-bit DataSize and status
+ * 32-on-64 - 32-bit DataSize and status
+ * 32-on-32 - 32-bit DataSize and status
+ *
+ * Is there a better way to figure this out?
  * Submit your patch here today!
  */
 static int
 is_64bit(void)
 {
-	struct utsname utsname;
-	char machine[sizeof(utsname.machine) + 1];
 	static int sixtyfour_bit = -1;
+	DIR *dir = NULL;
+	int dfd = -1;
+	int saved_errno;
 
 	if (sixtyfour_bit != -1)
 		return sixtyfour_bit;
 
-	int rc = uname(&utsname);
-	if (rc < 0)
-		return rc;
+	dir = opendir(VARS_PATH);
+	if (!dir)
+		goto err;
 
-	strncpy(machine, utsname.machine, sizeof(utsname.machine));
-	machine[sizeof(utsname.machine)] = '\0';
-	sixtyfour_bit = 0;
-	if (strstr(machine, "64") != NULL)
-		sixtyfour_bit = 1;
+	dfd = dirfd(dir);
+	if (dfd < 0)
+		goto err;
+
+	struct dirent entry;
+	struct dirent *result = NULL;
+	while (1) {
+		int rc = readdir_r(dir, &entry, &result);
+		if (rc != 0)
+			break;
+		if (result == NULL)
+			break;
+
+		if (!strcmp(entry.d_name, "..") || !strcmp(entry.d_name, "."))
+			continue;
+
+		ssize_t size = get_file_data_size(dfd, entry.d_name);
+		if (size < 0) {
+			continue;
+		} else if (size == 2084) {
+			sixtyfour_bit = 1;
+		} else {
+			sixtyfour_bit = 0;
+		}
+
+		errno = 0;
+		break;
+	}
+	if (sixtyfour_bit == -1)
+		sixtyfour_bit = __SIZEOF_POINTER__ == 4 ? 0 : 1;
+err:
+	saved_errno = errno;
+
+	if (dir)
+		closedir(dir);
+
+	errno = saved_errno;
 	return sixtyfour_bit;
 }
 
