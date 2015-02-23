@@ -184,4 +184,7 @@ extern int efi_variable_get_attributes(efi_variable_t *var, uint64_t *attrs)
 extern int efi_variable_realize(efi_variable_t *var)
 			__attribute__((__nonnull__ (1)));
 
+
+#include <efivar-dp.h>
+
 #endif /* EFIVAR_H */
