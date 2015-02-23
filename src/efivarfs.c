@@ -78,7 +78,7 @@ efivarfs_get_variable_size(efi_guid_t guid, const char *name, size_t *size)
 	if (rc < 0)
 		goto err;
 
-	struct stat statbuf;
+	struct stat statbuf = { 0, };
 	rc = stat(path, &statbuf);
 	if (rc < 0)
 		goto err;

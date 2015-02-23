@@ -21,6 +21,11 @@ generic_get_next_variable_name(char *path, efi_guid_t **guid, char **name)
 	static char ret_name[NAME_MAX+1];
 	static efi_guid_t ret_guid;
 
+	if (!guid || !name) {
+		errno = EINVAL;
+		return -1;
+	}
+
 	/* if only one of guid and name are null, there's no "next" variable,
 	 * because the current variable is invalid. */
 	if ((*guid == NULL && *name != NULL) ||
