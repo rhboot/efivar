@@ -1,6 +1,6 @@
 /*
  * libefivar - library for the manipulation of EFI variables
- * Copyright 2012-2014 Red Hat, Inc.
+ * Copyright 2012-2015 Red Hat, Inc.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -20,6 +20,7 @@
 #include <stdio.h>
 
 #include "efivar.h"
+#include "dp.h"
 
 static const efidp_header end_entire = {
 	.type = EFIDP_END_TYPE,
@@ -118,7 +119,7 @@ efidp_append_path(const_efidp dp0, const_efidp dp1, efidp *out)
 	int rc;
 
 	if (!dp0 && !dp1)
-		return efidp_duplicate_path(&end_entire, out);
+		return efidp_duplicate_path((const_efidp)&end_entire, out);
 
 	if (dp0 && !dp1)
 		return efidp_duplicate_path(dp0, out);
@@ -136,8 +137,8 @@ efidp_append_path(const_efidp dp0, const_efidp dp1, efidp *out)
 
 	le = dp0;
 	while (1) {
-		if (le->type == EFIDP_END_TYPE &&
-				le->subtype == EFIDP_END_ENTIRE) {
+		if (efidp_type(le) == EFIDP_END_TYPE &&
+				efidp_subtype(le) == EFIDP_END_ENTIRE) {
 			ssize_t lesz = efidp_size(le);
 			if (lesz < 0)
 				return -1;
@@ -150,7 +151,8 @@ efidp_append_path(const_efidp dp0, const_efidp dp1, efidp *out)
 			return -1;
 	}
 
-	efidp new = malloc(lsz + rsz);
+	efidp new;
+	new = malloc(lsz + rsz);
 	if (!new)
 		return -1;
 
@@ -169,13 +171,13 @@ efidp_append_node(const_efidp dp, const_efidp dn, efidp *out)
 	int rc;
 
 	if (!dp && !dn)
-		return efidp_duplicate_path(&end_entire, out);
+		return efidp_duplicate_path((const_efidp)(const efidp_header const *)&end_entire, out);
 
 	if (dp && !dn)
 		return efidp_duplicate_path(dp, out);
 
 	if (!dp && dn) {
-		efidp new = malloc(dn->length + sizeof (end_entire));
+		efidp new = malloc(efidp_node_size(dn) + sizeof (end_entire));
 		if (!new)
 			return -1;
 
@@ -271,13 +273,18 @@ efidp_append_instance(const_efidp dp, const_efidp dpi, efidp *out)
 }
 
 ssize_t
-efi_print_device_path(char *buf, size_t size, const_efidp dp)
+efidp_print_device_path(char *buf, size_t size, const_efidp dp)
 {
 	ssize_t sz;
 	ssize_t ret = 0;
 
 	switch (dp->type) {
 	case EFIDP_HARDWARE_TYPE:
+		sz = print_hw_dn(buf, size, dp);
+		if (sz < 0)
+			return -1;
+		if (!peek_dn_type(dp, EFIDP_END_TYPE, EFIDP_END_ENTIRE))
+			sz = pbufx(buf, size, sz, "/");
 		break;
 	case EFIDP_ACPI_TYPE:
 		break;
@@ -307,7 +314,7 @@ efi_print_device_path(char *buf, size_t size, const_efidp dp)
 
 #if 0
 ssize_t
-efidp_parse_device_path_node(char *path, efidp out, size_t size)
+efidp_parse_device_node(char *path, efidp out, size_t size)
 {
 
 }

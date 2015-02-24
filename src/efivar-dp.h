@@ -1,6 +1,6 @@
 /*
  * libefivar - library for the manipulation of EFI variables
- * Copyright 2012-2014 Red Hat, Inc.
+ * Copyright 2012-2015 Red Hat, Inc.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -72,6 +72,19 @@ typedef struct {
 	uint32_t	controller;
 } efidp_controller;
 
+#define EFIDP_BMC		0x06
+typedef struct {
+	efidp_header	header;
+	uint8_t		interface_type;
+	uint64_t	base_addr;
+} efidp_bmc;
+
+#define EFIDP_BMC_UNKNOWN	0x00
+#define EFIDP_BMC_KEYBOARD	0x01
+#define EFIDP_BMC_SMIC		0x02
+#define EFIDP_BMC_BLOCK		0x03
+
+
 /* Each ACPI subtype */
 #define EFIDP_ACPI_HID		0x02
 typedef struct {
@@ -128,14 +141,14 @@ typedef struct {
 	uint8_t		primary;
 	uint8_t		slave;
 	uint16_t	lun;
-} efidp_msg_atapi;
+} efidp_atapi;
 
 #define EFIDP_MSG_SCSI		0x02
 typedef struct {
 	efidp_header	header;
 	uint16_t	target;
 	uint16_t	lun;
-} efidp_msg_scsi;
+} efidp_scsi;
 
 #define EFIDP_MSG_FIBRECHANNEL	0x03
 typedef struct {
@@ -143,7 +156,7 @@ typedef struct {
 	uint32_t	reserved;
 	uint64_t	wwn;
 	uint64_t	lun;
-} efidp_msg_fc;
+} efidp_fc;
 
 #define EFIDP_MSG_FIBRECHANNELEX 0x15
 typedef struct {
@@ -151,21 +164,21 @@ typedef struct {
 	uint32_t	reserved;
 	uint8_t		wwn[8];
 	uint8_t		lun[8];
-} efidp_msg_fcex;
+} efidp_fcex;
 
 #define EFIDP_MSG_1394		0x04
 typedef struct {
 	efidp_header	header;
 	uint32_t	reserved;
 	uint64_t	guid;
-} efidp_msg_1394;
+} efidp_1394;
 
 #define EFIDP_MSG_USB		0x05
 typedef struct {
 	efidp_header	header;
 	uint8_t		parent_port;
 	uint8_t		interface;
-} efidp_msg_usb;
+} efidp_usb;
 
 #define EFIDP_MSG_USB_CLASS	0x0f
 typedef struct {
@@ -175,7 +188,7 @@ typedef struct {
 	uint8_t		device_class;
 	uint8_t		device_subclass;
 	uint8_t		device_protocol;
-} efidp_msg_usb_class;
+} efidp_usb_class;
 
 #define EFIDP_MSG_USB_WWID	0x10
 typedef struct {
@@ -183,13 +196,13 @@ typedef struct {
 	uint16_t	interface;
 	uint16_t	vendor_id;
 	uint16_t	product_id;
-} efidp_msg_usb_wwid;
+} efidp_usb_wwid;
 
 #define EFIDP_MSG_LUN		0x11
 typedef struct {
 	efidp_header	header;
 	uint8_t		lun;
-} efidp_msg_lun;
+} efidp_lun;
 
 #define EFIDP_MSG_SATA		0x12
 typedef struct {
@@ -197,21 +210,21 @@ typedef struct {
 	uint16_t	hba_port;
 	uint16_t	port_multiplier_port;
 	uint16_t	lun;
-} efidp_msg_sata;
+} efidp_sata;
 #define SATA_HBA_DIRECT_CONNECT_FLAG	0x8000
 
 #define	EFIDP_MSG_I2O		0x06
 typedef struct {
 	efidp_header	header;
 	uint32_t	target;
-} efidp_msg_i2o;
+} efidp_i2o;
 
 #define EFIDP_MSG_MAC_ADDR
 typedef struct {
 	efidp_header	header;
 	uint8_t		mac_addr[32];
 	uint8_t		if_type;
-} efidp_msg_mac_addr;
+} efidp_mac_addr;
 
 #define EFIDP_MSG_IPv4		0x0c
 typedef struct {
@@ -420,7 +433,7 @@ typedef struct {
 } efidp_sd;
 
 /* Each media subtype */
-#define EFIDP_MEDIA_HD		0x1
+#define efidp_HD		0x1
 typedef struct {
 	efidp_header	header;
 	uint32_t	partition_number;
@@ -438,7 +451,7 @@ typedef struct {
 #define EFIDP_HD_SIGNATURE_MBR		0x01
 #define EFIDP_HD_SIGNATURE_GUID		0x02
 
-#define EFIDP_MEDIA_CDROM	0x2
+#define efidp_CDROM	0x2
 typedef struct {
 	efidp_header	header;
 	uint32_t	boot_catalog_entry;
@@ -446,7 +459,7 @@ typedef struct {
 	uint64_t	sectors;
 } efidp_cdrom;
 
-#define EFIDP_MEDIA_VENDOR	0x3
+#define efidp_VENDOR	0x3
 typedef struct {
 	efidp_header	header;
 	efi_guid_t	vendor_guid;
@@ -454,46 +467,46 @@ typedef struct {
 } efidp_media_vendor;
 typedef efidp_media_vendor efidp_vendor_media;
 
-#define EFIDP_MEDIA_FILE	0x4
+#define efidp_FILE	0x4
 typedef struct {
 	efidp_header	header;
 	uint8_t		name[0];
-} efidp_media_file;
+} efidp_file;
 
-#define EFIDP_MEDIA_PROTOCOL	0x5
+#define efidp_PROTOCOL	0x5
 typedef struct {
 	efidp_header	header;
 	efi_guid_t	protocol_guid;
-} efidp_media_protocol;
+} efidp_protocol;
 
-#define EFIDP_MEDIA_FIRMWARE_FILE	0x6
+#define efidp_FIRMWARE_FILE	0x6
 typedef struct {
 	efidp_header	header;
 	uint8_t		pi_info[0];
-} efidp_media_firmware_file;
+} efidp_firmware_file;
 
-#define EFIDP_MEDIA_FIRMWARE_VOLUME	0x7
+#define efidp_FIRMWARE_VOLUME	0x7
 typedef struct {
 	efidp_header	header;
 	uint8_t		pi_info[0];
-} efidp_media_firmware_volume;
+} efidp_firmware_volume;
 
-#define EFIDP_MEDIA_RELATIVE_OFFSET	0x8
+#define efidp_RELATIVE_OFFSET	0x8
 typedef struct {
 	efidp_header	header;
 	uint32_t	reserved;
 	uint64_t	first_byte;
 	uint64_t	last_byte;
-} efidp_media_relative_offset;
+} efidp_relative_offset;
 
-#define EFIDP_MEDIA_RAMDISK	0x9
+#define efidp_RAMDISK	0x9
 typedef struct {
 	efidp_header	header;
 	uint64_t	start_addr;
 	uint64_t	end_addr;
 	efi_guid_t	disk_type_guid;
 	uint16_t	instance_number;
-} efidp_media_ramdisk;
+} efidp_ramdisk;
 
 #define EFIDP_VIRTUAL_DISK_GUID \
 	EFI_GUID(0x77AB535A,0x45FC,0x624B,0x5560,0xF7,0xB2,0x81,0xD1,0xF9,0x6E)
@@ -525,8 +538,60 @@ typedef struct {
 #define EFIDP_END_INSTANCE	0x01
 
 /* utility functions */
-typedef efidp_header *efidp;
-typedef const efidp_header const *const_efidp;
+typedef union {
+	struct {
+		uint8_t type;
+		uint8_t subtype;
+		uint16_t length;
+	}; 
+	efidp_header header;
+	efidp_pci pci;
+	efidp_pccard pccard;
+	efidp_mmio mmio;
+	efidp_hw_vendor hw_vendor;
+	efidp_controller controller;
+	efidp_bmc bmc;
+	efidp_acpi_hid acpi_hid;
+	efidp_acpi_adr acpi_adr;
+	efidp_atapi atapi;
+	efidp_scsi scsi;
+	efidp_fc fc;
+	efidp_fcex fcex;
+	efidp_1394 firewire;
+	efidp_usb usb;
+	efidp_usb_class usb_class;
+	efidp_usb_wwid usb_wwid;
+	efidp_lun lun;
+	efidp_sata sata;
+	efidp_i2o i2o;
+	efidp_mac_addr mac_addr;
+	efidp_ipv4_addr ipv4_addr;
+	efidp_ipv6_addr ipv6_addr;
+	efidp_vlan vlan;
+	efidp_infiniband infiniband;
+	efidp_uart uart;
+	efidp_msg_vendor msg_vendor;
+	efidp_uart_flow_control uart_flow_control;
+	efidp_sas sas;
+	efidp_sas_ex sas_ex;
+	efidp_iscsi iscsi;
+	efidp_nvme nvme;
+	efidp_uri uri;
+	efidp_ufs ufs;
+	efidp_sd sd;
+	efidp_hd hd;
+	efidp_cdrom cdrom;
+	efidp_media_vendor media_vendor;
+	efidp_file file;
+	efidp_protocol protocol;
+	efidp_firmware_file firmware_file;
+	efidp_firmware_volume firmware_volume;
+	efidp_relative_offset relative_offset;
+	efidp_ramdisk ramdisk;
+	efidp_bios_boot bios_boot;
+} efidp_data;
+typedef efidp_data *efidp;
+typedef const efidp_data const *const_efidp;
 
 extern ssize_t efidp_create_node(uint8_t type, uint8_t subtype, size_t len,
 				 void *buf, size_t bufsize);
@@ -535,6 +600,28 @@ extern int efidp_duplicate_path(const_efidp dp, efidp *out);
 extern int efidp_append_path(const_efidp dp0, const_efidp dp1, efidp *out);
 extern int efidp_append_node(const_efidp dp, const_efidp dn, efidp *out);
 extern int efidp_append_instance(const_efidp dp, const_efidp dpi, efidp *out);
+
+static inline int8_t
+__attribute__((__unused__))
+efidp_type(const_efidp dp)
+{
+	if (!dp) {
+		errno = EINVAL;
+		return -1;
+	}
+	return dp->type;
+}
+
+static inline int8_t
+__attribute__((__unused__))
+efidp_subtype(const_efidp dp)
+{
+	if (!dp) {
+		errno = EINVAL;
+		return -1;
+	}
+	return dp->subtype;
+}
 
 static inline ssize_t
 __attribute__((__unused__))
@@ -549,31 +636,34 @@ efidp_node_size(const_efidp dn)
 
 static inline int
 __attribute__((__unused__))
-efidp_next_node(const_efidp in, efidp *out)
+efidp_next_node(const_efidp in, const_efidp *out)
 {
-	if (in->type == EFIDP_END_TYPE)
+	if (efidp_type(in) == EFIDP_END_TYPE)
 		return -1;
 
 	ssize_t sz = efidp_node_size(in);
 	if (sz < 0)
 		return -1;
 
-	*out = (efidp)((uint8_t *)in + sz);
+	/* I love you gcc. */
+	*out = (const_efidp)(const efidp_header const *)((uint8_t *)in + sz);
 	return 0;
 }
 
 static inline int
 __attribute__((__unused__))
-efidp_next_instance(const_efidp in, efidp *out)
+efidp_next_instance(const_efidp in, const_efidp *out)
 {
-	if (in->type != EFIDP_END_TYPE || in->subtype != EFIDP_END_INSTANCE)
+	if (efidp_type(in) != EFIDP_END_TYPE ||
+			efidp_subtype(in) != EFIDP_END_INSTANCE)
 		return -1;
 
 	ssize_t sz = efidp_node_size(in);
 	if (sz < 0)
 		return -1;
 
-	*out = (efidp)((uint8_t *)in + sz);
+	/* I love you gcc. */
+	*out = (const_efidp)(const efidp_header const *)((uint8_t *)in + sz);
 	return 0;
 }
 
@@ -582,13 +672,14 @@ __attribute__((__unused__))
 efidp_dp_is_multiinstance(const_efidp dn)
 {
 	while (1) {
-		efidp next;
+		const_efidp next;
 		int rc = efidp_next_node(dn, &next);
 		if (rc < 0)
 			break;
 	}
 
-	if (dn->type == EFIDP_END_TYPE && dn->subtype == EFIDP_END_INSTANCE)
+	if (efidp_type(dn) == EFIDP_END_TYPE &&
+			efidp_subtype(dn) == EFIDP_END_INSTANCE)
 		return 1;
 	return 0;
 }
@@ -598,7 +689,7 @@ __attribute__((__unused__))
 efidp_get_next_end(const_efidp in, const_efidp *out)
 {
 	while (1) {
-		if (in->type == EFIDP_END_TYPE) {
+		if (efidp_type(in) == EFIDP_END_TYPE) {
 			*out = in;
 			return 0;
 		}
@@ -608,7 +699,7 @@ efidp_get_next_end(const_efidp in, const_efidp *out)
 		if (sz < 0)
 			break;
 
-		in = (efidp)((uint8_t *)in + sz);
+		in = (const_efidp)(const efidp_header const *)((uint8_t *)in + sz);
 	}
 	return -1;
 }
@@ -626,15 +717,15 @@ efidp_size(const_efidp dp)
 	while (1) {
 		ssize_t sz;
 		int rc;
-		efidp next;
+		const_efidp next;
 
 		sz = efidp_node_size(dp);
 		if (sz < 0)
 			return sz;
 		ret += sz;
 
-		if (dp->type == EFIDP_END_TYPE &&
-				dp->subtype == EFIDP_END_ENTIRE)
+		if (efidp_type(dp) == EFIDP_END_TYPE &&
+				efidp_subtype(dp) == EFIDP_END_ENTIRE)
 			break;
 
 		rc = efidp_next_instance(dp, &next);
@@ -655,14 +746,14 @@ efidp_instance_size(const_efidp dpi)
 	ssize_t ret = 0;
 	while (1) {
 		ssize_t sz;
-		efidp next;
+		const_efidp next;
 
 		sz = efidp_node_size(dpi);
 		if (sz < 0)
 			return sz;
 		ret += sz;
 
-		if (dpi->type == EFIDP_END_TYPE)
+		if (efidp_type(dpi) == EFIDP_END_TYPE)
 			break;
 
 		int rc = efidp_next_node(dpi, &next);
@@ -674,9 +765,8 @@ efidp_instance_size(const_efidp dpi)
 }
 
 /* and now, printing and parsing */
-extern ssize_t efidp_parse_device_path_node(char *path, efidp out, size_t size);
+extern ssize_t efidp_parse_device_node(char *path, efidp out, size_t size);
 extern ssize_t efidp_parse_device_path(char *path, efidp out, size_t size);
-extern ssize_t efi_print_device_path(char *buf, size_t size, const_efidp dp);
-
+extern ssize_t efidp_print_device_path(char *buf, size_t size, const_efidp dp);
 
 #endif /* _EFIVAR_DP_H */
