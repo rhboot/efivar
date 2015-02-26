@@ -23,39 +23,45 @@
 #include "dp.h"
 
 ssize_t
-print_hw_dn(char *buf, size_t size, const_efidp dp)
+print_message_dn(char *buf, size_t size, const_efidp dp)
 {
 	off_t off = 0;
 	size_t sz;
 	switch (dp->subtype) {
-	case EFIDP_HW_PCI_SUBTYPE:
-		off += pbufx(buf, size, off, "Pci(0x%"PRIx32",0x%"PRIx32")",
-			     dp->pci.device, dp->pci.function);
+	case EFIDP_MSG_MAC_ADDR:
+		off += pbufx(buf, size, off, "MAC(");
+		sz = print_hex(buf+off, size?size-off:0,
+			       dp->mac_addr.mac_addr,
+			       dp->mac_addr.if_type < 2 ? 6
+					: sizeof(dp->mac_addr.mac_addr));
+		if (sz < 0)
+			return sz;
+		off += sz;
+		off += pbufx(buf, size, off, ",%d)", dp->mac_addr.if_type);
 		break;
-	case EFIDP_HW_PCCARD_SUBTYPE:
-		off += pbufx(buf, size, off, "PcCard(0x%"PRIx32")",
-			     dp->pccard.function);
-		break;
-	case EFIDP_HW_MMIO:
+	case EFIDP_MSG_IPv4: {
+		efidp_ipv4_addr const *a = &dp->ipv4_addr;
 		off += pbufx(buf, size, off,
-			     "MemoryMapped(0x%"PRIx32",0x%"PRIx64",0x%"PRIx64")",
-			     dp->mmio.memory_type, dp->mmio.starting_address,
-			     dp->mmio.ending_address);
+			     "IPv4(%hhu.%hhu.%hhu.%hhu:%hu<->%hhu.%hhu.%hhu.%hhu:%hu,%hx,%hhx)",
+			     a->local_ipv4_addr[0],
+			     a->local_ipv4_addr[1],
+			     a->local_ipv4_addr[2],
+			     a->local_ipv4_addr[3],
+			     a->local_port,
+			     a->remote_ipv4_addr[0],
+			     a->remote_ipv4_addr[1],
+			     a->remote_ipv4_addr[2],
+			     a->remote_ipv4_addr[3],
+			     a->remote_port,
+			     a->protocol,
+			     a->static_ip_addr);
 		break;
-	case EFIDP_HW_VENDOR:
-		off += print_vendor(buf+off, size?size-off:0, "VenHw", dp);
-		break;
-	case EFIDP_HW_CONTROLLER:
-		off += pbufx(buf, size, off, "Ctrl(0x%"PRIx32")",
-			     dp->controller.controller);
-		break;
-	case EFIDP_HW_BMC:
-		off += pbufx(buf, size, off, "BMC(%d,0x%"PRIx64")",
-			     dp->bmc.interface_type,
-			     dp->bmc.base_addr);
+			     }
+	case EFIDP_MSG_VENDOR:
+		off += print_vendor(buf+off, size?size-off:0, "VenMsg", dp);
 		break;
 	default:
-		off += pbufx(buf, size, off, "HardwarePath(%d,", dp->subtype);
+		off += pbufx(buf, size, off, "MessagePath(%d,", dp->subtype);
 		sz = print_hex(buf+off, size?size-off:0, (uint8_t *)dp+4,
 			       efidp_node_size(dp)-4);
 		if (sz < 0)

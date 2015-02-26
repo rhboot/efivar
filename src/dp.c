@@ -16,6 +16,7 @@
  * along with this library.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include <inttypes.h>
 #include <stdlib.h>
 #include <stdio.h>
 
@@ -273,43 +274,109 @@ efidp_append_instance(const_efidp dp, const_efidp dpi, efidp *out)
 }
 
 ssize_t
-efidp_print_device_path(char *buf, size_t size, const_efidp dp)
+efidp_print_device_path(char *buf, size_t size, const_efidp dp, ssize_t limit)
 {
 	ssize_t sz;
-	ssize_t ret = 0;
+	ssize_t off = 0;
+	int first = 1;
 
-	switch (dp->type) {
-	case EFIDP_HARDWARE_TYPE:
-		sz = print_hw_dn(buf, size, dp);
-		if (sz < 0)
-			return -1;
-		if (!peek_dn_type(dp, EFIDP_END_TYPE, EFIDP_END_ENTIRE))
-			sz = pbufx(buf, size, sz, "/");
-		break;
-	case EFIDP_ACPI_TYPE:
-		break;
-	case EFIDP_MESSAGE_TYPE:
-		break;
-	case EFIDP_MEDIA_TYPE:
-		break;
-	case EFIDP_BIOS_BOOT_TYPE:
-		break;
-	case EFIDP_END_TYPE:
-		break;
-	default:
-		sz = snprintf(buf ? buf+ret : buf, size ? size-ret : size,
-			      "Path(%d,%d,", dp->type, dp->subtype);
-		ret += sz;
-		for (int i = 4; i < dp->length; i++) {
-			sz = snprintf(buf ?buf+ret :buf, size ?size-ret :size,
-				 "%02x", *((uint8_t *)dp + i));
-			ret += sz;
+	while (1) {
+		if (limit && (limit < 4 || efidp_node_size(dp) > limit))
+			return off+1;
+
+		if (first) {
+			first = 0;
+		} else {
+			if (dp->type == EFIDP_END_TYPE) {
+				if (dp->type == EFIDP_END_INSTANCE)
+					off += pbufx(buf, size, off, ",");
+				else
+					return off+1;
+			} else {
+				off += pbufx(buf, size, off, "/");
+			}
 		}
-		sz = snprintf(buf ?buf+ret :buf, size ? size-ret :size, ")");
-		ret += sz;
-		break;
+
+		switch (dp->type) {
+		case EFIDP_HARDWARE_TYPE:
+			sz = print_hw_dn(buf+off, size?size-off:0, dp);
+			if (sz < 0)
+				return -1;
+			off += sz;
+			break;
+		case EFIDP_ACPI_TYPE:
+			sz = print_acpi_dn(buf+off, size?size-off:0, dp);
+			if (sz < 0)
+				return -1;
+			off += sz;
+			break;
+		case EFIDP_MESSAGE_TYPE:
+			sz = print_message_dn(buf+off, size?size-off:0, dp);
+			if (sz < 0)
+				return -1;
+			off += sz;
+			break;
+		case EFIDP_MEDIA_TYPE:
+			sz = print_media_dn(buf+off, size?size-off:0, dp);
+			if (sz < 0)
+				return -1;
+			off += sz;
+			break;
+		case EFIDP_BIOS_BOOT_TYPE: {
+			char *types[] = {"", "Floppy", "HD", "CDROM", "PCMCIA",
+					 "USB", "Network", "" };
+
+			if (dp->subtype != EFIDP_BIOS_BOOT) {
+				off += pbufx(buf, size, off, "BbsPath(%d,",
+					   dp->subtype);
+				sz = print_hex(buf+off, size?size-off:0,
+					       (uint8_t *)dp+4,
+					       efidp_node_size(dp)-4);
+				if (sz < 0)
+					return sz;
+				off += sz;
+				off += pbufx(buf,size,off,")");
+				break;
+			}
+
+			if (dp->bios_boot.device_type > 0 &&
+					dp->bios_boot.device_type < 7) {
+				off += pbufx(buf, size, off, "BBS(%s,%s,0x%"PRIx32")",
+					   types[dp->bios_boot.device_type],
+					   dp->bios_boot.description,
+					   dp->bios_boot.status);
+			} else {
+				off += pbufx(buf, size, off, "BBS(%d,%s,0x%"PRIx32")",
+					     dp->bios_boot.device_type,
+					     dp->bios_boot.description,
+					     dp->bios_boot.status);
+			}
+			break;
+					   }
+		case EFIDP_END_TYPE:
+			if (dp->subtype == EFIDP_END_INSTANCE) {
+				off += pbufx(buf, size, off, ",");
+				break;
+			}
+			return off;
+		default:
+			off += pbufx(buf, size, off,
+				   "Path(%d,%d,", dp->type, dp->subtype);
+			off += print_hex(buf+off,size?size-off:0,
+					 (uint8_t *)dp + 4,
+					 efidp_node_size(dp) - 4);
+			off += pbufx(buf, size, off, ")");
+			break;
+		}
+
+		if (limit)
+			limit -= efidp_node_size(dp);
+
+		int rc = efidp_next_node(dp, &dp);
+		if (rc < 0)
+			return rc;
 	}
-	return ret;
+	return off+1;
 }
 
 #if 0

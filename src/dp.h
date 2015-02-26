@@ -18,18 +18,64 @@
 #ifndef _EFIVAR_INTERNAL_DP_H
 #define _EFIVAR_INTERNAL_DP_H
 
+#include <alloca.h>
 #include <stdarg.h>
 #include <stdio.h>
+#include <stdlib.h>
 
 #define pbufx(buf, size, off, fmt, args...) ({				\
 		ssize_t __x;						\
 		__x = snprintf(((buf)+(off)),				\
-			       ((size)==0?0:((size)-(off))),		\
+			       ((size)?((size)-(off)):0),		\
 			       fmt, ## args);				\
 		if (__x < 0)						\
 			return -1;					\
 		__x;							\
 	})
+
+static inline int
+__attribute__((__unused__))
+print_hex(char *buf, size_t size, const void const *addr, const size_t len)
+{
+	size_t off = 0;
+	for (size_t i = 0; i < len; i++)
+		off += pbufx(buf, size, off, "%02x",
+			     *((const unsigned char const *)addr+i));
+	return off;
+}
+
+#define onstack(buf, len) ({						\
+		char *__newbuf = alloca(len);				\
+		memcpy(__newbuf, buf, len);				\
+		free(buf);						\
+		__newbuf;						\
+	})
+
+static inline int
+__attribute__((__unused__))
+print_vendor(char *buf, size_t size, char *label, const_efidp dp)
+{
+	char *guidstr = NULL;
+	int rc;
+	size_t off = 0;
+
+	rc = efi_guid_to_str(&dp->hw_vendor.vendor_guid, &guidstr);
+	if (rc < 0)
+		return rc;
+
+	guidstr = onstack(guidstr, strlen(guidstr)+1);
+
+	off = pbufx(buf, size, off, "%s(%s,", label, guidstr);
+
+	size_t sz = print_hex(buf+off, size?size-off:0,
+			      dp->hw_vendor.vendor_data,
+			      efidp_node_size(dp) - 4 - sizeof (efi_guid_t));
+	if (sz < 0)
+		return sz;
+	off += sz;
+	off += pbufx(buf, size, off, ")");
+	return off;
+}
 
 static inline int
 __attribute__((__unused__))

@@ -72,7 +72,7 @@ typedef struct {
 	uint32_t	controller;
 } efidp_controller;
 
-#define EFIDP_BMC		0x06
+#define EFIDP_HW_BMC		0x06
 typedef struct {
 	efidp_header	header;
 	uint8_t		interface_type;
@@ -86,13 +86,21 @@ typedef struct {
 
 
 /* Each ACPI subtype */
-#define EFIDP_ACPI_HID		0x02
+#define EFIDP_ACPI_HID		0x01
+typedef struct {
+	efidp_header	header;
+	uint32_t	hid;
+	uint32_t	uid;
+} efidp_acpi_hid;
+
+#define EFIDP_ACPI_HID_EX	0x02
 typedef struct {
 	efidp_header	header;
 	uint32_t	hid;
 	uint32_t	uid;
 	uint32_t	cid;
-} efidp_acpi_hid;
+	/* three ascii string fields follow */
+} efidp_acpi_hid_ex;
 
 #define EFIDP_PNP_EISA_ID_CONST		0x41d0
 #define EFIDP_EISA_ID(_Name, _Num)	((uint32_t)((_Name) | (_Num) << 16))
@@ -219,7 +227,7 @@ typedef struct {
 	uint32_t	target;
 } efidp_i2o;
 
-#define EFIDP_MSG_MAC_ADDR
+#define EFIDP_MSG_MAC_ADDR	0x0b
 typedef struct {
 	efidp_header	header;
 	uint8_t		mac_addr[32];
@@ -433,7 +441,7 @@ typedef struct {
 } efidp_sd;
 
 /* Each media subtype */
-#define efidp_HD		0x1
+#define EFIDP_MEDIA_HD		0x1
 typedef struct {
 	efidp_header	header;
 	uint32_t	partition_number;
@@ -451,7 +459,7 @@ typedef struct {
 #define EFIDP_HD_SIGNATURE_MBR		0x01
 #define EFIDP_HD_SIGNATURE_GUID		0x02
 
-#define efidp_CDROM	0x2
+#define EFIDP_MEDIA_CDROM	0x2
 typedef struct {
 	efidp_header	header;
 	uint32_t	boot_catalog_entry;
@@ -459,7 +467,7 @@ typedef struct {
 	uint64_t	sectors;
 } efidp_cdrom;
 
-#define efidp_VENDOR	0x3
+#define EFIDP_MEDIA_VENDOR	0x3
 typedef struct {
 	efidp_header	header;
 	efi_guid_t	vendor_guid;
@@ -467,31 +475,31 @@ typedef struct {
 } efidp_media_vendor;
 typedef efidp_media_vendor efidp_vendor_media;
 
-#define efidp_FILE	0x4
+#define EFIDP_MEDIA_FILE	0x4
 typedef struct {
 	efidp_header	header;
-	uint8_t		name[0];
+	uint16_t	name[];
 } efidp_file;
 
-#define efidp_PROTOCOL	0x5
+#define EFIDP_MEDIA_PROTOCOL	0x5
 typedef struct {
 	efidp_header	header;
 	efi_guid_t	protocol_guid;
 } efidp_protocol;
 
-#define efidp_FIRMWARE_FILE	0x6
+#define EFIDP_MEDIA_FIRMWARE_FILE	0x6
 typedef struct {
 	efidp_header	header;
 	uint8_t		pi_info[0];
 } efidp_firmware_file;
 
-#define efidp_FIRMWARE_VOLUME	0x7
+#define EFIDP_MEDIA_FIRMWARE_VOLUME	0x7
 typedef struct {
 	efidp_header	header;
 	uint8_t		pi_info[0];
 } efidp_firmware_volume;
 
-#define efidp_RELATIVE_OFFSET	0x8
+#define EFIDP_MEDIA_RELATIVE_OFFSET	0x8
 typedef struct {
 	efidp_header	header;
 	uint32_t	reserved;
@@ -499,7 +507,7 @@ typedef struct {
 	uint64_t	last_byte;
 } efidp_relative_offset;
 
-#define efidp_RAMDISK	0x9
+#define EFIDP_MEDIA_RAMDISK	0x9
 typedef struct {
 	efidp_header	header;
 	uint64_t	start_addr;
@@ -543,7 +551,7 @@ typedef union {
 		uint8_t type;
 		uint8_t subtype;
 		uint16_t length;
-	}; 
+	};
 	efidp_header header;
 	efidp_pci pci;
 	efidp_pccard pccard;
@@ -767,6 +775,7 @@ efidp_instance_size(const_efidp dpi)
 /* and now, printing and parsing */
 extern ssize_t efidp_parse_device_node(char *path, efidp out, size_t size);
 extern ssize_t efidp_parse_device_path(char *path, efidp out, size_t size);
-extern ssize_t efidp_print_device_path(char *buf, size_t size, const_efidp dp);
+extern ssize_t efidp_print_device_path(char *buf, size_t size, const_efidp dp,
+				       ssize_t limit);
 
 #endif /* _EFIVAR_DP_H */
