@@ -415,6 +415,14 @@ format_message_dn(char *buf, size_t size, const_efidp dp)
 			     dp->usb_wwid.interface, serial);
 		break;
 				 }
+	case EFIDP_MSG_LUN:
+		off += pbufx(buf, size, off, "Unit(%d)", dp->lun.lun);
+		break;
+	case EFIDP_MSG_SATA:
+		off += pbufx(buf, size, off, "Sata(%d,%d,%d)",
+			     dp->sata.hba_port, dp->sata.port_multiplier_port,
+			     dp->sata.lun);
+		break;
 	case EFIDP_MSG_SAS_EX:
 		off += format_sas(buf, size, dp);
 		break;
