@@ -18,6 +18,7 @@
 
 #include <errno.h>
 #include <inttypes.h>
+#include <stddef.h>
 
 #include "efivar.h"
 #include "dp.h"
@@ -79,10 +80,18 @@ format_media_dn(char *buf, size_t size, const_efidp dp)
 		off += format_vendor(buf+off, size?size-off:0, "VenMedia", dp);
 		break;
 	case EFIDP_MEDIA_FILE: {
-		char *str = ucs2_to_utf8(dp->file.name, efidp_node_size(dp)-4);
-		str = onstack(str, strlen(str)+1);
+		size_t len = (efidp_node_size(dp)
+			      - offsetof(efidp_file, name))
+			     / 2 + 1;
+		uint16_t namebuf16[len];
 
-		off += pbufx(buf, size, off, "File(%s)", str);
+		memset(namebuf16, '\0', sizeof (namebuf16));
+		memcpy(namebuf16, dp->file.name, sizeof (namebuf16)
+						 - sizeof (namebuf16[0]));
+		char *namebuf = ucs2_to_utf8(namebuf16, len-1);
+		namebuf = onstack(namebuf, strlen(namebuf)+1);
+
+		off += pbufx(buf, size, off, "File(%s)", namebuf);
 		break;
 			       }
 	case EFIDP_MEDIA_PROTOCOL: {

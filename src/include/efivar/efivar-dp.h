@@ -204,6 +204,7 @@ typedef struct {
 	uint16_t	interface;
 	uint16_t	vendor_id;
 	uint16_t	product_id;
+	uint16_t	serial_number[];
 } efidp_usb_wwid;
 
 #define EFIDP_MSG_LUN		0x11

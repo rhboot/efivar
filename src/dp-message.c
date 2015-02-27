@@ -18,10 +18,12 @@
 
 #include <errno.h>
 #include <inttypes.h>
+#include <stddef.h>
 
 #include "efivar.h"
 #include "endian.h"
 #include "dp.h"
+#include "ucs2.h"
 
 static ssize_t
 format_ipv6_port(char *buffer, size_t buffer_size, uint8_t const *ipaddr,
@@ -395,6 +397,24 @@ format_message_dn(char *buf, size_t size, const_efidp dp)
 			     dp->usb_class.device_subclass,
 			     dp->usb_class.device_protocol);
 		break;
+	case EFIDP_MSG_USB_WWID: {
+		size_t len = (efidp_node_size(dp)
+			      - offsetof(efidp_usb_wwid, serial_number))
+			     / 2 + 1;
+		uint16_t serial16[len];
+
+		memset(serial16, '\0', sizeof (serial16));
+		memcpy(serial16, dp->file.name, sizeof (serial16)
+						- sizeof (serial16[0]));
+		char *serial = ucs2_to_utf8(serial16, len-1);
+		serial = onstack(serial, len);
+
+		off += pbufx(buf, size, off,
+			     "UsbWwid(%"PRIx16",%"PRIx16",%d,%s)",
+			     dp->usb_wwid.vendor_id, dp->usb_wwid.product_id,
+			     dp->usb_wwid.interface, serial);
+		break;
+				 }
 	case EFIDP_MSG_SAS_EX:
 		off += format_sas(buf, size, dp);
 		break;
