@@ -23,14 +23,14 @@
 #include "dp.h"
 
 ssize_t
-print_message_dn(char *buf, size_t size, const_efidp dp)
+format_message_dn(char *buf, size_t size, const_efidp dp)
 {
 	off_t off = 0;
 	size_t sz;
 	switch (dp->subtype) {
 	case EFIDP_MSG_MAC_ADDR:
 		off += pbufx(buf, size, off, "MAC(");
-		sz = print_hex(buf+off, size?size-off:0,
+		sz = format_hex(buf+off, size?size-off:0,
 			       dp->mac_addr.mac_addr,
 			       dp->mac_addr.if_type < 2 ? 6
 					: sizeof(dp->mac_addr.mac_addr));
@@ -58,11 +58,11 @@ print_message_dn(char *buf, size_t size, const_efidp dp)
 		break;
 			     }
 	case EFIDP_MSG_VENDOR:
-		off += print_vendor(buf+off, size?size-off:0, "VenMsg", dp);
+		off += format_vendor(buf+off, size?size-off:0, "VenMsg", dp);
 		break;
 	default:
 		off += pbufx(buf, size, off, "MessagePath(%d,", dp->subtype);
-		sz = print_hex(buf+off, size?size-off:0, (uint8_t *)dp+4,
+		sz = format_hex(buf+off, size?size-off:0, (uint8_t *)dp+4,
 			       efidp_node_size(dp)-4);
 		if (sz < 0)
 			return sz;

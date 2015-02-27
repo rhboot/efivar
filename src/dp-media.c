@@ -24,7 +24,7 @@
 #include "ucs2.h"
 
 ssize_t
-print_media_dn(char *buf, size_t size, const_efidp dp)
+format_media_dn(char *buf, size_t size, const_efidp dp)
 {
 	off_t off = 0;
 	size_t sz;
@@ -57,7 +57,7 @@ print_media_dn(char *buf, size_t size, const_efidp dp)
 		default:
 			off += pbufx(buf, size, off, "%d,",
 				     dp->hd.signature_type);
-			sz = print_hex(buf+off, size?size-off:0,
+			sz = format_hex(buf+off, size?size-off:0,
 				       dp->hd.signature,
 				       sizeof(dp->hd.signature));
 			if (sz < 0)
@@ -76,7 +76,7 @@ print_media_dn(char *buf, size_t size, const_efidp dp)
 			     dp->cdrom.sectors);
 		break;
 	case EFIDP_MEDIA_VENDOR:
-		off += print_vendor(buf+off, size?size-off:0, "VenMedia", dp);
+		off += format_vendor(buf+off, size?size-off:0, "VenMedia", dp);
 		break;
 	case EFIDP_MEDIA_FILE: {
 		char *str = ucs2_to_utf8(dp->file.name, efidp_node_size(dp)-4);
@@ -178,7 +178,7 @@ print_media_dn(char *buf, size_t size, const_efidp dp)
 					   }
 	default:
 		off += pbufx(buf, size, off, "MediaPath(%d,", dp->subtype);
-		sz = print_hex(buf+off, size?size-off:0, (uint8_t *)dp+4,
+		sz = format_hex(buf+off, size?size-off:0, (uint8_t *)dp+4,
 			       (efidp_node_size(dp)-4) / 2);
 		if (sz < 0)
 			return sz;

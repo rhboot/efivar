@@ -35,7 +35,7 @@
 
 static inline int
 __attribute__((__unused__))
-print_hex(char *buf, size_t size, const void const *addr, const size_t len)
+format_hex(char *buf, size_t size, const void const *addr, const size_t len)
 {
 	size_t off = 0;
 	for (size_t i = 0; i < len; i++)
@@ -53,7 +53,7 @@ print_hex(char *buf, size_t size, const void const *addr, const size_t len)
 
 static inline int
 __attribute__((__unused__))
-print_vendor(char *buf, size_t size, char *label, const_efidp dp)
+format_vendor(char *buf, size_t size, char *label, const_efidp dp)
 {
 	char *guidstr = NULL;
 	int rc;
@@ -67,7 +67,7 @@ print_vendor(char *buf, size_t size, char *label, const_efidp dp)
 
 	off = pbufx(buf, size, off, "%s(%s,", label, guidstr);
 
-	size_t sz = print_hex(buf+off, size?size-off:0,
+	size_t sz = format_hex(buf+off, size?size-off:0,
 			      dp->hw_vendor.vendor_data,
 			      efidp_node_size(dp) - 4 - sizeof (efi_guid_t));
 	if (sz < 0)
@@ -92,10 +92,10 @@ peek_dn_type(const_efidp dp, uint8_t type, uint8_t subtype)
 	return 0;
 }
 
-extern ssize_t print_hw_dn(char *buf, size_t size, const_efidp dp);
-extern ssize_t print_acpi_dn(char *buf, size_t size, const_efidp dp);
-extern ssize_t print_message_dn(char *buf, size_t size, const_efidp dp);
-extern ssize_t print_media_dn(char *buf, size_t size, const_efidp dp);
-extern ssize_t print_bios_boot_dn(char *buf, size_t size, const_efidp dp);
+extern ssize_t format_hw_dn(char *buf, size_t size, const_efidp dp);
+extern ssize_t format_acpi_dn(char *buf, size_t size, const_efidp dp);
+extern ssize_t format_message_dn(char *buf, size_t size, const_efidp dp);
+extern ssize_t format_media_dn(char *buf, size_t size, const_efidp dp);
+extern ssize_t format_bios_boot_dn(char *buf, size_t size, const_efidp dp);
 
 #endif /* _EFIVAR_INTERNAL_DP_H */

@@ -274,7 +274,7 @@ efidp_append_instance(const_efidp dp, const_efidp dpi, efidp *out)
 }
 
 ssize_t
-efidp_print_device_path(char *buf, size_t size, const_efidp dp, ssize_t limit)
+efidp_format_device_path(char *buf, size_t size, const_efidp dp, ssize_t limit)
 {
 	ssize_t sz;
 	ssize_t off = 0;
@@ -299,25 +299,25 @@ efidp_print_device_path(char *buf, size_t size, const_efidp dp, ssize_t limit)
 
 		switch (dp->type) {
 		case EFIDP_HARDWARE_TYPE:
-			sz = print_hw_dn(buf+off, size?size-off:0, dp);
+			sz = format_hw_dn(buf+off, size?size-off:0, dp);
 			if (sz < 0)
 				return -1;
 			off += sz;
 			break;
 		case EFIDP_ACPI_TYPE:
-			sz = print_acpi_dn(buf+off, size?size-off:0, dp);
+			sz = format_acpi_dn(buf+off, size?size-off:0, dp);
 			if (sz < 0)
 				return -1;
 			off += sz;
 			break;
 		case EFIDP_MESSAGE_TYPE:
-			sz = print_message_dn(buf+off, size?size-off:0, dp);
+			sz = format_message_dn(buf+off, size?size-off:0, dp);
 			if (sz < 0)
 				return -1;
 			off += sz;
 			break;
 		case EFIDP_MEDIA_TYPE:
-			sz = print_media_dn(buf+off, size?size-off:0, dp);
+			sz = format_media_dn(buf+off, size?size-off:0, dp);
 			if (sz < 0)
 				return -1;
 			off += sz;
@@ -329,7 +329,7 @@ efidp_print_device_path(char *buf, size_t size, const_efidp dp, ssize_t limit)
 			if (dp->subtype != EFIDP_BIOS_BOOT) {
 				off += pbufx(buf, size, off, "BbsPath(%d,",
 					   dp->subtype);
-				sz = print_hex(buf+off, size?size-off:0,
+				sz = format_hex(buf+off, size?size-off:0,
 					       (uint8_t *)dp+4,
 					       efidp_node_size(dp)-4);
 				if (sz < 0)
@@ -362,7 +362,7 @@ efidp_print_device_path(char *buf, size_t size, const_efidp dp, ssize_t limit)
 		default:
 			off += pbufx(buf, size, off,
 				   "Path(%d,%d,", dp->type, dp->subtype);
-			off += print_hex(buf+off,size?size-off:0,
+			off += format_hex(buf+off,size?size-off:0,
 					 (uint8_t *)dp + 4,
 					 efidp_node_size(dp) - 4);
 			off += pbufx(buf, size, off, ")");

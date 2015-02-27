@@ -775,7 +775,7 @@ efidp_instance_size(const_efidp dpi)
 /* and now, printing and parsing */
 extern ssize_t efidp_parse_device_node(char *path, efidp out, size_t size);
 extern ssize_t efidp_parse_device_path(char *path, efidp out, size_t size);
-extern ssize_t efidp_print_device_path(char *buf, size_t size, const_efidp dp,
+extern ssize_t efidp_format_device_path(char *buf, size_t size, const_efidp dp,
 				       ssize_t limit);
 
 #endif /* _EFIVAR_DP_H */
