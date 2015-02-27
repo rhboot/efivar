@@ -332,7 +332,6 @@ typedef struct {
 typedef efidp_msg_vendor efidp_vendor_msg;
 
 /* The next ones are phrased as vendor specific, but they're in the spec. */
-#define EFIDP_MSG_UART_FLOW_CONTROL	0x10
 #define EFIDP_MSG_UART_GUID \
 	EFI_GUID(0x37499a9d,0x542f,0x4c89,0xa026,0x35,0xda,0x14,0x20,0x94,0xe4)
 typedef struct {
@@ -344,7 +343,6 @@ typedef struct {
 #define EFIDP_UART_FLOW_CONTROL_HARDWARE	0x1
 #define EFIDP_UART_FLOW_CONTROL_XONXOFF		0x2
 
-#define EFIDP_MSG_SAS		0x0a
 #define EFIDP_MSG_SAS_GUID \
 	EFI_GUID(0xd487ddb4,0x008b,0x11d9,0xafdc,0x00,0x10,0x83,0xff,0xca,0x4d)
 typedef struct {
@@ -359,19 +357,24 @@ typedef struct {
 } efidp_sas;
 
 /* device_topology_info Bits 0:3 (enum) */
-#define EFIDP_SAS_TOPOLOGY_NONE		0x00
-#define EFIDP_SAS_TOPOLOGY_THISBYTE	0x01
-#define EFIDP_SAS_TOPOLOGY_NEXTBYTE	0x02
+#define EFIDP_SAS_TOPOLOGY_MASK		0x02
+#define EFIDP_SAS_TOPOLOGY_NONE		0x0
+#define EFIDP_SAS_TOPOLOGY_THISBYTE	0x1
+#define EFIDP_SAS_TOPOLOGY_NEXTBYTE	0x2
 
 /* device_topology_info Bits 4:5 (enum) */
-#define EFIDP_SAS_DEVICE_SAS_INTERNAL	0x00
-#define EFIDP_SAS_DEVICE_SATA_INTERNAL	0x10
-#define EFIDP_SAS_DEVICE_SAS_EXTERNAL	0x20
-#define EFIDP_SAS_DEVICE_SATA_EXTERNAL	0x30
+#define EFIDP_SAS_DEVICE_MASK		0x30
+#define EFIDP_SAS_DEVICE_SHIFT		4
+#define EFIDP_SAS_DEVICE_SAS_INTERNAL	0x0
+#define EFIDP_SAS_DEVICE_SATA_INTERNAL	0x1
+#define EFIDP_SAS_DEVICE_SAS_EXTERNAL	0x2
+#define EFIDP_SAS_DEVICE_SATA_EXTERNAL	0x3
 
 /* device_topology_info Bits 6:7 (enum) */
-#define EFIDP_SAS_TOPOLOGY_DIRECT	0x00
-#define EFIDP_SAS_TOPOLOGY_EXPANDER	0x40
+#define EFIDP_SAS_CONNECT_MASK		0x40
+#define EFIDP_SAS_CONNECT_SHIFT		6
+#define EFIDP_SAS_CONNECT_DIRECT	0x0
+#define EFIDP_SAS_CONNECT_EXPANDER	0x1
 
 #define EFIDP_MSG_SAS_EX	0x16
 typedef struct {
@@ -382,6 +385,9 @@ typedef struct {
 	uint8_t		drive_bay_id; /* If EFIDP_SAS_TOPOLOGY_NEXTBYTE set */
 	uint16_t	rtp;
 } efidp_sas_ex;
+
+#define EFIDP_MSG_DEBUGPORT_GUID \
+	EFI_GUID(0xEBA4E8D2,0x3858,0x41EC,0xA281,0x26,0x47,0xBA,0x96,0x60,0xD0)
 
 #define EFIDP_MSG_ISCSI		0x13
 typedef struct {

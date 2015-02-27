@@ -29,11 +29,11 @@ format_hw_dn(char *buf, size_t size, const_efidp dp)
 	size_t sz;
 	switch (dp->subtype) {
 	case EFIDP_HW_PCI_SUBTYPE:
-		off += pbufx(buf, size, off, "Pci(0x%"PRIx32",0x%"PRIx32")",
+		off += pbufx(buf, size, off, "Pci(%d,%d)",
 			     dp->pci.device, dp->pci.function);
 		break;
 	case EFIDP_HW_PCCARD_SUBTYPE:
-		off += pbufx(buf, size, off, "PcCard(0x%"PRIx32")",
+		off += pbufx(buf, size, off, "PcCard(%d)",
 			     dp->pccard.function);
 		break;
 	case EFIDP_HW_MMIO:
