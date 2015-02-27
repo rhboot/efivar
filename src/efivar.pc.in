@@ -8,3 +8,4 @@ Description: UEFI Variable Management
 Version: @@VERSION@@
 Requires:
 Libs: -L${libdir} -lefivar -ldl
+Cflags: -I${includedir}/efivar

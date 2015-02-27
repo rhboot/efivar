@@ -36,7 +36,7 @@ typedef struct {
 } efi_guid_t;
 
 #ifndef EFIVAR_BUILD_ENVIRONMENT
-#include "efivar-guids.h"
+#include <efivar-guids.h>
 #endif
 
 #define EFI_GUID(a,b,c,d,e0,e1,e2,e3,e4,e5) \
