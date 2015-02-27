@@ -22,6 +22,98 @@
 #include "efivar.h"
 #include "dp.h"
 
+static ssize_t
+format_ipv6_port(char *buffer, size_t buffer_size, uint8_t const *ipaddr,
+		uint16_t port)
+{
+	uint16_t *ip = (uint16_t *)ipaddr;
+	off_t offset = 0;
+	ssize_t needed;
+
+	needed = snprintf(buffer, buffer_size, "[");
+	if (needed < 0)
+		return -1;
+	offset += needed;
+
+	// deciding how to print an ipv6 ip requires 2 passes, because
+	// RFC5952 says we have to use :: a) only once and b) to maximum effect.
+	int largest_zero_block_size = 0;
+	int largest_zero_block_offset = -1;
+
+	int this_zero_block_size = 0;
+	int this_zero_block_offset = -1;
+
+	int in_zero_block = 0;
+
+	int i;
+	for (i = 0; i < 8; i++) {
+		if (ip[i] != 0 && in_zero_block) {
+			if (this_zero_block_size > largest_zero_block_size) {
+				largest_zero_block_size = this_zero_block_size;
+				largest_zero_block_offset =
+							this_zero_block_offset;
+				this_zero_block_size = 0;
+				this_zero_block_offset = -1;
+				in_zero_block = 0;
+			}
+		}
+		if (ip[i] == 0) {
+			if (in_zero_block == 0) {
+				in_zero_block = 1;
+				this_zero_block_offset = i;
+			}
+			this_zero_block_size++;
+		}
+	}
+	if (this_zero_block_size > largest_zero_block_size) {
+		largest_zero_block_size = this_zero_block_size;
+		largest_zero_block_offset = this_zero_block_offset;
+		this_zero_block_size = 0;
+		this_zero_block_offset = -1;
+		in_zero_block = 0;
+	}
+	if (largest_zero_block_size == 1)
+		largest_zero_block_offset = -1;
+
+	for (i = 0; i < 8; i++) {
+		if (largest_zero_block_offset == i) {
+			needed = snprintf(buffer + offset,
+					  buffer_size == 0 ? 0
+						: buffer_size - offset,
+					  "::");
+			if (needed < 0)
+				return -1;
+			offset += needed;
+			i += largest_zero_block_size -1;
+			continue;
+		} else if (i > 0) {
+			needed = snprintf(buffer + offset,
+					  buffer_size == 0 ? 0
+						: buffer_size - offset,
+					  ":");
+			if (needed < 0)
+				return -1;
+			offset += needed;
+		}
+
+		needed = snprintf(buffer + offset,
+				  buffer_size == 0 ? 0 : buffer_size - offset,
+				  "%x", ip[i]);
+		if (needed < 0)
+			return -1;
+		offset += needed;
+	}
+
+	needed = snprintf(buffer + offset,
+			  buffer_size == 0 ? 0 : buffer_size - offset,
+			  "]:%d", port);
+	if (needed < 0)
+		return -1;
+	offset += needed;
+
+	return offset;
+}
+
 ssize_t
 format_message_dn(char *buf, size_t size, const_efidp dp)
 {
@@ -55,6 +147,36 @@ format_message_dn(char *buf, size_t size, const_efidp dp)
 			     a->remote_port,
 			     a->protocol,
 			     a->static_ip_addr);
+		break;
+			     }
+	case EFIDP_MSG_IPv6: {
+		efidp_ipv6_addr const *a = &dp->ipv6_addr;
+		char *addr0 = NULL;
+		char *addr1 = NULL;
+
+		sz = format_ipv6_port(addr0, 0, a->local_ipv6_addr,
+				      a->local_port);
+		if (sz < 0)
+			return sz;
+
+		addr0 = alloca(sz+1);
+		sz = format_ipv6_port(addr0, sz, a->local_ipv6_addr,
+				      a->local_port);
+		if (sz < 0)
+			return sz;
+
+		sz = format_ipv6_port(addr1, 0, a->remote_ipv6_addr,
+				      a->remote_port);
+		if (sz < 0)
+			return sz;
+		addr1 = alloca(sz+1);
+		sz = format_ipv6_port(addr1, sz, a->remote_ipv6_addr,
+				      a->remote_port);
+		if (sz < 0)
+			return sz;
+
+		off += pbufx(buf, size, off, "IPv6(%s<->%s,%hx,%hhx)",
+			     addr0, addr1, a->protocol, a->ip_addr_origin);
 		break;
 			     }
 	case EFIDP_MSG_VENDOR:
