@@ -1,5 +1,5 @@
 Name:           efivar
-Version:        0.15
+Version:        @@VERSION@@
 Release:        1%{?dist}
 Summary:        Tools to manage UEFI variables
 License:        LGPLv2.1
