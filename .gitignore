@@ -13,3 +13,5 @@
 .*.h.P
 core.*
 *.spec
+src/efivar
+src/makeguids
