@@ -118,20 +118,16 @@ format_vendor_helper(char *buf, size_t size, char *label, const_efidp dp)
 		format(buf, size, off, "%s", _asciibuf);		\
        })
 
-static inline int
-__attribute__((__unused__))
-peek_dn_type(const_efidp dp, uint8_t type, uint8_t subtype)
-{
-	if (efidp_type(dp) == EFIDP_END_TYPE &&
-			efidp_subtype(dp) == EFIDP_END_ENTIRE)
-		return 0;
-
-	dp = (const_efidp)(const efidp_header const *)((uint8_t *)dp + dp->length);
-
-	if (efidp_type(dp) == type && efidp_subtype(dp) == subtype)
-		return 1;
-	return 0;
-}
+#define format_array(buf, size, off, fmt, type, addr, len) ({		\
+		ssize_t _off = 0;					\
+		for (size_t _i = 0; _i < len; _i++) {			\
+			if (_i != 0)					\
+				_off += format(buf, size, off+_off, ",");\
+			_off += format(buf, size, off+_off, fmt,	\
+				      ((type *)addr)[_i]);		\
+		}							\
+		_off+off;						\
+	})
 
 extern ssize_t format_hw_dn(char *buf, size_t size, const_efidp dp);
 extern ssize_t format_acpi_dn(char *buf, size_t size, const_efidp dp);

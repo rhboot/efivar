@@ -100,6 +100,7 @@ typedef struct {
 	uint32_t	uid;
 	uint32_t	cid;
 	/* three ascii string fields follow */
+	char		hidstr[];
 } efidp_acpi_hid_ex;
 
 #define EFIDP_PNP_EISA_ID_CONST		0x41d0
@@ -112,16 +113,17 @@ typedef struct {
 #define EFIDP_PNP_EISA_ID_MASK		0xffff
 #define EFIDP_EISA_ID_TO_NUM(_Id)	((_Id) >> 16)
 
-#define EFIDP_ACPI_PCI_ROOT_HID	EFIDP_EFI_PNP_ID(0x0a03)
-#define EFIDP_ACPI_FLOPPY_HID	EFIDP_EFI_PNP_ID(0x0604)
-#define EFIDP_ACPI_KEYBOARD_HID	EFIDP_EFI_PNP_ID(0x0301)
-#define EFIDP_ACPI_SERIAL_HID	EFIDP_EFI_PNP_ID(0x0501)
-#define EFIDP_ACPI_PARALLEL_HID	EFIDP_EFI_PNP_ID(0x0401)
+#define EFIDP_ACPI_PCI_ROOT_HID		EFIDP_EFI_PNP_ID(0x0a03)
+#define EFIDP_ACPI_PCIE_ROOT_HID	EFIDP_EFI_PNP_ID(0x0a08)
+#define EFIDP_ACPI_FLOPPY_HID		EFIDP_EFI_PNP_ID(0x0604)
+#define EFIDP_ACPI_KEYBOARD_HID		EFIDP_EFI_PNP_ID(0x0301)
+#define EFIDP_ACPI_SERIAL_HID		EFIDP_EFI_PNP_ID(0x0501)
+#define EFIDP_ACPI_PARALLEL_HID		EFIDP_EFI_PNP_ID(0x0401)
 
 #define EFIDP_ACPI_ADR		0x03
 typedef struct {
 	efidp_header	header;
-	uint32_t	adr;
+	uint32_t	adr[];
 } efidp_acpi_adr;
 
 #define EFIDP_ACPI_ADR_DISPLAY_TYPE_OTHER		0
@@ -567,6 +569,7 @@ typedef union {
 	efidp_controller controller;
 	efidp_bmc bmc;
 	efidp_acpi_hid acpi_hid;
+	efidp_acpi_hid_ex acpi_hid_ex;
 	efidp_acpi_adr acpi_adr;
 	efidp_atapi atapi;
 	efidp_scsi scsi;
