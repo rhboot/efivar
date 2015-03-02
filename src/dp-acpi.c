@@ -156,3 +156,18 @@ format_acpi_dn(char *buf, size_t size, const_efidp dp)
 
 	return off;
 }
+
+ssize_t
+efidp_make_acpi_hid(uint8_t *buf, ssize_t size, uint32_t hid, uint32_t uid)
+{
+	efidp_acpi_hid *acpi_hid = (efidp_acpi_hid *)buf;
+	ssize_t sz;
+	sz = efidp_make_generic(buf, size, EFIDP_ACPI_TYPE, EFIDP_ACPI_HID,
+				sizeof (*acpi_hid));
+	if (sz == size) {
+		acpi_hid->uid = uid;
+		acpi_hid->hid = hid;
+	}
+
+	return sz;
+}

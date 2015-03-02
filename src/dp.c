@@ -34,27 +34,6 @@ static const efidp_header end_instance = {
 	.length = 4
 };
 
-ssize_t
-efidp_create_node(uint8_t type, uint8_t subtype, size_t len,
-		  void *buf, size_t bufsize)
-{
-	efidp dp;
-
-	if (!buf || bufsize == 0)
-		return len;
-	if (bufsize < len) {
-		errno = ENOSPC;
-		return -1;
-	}
-
-	dp = buf;
-	dp->type = type;
-	dp->subtype = subtype;
-	dp->length = len;
-
-	return len;
-}
-
 static inline void *
 efidp_data_address(const_efidp dp)
 {
@@ -391,3 +370,38 @@ efidp_parse_device_path(char *path, efidp out, size_t size)
 
 }
 #endif
+
+ssize_t
+efidp_make_vendor(uint8_t *buf, ssize_t size, uint8_t type, uint8_t subtype,
+		  efi_guid_t vendor_guid, void *data, size_t data_size)
+{
+	efidp_hw_vendor *vend = (efidp_hw_vendor *)buf;
+	ssize_t sz;
+	ssize_t req = sizeof (*vend) + data_size;
+	sz = efidp_make_generic(buf, size, type, subtype, req);
+	if (sz == req) {
+		vend->vendor_guid = vendor_guid;
+		memcpy(vend->vendor_data, data, data_size);
+	}
+
+	return sz;
+}
+
+ssize_t
+efidp_make_generic(uint8_t *buf, ssize_t size, uint8_t type, uint8_t subtype,
+		   ssize_t total_size)
+{
+	efidp_header *head = (efidp_header *)buf;
+
+	if (!size)
+		return total_size;
+	if (size < total_size) {
+		errno = ENOSPC;
+		return -1;
+	}
+
+	head->type = type;
+	head->subtype = subtype;
+	head->length = total_size;
+	return head->length;
+}

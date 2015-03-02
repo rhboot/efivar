@@ -67,6 +67,9 @@ typedef struct {
 	uint8_t		vendor_data[0];
 } efidp_hw_vendor;
 typedef efidp_hw_vendor efidp_vendor_hw;
+#define efidp_make_hw_vendor(buf, size, guid, data, data_size)		\
+	efidp_make_vendor(buf, size, EFIDP_HARDWARE_TYPE,		\
+			  EFIDP_HW_VENDOR, guid, data, data_size)
 
 #define EFIDP_HW_CONTROLLER	0x05
 typedef struct {
@@ -94,6 +97,8 @@ typedef struct {
 	uint32_t	hid;
 	uint32_t	uid;
 } efidp_acpi_hid;
+extern ssize_t efidp_make_acpi_hid(uint8_t *buf, ssize_t size, uint32_t hid,
+				   uint32_t uid);
 
 #define EFIDP_ACPI_HID_EX	0x02
 typedef struct {
@@ -255,6 +260,9 @@ typedef struct {
 	uint8_t		mac_addr[32];
 	uint8_t		if_type;
 } efidp_mac_addr;
+extern ssize_t efidp_make_mac_addr(uint8_t *buf, ssize_t size,
+				   uint8_t if_type, uint8_t *mac_addr,
+				   ssize_t mac_addr_size);
 
 #define EFIDP_MSG_IPv4		0x0c
 typedef struct {
@@ -352,6 +360,9 @@ typedef struct {
 	uint8_t		vendor_data[0];
 } efidp_msg_vendor;
 typedef efidp_msg_vendor efidp_vendor_msg;
+#define efidp_make_msg_vendor(buf, size, guid, data, data_size)		\
+	efidp_make_vendor(buf, size, EFIDP_MESSAGE_TYPE,		\
+			  EFIDP_MSG_VENDOR, guid, data, data_size)
 
 /* The next ones are phrased as vendor specific, but they're in the spec. */
 #define EFIDP_MSG_UART_GUID \
@@ -506,12 +517,16 @@ typedef struct {
 	uint8_t		vendor_data[0];
 } efidp_media_vendor;
 typedef efidp_media_vendor efidp_vendor_media;
+#define efidp_make_media_vendor(buf, size, guid, data, data_size)	\
+	efidp_make_vendor(buf, size, EFIDP_MEDIA_TYPE,			\
+			  EFIDP_MEDIA_VENDOR, guid, data, data_size)
 
 #define EFIDP_MEDIA_FILE	0x4
 typedef struct {
 	efidp_header	header;
 	uint16_t	name[];
 } efidp_file;
+extern ssize_t efidp_make_file(uint8_t *buf, ssize_t size, char *filename);
 
 #define EFIDP_MEDIA_PROTOCOL	0x5
 typedef struct {
@@ -634,8 +649,6 @@ typedef union {
 typedef efidp_data *efidp;
 typedef const efidp_data const *const_efidp;
 
-extern ssize_t efidp_create_node(uint8_t type, uint8_t subtype, size_t len,
-				 void *buf, size_t bufsize);
 extern int efidp_set_node_data(const_efidp dn, void *buf, size_t bufsize);
 extern int efidp_duplicate_path(const_efidp dp, efidp *out);
 extern int efidp_append_path(const_efidp dp0, const_efidp dp1, efidp *out);
@@ -810,5 +823,17 @@ extern ssize_t efidp_parse_device_node(char *path, efidp out, size_t size);
 extern ssize_t efidp_parse_device_path(char *path, efidp out, size_t size);
 extern ssize_t efidp_format_device_path(char *buf, size_t size, const_efidp dp,
 				       ssize_t limit);
+extern ssize_t efidp_make_vendor(uint8_t *buf, ssize_t size, uint8_t type,
+				 uint8_t subtype,  efi_guid_t vendor_guid,
+				 void *data, size_t data_size);
+extern ssize_t efidp_make_generic(uint8_t *buf, ssize_t size, uint8_t type,
+				  uint8_t subtype, ssize_t total_size);
+#define efidp_make_end_entire(buf, size)				\
+	efidp_make_generic(buf, size, EFIDP_END_TYPE, EFIDP_END_ENTIRE,	\
+			   sizeof (efidp_header));
+#define efidp_make_end_instance(buf, size)				\
+	efidp_make_generic(buf, size, EFIDP_END_TYPE,			\
+			   EFIDP_END_INSTANCE, sizeof (efidp_header));
+
 
 #endif /* _EFIVAR_DP_H */

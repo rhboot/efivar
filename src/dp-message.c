@@ -541,3 +541,20 @@ format_message_dn(char *buf, size_t size, const_efidp dp)
 	}
 	return off;
 }
+
+ssize_t
+efidp_make_mac_addr(uint8_t *buf, ssize_t size, uint8_t if_type,
+		    uint8_t *mac_addr, ssize_t mac_addr_size)
+{
+	efidp_mac_addr *mac = (efidp_mac_addr *)buf;
+
+	ssize_t sz = efidp_make_generic(buf, size, EFIDP_MESSAGE_TYPE,
+					EFIDP_MSG_MAC_ADDR, sizeof (*mac));
+	ssize_t req = sizeof (*mac);
+	if (sz == req) {
+		mac->if_type = if_type;
+		memcpy(mac->mac_addr, mac_addr,
+		       mac_addr_size > 32 ? 32 : mac_addr_size);
+	}
+	return sz;
+}

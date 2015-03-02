@@ -61,3 +61,18 @@ format_hw_dn(char *buf, size_t size, const_efidp dp)
 	}
 	return off;
 }
+
+ssize_t
+efidp_make_pci(uint8_t *buf, ssize_t size, uint8_t device, uint8_t function)
+{
+	efidp_pci *pci = (efidp_pci *)buf;
+	ssize_t sz;
+	ssize_t req = sizeof (*pci);
+	sz = efidp_make_generic(buf, size, EFIDP_HARDWARE_TYPE, EFIDP_HW_PCI,
+				req);
+	if (sz == req) {
+		pci->device = device;
+		pci->function = function;
+	}
+	return sz;
+}
