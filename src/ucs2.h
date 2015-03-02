@@ -48,4 +48,14 @@ ucs2_to_utf8(const uint16_t const *chars, size_t max)
 	return strdup(ret);
 }
 
+static inline size_t
+__attribute__((__unused__))
+ucs2len(uint16_t *s, ssize_t limit)
+{
+	ssize_t i;
+	for (i = 0; i < limit && s[i] != L'\0'; i++)
+		;
+	return i;
+}
+
 #endif /* _EFIVAR_UCS2_H */
