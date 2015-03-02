@@ -27,11 +27,11 @@ format_hw_dn(char *buf, size_t size, const_efidp dp)
 {
 	off_t off = 0;
 	switch (dp->subtype) {
-	case EFIDP_HW_PCI_SUBTYPE:
+	case EFIDP_HW_PCI:
 		off += format(buf, size, off, "Pci(0x%"PRIx32",0x%"PRIx32")",
 			      dp->pci.device, dp->pci.function);
 		break;
-	case EFIDP_HW_PCCARD_SUBTYPE:
+	case EFIDP_HW_PCCARD:
 		off += format(buf, size, off, "PcCard(0x%"PRIx32")",
 			      dp->pccard.function);
 		break;

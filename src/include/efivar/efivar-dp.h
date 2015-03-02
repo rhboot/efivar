@@ -37,14 +37,16 @@ typedef uint8_t efidp_boolean;
 #define EFIDP_END_TYPE		0x7f
 
 /* Each hardware subtype */
-#define EFIDP_HW_PCI_SUBTYPE	0x01
+#define EFIDP_HW_PCI	0x01
 typedef struct {
 	efidp_header	header;
 	uint8_t		function;
 	uint8_t		device;
 } efidp_pci;
+extern ssize_t efidp_make_pci(uint8_t *buf, ssize_t size, uint8_t device,
+			      uint8_t function);
 
-#define EFIDP_HW_PCCARD_SUBTYPE	0x02
+#define EFIDP_HW_PCCARD	0x02
 typedef struct {
 	efidp_header	header;
 	uint8_t		function;
