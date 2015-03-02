@@ -200,6 +200,23 @@ typedef struct {
 	uint8_t		device_protocol;
 } efidp_usb_class;
 
+#define EFIDP_USB_CLASS_AUDIO		0x01
+#define EFIDP_USB_CLASS_CDC_CONTROL	0x02
+#define EFIDP_USB_CLASS_HID		0x03
+#define EFIDP_USB_CLASS_IMAGE		0x06
+#define EFIDP_USB_CLASS_PRINTER		0x07
+#define EFIDP_USB_CLASS_MASS_STORAGE	0x08
+#define EFIDP_USB_CLASS_HUB		0x09
+#define EFIDP_USB_CLASS_CDC_DATA	0x0a
+#define EFIDP_USB_CLASS_SMARTCARD	0x0b
+#define EFIDP_USB_CLASS_VIDEO		0x0e
+#define EFIDP_USB_CLASS_DIAGNOSTIC	0xdc
+#define EFIDP_USB_CLASS_WIRELESS	0xde
+#define EFIDP_USB_CLASS_254		0xfe
+#define EFIDP_USB_SUBCLASS_FW_UPDATE		0x01
+#define EFIDP_USB_SUBCLASS_IRDA_BRIDGE		0x02
+#define EFIDP_USB_SUBCLASS_TEST_AND_MEASURE	0x03
+
 #define EFIDP_MSG_USB_WWID	0x10
 typedef struct {
 	efidp_header	header;
@@ -403,23 +420,27 @@ typedef struct {
 } efidp_iscsi;
 
 /* options bits 0:1 */
-#define EFIDP_ISCSI_OPTION_NO_HEADER_DIGEST	0x0000
-#define EFIDP_ISCSI_OPTION_HEADER_CRC32		0x0002
+#define EFIDP_ISCSI_HEADER_DIGEST_SHIFT	0
+#define EFIDP_ISCSI_NO_HEADER_DIGEST	0x0
+#define EFIDP_ISCSI_HEADER_CRC32	0x2
 
 /* option bits 2:3 */
-#define EFIDP_ISCSI_OPTION_NO_DATA_DIGEST	0x0000
-#define EFIDP_ISCSI_OPTION_DATA_CRC32		0x0008
+#define EFIDP_ISCSI_DATA_DIGEST_SHIFT	2
+#define EFIDP_ISCSI_NO_DATA_DIGEST	0x0
+#define EFIDP_ISCSI_DATA_CRC32		0x2
 
 /* option bits 4:9 */
-#define EFIDP_ISCSI_OPTION_RESERVED		0x0000
+#define EFIDP_ISCSI_RESERVED		0x0
 
 /* option bits 10:11 */
-#define EFIDP_ISCSI_OPTION_AUTH_CHAP		0x0000
-#define EFIDP_ISCSI_OPTION_AUTH_NONE		0x0800
+#define EFIDP_ISCSI_AUTH_SHIFT		10
+#define EFIDP_ISCSI_AUTH_CHAP		0x0
+#define EFIDP_ISCSI_AUTH_NONE		0x2
 
 /* option bit 12 */
-#define EFIDP_ISCSI_OPTION_CHAP_BI		0x0000
-#define EFIDP_ISCSI_OPTION_CHAP_UNI		0x1000
+#define EFIDP_ISCSI_CHAP_SHIFT		12
+#define EFIDP_ISCSI_CHAP_BI		0x0
+#define EFIDP_ISCSI_CHAP_UNI		0x1
 
 #define EFIDP_ISCSI_MAX_TARGET_NAME_LEN		223
 
@@ -427,7 +448,7 @@ typedef struct {
 typedef struct {
 	efidp_header	header;
 	uint32_t	namespace_id;
-	uint64_t	ieee_eui_64;
+	uint8_t		ieee_eui_64[8];
 } efidp_nvme;
 
 #define EFIDP_MSG_URI		0x18

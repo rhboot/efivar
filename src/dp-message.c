@@ -190,6 +190,95 @@ format_sas(char *buf, size_t size, const_efidp dp)
 	return off;
 }
 
+#define class_helper(buf, size, off, label, dp) ({			\
+		off += format(buf, size, off,				\
+			      "%s(0x%"PRIx16",0x%"PRIx16",%d,%d)",	\
+			      label,					\
+			      dp->usb_class.vendor_id,			\
+			      dp->usb_class.product_id,			\
+			      dp->usb_class.device_subclass,		\
+			      dp->usb_class.device_protocol);		\
+		off;							\
+	})
+
+static ssize_t
+format_usb_class(char *buf, size_t size, const_efidp dp)
+{
+	ssize_t off = 0;
+	switch (dp->usb_class.device_class) {
+	case EFIDP_USB_CLASS_AUDIO:
+		off += class_helper(buf, size, off, "UsbAudio", dp);
+		break;
+	case EFIDP_USB_CLASS_CDC_CONTROL:
+		off += class_helper(buf, size, off, "UsbCDCControl", dp);
+		break;
+	case EFIDP_USB_CLASS_HID:
+		off += class_helper(buf, size, off, "UsbHID", dp);
+		break;
+	case EFIDP_USB_CLASS_IMAGE:
+		off += class_helper(buf, size, off, "UsbImage", dp);
+		break;
+	case EFIDP_USB_CLASS_PRINTER:
+		off += class_helper(buf, size, off, "UsbPrinter", dp);
+		break;
+	case EFIDP_USB_CLASS_MASS_STORAGE:
+		off += class_helper(buf, size, off, "UsbMassStorage", dp);
+		break;
+	case EFIDP_USB_CLASS_HUB:
+		off += class_helper(buf, size, off, "UsbHub", dp);
+		break;
+	case EFIDP_USB_CLASS_CDC_DATA:
+		off += class_helper(buf, size, off, "UsbCDCData", dp);
+		break;
+	case EFIDP_USB_CLASS_SMARTCARD:
+		off += class_helper(buf, size, off, "UsbSmartCard", dp);
+		break;
+	case EFIDP_USB_CLASS_VIDEO:
+		off += class_helper(buf, size, off, "UsbVideo", dp);
+		break;
+	case EFIDP_USB_CLASS_DIAGNOSTIC:
+		off += class_helper(buf, size, off, "UsbDiagnostic", dp);
+		break;
+	case EFIDP_USB_CLASS_WIRELESS:
+		off += class_helper(buf, size, off, "UsbWireless", dp);
+		break;
+	case EFIDP_USB_CLASS_254:
+		switch (dp->usb_class.device_subclass) {
+		case EFIDP_USB_SUBCLASS_FW_UPDATE:
+			off += format(buf, size, off,
+				      "UsbDeviceFirmwareUpdate(0x%"PRIx16",0x%"PRIx16",%d)",
+				      dp->usb_class.vendor_id,
+				      dp->usb_class.product_id,
+				      dp->usb_class.device_protocol);
+			break;
+		case EFIDP_USB_SUBCLASS_IRDA_BRIDGE:
+			off += format(buf, size, off,
+				      "UsbIrdaBridge(0x%"PRIx16",0x%"PRIx16",%d)",
+				      dp->usb_class.vendor_id,
+				      dp->usb_class.product_id,
+				      dp->usb_class.device_protocol);
+			break;
+		case EFIDP_USB_SUBCLASS_TEST_AND_MEASURE:
+			off += format(buf, size, off,
+				      "UsbTestAndMeasurement(0x%"PRIx16",0x%"PRIx16",%d)",
+				      dp->usb_class.vendor_id,
+				      dp->usb_class.product_id,
+				      dp->usb_class.device_protocol);
+			break;
+		}
+		break;
+	default:
+		off += format(buf, size, off,
+			     "UsbClass(%"PRIx16",%"PRIx16",%d,%d)",
+			     dp->usb_class.vendor_id,
+			     dp->usb_class.product_id,
+			     dp->usb_class.device_subclass,
+			     dp->usb_class.device_protocol);
+		break;
+	}
+	return off;
+}
+
 ssize_t
 format_message_dn(char *buf, size_t size, const_efidp dp)
 {
@@ -369,12 +458,7 @@ format_message_dn(char *buf, size_t size, const_efidp dp)
 		break;
 			     }
 	case EFIDP_MSG_USB_CLASS:
-		off += format(buf, size, off,
-			     "UsbClass(%"PRIx16",%"PRIx16",%d,%d)",
-			     dp->usb_class.vendor_id,
-			     dp->usb_class.product_id,
-			     dp->usb_class.device_subclass,
-			     dp->usb_class.device_protocol);
+		off += format_helper(format_usb_class, buf, size, off, dp);
 		break;
 	case EFIDP_MSG_USB_WWID:
 		off += format(buf, size, off,
@@ -395,11 +479,61 @@ format_message_dn(char *buf, size_t size, const_efidp dp)
 			     dp->sata.hba_port, dp->sata.port_multiplier_port,
 			     dp->sata.lun);
 		break;
+	case EFIDP_MSG_ISCSI: {
+		size_t sz = efidp_node_size(dp)
+			    - offsetof(efidp_iscsi, target_name);
+		if (sz > EFIDP_ISCSI_MAX_TARGET_NAME_LEN)
+			sz = EFIDP_ISCSI_MAX_TARGET_NAME_LEN;
+		char target_name[sz + 1];
+		memcpy(target_name, dp->iscsi.target_name, sz);
+		target_name[sz] = '\0';
+		uint64_t lun;
+
+		memcpy(&lun, dp->iscsi.lun, sizeof (lun));
+
+		off += format(buf, size, off,
+			      "iSCSI(%s,%d,0x%"PRIx64",%s,%s,%s,%s)",
+			      target_name, dp->iscsi.tpgt,
+			      be64_to_cpu(lun),
+			      (dp->iscsi.options >> EFIDP_ISCSI_HEADER_DIGEST_SHIFT) & EFIDP_ISCSI_HEADER_CRC32 ? "CRC32" : "None",
+			      (dp->iscsi.options >> EFIDP_ISCSI_DATA_DIGEST_SHIFT) & EFIDP_ISCSI_DATA_CRC32 ? "CRC32" : "None",
+			      (dp->iscsi.options >> EFIDP_ISCSI_AUTH_SHIFT) & EFIDP_ISCSI_AUTH_NONE ? "None" : \
+				      (dp->iscsi.options >> EFIDP_ISCSI_CHAP_SHIFT) & EFIDP_ISCSI_CHAP_UNI ? "CHAP_UNI" : "CHAP_BI",
+			      dp->iscsi.protocol == 0 ? "TCP" : "Unknown");
+		break;
+			      }
+	case EFIDP_MSG_VLAN:
+		off += format(buf, size, off, "Vlan(%d)", dp->vlan.vlan_id);
+		break;
 	case EFIDP_MSG_SAS_EX:
 		off += format_sas(buf, size, dp);
 		break;
+	case EFIDP_MSG_NVME:
+		off += format(buf, size, off, "NVMe(0x%"PRIx32","
+			      "%02X-%02X-%02X-%02X-%02X-%02X-%02X-%02X)",
+			      dp->nvme.namespace_id, dp->nvme.ieee_eui_64[0],
+			      dp->nvme.ieee_eui_64[1], dp->nvme.ieee_eui_64[2],
+			      dp->nvme.ieee_eui_64[3], dp->nvme.ieee_eui_64[4],
+			      dp->nvme.ieee_eui_64[5], dp->nvme.ieee_eui_64[6],
+			      dp->nvme.ieee_eui_64[7]);
+		break;
+	case EFIDP_MSG_URI: {
+		size_t sz = efidp_node_size(dp) - offsetof(efidp_uri, uri);
+		char uri[sz + 1];
+		memcpy(uri, dp->uri.uri, sz);
+		uri[sz] = '\0';
+		off += format(buf, size, off, "Uri(%s)", uri);
+		break;
+			    }
+	case EFIDP_MSG_UFS:
+		off += format(buf, size, off, "UFS(%d,0x%02x)",
+			      dp->ufs.target_id, dp->ufs.lun);
+		break;
+	case EFIDP_MSG_SD:
+		off += format(buf, size, off, "SD(%d)", dp->sd.slot_number);
+		break;
 	default:
-		off += format(buf, size, off, "MessagePath(%d,", dp->subtype);
+		off += format(buf, size, off, "Msg(%d,", dp->subtype);
 		off += format_hex(buf, size, off, (uint8_t *)dp+4,
 				  efidp_node_size(dp)-4);
 		off += format(buf,size,off,")");
