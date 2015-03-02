@@ -37,7 +37,7 @@ format_hw_dn(char *buf, size_t size, const_efidp dp)
 		break;
 	case EFIDP_HW_MMIO:
 		off += format(buf, size, off,
-			      "MemoryMapped(0x%"PRIx32",0x%"PRIx64",0x%"PRIx64")",
+			      "MemoryMapped(%"PRIu32",0x%"PRIx64",0x%"PRIx64")",
 			      dp->mmio.memory_type, dp->mmio.starting_address,
 			      dp->mmio.ending_address);
 		break;
