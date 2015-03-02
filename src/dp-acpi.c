@@ -26,21 +26,17 @@ ssize_t
 format_acpi_dn(char *buf, size_t size, const_efidp dp)
 {
 	off_t off = 0;
-	size_t sz;
 	switch (dp->subtype) {
 	case EFIDP_ACPI_HID:
-		off += pbufx(buf, size, off, "ACPI(0x%"PRIx32",0x%"PRIx32")",
-			     dp->acpi_hid.hid, dp->acpi_hid.uid);
+		off += format(buf, size, off, "ACPI(0x%"PRIx32",0x%"PRIx32")",
+			      dp->acpi_hid.hid, dp->acpi_hid.uid);
 		break;
 
 	default:
-		off += pbufx(buf, size, off, "AcpiPath(%d,", dp->subtype);
-		sz = format_hex(buf+off, size?size-off:0, (uint8_t *)dp+4,
-			       (efidp_node_size(dp)-4) / 2);
-		if (sz < 0)
-			return sz;
-		off += sz;
-		off += pbufx(buf,size,off,")");
+		off += format(buf, size, off, "AcpiPath(%d,", dp->subtype);
+		off += format_hex(buf, size, off, (uint8_t *)dp+4,
+				  (efidp_node_size(dp)-4) / 2);
+		off += format(buf,size,off,")");
 		break;
 	}
 	return off;

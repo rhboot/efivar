@@ -289,11 +289,11 @@ efidp_format_device_path(char *buf, size_t size, const_efidp dp, ssize_t limit)
 		} else {
 			if (dp->type == EFIDP_END_TYPE) {
 				if (dp->type == EFIDP_END_INSTANCE)
-					off += pbufx(buf, size, off, ",");
+					off += format(buf, size, off, ",");
 				else
 					return off+1;
 			} else {
-				off += pbufx(buf, size, off, "/");
+				off += format(buf, size, off, "/");
 			}
 		}
 
@@ -327,45 +327,44 @@ efidp_format_device_path(char *buf, size_t size, const_efidp dp, ssize_t limit)
 					 "USB", "Network", "" };
 
 			if (dp->subtype != EFIDP_BIOS_BOOT) {
-				off += pbufx(buf, size, off, "BbsPath(%d,",
-					   dp->subtype);
-				sz = format_hex(buf+off, size?size-off:0,
-					       (uint8_t *)dp+4,
-					       efidp_node_size(dp)-4);
-				if (sz < 0)
-					return sz;
-				off += sz;
-				off += pbufx(buf,size,off,")");
+				off += format(buf, size, off, "BbsPath(%d,",
+					      dp->subtype);
+				off += format_hex(buf, size, off,
+						  (uint8_t *)dp+4,
+						  efidp_node_size(dp)-4);
+				off += format(buf,size,off,")");
 				break;
 			}
 
 			if (dp->bios_boot.device_type > 0 &&
 					dp->bios_boot.device_type < 7) {
-				off += pbufx(buf, size, off, "BBS(%s,%s,0x%"PRIx32")",
-					   types[dp->bios_boot.device_type],
-					   dp->bios_boot.description,
-					   dp->bios_boot.status);
+				off += format(buf, size, off,
+					      "BBS(%s,%s,0x%"PRIx32")",
+					      types[dp->bios_boot.device_type],
+					      dp->bios_boot.description,
+					      dp->bios_boot.status);
 			} else {
-				off += pbufx(buf, size, off, "BBS(%d,%s,0x%"PRIx32")",
-					     dp->bios_boot.device_type,
-					     dp->bios_boot.description,
-					     dp->bios_boot.status);
+				off += format(buf, size, off,
+					      "BBS(%d,%s,0x%"PRIx32")",
+					      dp->bios_boot.device_type,
+					      dp->bios_boot.description,
+					      dp->bios_boot.status);
 			}
 			break;
 					   }
 		case EFIDP_END_TYPE:
 			if (dp->subtype == EFIDP_END_INSTANCE) {
-				off += pbufx(buf, size, off, ",");
+				off += format(buf, size, off, ",");
 				break;
 			}
 			return off;
 		default:
-			off += pbufx(buf, size, off,
-				   "Path(%d,%d,", dp->type, dp->subtype);
-			off += format_hex(buf+off,size?size-off:0,
-					 (uint8_t *)dp + 4,
-					 efidp_node_size(dp) - 4);
-			off += pbufx(buf, size, off, ")");
+			off += format(buf, size, off, "Path(%d,%d,", dp->type,
+				      dp->subtype);
+			off += format_hex(buf, size, off,
+					  (uint8_t *)dp + 4,
+					  efidp_node_size(dp) - 4);
+			off += format(buf, size, off, ")");
 			break;
 		}
 

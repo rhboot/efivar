@@ -23,11 +23,10 @@
 #include "efivar.h"
 #include "endian.h"
 #include "dp.h"
-#include "ucs2.h"
 
 static ssize_t
-format_ipv6_port(char *buffer, size_t buffer_size, uint8_t const *ipaddr,
-		uint16_t port)
+format_ipv6_port_helper(char *buffer, size_t buffer_size,
+			uint8_t const *ipaddr, uint16_t port)
 {
 	uint16_t *ip = (uint16_t *)ipaddr;
 	off_t offset = 0;
@@ -117,6 +116,9 @@ format_ipv6_port(char *buffer, size_t buffer_size, uint8_t const *ipaddr,
 	return offset;
 }
 
+#define format_ipv6_port(buf, size, off, ipaddr, port)			\
+	format_helper(format_ipv6_port_helper, buf, size, off, ipaddr, port)
+
 static ssize_t
 format_uart(char *buf, size_t size, const_efidp dp)
 {
@@ -126,9 +128,9 @@ format_uart(char *buf, size_t size, const_efidp dp)
 
 	value = dp->uart_flow_control.flow_control_map;
 	if (value > 2) {
-		return pbufx(buf, size, off, "UartFlowcontrol(%d)", value);
+		return format(buf, size, off, "UartFlowcontrol(%d)", value);
 	}
-	return pbufx(buf, size, off, "UartFlowControl(%s)", labels[value]);
+	return format(buf, size, off, "UartFlowControl(%s)", labels[value]);
 }
 
 static ssize_t
@@ -168,119 +170,103 @@ format_sas(char *buf, size_t size, const_efidp dp)
 			drive_bay = s->drive_bay_id + 1;
 	}
 
-	off += pbufx(buf, size, off, "SAS(%"PRIx64",%"PRIx64",%"PRIx16",%s",
-		     dp->subtype == EFIDP_MSG_SAS_EX ?
+	off += format(buf, size, off, "SAS(%"PRIx64",%"PRIx64",%"PRIx16",%s",
+		      dp->subtype == EFIDP_MSG_SAS_EX ?
 			be64_to_cpu(s->sas_address) :
 			le64_to_cpu(s->sas_address),
-		     dp->subtype == EFIDP_MSG_SAS_EX ?
+		      dp->subtype == EFIDP_MSG_SAS_EX ?
 			be64_to_cpu(s->lun) :
 			le64_to_cpu(s->lun),
-		     s->rtp, sassata_label[sassata]);
+		      s->rtp, sassata_label[sassata]);
 
 	if (more_info)
-		off += pbufx(buf, size, off, ",%s,%s",
-			     location_label[location], connect_label[connect]);
+		off += format(buf, size, off, ",%s,%s",
+			      location_label[location], connect_label[connect]);
 
 	if (more_info == 2 && drive_bay >= 0)
-		off += pbufx(buf, size, off, ",%d", drive_bay);
+		off += format(buf, size, off, ",%d", drive_bay);
 
-	off += pbufx(buf, size, off, ")");
+	off += format(buf, size, off, ")");
 	return off;
 }
 
 ssize_t
 format_message_dn(char *buf, size_t size, const_efidp dp)
 {
-	off_t off = 0;
-	size_t sz;
+	ssize_t off = 0;
+	ssize_t sz;
 	switch (dp->subtype) {
 	case EFIDP_MSG_ATAPI:
-		off += pbufx(buf, size, off, "Ata(%d,%d,%d)",
-			     dp->atapi.primary, dp->atapi.slave, dp->atapi.lun);
+		off += format(buf, size, off, "Ata(%d,%d,%d)",
+			      dp->atapi.primary, dp->atapi.slave,
+			      dp->atapi.lun);
 		break;
 	case EFIDP_MSG_SCSI:
-		off += pbufx(buf, size, off, "SCSI(%d,%d)",
-			     dp->scsi.target, dp->scsi.lun);
+		off += format(buf, size, off, "SCSI(%d,%d)",
+			      dp->scsi.target, dp->scsi.lun);
 		break;
 	case EFIDP_MSG_FIBRECHANNEL:
-		off += pbufx(buf, size, off, "Fibre(%"PRIx64",%"PRIx64")",
-			     le64_to_cpu(dp->fc.wwn),
-			     le64_to_cpu(dp->fc.lun));
+		off += format(buf, size, off, "Fibre(%"PRIx64",%"PRIx64")",
+			      le64_to_cpu(dp->fc.wwn),
+			      le64_to_cpu(dp->fc.lun));
 		break;
 	case EFIDP_MSG_FIBRECHANNELEX:
-		off += pbufx(buf, size, off, "Fibre(%"PRIx64",%"PRIx64")",
-			     be64_to_cpu(dp->fc.wwn),
-			     be64_to_cpu(dp->fc.lun));
+		off += format(buf, size, off, "Fibre(%"PRIx64",%"PRIx64")",
+			      be64_to_cpu(dp->fc.wwn),
+			      be64_to_cpu(dp->fc.lun));
 		break;
 	case EFIDP_MSG_1394:
-		off += pbufx(buf, size, off, "I1394(0x%"PRIx64")",
-			     dp->firewire.guid);
+		off += format(buf, size, off, "I1394(0x%"PRIx64")",
+			      dp->firewire.guid);
 		break;
 	case EFIDP_MSG_USB:
-		off += pbufx(buf, size, off, "USB(%d,%d)",
-			     dp->usb.parent_port, dp->usb.interface);
+		off += format(buf, size, off, "USB(%d,%d)",
+			      dp->usb.parent_port, dp->usb.interface);
 		break;
 	case EFIDP_MSG_I2O:
-		off += pbufx(buf, size, off, "I2O(%d)", dp->i2o.target);
+		off += format(buf, size, off, "I2O(%d)", dp->i2o.target);
 		break;
 	case EFIDP_MSG_INFINIBAND:
 		if (dp->infiniband.resource_flags &
 				EFIDP_INFINIBAND_RESOURCE_IOC_SERVICE) {
-			off += pbufx(buf, size, off,
-				     "Infiniband(%08x,%"PRIx64"%"PRIx64",%"PRIx64",%"PRIu64",%"PRIu64")",
-			     dp->infiniband.resource_flags,
-			     dp->infiniband.port_gid[1],
-			     dp->infiniband.port_gid[0],
-			     dp->infiniband.service_id,
-			     dp->infiniband.target_port_id,
-			     dp->infiniband.device_id);
+			off += format(buf, size, off,
+				      "Infiniband(%08x,%"PRIx64"%"PRIx64",%"PRIx64",%"PRIu64",%"PRIu64")",
+				      dp->infiniband.resource_flags,
+				      dp->infiniband.port_gid[1],
+				      dp->infiniband.port_gid[0],
+				      dp->infiniband.service_id,
+				      dp->infiniband.target_port_id,
+				      dp->infiniband.device_id);
 		} else {
-			char *guidstr = NULL;
-			int rc;
-			rc = efi_guid_to_str(
-				(efi_guid_t *)&dp->infiniband.ioc_guid,
-					     &guidstr);
-			if (rc < 0)
-				return rc;
-			guidstr = onstack(guidstr, strlen(guidstr)+1);
-			off += pbufx(buf, size, off,
-				     "Infiniband(%08x,%"PRIx64"%"PRIx64",%s,%"PRIu64",%"PRIu64")",
-			     dp->infiniband.resource_flags,
-			     dp->infiniband.port_gid[1],
-			     dp->infiniband.port_gid[0],
-			     guidstr,
-			     dp->infiniband.target_port_id,
-			     dp->infiniband.device_id);
+			off += format(buf, size, off,
+				      "Infiniband(%08x,%"PRIx64"%"PRIx64",",
+				      dp->infiniband.resource_flags,
+				      dp->infiniband.port_gid[1],
+				      dp->infiniband.port_gid[0]);
+			off += format_guid(buf, size, off, (efi_guid_t *)
+					   &dp->infiniband.ioc_guid);
+			off += format(buf, size, off, ",%"PRIu64",%"PRIu64")",
+				      dp->infiniband.target_port_id,
+				      dp->infiniband.device_id);
 		}
 		break;
-
 	case EFIDP_MSG_MAC_ADDR:
-		off += pbufx(buf, size, off, "MAC(");
-		sz = format_hex(buf+off, size?size-off:0,
-			       dp->mac_addr.mac_addr,
-			       dp->mac_addr.if_type < 2 ? 6
+		off += format(buf, size, off, "MAC(");
+		off += format_hex(buf, size, off, dp->mac_addr.mac_addr,
+				  dp->mac_addr.if_type < 2 ? 6
 					: sizeof(dp->mac_addr.mac_addr));
-		if (sz < 0)
-			return sz;
-		off += sz;
-		off += pbufx(buf, size, off, ",%d)", dp->mac_addr.if_type);
+		off += format(buf, size, off, ",%d)", dp->mac_addr.if_type);
 		break;
 	case EFIDP_MSG_IPv4: {
 		efidp_ipv4_addr const *a = &dp->ipv4_addr;
-		off += pbufx(buf, size, off,
-			     "IPv4(%hhu.%hhu.%hhu.%hhu:%hu<->%hhu.%hhu.%hhu.%hhu:%hu,%hx,%hhx)",
-			     a->local_ipv4_addr[0],
-			     a->local_ipv4_addr[1],
-			     a->local_ipv4_addr[2],
-			     a->local_ipv4_addr[3],
-			     a->local_port,
-			     a->remote_ipv4_addr[0],
-			     a->remote_ipv4_addr[1],
-			     a->remote_ipv4_addr[2],
-			     a->remote_ipv4_addr[3],
-			     a->remote_port,
-			     a->protocol,
-			     a->static_ip_addr);
+		off += format(buf, size, off,
+			      "IPv4(%hhu.%hhu.%hhu.%hhu:%hu<->%hhu.%hhu.%hhu.%hhu:%hu,%hx,%hhx)",
+			      a->local_ipv4_addr[0], a->local_ipv4_addr[1],
+			      a->local_ipv4_addr[2], a->local_ipv4_addr[3],
+			      a->local_port, a->remote_ipv4_addr[0],
+			      a->remote_ipv4_addr[1], a->remote_ipv4_addr[2],
+			      a->remote_ipv4_addr[3], a->remote_port,
+			      a->protocol, a->static_ip_addr);
 		break;
 			     }
 	case EFIDP_MSG_VENDOR: {
@@ -314,29 +300,22 @@ format_message_dn(char *buf, size_t size, const_efidp dp)
 		}
 
 		if (!label && !formatter) {
-			off += format_vendor(buf+off, size?size-off:0,
-					     "VenMsg", dp);
+			off += format_vendor(buf, size, off, "VenMsg", dp);
 			break;
 		} else if (formatter) {
-			sz = formatter(buf+off, size?size-off:0, dp);
-			if (sz < 0)
-				return sz;
-			off += sz;
+			off += format_helper(formatter, buf, size, off, dp);
 			break;
 		}
 
-		off += pbufx(buf, size, off, "%s(", label);
+		off += format(buf, size, off, "%s(", label);
 		if (efidp_node_size(dp) >
 				(ssize_t)(sizeof (efidp_header)
 					  + sizeof (efi_guid_t))) {
-			sz = format_hex(buf+off, size?size-off:0,
-					dp->msg_vendor.vendor_data,
-					efidp_node_size(dp)
-					- sizeof (efidp_header)
-					- sizeof (efi_guid_t));
-			if (sz < 0)
-				return sz;
-			off += sz;
+			off += format_hex(buf, size, off,
+					  dp->msg_vendor.vendor_data,
+					  efidp_node_size(dp)
+						- sizeof (efidp_header)
+						- sizeof (efi_guid_t));
 		}
 		break;
 			       }
@@ -345,28 +324,28 @@ format_message_dn(char *buf, size_t size, const_efidp dp)
 		char *addr0 = NULL;
 		char *addr1 = NULL;
 
-		sz = format_ipv6_port(addr0, 0, a->local_ipv6_addr,
+		sz = format_ipv6_port(addr0, 0, 0, a->local_ipv6_addr,
 				      a->local_port);
 		if (sz < 0)
 			return sz;
 
 		addr0 = alloca(sz+1);
-		sz = format_ipv6_port(addr0, sz, a->local_ipv6_addr,
+		sz = format_ipv6_port(addr0, sz, 0, a->local_ipv6_addr,
 				      a->local_port);
 		if (sz < 0)
 			return sz;
 
-		sz = format_ipv6_port(addr1, 0, a->remote_ipv6_addr,
+		sz = format_ipv6_port(addr1, 0, 0, a->remote_ipv6_addr,
 				      a->remote_port);
 		if (sz < 0)
 			return sz;
 		addr1 = alloca(sz+1);
-		sz = format_ipv6_port(addr1, sz, a->remote_ipv6_addr,
+		sz = format_ipv6_port(addr1, sz, 0, a->remote_ipv6_addr,
 				      a->remote_port);
 		if (sz < 0)
 			return sz;
 
-		off += pbufx(buf, size, off, "IPv6(%s<->%s,%hx,%hhx)",
+		off += format(buf, size, off, "IPv6(%s<->%s,%hx,%hhx)",
 			     addr0, addr1, a->protocol, a->ip_addr_origin);
 		break;
 			     }
@@ -376,50 +355,43 @@ format_message_dn(char *buf, size_t size, const_efidp dp)
 		int stop_bits = dp->uart.stop_bits;
 		char *sb_label[] = {"D", "1", "1.5", "2"};
 
-		off += pbufx(buf, size, off, "Uart(%"PRIu64",%d,",
+		off += format(buf, size, off, "Uart(%"PRIu64",%d,",
 			     dp->uart.baud_rate ? dp->uart.baud_rate : 115200,
 			     dp->uart.data_bits ? dp->uart.data_bits : 8);
-		off += pbufx(buf, size, off,
+		off += format(buf, size, off,
 			     parity > 5 ? "%d," : "%c,",
 			     parity > 5 ? parity : parity_label[parity]);
 		if (stop_bits > 3)
-			off += pbufx(buf, size, off, "%d)", stop_bits);
+			off += format(buf, size, off, "%d)", stop_bits);
 		else
-			off += pbufx(buf, size, off, "%s)",
+			off += format(buf, size, off, "%s)",
 				     sb_label[stop_bits]);
 		break;
 			     }
 	case EFIDP_MSG_USB_CLASS:
-		off += pbufx(buf, size, off,
+		off += format(buf, size, off,
 			     "UsbClass(%"PRIx16",%"PRIx16",%d,%d)",
 			     dp->usb_class.vendor_id,
 			     dp->usb_class.product_id,
 			     dp->usb_class.device_subclass,
 			     dp->usb_class.device_protocol);
 		break;
-	case EFIDP_MSG_USB_WWID: {
-		size_t len = (efidp_node_size(dp)
-			      - offsetof(efidp_usb_wwid, serial_number))
-			     / 2 + 1;
-		uint16_t serial16[len];
-
-		memset(serial16, '\0', sizeof (serial16));
-		memcpy(serial16, dp->file.name, sizeof (serial16)
-						- sizeof (serial16[0]));
-		char *serial = ucs2_to_utf8(serial16, len-1);
-		serial = onstack(serial, len);
-
-		off += pbufx(buf, size, off,
-			     "UsbWwid(%"PRIx16",%"PRIx16",%d,%s)",
-			     dp->usb_wwid.vendor_id, dp->usb_wwid.product_id,
-			     dp->usb_wwid.interface, serial);
+	case EFIDP_MSG_USB_WWID:
+		off += format(buf, size, off,
+			      "UsbWwid(%"PRIx16",%"PRIx16",%d,",
+			      dp->usb_wwid.vendor_id, dp->usb_wwid.product_id,
+			      dp->usb_wwid.interface);
+		off += format_ucs2(buf, size, off, dp->usb_wwid.serial_number,
+				   (efidp_node_size(dp)
+				    - offsetof(efidp_usb_wwid, serial_number))
+				   / 2 + 1);
+		off += format(buf, size, off, ")");
 		break;
-				 }
 	case EFIDP_MSG_LUN:
-		off += pbufx(buf, size, off, "Unit(%d)", dp->lun.lun);
+		off += format(buf, size, off, "Unit(%d)", dp->lun.lun);
 		break;
 	case EFIDP_MSG_SATA:
-		off += pbufx(buf, size, off, "Sata(%d,%d,%d)",
+		off += format(buf, size, off, "Sata(%d,%d,%d)",
 			     dp->sata.hba_port, dp->sata.port_multiplier_port,
 			     dp->sata.lun);
 		break;
@@ -427,13 +399,10 @@ format_message_dn(char *buf, size_t size, const_efidp dp)
 		off += format_sas(buf, size, dp);
 		break;
 	default:
-		off += pbufx(buf, size, off, "MessagePath(%d,", dp->subtype);
-		sz = format_hex(buf+off, size?size-off:0, (uint8_t *)dp+4,
-			       efidp_node_size(dp)-4);
-		if (sz < 0)
-			return sz;
-		off += sz;
-		off += pbufx(buf,size,off,")");
+		off += format(buf, size, off, "MessagePath(%d,", dp->subtype);
+		off += format_hex(buf, size, off, (uint8_t *)dp+4,
+				  efidp_node_size(dp)-4);
+		off += format(buf,size,off,")");
 		break;
 	}
 	return off;

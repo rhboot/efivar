@@ -26,42 +26,37 @@ ssize_t
 format_hw_dn(char *buf, size_t size, const_efidp dp)
 {
 	off_t off = 0;
-	size_t sz;
 	switch (dp->subtype) {
 	case EFIDP_HW_PCI_SUBTYPE:
-		off += pbufx(buf, size, off, "Pci(%d,%d)",
-			     dp->pci.device, dp->pci.function);
+		off += format(buf, size, off, "Pci(0x%"PRIx32",0x%"PRIx32")",
+			      dp->pci.device, dp->pci.function);
 		break;
 	case EFIDP_HW_PCCARD_SUBTYPE:
-		off += pbufx(buf, size, off, "PcCard(%d)",
-			     dp->pccard.function);
+		off += format(buf, size, off, "PcCard(0x%"PRIx32")",
+			      dp->pccard.function);
 		break;
 	case EFIDP_HW_MMIO:
-		off += pbufx(buf, size, off,
-			     "MemoryMapped(0x%"PRIx32",0x%"PRIx64",0x%"PRIx64")",
-			     dp->mmio.memory_type, dp->mmio.starting_address,
-			     dp->mmio.ending_address);
+		off += format(buf, size, off,
+			      "MemoryMapped(0x%"PRIx32",0x%"PRIx64",0x%"PRIx64")",
+			      dp->mmio.memory_type, dp->mmio.starting_address,
+			      dp->mmio.ending_address);
 		break;
 	case EFIDP_HW_VENDOR:
-		off += format_vendor(buf+off, size?size-off:0, "VenHw", dp);
+		off += format_vendor(buf, size, off, "VenHw", dp);
 		break;
 	case EFIDP_HW_CONTROLLER:
-		off += pbufx(buf, size, off, "Ctrl(0x%"PRIx32")",
-			     dp->controller.controller);
+		off += format(buf, size, off, "Ctrl(0x%"PRIx32")",
+			      dp->controller.controller);
 		break;
 	case EFIDP_HW_BMC:
-		off += pbufx(buf, size, off, "BMC(%d,0x%"PRIx64")",
-			     dp->bmc.interface_type,
-			     dp->bmc.base_addr);
+		off += format(buf, size, off, "BMC(%d,0x%"PRIx64")",
+			      dp->bmc.interface_type, dp->bmc.base_addr);
 		break;
 	default:
-		off += pbufx(buf, size, off, "HardwarePath(%d,", dp->subtype);
-		sz = format_hex(buf+off, size?size-off:0, (uint8_t *)dp+4,
-			       efidp_node_size(dp)-4);
-		if (sz < 0)
-			return sz;
-		off += sz;
-		off += pbufx(buf,size,off,")");
+		off += format(buf, size, off, "HardwarePath(%d,", dp->subtype);
+		off += format_hex(buf, size, off, (uint8_t *)dp+4,
+				  efidp_node_size(dp)-4);
+		off += format(buf,size,off,")");
 		break;
 	}
 	return off;
