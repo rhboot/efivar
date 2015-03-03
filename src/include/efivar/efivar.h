@@ -185,5 +185,6 @@ extern int efi_variable_realize(efi_variable_t *var)
 			__attribute__((__nonnull__ (1)));
 
 #include <efivar-dp.h>
+#include <efivar-linux.h>
 
 #endif /* EFIVAR_H */
