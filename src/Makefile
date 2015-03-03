@@ -14,7 +14,7 @@ all : $(LIBTARGETS) $(PCTARGETS) $(BINTARGETS) $(INCTARGETS)
 
 OBJECTS = dp.o dp-acpi.o dp-hw.o dp-media.o dp-message.o \
 	efivarfs.o export.o guid.o guidlist.o guid-symbols.o \
-	lib.o linux.o vars.o
+	lib.o linux.o loadopt.o vars.o
 # c files (alphabetically), then local headers (alphabetically),
 # then target headers (again alphabetically)
 DEPS = .dp.c.P .dp-acpi.c.P .dp-hw.c.P .dp-media.c.P .dp-message.c.P \
@@ -22,7 +22,8 @@ DEPS = .dp.c.P .dp-acpi.c.P .dp-hw.c.P .dp-media.c.P .dp-message.c.P \
 	.loadopt.c.P .vars.c.P \
 	.dp.h.P .generics.h.P .guid.h.P .lib.h.P \
 	include/efivar/.efivar.h.P include/efivar/.efivar-dp.h.P \
-	include/efivar/.efivar-guids.h.P include/efivar/.efivar-linux.h.P
+	include/efivar/.efivar-guids.h.P include/efivar/.efivar-linux.h.P \
+	include/efivar/.efivar-loadopt.h.P
 LIBS = dl
 
 libefivar.a :: $(OBJECTS)
