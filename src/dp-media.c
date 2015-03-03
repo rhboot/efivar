@@ -159,3 +159,26 @@ efidp_make_file(uint8_t *buf, ssize_t size, char *filepath)
 	}
 	return sz;
 }
+
+ssize_t
+efidp_make_hd(uint8_t *buf, ssize_t size, uint32_t num, uint64_t part_start,
+	      uint64_t part_size, uint8_t *signature, uint8_t format,
+	      uint8_t signature_type)
+{
+	efidp_hd *hd = (efidp_hd *)buf;
+	ssize_t sz;
+	ssize_t req = sizeof (*hd);
+	sz = efidp_make_generic(buf, size, EFIDP_MEDIA_TYPE, EFIDP_MEDIA_HD,
+				req);
+	if (sz == req) {
+		hd->partition_number = num;
+		hd->start = part_start;
+		hd->size = part_size;
+		if (signature)
+			memcpy(hd->signature, signature,
+			       sizeof (hd->signature));
+		hd->format = format;
+		hd->signature_type = signature_type;
+	}
+	return sz;
+}

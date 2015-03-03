@@ -49,7 +49,7 @@
 		char *__newbuf = alloca(len);				\
 		memcpy(__newbuf, buf, len);				\
 		free(buf);						\
-		__newbuf;						\
+		(void *)__newbuf;					\
 	})
 
 #define format_guid(buf, size, off, guid) ({				\

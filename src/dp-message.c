@@ -558,3 +558,39 @@ efidp_make_mac_addr(uint8_t *buf, ssize_t size, uint8_t if_type,
 	}
 	return sz;
 }
+
+ssize_t
+efidp_make_scsi(uint8_t *buf, ssize_t size, uint16_t target, uint16_t lun)
+{
+	efidp_scsi *scsi = (efidp_scsi *)buf;
+	ssize_t req = sizeof (*scsi);
+	ssize_t sz = efidp_make_generic(buf, size, EFIDP_MESSAGE_TYPE,
+					EFIDP_MSG_SCSI, sizeof (*scsi));
+	if (sz == req) {
+		scsi->target = target;
+		scsi->lun = lun;
+	}
+	return sz;
+}
+
+ssize_t
+efidp_make_nvme(uint8_t *buf, ssize_t size, uint32_t namespace_id,
+		uint8_t *ieee_eui_64)
+{
+	efidp_nvme *nvme = (efidp_nvme *)buf;
+	ssize_t req = sizeof (*nvme);
+	ssize_t sz;
+
+	sz = efidp_make_generic(buf, size, EFIDP_MESSAGE_TYPE,
+					EFIDP_MSG_NVME, sizeof (*nvme));
+	if (sz == req) {
+		nvme->namespace_id = namespace_id;
+		if (ieee_eui_64)
+			memcpy(nvme->ieee_eui_64, ieee_eui_64,
+			       sizeof (nvme->ieee_eui_64));
+		else
+			memset(nvme->ieee_eui_64, '\0',
+			       sizeof (nvme->ieee_eui_64));
+	}
+	return sz;
+}

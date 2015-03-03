@@ -12,12 +12,14 @@ INCTARGETS = include/efivar/efivar-guids.h
 all : $(LIBTARGETS) $(PCTARGETS) $(BINTARGETS) $(INCTARGETS)
 	@$(MAKE) -C test TOPDIR=$(TOPDIR) SRCDIR=$(SRCDIR)/test $@
 
-OBJECTS = dp.o dp-acpi.o dp-hw.o dp-media.o dp-message.o efivarfs.o export.o \
-	lib.o guid.o guidlist.o guid-symbols.o vars.o
+OBJECTS = dp.o dp-acpi.o dp-hw.o dp-media.o dp-message.o \
+	efivarfs.o export.o guid.o guidlist.o guid-symbols.o \
+	lib.o vars.o
 # c files (alphabetically), then local headers (alphabetically),
 # then target headers (again alphabetically)
 DEPS = .dp.c.P .dp-acpi.c.P .dp-hw.c.P .dp-media.c.P .dp-message.c.P \
-	.efivar.c.P .efivarfs.c.P .export.c.P .lib.c.P .guid.c.P .vars.c.P \
+	.efivar.c.P .efivarfs.c.P .export.c.P .guid.c.P .lib.c.P \
+	.loadopt.c.P .vars.c.P \
 	.dp.h.P .generics.h.P .guid.h.P .lib.h.P \
 	include/efivar/.efivar.h.P include/efivar/.efivar-dp.h.P \
 	include/efivar/.efivar-guids.h.P

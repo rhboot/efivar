@@ -71,6 +71,16 @@ typedef efidp_hw_vendor efidp_vendor_hw;
 	efidp_make_vendor(buf, size, EFIDP_HARDWARE_TYPE,		\
 			  EFIDP_HW_VENDOR, guid, data, data_size)
 
+#define EDD10_HARDWARE_VENDOR_PATH_GUID \
+	EFI_GUID(0xCF31FAC5,0xC24E,0x11d2,0x85F3,0x00,0xA0,0xC9,0x3E,0xC9,0x3B)
+typedef struct {
+	efidp_header	header;
+	efi_guid_t	vendor_guid;
+	uint32_t	hardware_device;
+} efidp_edd10;
+extern ssize_t efidp_make_edd10(uint8_t *buf, ssize_t size,
+				uint32_t hardware_device);
+
 #define EFIDP_HW_CONTROLLER	0x05
 typedef struct {
 	efidp_header	header;
@@ -166,6 +176,8 @@ typedef struct {
 	uint16_t	target;
 	uint16_t	lun;
 } efidp_scsi;
+extern ssize_t efidp_make_scsi(uint8_t *buf, ssize_t size, uint16_t target,
+			       uint16_t lun);
 
 #define EFIDP_MSG_FIBRECHANNEL	0x03
 typedef struct {
@@ -463,6 +475,8 @@ typedef struct {
 	uint32_t	namespace_id;
 	uint8_t		ieee_eui_64[8];
 } efidp_nvme;
+extern ssize_t efidp_make_nvme(uint8_t *buf, ssize_t size,
+			       uint32_t namespace_id, uint8_t *ieee_eui_64);
 
 #define EFIDP_MSG_URI		0x18
 typedef struct {
@@ -493,7 +507,14 @@ typedef struct {
 	uint8_t		signature[16];
 	uint8_t		format;
 	uint8_t		signature_type;
+#ifdef __ia64
+	uint8_t		padding[6]; /* Emperically needed */
+#endif
 } efidp_hd;
+extern ssize_t efidp_make_hd(uint8_t *buf, ssize_t size, uint32_t num,
+			     uint64_t part_start, uint64_t part_size,
+			     uint8_t *signature, uint8_t format,
+			     uint8_t signature_type);
 
 #define EFIDP_HD_FORMAT_PCAT	0x01
 #define EFIDP_HD_FORMAT_GPT	0x02

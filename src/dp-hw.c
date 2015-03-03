@@ -23,8 +23,19 @@
 #include "dp.h"
 
 ssize_t
+format_edd10_guid(char *buf, size_t size, const_efidp dp)
+{
+	size_t off = 0;
+	efidp_edd10 const *edd_dp = (efidp_edd10 *)dp;
+	off = format(buf, size, off, "EDD10(0x%"PRIx32")",
+		     edd_dp->hardware_device);
+	return off;
+}
+
+ssize_t
 format_hw_dn(char *buf, size_t size, const_efidp dp)
 {
+	efi_guid_t edd10_guid = EDD10_HARDWARE_VENDOR_PATH_GUID;
 	off_t off = 0;
 	switch (dp->subtype) {
 	case EFIDP_HW_PCI:
@@ -42,7 +53,12 @@ format_hw_dn(char *buf, size_t size, const_efidp dp)
 			      dp->mmio.ending_address);
 		break;
 	case EFIDP_HW_VENDOR:
-		off += format_vendor(buf, size, off, "VenHw", dp);
+		if (!efi_guid_cmp(&dp->hw_vendor.vendor_guid, &edd10_guid)) {
+			off += format_helper(format_edd10_guid, buf, size,
+					     off, dp);
+		} else {
+			off += format_vendor(buf, size, off, "VenHw", dp);
+		}
 		break;
 	case EFIDP_HW_CONTROLLER:
 		off += format(buf, size, off, "Ctrl(0x%"PRIx32")",
@@ -73,6 +89,22 @@ efidp_make_pci(uint8_t *buf, ssize_t size, uint8_t device, uint8_t function)
 	if (sz == req) {
 		pci->device = device;
 		pci->function = function;
+	}
+	return sz;
+}
+
+ssize_t
+efidp_make_edd10(uint8_t *buf, ssize_t size, uint32_t hardware_device)
+{
+	efi_guid_t edd10_guid = EDD10_HARDWARE_VENDOR_PATH_GUID;
+	efidp_edd10 *edd_dp = (efidp_edd10 *)buf;
+	ssize_t sz;
+	ssize_t req = sizeof (*edd_dp);
+	sz = efidp_make_generic(buf, size, EFIDP_HARDWARE_TYPE, EFIDP_HW_VENDOR,
+				req);
+	if (sz == req) {
+		memcpy(&edd_dp->vendor_guid, &edd10_guid, sizeof (edd10_guid));
+		edd_dp->hardware_device = hardware_device;
 	}
 	return sz;
 }
