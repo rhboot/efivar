@@ -551,7 +551,7 @@ efidp_make_mac_addr(uint8_t *buf, ssize_t size, uint8_t if_type,
 	ssize_t sz = efidp_make_generic(buf, size, EFIDP_MESSAGE_TYPE,
 					EFIDP_MSG_MAC_ADDR, sizeof (*mac));
 	ssize_t req = sizeof (*mac);
-	if (sz == req) {
+	if (size && sz == req) {
 		mac->if_type = if_type;
 		memcpy(mac->mac_addr, mac_addr,
 		       mac_addr_size > 32 ? 32 : mac_addr_size);
@@ -566,7 +566,7 @@ efidp_make_scsi(uint8_t *buf, ssize_t size, uint16_t target, uint16_t lun)
 	ssize_t req = sizeof (*scsi);
 	ssize_t sz = efidp_make_generic(buf, size, EFIDP_MESSAGE_TYPE,
 					EFIDP_MSG_SCSI, sizeof (*scsi));
-	if (sz == req) {
+	if (size && sz == req) {
 		scsi->target = target;
 		scsi->lun = lun;
 	}
@@ -583,7 +583,7 @@ efidp_make_nvme(uint8_t *buf, ssize_t size, uint32_t namespace_id,
 
 	sz = efidp_make_generic(buf, size, EFIDP_MESSAGE_TYPE,
 					EFIDP_MSG_NVME, sizeof (*nvme));
-	if (sz == req) {
+	if (size && sz == req) {
 		nvme->namespace_id = namespace_id;
 		if (ieee_eui_64)
 			memcpy(nvme->ieee_eui_64, ieee_eui_64,

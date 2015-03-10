@@ -86,7 +86,7 @@ efidp_make_pci(uint8_t *buf, ssize_t size, uint8_t device, uint8_t function)
 	ssize_t req = sizeof (*pci);
 	sz = efidp_make_generic(buf, size, EFIDP_HARDWARE_TYPE, EFIDP_HW_PCI,
 				req);
-	if (sz == req) {
+	if (size && sz == req) {
 		pci->device = device;
 		pci->function = function;
 	}
@@ -102,7 +102,7 @@ efidp_make_edd10(uint8_t *buf, ssize_t size, uint32_t hardware_device)
 	ssize_t req = sizeof (*edd_dp);
 	sz = efidp_make_generic(buf, size, EFIDP_HARDWARE_TYPE, EFIDP_HW_VENDOR,
 				req);
-	if (sz == req) {
+	if (size && sz == req) {
 		memcpy(&edd_dp->vendor_guid, &edd10_guid, sizeof (edd10_guid));
 		edd_dp->hardware_device = hardware_device;
 	}

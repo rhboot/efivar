@@ -379,7 +379,7 @@ efidp_make_vendor(uint8_t *buf, ssize_t size, uint8_t type, uint8_t subtype,
 	ssize_t sz;
 	ssize_t req = sizeof (*vend) + data_size;
 	sz = efidp_make_generic(buf, size, type, subtype, req);
-	if (sz == req) {
+	if (size && sz == req) {
 		vend->vendor_guid = vendor_guid;
 		memcpy(vend->vendor_data, data, data_size);
 	}

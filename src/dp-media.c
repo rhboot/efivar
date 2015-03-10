@@ -153,9 +153,9 @@ efidp_make_file(uint8_t *buf, ssize_t size, char *filepath)
 	ssize_t req = sizeof (*file) + len * sizeof (uint16_t);
 	sz = efidp_make_generic(buf, size, EFIDP_MEDIA_TYPE, EFIDP_MEDIA_FILE,
 				req);
-	if (sz == req) {
+	if (size && sz == req) {
 		uint16_t *addr = utf8_to_ucs2(lf, -1);
-		memcpy(file->name, addr, len * sizeof (uint16_t));
+		memcpy(file->name, addr, (len-1) * sizeof (uint16_t));
 	}
 	return sz;
 }
@@ -170,7 +170,7 @@ efidp_make_hd(uint8_t *buf, ssize_t size, uint32_t num, uint64_t part_start,
 	ssize_t req = sizeof (*hd);
 	sz = efidp_make_generic(buf, size, EFIDP_MEDIA_TYPE, EFIDP_MEDIA_HD,
 				req);
-	if (sz == req) {
+	if (size && sz == req) {
 		hd->partition_number = num;
 		hd->start = part_start;
 		hd->size = part_size;
