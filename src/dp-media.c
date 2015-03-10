@@ -149,13 +149,14 @@ efidp_make_file(uint8_t *buf, ssize_t size, char *filepath)
 	efidp_file *file = (efidp_file *)buf;
 	unsigned char *lf = (unsigned char *)filepath;
 	ssize_t sz;
-	ssize_t len = utf8len(lf, -1) + 1;
+	ssize_t len = utf8len(lf, -1);
 	ssize_t req = sizeof (*file) + len * sizeof (uint16_t);
 	sz = efidp_make_generic(buf, size, EFIDP_MEDIA_TYPE, EFIDP_MEDIA_FILE,
 				req);
 	if (size && sz == req) {
+		memset(buf+4, 0, req-4);
 		uint16_t *addr = utf8_to_ucs2(lf, -1);
-		memcpy(file->name, addr, (len-1) * sizeof (uint16_t));
+		memcpy(file->name, addr, len * sizeof (uint16_t));
 	}
 	return sz;
 }
