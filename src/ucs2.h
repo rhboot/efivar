@@ -55,12 +55,12 @@ utf8len(uint8_t *s, ssize_t limit)
 	ssize_t i, j;
 	for (i = 0, j = 0; i < (limit >= 0 ? limit : i+1) && s[i] != '\0';
 	     j++, i++) {
-		if (s[i] & 0xe0 && !(s[i] & 0x10)) {
-			i += 2;
-		} else if (s[i] & 0xc0 && !(s[i] & 0x20)) {
-			i += 1;
-		} else if (s[i] & 0x80 && !(s[i] & 0x40)) {
+		if (!(s[i] & 0x80)) {
 			;
+		} else if ((s[i] & 0xc0) == 0xc0 && !(s[i] & 0x20)) {
+			i += 1;
+		} else if ((s[i] & 0xe0) == 0xe0 && !(s[i] & 0x10)) {
+			i += 2;
 		}
 	}
 	return j;
@@ -77,20 +77,23 @@ utf8_to_ucs2(uint8_t *utf8, ssize_t max)
 
 	for (i=0, j=0; i < (max >= 0 ? max : i+1) && utf8[i] != '\0'; j++) {
 		uint32_t val = 0;
-		if (utf8[i] & 0xe0 && !(utf8[i] & 0x10)) {
+
+		if ((utf8[i] & 0xe0) == 0xe0 && !(utf8[i] & 0x10)) {
 			val = ((utf8[i+0] & 0x0f) << 10)
 			     |((utf8[i+1] & 0x3f) << 6)
 			     |((utf8[i+2] & 0x3f) << 0);
-			i += 2;
-		} else if (utf8[i] & 0xc0 && !(utf8[i] & 0x20)) {
+			i += 3;
+		} else if ((utf8[i] & 0xc0) == 0xc0 && !(utf8[i] & 0x20)) {
 			val = ((utf8[i+0] & 0x1f) << 6)
 			     |((utf8[i+1] & 0x3f) << 0);
-			i += 1;
-		} else if (utf8[i] & 0x80 && !(utf8[i] & 0x40)) {
+			i += 2;
+		} else {
 			val = utf8[i] & 0x7f;
+			i += 1;
 		}
 		ret[j] = val;
 	}
+	ret[j] = L'\0';
 	return ret;
 };
 
