@@ -179,8 +179,8 @@ efidp_append_node(const_efidp dp, const_efidp dn, efidp *out)
 	const_efidp le;
 	le = dp;
 	while (1) {
-		if (le->type == EFIDP_END_TYPE &&
-				le->subtype == EFIDP_END_ENTIRE) {
+		if (efidp_type(le) == EFIDP_END_TYPE &&
+				efidp_subtype(le) == EFIDP_END_ENTIRE) {
 			ssize_t lesz = efidp_size(le);
 			if (lesz < 0)
 				return -1;

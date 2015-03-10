@@ -676,7 +676,7 @@ extern int efidp_append_path(const_efidp dp0, const_efidp dp1, efidp *out);
 extern int efidp_append_node(const_efidp dp, const_efidp dn, efidp *out);
 extern int efidp_append_instance(const_efidp dp, const_efidp dpi, efidp *out);
 
-static inline int8_t
+static inline int16_t
 __attribute__((__unused__))
 efidp_type(const_efidp dp)
 {
@@ -684,10 +684,10 @@ efidp_type(const_efidp dp)
 		errno = EINVAL;
 		return -1;
 	}
-	return dp->type;
+	return (uint8_t)dp->type;
 }
 
-static inline int8_t
+static inline int16_t
 __attribute__((__unused__))
 efidp_subtype(const_efidp dp)
 {
@@ -695,7 +695,7 @@ efidp_subtype(const_efidp dp)
 		errno = EINVAL;
 		return -1;
 	}
-	return dp->subtype;
+	return (uint8_t)dp->subtype;
 }
 
 static inline ssize_t
