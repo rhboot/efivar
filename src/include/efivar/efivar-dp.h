@@ -806,7 +806,7 @@ efidp_size(const_efidp dp)
 		rc = efidp_next_instance(dp, &next);
 		if (rc < 0)
 			rc = efidp_next_node(dp, &next);
-		if (rc < 1)
+		if (rc < 0)
 			return -1;
 
 		dp = next;
