@@ -161,10 +161,12 @@ ssize_t
 efidp_make_acpi_hid(uint8_t *buf, ssize_t size, uint32_t hid, uint32_t uid)
 {
 	efidp_acpi_hid *acpi_hid = (efidp_acpi_hid *)buf;
+	ssize_t req = sizeof (*acpi_hid);
 	ssize_t sz;
+
 	sz = efidp_make_generic(buf, size, EFIDP_ACPI_TYPE, EFIDP_ACPI_HID,
 				sizeof (*acpi_hid));
-	if (sz == size) {
+	if (size && sz == req) {
 		acpi_hid->uid = uid;
 		acpi_hid->hid = hid;
 	}
