@@ -23,7 +23,7 @@ test : all
 include $(TOPDIR)/Make.defaults
 include $(TOPDIR)/Make.rules
 
-efivar.spec : efivar.spec.in
+efivar.spec : efivar.spec.in Makefile
 	@sed -e "s,@@VERSION@@,$(VERSION),g" $< > $@
 
 GITTAG = $(VERSION)
