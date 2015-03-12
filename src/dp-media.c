@@ -156,7 +156,10 @@ efidp_make_file(uint8_t *buf, ssize_t size, char *filepath)
 	if (size && sz == req) {
 		memset(buf+4, 0, req-4);
 		uint16_t *addr = utf8_to_ucs2(lf, -1);
+		if (!addr)
+			return -1;
 		memcpy(file->name, addr, len * sizeof (uint16_t));
+		free(addr);
 	}
 	return sz;
 }
