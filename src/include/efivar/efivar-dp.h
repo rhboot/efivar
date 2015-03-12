@@ -512,7 +512,7 @@ typedef struct {
 #ifdef __ia64
 	uint8_t		padding[6]; /* Emperically needed */
 #endif
-} efidp_hd;
+} __attribute__((__packed__)) efidp_hd;
 extern ssize_t efidp_make_hd(uint8_t *buf, ssize_t size, uint32_t num,
 			     uint64_t part_start, uint64_t part_size,
 			     uint8_t *signature, uint8_t format,
