@@ -594,3 +594,21 @@ efidp_make_nvme(uint8_t *buf, ssize_t size, uint32_t namespace_id,
 	}
 	return sz;
 }
+
+ssize_t
+efidp_make_sata(uint8_t *buf, ssize_t size, uint16_t hba_port,
+		uint16_t port_multiplier_port, uint16_t lun)
+{
+	efidp_sata *sata = (efidp_sata *)buf;
+	ssize_t req = sizeof (*sata);
+	ssize_t sz;
+
+	sz = efidp_make_generic(buf, size, EFIDP_MESSAGE_TYPE,
+					EFIDP_MSG_SATA, sizeof (*sata));
+	if (size && sz == req) {
+		sata->hba_port = hba_port;
+		sata->port_multiplier_port = port_multiplier_port;
+		sata->lun = lun;
+	}
+	return sz;
+}
