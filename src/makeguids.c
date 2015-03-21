@@ -99,14 +99,14 @@ main(int argc, char *argv[])
 	if (rc < 0)
 		err(1, "makeguids: could not read \"%s\"", argv[1]);
 
-	/* strictly speaking, this *has* to be too large. */
-	struct guidname *outbuf = calloc(inlen, sizeof (char));
-	if (!outbuf)
-		err(1, "makeguids");
-
+	struct guidname *outbuf = NULL;
 	char *guidstr = inbuf;
 	unsigned int line;
 	for (line = 1; (uintptr_t)guidstr - (uintptr_t)inbuf < inlen; line++) {
+		outbuf = realloc(outbuf, line * sizeof (struct guidname));
+		if (!outbuf)
+			err(1, "makeguids");
+
 		char *symbol = strchr(guidstr, '\t');
 		if (symbol == NULL)
 			err(1, "makeguids: \"%s\": 1 invalid data on line %d",
