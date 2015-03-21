@@ -88,7 +88,7 @@ efi_set_variable(efi_guid_t guid, const char *name,
 		return -1;
 	}
 
-	if (__va_arg_pack_len() == 0)
+	if (__builtin_va_arg_pack_len() == 0)
 		return _efi_set_variable(guid, name, data, data_size,
 					 attributes, 0644);
 
