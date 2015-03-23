@@ -136,7 +136,6 @@ efivarfs_get_variable(efi_guid_t guid, const char *name, uint8_t **data,
 	if (fd < 0)
 		goto err;
 
-	bzero(&statbuf, sizeof(struct stat));
 	rc = read(fd, &ret_attributes, sizeof (ret_attributes));
 	if (rc < 0)
 		goto err;
