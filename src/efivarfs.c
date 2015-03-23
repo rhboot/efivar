@@ -79,6 +79,7 @@ efivarfs_get_variable_size(efi_guid_t guid, const char *name, size_t *size)
 		goto err;
 
 	struct stat statbuf;
+	bzero(&statbuf, sizeof(struct stat));
 	rc = stat(path, &statbuf);
 	if (rc < 0)
 		goto err;
