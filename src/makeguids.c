@@ -99,7 +99,10 @@ main(int argc, char *argv[])
 	if (rc < 0)
 		err(1, "makeguids: could not read \"%s\"", argv[1]);
 
-	struct guidname *outbuf = NULL;
+	struct guidname *outbuf = malloc(1);
+	if (!outbuf)
+		err(1, "makeguids");
+
 	char *guidstr = inbuf;
 	unsigned int line;
 	for (line = 1; (uintptr_t)guidstr - (uintptr_t)inbuf < inlen; line++) {
