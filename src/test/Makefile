@@ -16,7 +16,7 @@ clean :
 test : tester
 	./tester
 
-tester :: tester.o
+tester :: tester.o -ldl
 
 .PHONY: all clean install test
 

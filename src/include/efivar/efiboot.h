@@ -1,5 +1,5 @@
 /*
- * libefivar - library for the manipulation of EFI variables
+ * libefiboot - library for the manipulation of EFI boot variables
  * Copyright 2012-2015 Red Hat, Inc.
  *
  * This library is free software; you can redistribute it and/or
@@ -15,16 +15,21 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this library.  If not, see <http://www.gnu.org/licenses/>.
  */
-#ifndef _EFIVAR_LOAD_H
-#define _EFIVAR_LOAD_H 1
+#ifndef EFIBOOT_H
+#define EFIBOOT_H 1
 
-typedef struct efi_load_option_s efi_load_option;
+#include <errno.h>
+#include <stdarg.h>
+#include <stdint.h>
+#include <string.h>
+#include <sys/stat.h>
+#include <sys/types.h>
+#include <unistd.h>
+#include <byteswap.h>
 
-extern ssize_t efi_make_load_option(uint8_t *buf, ssize_t size,
-				    uint32_t attributes, efidp dp,
-				    char *description,
-				    uint8_t *optional_data,
-				    size_t optional_data_size);
-extern efidp efi_load_option_path(efi_load_option *opt);
+#include <efivar.h>
 
-#endif /* _EFIVAR_LOAD_H */
+#include <efiboot-loadopt.h>
+#include <efiboot-linux.h>
+
+#endif /* EFIBOOT_H */

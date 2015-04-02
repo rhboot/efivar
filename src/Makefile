@@ -1,42 +1,52 @@
 SRCDIR = $(realpath .)
 TOPDIR = $(realpath ..)
 
-SONAME = libefivar.so.$(SONAME_VERSION)
-
 include $(TOPDIR)/Make.defaults
 
-LIBTARGETS = libefivar.so.0
-PCTARGETS = efivar.pc
+LIBTARGETS = libefivar.so.$(SONAME_VERSION) libefiboot.so.$(SONAME_VERSION)
+PCTARGETS = efivar.pc efiboot.pc
 BINTARGETS = efivar
 INCTARGETS = include/efivar/efivar-guids.h
-all : $(LIBTARGETS) $(PCTARGETS) $(BINTARGETS) $(INCTARGETS)
+all : $(LIBTARGETS) $(PCTARGETS) $(BINTARGETS) $(INCTARGETS) libefiboot.so
 	@$(MAKE) -C test TOPDIR=$(TOPDIR) SRCDIR=$(SRCDIR)/test $@
 
-OBJECTS = dp.o dp-acpi.o dp-hw.o dp-media.o dp-message.o \
+EFIVAR_OBJECTS = dp.o dp-acpi.o dp-hw.o dp-media.o dp-message.o \
 	efivarfs.o export.o guid.o guidlist.o guid-symbols.o \
-	lib.o linux.o loadopt.o vars.o
+	lib.o vars.o
 # c files (alphabetically), then local headers (alphabetically),
 # then target headers (again alphabetically)
-DEPS = .dp.c.P .dp-acpi.c.P .dp-hw.c.P .dp-media.c.P .dp-message.c.P \
-	.efivar.c.P .efivarfs.c.P .export.c.P .guid.c.P .lib.c.P \
-	.loadopt.c.P .vars.c.P \
+EFIVAR_DEPS = .dp.c.P .dp-acpi.c.P .dp-hw.c.P .dp-media.c.P .dp-message.c.P \
+	.efivar.c.P .efivarfs.c.P .export.c.P .guid.c.P .lib.c.P .vars.c.P \
 	.dp.h.P .generics.h.P .guid.h.P .lib.h.P \
 	include/efivar/.efivar.h.P include/efivar/.efivar-dp.h.P \
-	include/efivar/.efivar-guids.h.P include/efivar/.efivar-linux.h.P \
+	include/efivar/.efivar-guids.h.P
+EFIVAR_LIBS = dl
+
+MAKEGUIDS_DEPS = .makeguids.c.P .efivar.h.P .util.h.P .guid.h.P
+
+EFIBOOT_OBJECTS =  \
+	linux.o loadopt.o
+EFIBOOT_DEPS = \
+	.linux.c.P .loadopt.c.P \
+	include/efivar/.efivar-linux.h.P \
 	include/efivar/.efivar-loadopt.h.P
-LIBS = dl
 
-libefivar.a :: $(OBJECTS)
+libefivar.a :: $(EFIVAR_OBJECTS)
 
-libefivar.so.$(SONAME_VERSION) :: $(OBJECTS)
+libefivar.so.$(SONAME_VERSION) :: $(EFIVAR_OBJECTS)
+
+libefiboot.a :: $(EFIBOOT_OBJECTS)
+
+libefiboot.so.$(SONAME_VERSION) :: $(EFIBOOT_OBJECTS)
 
 efivar : efivar.o libefivar.so
-	$(CCLD) $(ccldflags) -L. -lefivar -o $@ $^ -lpopt $(foreach lib,$(LIBS),-l$(lib))
+	$(CCLD) $(ccldflags) -L. -lefivar -o $@ $^ \
+		-lpopt $(foreach lib,$(EFIVAR_LIBS),-l$(lib))
 
-efivar.pc : efivar.pc.in
+%.pc : %.pc.in
 	sed -e "s,@@VERSION@@,$(VERSION),g" \
 	    -e "s,@@LIBDIR@@,$(libdir),g" \
-		efivar.pc.in > efivar.pc
+		$< > $@
 
 include/efivar/efivar.h : include/efivar/efivar-guids.h
 
@@ -46,7 +56,7 @@ fakeguid.o : guid.c
 makeguids.o : makeguids.c
 	$(CC) $(cflags) -DEFIVAR_BUILD_ENVIRONMENT -c -o $@ $^
 
-makeguids : makeguids.o fakeguid.o
+makeguids : makeguids.o fakeguid.o -ldl
 
 include/efivar/efivar-guids.h : makeguids guids.txt
 	./makeguids guids.txt guids.bin names.bin guid-symbols.S $@
@@ -59,12 +69,14 @@ guid-symbols.o : guid-symbols.S
 
 .INTERMEDIATE: guids.bin names.bin guid-symbols.S
 
-deps : $(DEPS)
+deps : $(EFIVAR_DEPS) $(EFIBOOT_DEPS) $(MAKEGUIDS_DEPS)
 
--include $(DEPS)
+-include $(EFIVAR_DEPS)
+-include $(EFIBOOT_DEPS)
+-include $(MAKEGUIDS_DEPS)
 
 clean : 
-	@rm -rfv *~ *.o *.a *.so *.so.$(SONAME_VERSION) .*.c.P .*.h.P $(PCTARGETS) $(BINTARGETS) $(INCTARGETS) *.bin guid-symbols.S makeguids include/efivar/.*.h.P
+	@rm -rfv *~ *.o *.a *.so *.so.$(SONAME_VERSION) .*.c.P .*.h.P $(PCTARGETS) $(BINTARGETS) $(INCTARGETS) *.bin guid-symbols.S makeguids include/efivar/.*.h.P $(LIBTARGETS)
 	@$(MAKE) -C test TOPDIR=$(TOPDIR) SRCDIR=$(TOPDIR)/src/ $@
 
 install : all

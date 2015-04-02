@@ -5,7 +5,7 @@
 	$(CCLD) $(ccldflags) -o $@ $^ $(foreach lib,$(LIBS),-l$(lib))
 
 %.so.$(SONAME_VERSION) : 
-	$(CCLD) $(cflags) -Wl,-soname,$(SONAME) $(ccldflags) $(LIBFLAGS) $^ -o $@ $(foreach lib,$(LIBS),-l$(lib))
+	$(CCLD) $(cflags) -Wl,-soname,$@ $(ccldflags) $(LIBFLAGS) $^ -o $@ $(foreach lib,$(LIBS),-l$(lib))
 
 %.so : %.so.$(SONAME_VERSION)
 	ln -sf $^ $@

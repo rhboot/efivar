@@ -1,5 +1,5 @@
 /*
- * libefivar - library for the manipulation of EFI variables
+ * libefiboot - library for the manipulation of EFI boot variables
  * Copyright 2012-2015 Red Hat, Inc.
  *
  * This library is free software; you can redistribute it and/or
@@ -15,13 +15,16 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this library.  If not, see <http://www.gnu.org/licenses/>.
  */
-#ifndef _EFIVAR_linux_H
-#define _EFIVAR_linux_H 1
+#ifndef _EFIBOOT_LOADOPT_H
+#define _EFIBOOT_LOADOPT_H 1
 
-extern int efi_linux_nvme_ns_id(int fd, uint32_t *ns_id);
+typedef struct efi_load_option_s efi_load_option;
 
-extern int efi_linux_scsi_idlun(int fd, uint8_t *host, uint8_t *channel,
-			      uint8_t *id, uint8_t *lun);
-extern int efi_linux_scsi_pci(int fd, char *slot_name, size_t size);
+extern ssize_t efi_make_load_option(uint8_t *buf, ssize_t size,
+				    uint32_t attributes, efidp dp,
+				    char *description,
+				    uint8_t *optional_data,
+				    size_t optional_data_size);
+extern efidp efi_load_option_path(efi_load_option *opt);
 
-#endif /* _EFIVAR_linux_H */
+#endif /* _EFIBOOT_LOADOPT_H */

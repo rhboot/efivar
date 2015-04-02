@@ -1,0 +1,11 @@
+prefix=/usr
+exec_prefix=/usr
+libdir=@@LIBDIR@@
+includedir=/usr/include
+
+Name: efiboot
+Description: UEFI Boot variable support
+Version: @@VERSION@@
+Requires:
+Libs: -L${libdir} -lefivar -lefiboot -ldl
+Cflags: -I${includedir}/efivar
