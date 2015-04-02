@@ -45,6 +45,7 @@ efidp_data_address(const_efidp dp)
 }
 
 int
+__attribute__((__visibility__ ("default")))
 efidp_set_node_data(const_efidp dn, void *buf, size_t bufsize)
 {
 	if (dn->length < 4 || bufsize > (size_t)dn->length - 4) {
@@ -86,12 +87,14 @@ efidp_duplicate_extra(const_efidp dp, efidp *out, size_t extra)
 }
 
 int
+__attribute__((__visibility__ ("default")))
 efidp_duplicate_path(const_efidp  dp, efidp *out)
 {
 	return efidp_duplicate_extra(dp, out, 0);
 }
 
 int
+__attribute__((__visibility__ ("default")))
 efidp_append_path(const_efidp dp0, const_efidp dp1, efidp *out)
 {
 	ssize_t lsz, rsz;
@@ -145,6 +148,7 @@ efidp_append_path(const_efidp dp0, const_efidp dp1, efidp *out)
 }
 
 int
+__attribute__((__visibility__ ("default")))
 efidp_append_node(const_efidp dp, const_efidp dn, efidp *out)
 {
 	ssize_t lsz, rsz;
@@ -206,6 +210,7 @@ efidp_append_node(const_efidp dp, const_efidp dn, efidp *out)
 }
 
 int
+__attribute__((__visibility__ ("default")))
 efidp_append_instance(const_efidp dp, const_efidp dpi, efidp *out)
 {
 	ssize_t lsz, rsz;
@@ -253,6 +258,7 @@ efidp_append_instance(const_efidp dp, const_efidp dpi, efidp *out)
 }
 
 ssize_t
+__attribute__((__visibility__ ("default")))
 efidp_format_device_path(char *buf, size_t size, const_efidp dp, ssize_t limit)
 {
 	ssize_t sz;
@@ -359,12 +365,14 @@ efidp_format_device_path(char *buf, size_t size, const_efidp dp, ssize_t limit)
 
 #if 0
 ssize_t
+__attribute__((__visibility__ ("default")))
 efidp_parse_device_node(char *path, efidp out, size_t size)
 {
 
 }
 
 ssize_t
+__attribute__((__visibility__ ("default")))
 efidp_parse_device_path(char *path, efidp out, size_t size)
 {
 
@@ -372,6 +380,7 @@ efidp_parse_device_path(char *path, efidp out, size_t size)
 #endif
 
 ssize_t
+__attribute__((__visibility__ ("default")))
 efidp_make_vendor(uint8_t *buf, ssize_t size, uint8_t type, uint8_t subtype,
 		  efi_guid_t vendor_guid, void *data, size_t data_size)
 {
@@ -388,6 +397,7 @@ efidp_make_vendor(uint8_t *buf, ssize_t size, uint8_t type, uint8_t subtype,
 }
 
 ssize_t
+__attribute__((__visibility__ ("default")))
 efidp_make_generic(uint8_t *buf, ssize_t size, uint8_t type, uint8_t subtype,
 		   ssize_t total_size)
 {

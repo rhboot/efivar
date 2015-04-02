@@ -38,6 +38,7 @@ format_acpi_adr(char *buf, size_t size, ssize_t off, const_efidp dp)
 
 
 ssize_t
+__attribute__((__visibility__ ("default")))
 format_acpi_dn(char *buf, size_t size, const_efidp dp)
 {
 	ssize_t off = 0;
@@ -158,6 +159,7 @@ format_acpi_dn(char *buf, size_t size, const_efidp dp)
 }
 
 ssize_t
+__attribute__((__visibility__ ("default")))
 efidp_make_acpi_hid(uint8_t *buf, ssize_t size, uint32_t hid, uint32_t uid)
 {
 	efidp_acpi_hid *acpi_hid = (efidp_acpi_hid *)buf;

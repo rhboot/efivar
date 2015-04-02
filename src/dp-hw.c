@@ -23,6 +23,7 @@
 #include "dp.h"
 
 ssize_t
+__attribute__((__visibility__ ("default")))
 format_edd10_guid(char *buf, size_t size, const_efidp dp)
 {
 	size_t off = 0;
@@ -33,6 +34,7 @@ format_edd10_guid(char *buf, size_t size, const_efidp dp)
 }
 
 ssize_t
+__attribute__((__visibility__ ("default")))
 format_hw_dn(char *buf, size_t size, const_efidp dp)
 {
 	efi_guid_t edd10_guid = EDD10_HARDWARE_VENDOR_PATH_GUID;
@@ -79,6 +81,7 @@ format_hw_dn(char *buf, size_t size, const_efidp dp)
 }
 
 ssize_t
+__attribute__((__visibility__ ("default")))
 efidp_make_pci(uint8_t *buf, ssize_t size, uint8_t device, uint8_t function)
 {
 	efidp_pci *pci = (efidp_pci *)buf;
@@ -94,6 +97,7 @@ efidp_make_pci(uint8_t *buf, ssize_t size, uint8_t device, uint8_t function)
 }
 
 ssize_t
+__attribute__((__visibility__ ("default")))
 efidp_make_edd10(uint8_t *buf, ssize_t size, uint32_t hardware_device)
 {
 	efi_guid_t edd10_guid = EDD10_HARDWARE_VENDOR_PATH_GUID;

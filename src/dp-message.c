@@ -280,6 +280,7 @@ format_usb_class(char *buf, size_t size, const_efidp dp)
 }
 
 ssize_t
+__attribute__((__visibility__ ("default")))
 format_message_dn(char *buf, size_t size, const_efidp dp)
 {
 	ssize_t off = 0;
@@ -543,6 +544,7 @@ format_message_dn(char *buf, size_t size, const_efidp dp)
 }
 
 ssize_t
+__attribute__((__visibility__ ("default")))
 efidp_make_mac_addr(uint8_t *buf, ssize_t size, uint8_t if_type,
 		    uint8_t *mac_addr, ssize_t mac_addr_size)
 {
@@ -560,6 +562,7 @@ efidp_make_mac_addr(uint8_t *buf, ssize_t size, uint8_t if_type,
 }
 
 ssize_t
+__attribute__((__visibility__ ("default")))
 efidp_make_scsi(uint8_t *buf, ssize_t size, uint16_t target, uint16_t lun)
 {
 	efidp_scsi *scsi = (efidp_scsi *)buf;
@@ -574,6 +577,7 @@ efidp_make_scsi(uint8_t *buf, ssize_t size, uint16_t target, uint16_t lun)
 }
 
 ssize_t
+__attribute__((__visibility__ ("default")))
 efidp_make_nvme(uint8_t *buf, ssize_t size, uint32_t namespace_id,
 		uint8_t *ieee_eui_64)
 {
@@ -596,6 +600,7 @@ efidp_make_nvme(uint8_t *buf, ssize_t size, uint32_t namespace_id,
 }
 
 ssize_t
+__attribute__((__visibility__ ("default")))
 efidp_make_sata(uint8_t *buf, ssize_t size, uint16_t hba_port,
 		uint16_t port_multiplier_port, uint16_t lun)
 {

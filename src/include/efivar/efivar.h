@@ -58,26 +58,27 @@ typedef struct {
 extern int efi_variables_supported(void);
 extern int efi_get_variable_size(efi_guid_t guid, const char *name,
 				 size_t *size)
-				__attribute__ ((__nonnull__ (2, 3)));
+				__attribute__((__nonnull__ (2, 3)));
 extern int efi_get_variable_attributes(efi_guid_t, const char *name,
 				       uint32_t *attributes)
-				__attribute__ ((__nonnull__ (2, 3)));
+				__attribute__((__nonnull__ (2, 3)));
 extern int efi_get_variable(efi_guid_t guid, const char *name, uint8_t **data,
 			    size_t *data_size, uint32_t *attributes)
-				__attribute__ ((__nonnull__ (2, 3, 4, 5)));
+				__attribute__((__nonnull__ (2, 3, 4, 5)));
 extern int efi_del_variable(efi_guid_t guid, const char *name)
-				__attribute__ ((__nonnull__ (2)));
+				__attribute__((__nonnull__ (2)));
 extern int _efi_set_variable(efi_guid_t guid, const char *name,
 			     uint8_t *data, size_t data_size,
 			     uint32_t attributes, mode_t mode)
-			    __attribute__ ((__nonnull__ (2, 3)));
+			    __attribute__((__nonnull__ (2, 3)));
 extern int _efi_set_variable_variadic(efi_guid_t guid, const char *name,
 				      uint8_t *data, size_t data_size,
 				      uint32_t attributes, ...);
-				     __attribute__ ((__nonnull__ (2, 3)))
+				     __attribute__((__nonnull__ (2, 3)))
 extern inline int
-__attribute__ ((__gnu_inline__))
-__attribute__ ((__artificial__))
+__attribute__((__gnu_inline__))
+__attribute__((__artificial__))
+__attribute__((__visibility__ ("default")))
 efi_set_variable(efi_guid_t guid, const char *name,
 			       uint8_t *data, size_t data_size,
 			       uint32_t attributes, ...)
@@ -99,32 +100,32 @@ efi_set_variable(efi_guid_t guid, const char *name,
 extern int efi_append_variable(efi_guid_t guid, const char *name,
 			       uint8_t *data, size_t data_size,
 			       uint32_t attributes)
-			      __attribute__ ((__nonnull__ (2, 3)));
+			      __attribute__((__nonnull__ (2, 3)));
 extern int efi_get_next_variable_name(efi_guid_t **guid, char **name)
-			      __attribute__ ((__nonnull__ (1, 2)));
+			      __attribute__((__nonnull__ (1, 2)));
 extern int efi_chmod_variable(efi_guid_t guid, const char *name, mode_t mode)
-			      __attribute__ ((__nonnull__ (2)));
+			      __attribute__((__nonnull__ (2)));
 
 extern int efi_str_to_guid(const char *s, efi_guid_t *guid)
-			  __attribute__ ((__nonnull__ (1, 2)));
+			  __attribute__((__nonnull__ (1, 2)));
 extern int efi_guid_to_str(const efi_guid_t *guid, char **sp)
-			  __attribute__ ((__nonnull__ (1)));
+			  __attribute__((__nonnull__ (1)));
 extern int efi_guid_to_id_guid(const efi_guid_t *guid, char **sp)
-			      __attribute__ ((__nonnull__ (1)));
+			      __attribute__((__nonnull__ (1)));
 extern int efi_guid_to_symbol(efi_guid_t *guid, char **symbol)
-			     __attribute__ ((__nonnull__ (1, 2)));
+			     __attribute__((__nonnull__ (1, 2)));
 extern int efi_guid_to_name(efi_guid_t *guid, char **name)
-			   __attribute__ ((__nonnull__ (1, 2)));
+			   __attribute__((__nonnull__ (1, 2)));
 extern int efi_name_to_guid(const char *name, efi_guid_t *guid)
-			   __attribute__ ((__nonnull__ (1, 2)));
+			   __attribute__((__nonnull__ (1, 2)));
 extern int efi_id_guid_to_guid(const char *name, efi_guid_t *guid)
-			      __attribute__ ((__nonnull__ (1, 2)));
+			      __attribute__((__nonnull__ (1, 2)));
 extern int efi_symbol_to_guid(const char *symbol, efi_guid_t *guid)
-			     __attribute__ ((__nonnull__ (1, 2)));
+			     __attribute__((__nonnull__ (1, 2)));
 
 static inline int
 __attribute__ ((unused))
-__attribute__ ((__nonnull__ (1, 2)))
+__attribute__((__nonnull__ (1, 2)))
 efi_guid_cmp(const efi_guid_t *a, const efi_guid_t *b)
 {
 	return memcmp(a, b, sizeof (efi_guid_t));
@@ -134,7 +135,7 @@ extern const efi_guid_t efi_guid_zero;
 
 static inline int
 __attribute__ ((unused))
-__attribute__ ((__nonnull__ (1)))
+__attribute__((__nonnull__ (1)))
 efi_guid_is_zero(const efi_guid_t *guid)
 {
 	return !efi_guid_cmp(guid,&efi_guid_zero);
@@ -142,9 +143,9 @@ efi_guid_is_zero(const efi_guid_t *guid)
 extern int
 efi_guid_is_empty(const efi_guid_t *guid)
 __attribute__ ((unused))
-__attribute__ ((__nonnull__ (1)))
+__attribute__((__nonnull__ (1)))
+__attribute__((__visibility__ ("default")))
 __attribute__ ((weak, alias ("efi_guid_is_zero")));
-
 
 /* import / export functions */
 typedef struct efi_variable efi_variable_t;
@@ -156,12 +157,14 @@ extern ssize_t efi_variable_export(efi_variable_t *var, uint8_t *data,
 				size_t size)
 			__attribute__((__nonnull__ (1)));
 
-extern efi_variable_t *efi_variable_alloc(void);
+extern efi_variable_t *efi_variable_alloc(void)
+			__attribute__((__visibility__ ("default")));
 extern void efi_variable_free(efi_variable_t *var, int free_data);
 
 extern int efi_variable_set_name(efi_variable_t *var, char *name)
 			__attribute__((__nonnull__ (1, 2)));
 extern char *efi_variable_get_name(efi_variable_t *var)
+			__attribute__((__visibility__ ("default")))
 			__attribute__((__nonnull__ (1)));
 
 extern int efi_variable_set_guid(efi_variable_t *var, efi_guid_t *guid)

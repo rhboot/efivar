@@ -30,6 +30,7 @@
 #endif
 
 int
+__attribute__((__visibility__ ("default")))
 efi_linux_nvme_ns_id(int fd, uint32_t *ns_id)
 {
 	uint64_t ret = ioctl(fd, NVME_IOCTL_ID, NULL);
@@ -45,6 +46,7 @@ typedef struct scsi_idlun_s {
 } scsi_idlun;
 
 int
+__attribute__((__visibility__ ("default")))
 efi_linux_scsi_idlun(int fd, uint8_t *host, uint8_t *channel, uint8_t *id,
 		   uint8_t *lun)
 {
@@ -76,6 +78,7 @@ efi_linux_scsi_idlun(int fd, uint8_t *host, uint8_t *channel, uint8_t *id,
 
 /* TODO: move this to get it from sysfs? */
 int
+__attribute__((__visibility__ ("default")))
 efi_linux_scsi_pci(int fd, char *slot_name, size_t size)
 {
 	char buf[SLOT_NAME_SIZE] = "";

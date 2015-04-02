@@ -53,6 +53,7 @@ struct efi_variable {
 
 ssize_t
 __attribute__((__nonnull__ (1, 3)))
+__attribute__((__visibility__ ("default")))
 efi_variable_import(uint8_t *data, size_t size, efi_variable_t **var_out)
 {
 	efi_variable_t var;
@@ -145,6 +146,7 @@ efi_variable_import(uint8_t *data, size_t size, efi_variable_t **var_out)
 
 ssize_t
 __attribute__((__nonnull__ (1)))
+__attribute__((__visibility__ ("default")))
 efi_variable_export(efi_variable_t *var, uint8_t *data, size_t size)
 {
 	if (!var) {
@@ -203,6 +205,12 @@ efi_variable_export(efi_variable_t *var, uint8_t *data, size_t size)
 }
 
 efi_variable_t *
+#if 0 /* we get it from the decl instead of the defn here, because GCC gets
+       * confused and thinks we're saying the /return type/ has visibility
+       * and that makes no sense at all except in C++ where it's a class type.
+       */
+__attribute__((__visibility__ ("default")))
+#endif
 efi_variable_alloc(void)
 {
 	efi_variable_t *var = calloc(1, sizeof (efi_variable_t));
@@ -214,6 +222,7 @@ efi_variable_alloc(void)
 }
 
 void
+__attribute__((__visibility__ ("default")))
 efi_variable_free(efi_variable_t *var, int free_data)
 {
 	if (!var)
@@ -236,6 +245,7 @@ efi_variable_free(efi_variable_t *var, int free_data)
 
 int
 __attribute__((__nonnull__ (1, 2)))
+__attribute__((__visibility__ ("default")))
 efi_variable_set_name(efi_variable_t *var, char *name)
 {
 	if (!var || !name) {
@@ -249,6 +259,12 @@ efi_variable_set_name(efi_variable_t *var, char *name)
 
 char *
 __attribute__((__nonnull__ (1)))
+#if 0 /* we get it from the decl instead of the defn here, because GCC gets
+       * confused and thinks we're saying the /return type/ has visibility
+       * and that makes no sense at all except in C++ where it's a class type.
+       */
+__attribute__((__visibility__ ("default")))
+#endif
 efi_variable_get_name(efi_variable_t *var)
 {
 	if (!var) {
@@ -266,6 +282,7 @@ efi_variable_get_name(efi_variable_t *var)
 
 int
 __attribute__((__nonnull__ (1, 2)))
+__attribute__((__visibility__ ("default")))
 efi_variable_set_guid(efi_variable_t *var, efi_guid_t *guid)
 {
 	if (!var || !guid) {
@@ -279,6 +296,7 @@ efi_variable_set_guid(efi_variable_t *var, efi_guid_t *guid)
 
 int
 __attribute__((__nonnull__ (1, 2)))
+__attribute__((__visibility__ ("default")))
 efi_variable_get_guid(efi_variable_t *var, efi_guid_t **guid)
 {
 	if (!var || !guid) {
@@ -297,6 +315,7 @@ efi_variable_get_guid(efi_variable_t *var, efi_guid_t **guid)
 
 int
 __attribute__((__nonnull__ (1, 2)))
+__attribute__((__visibility__ ("default")))
 efi_variable_set_data(efi_variable_t *var, uint8_t *data, size_t size)
 {
 	if (!var || !data || !size) {
@@ -311,6 +330,7 @@ efi_variable_set_data(efi_variable_t *var, uint8_t *data, size_t size)
 
 ssize_t
 __attribute__((__nonnull__ (1, 2, 3)))
+__attribute__((__visibility__ ("default")))
 efi_variable_get_data(efi_variable_t *var, uint8_t **data, size_t *size)
 {
 	if (!var || !data || !size) {
@@ -330,6 +350,7 @@ efi_variable_get_data(efi_variable_t *var, uint8_t **data, size_t *size)
 
 int
 __attribute__((__nonnull__ (1)))
+__attribute__((__visibility__ ("default")))
 efi_variable_set_attributes(efi_variable_t *var, uint64_t attrs)
 {
 	if (!var) {
@@ -343,6 +364,7 @@ efi_variable_set_attributes(efi_variable_t *var, uint64_t attrs)
 
 int
 __attribute__((__nonnull__ (1, 2)))
+__attribute__((__visibility__ ("default")))
 efi_variable_get_attributes(efi_variable_t *var, uint64_t *attrs)
 {
 	if (!var || !attrs) {
@@ -361,6 +383,7 @@ efi_variable_get_attributes(efi_variable_t *var, uint64_t *attrs)
 
 int
 __attribute__((__nonnull__ (1)))
+__attribute__((__visibility__ ("default")))
 efi_variable_realize(efi_variable_t *var)
 {
 	if (!var) {

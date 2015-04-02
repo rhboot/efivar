@@ -24,6 +24,7 @@
 #include "dp.h"
 
 ssize_t
+__attribute__((__visibility__ ("default")))
 format_media_dn(char *buf, size_t size, const_efidp dp)
 {
 	ssize_t off = 0;
@@ -144,6 +145,7 @@ format_media_dn(char *buf, size_t size, const_efidp dp)
 }
 
 ssize_t
+__attribute__((__visibility__ ("default")))
 efidp_make_file(uint8_t *buf, ssize_t size, char *filepath)
 {
 	efidp_file *file = (efidp_file *)buf;
@@ -165,6 +167,7 @@ efidp_make_file(uint8_t *buf, ssize_t size, char *filepath)
 }
 
 ssize_t
+__attribute__((__visibility__ ("default")))
 efidp_make_hd(uint8_t *buf, ssize_t size, uint32_t num, uint64_t part_start,
 	      uint64_t part_size, uint8_t *signature, uint8_t format,
 	      uint8_t signature_type)

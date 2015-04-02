@@ -40,7 +40,8 @@ struct efi_var_operations default_ops = {
 struct efi_var_operations *ops = NULL;
 
 int
-__attribute__ ((__nonnull__ (2, 3)))
+__attribute__((__nonnull__ (2, 3)))
+__attribute__((__visibility__ ("default")))
 _efi_set_variable(efi_guid_t guid, const char *name, uint8_t *data,
 		 size_t data_size, uint32_t attributes, mode_t mode)
 {
@@ -48,7 +49,8 @@ _efi_set_variable(efi_guid_t guid, const char *name, uint8_t *data,
 }
 
 int
-__attribute__ ((__nonnull__ (2, 3)))
+__attribute__((__nonnull__ (2, 3)))
+__attribute__((__visibility__ ("default")))
 _efi_set_variable_variadic(efi_guid_t guid, const char *name, uint8_t *data,
                  size_t data_size, uint32_t attributes, ...)
 {
@@ -62,7 +64,8 @@ extern typeof(_efi_set_variable_variadic) efi_set_variable
 	__attribute__ ((alias ("_efi_set_variable_variadic")));
 
 int
-__attribute__ ((__nonnull__ (2, 3)))
+__attribute__((__nonnull__ (2, 3)))
+__attribute__((__visibility__ ("default")))
 efi_append_variable(efi_guid_t guid, const char *name, uint8_t *data,
 			size_t data_size, uint32_t attributes)
 {
@@ -73,7 +76,8 @@ efi_append_variable(efi_guid_t guid, const char *name, uint8_t *data,
 }
 
 int
-__attribute__ ((__nonnull__ (2)))
+__attribute__((__nonnull__ (2)))
+__attribute__((__visibility__ ("default")))
 efi_del_variable(efi_guid_t guid, const char *name)
 {
 	if (!ops->del_variable) {
@@ -84,7 +88,8 @@ efi_del_variable(efi_guid_t guid, const char *name)
 }
 
 int
-__attribute__ ((__nonnull__ (2, 3, 4, 5)))
+__attribute__((__nonnull__ (2, 3, 4, 5)))
+__attribute__((__visibility__ ("default")))
 efi_get_variable(efi_guid_t guid, const char *name, uint8_t **data,
 		  size_t *data_size, uint32_t *attributes)
 {
@@ -96,7 +101,8 @@ efi_get_variable(efi_guid_t guid, const char *name, uint8_t **data,
 }
 
 int
-__attribute__ ((__nonnull__ (2, 3)))
+__attribute__((__nonnull__ (2, 3)))
+__attribute__((__visibility__ ("default")))
 efi_get_variable_attributes(efi_guid_t guid, const char *name,
 			    uint32_t *attributes)
 {
@@ -108,7 +114,8 @@ efi_get_variable_attributes(efi_guid_t guid, const char *name,
 }
 
 int
-__attribute__ ((__nonnull__ (2, 3)))
+__attribute__((__nonnull__ (2, 3)))
+__attribute__((__visibility__ ("default")))
 efi_get_variable_size(efi_guid_t guid, const char *name, size_t *size)
 {
 	if (!ops->get_variable_size) {
@@ -119,7 +126,8 @@ efi_get_variable_size(efi_guid_t guid, const char *name, size_t *size)
 }
 
 int
-__attribute__ ((__nonnull__ (1, 2)))
+__attribute__((__nonnull__ (1, 2)))
+__attribute__((__visibility__ ("default")))
 efi_get_next_variable_name(efi_guid_t **guid, char **name)
 {
 	if (!ops->get_next_variable_name) {
@@ -130,7 +138,8 @@ efi_get_next_variable_name(efi_guid_t **guid, char **name)
 }
 
 int
-__attribute__ ((__nonnull__ (2)))
+__attribute__((__nonnull__ (2)))
+__attribute__((__visibility__ ("default")))
 efi_chmod_variable(efi_guid_t guid, const char *name, mode_t mode)
 {
 	if (!ops->chmod_variable) {
@@ -141,6 +150,7 @@ efi_chmod_variable(efi_guid_t guid, const char *name, mode_t mode)
 }
 
 int
+__attribute__((__visibility__ ("default")))
 efi_variables_supported(void)
 {
 	if (ops == &default_ops)

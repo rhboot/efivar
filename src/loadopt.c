@@ -28,6 +28,7 @@ typedef struct efi_load_option_s {
 } efi_load_option;
 
 ssize_t
+__attribute__((__visibility__ ("default")))
 efi_make_load_option(uint8_t *buf, ssize_t size, uint32_t attributes,
 		     efidp dp, char *description,
 		     uint8_t *optional_data, size_t optional_data_size)
@@ -74,6 +75,7 @@ efi_make_load_option(uint8_t *buf, ssize_t size, uint32_t attributes,
 }
 
 efidp
+__attribute__((__visibility__ ("default")))
 efi_load_option_path(efi_load_option *opt)
 {
 	char *p = (char *)opt;
