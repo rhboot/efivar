@@ -28,6 +28,7 @@ typedef struct efi_load_option_s {
 } efi_load_option;
 
 ssize_t
+__attribute__((__nonnull__ (4,5)))
 __attribute__((__visibility__ ("default")))
 efi_make_load_option(uint8_t *buf, ssize_t size, uint32_t attributes,
 		     efidp dp, char *description,
@@ -40,9 +41,9 @@ efi_make_load_option(uint8_t *buf, ssize_t size, uint32_t attributes,
 	}
 
 	uint16_t dp_size = efidp_size(dp);
-	ssize_t desc_len = utf8len((uint8_t *)description, 1024) + 1;
+	ssize_t desc_len = utf8len((uint8_t *)description, 1024) * 2 + 2;
 	ssize_t sz = sizeof (attributes)
-		     + sizeof (uint16_t) + desc_len * 2
+		     + sizeof (uint16_t) + desc_len
 		     + dp_size + optional_data_size;
 	if (size == 0)
 		return sz;
@@ -50,9 +51,6 @@ efi_make_load_option(uint8_t *buf, ssize_t size, uint32_t attributes,
 		errno = ENOSPC;
 		return -1;
 	}
-
-	uint16_t *desc = utf8_to_ucs2((uint8_t *)description, desc_len);
-	desc = onstack(desc, desc_len * 2);
 
 	uint8_t *pos = buf;
 
@@ -62,8 +60,8 @@ efi_make_load_option(uint8_t *buf, ssize_t size, uint32_t attributes,
 	*(uint16_t *)pos = dp_size;
 	pos += sizeof (dp_size);
 
-	memcpy(pos, desc, desc_len * 2);
-	pos += desc_len * 2;
+	utf8_to_ucs2((uint16_t *)pos, desc_len, 1, (uint8_t *)description);
+	pos += desc_len;
 
 	memcpy(pos, dp, dp_size);
 	pos += dp_size;

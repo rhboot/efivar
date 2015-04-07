@@ -111,7 +111,8 @@ format_vendor_helper(char *buf, size_t size, char *label, const_efidp dp)
 		memset(_ucs2buf, '\0', sizeof (_ucs2buf));		\
 		memcpy(_ucs2buf, str, sizeof (_ucs2buf)			\
 				      - sizeof (_ucs2buf[0]));		\
-		char *_asciibuf = ucs2_to_utf8(_ucs2buf, (len) - 1);	\
+		unsigned char *_asciibuf;				\
+		_asciibuf = ucs2_to_utf8(_ucs2buf, (len) - 1);		\
 		if (_asciibuf == NULL)					\
 			return -1;					\
 		_asciibuf = onstack(_asciibuf, (len));			\
