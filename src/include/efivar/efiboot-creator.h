@@ -1,5 +1,5 @@
 /*
- * libefiboot - library for the manipulation of EFI boot variables
+ * libefivar - library for the manipulation of EFI variables
  * Copyright 2012-2015 Red Hat, Inc.
  *
  * This library is free software; you can redistribute it and/or
@@ -15,22 +15,21 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this library.  If not, see <http://www.gnu.org/licenses/>.
  */
-#ifndef EFIBOOT_H
-#define EFIBOOT_H 1
+#ifndef _EFIBOOT_CREATOR_H
+#define _EFIBOOT_CREATOR_H
 
-#include <errno.h>
-#include <stdarg.h>
-#include <stdint.h>
-#include <string.h>
-#include <sys/stat.h>
-#include <sys/types.h>
-#include <unistd.h>
-#include <byteswap.h>
+#define EFIBOOT_ABBREV_NONE		1
+#define EFIBOOT_ABBREV_HD			2
+#define EFIBOOT_ABBREV_FILE		3
 
-#include <efivar.h>
+extern ssize_t efi_generate_file_device_path(uint8_t *buf, ssize_t size,
+					     const char const *filepath,
+					     uint32_t abbrev, int ignore_fs_err)
+	__attribute__((__nonnull__ (3)));
 
-#include <efiboot-creator.h>
-#include <efiboot-loadopt.h>
-#include <efiboot-linux.h>
+extern ssize_t efi_generate_network_device_path(uint8_t *buf, ssize_t size,
+						const char const *ifname,
+						uint32_t abbrev)
+	__attribute__((__nonnull__ (3)));
 
-#endif /* EFIBOOT_H */
+#endif /* _EFIBOOT_CREATOR_H */

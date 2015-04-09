@@ -25,9 +25,10 @@ EFIVAR_LIBS = dl
 MAKEGUIDS_DEPS = .makeguids.c.P .efivar.h.P .util.h.P .guid.h.P
 
 EFIBOOT_OBJECTS =  \
-	linux.o loadopt.o
+	creator.o linux.o loadopt.o
 EFIBOOT_DEPS = \
-	.linux.c.P .loadopt.c.P \
+	.creator.c.P .linux.c.P .loadopt.c.P \
+	include/efivar/.efivar-creator.h.P \
 	include/efivar/.efivar-linux.h.P \
 	include/efivar/.efivar-loadopt.h.P
 
