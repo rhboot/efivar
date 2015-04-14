@@ -858,5 +858,4 @@ extern ssize_t efidp_make_generic(uint8_t *buf, ssize_t size, uint8_t type,
 	efidp_make_generic(buf, size, EFIDP_END_TYPE,			\
 			   EFIDP_END_INSTANCE, sizeof (efidp_header));
 
-
 #endif /* _EFIVAR_DP_H */

@@ -31,6 +31,5 @@
 
 #include <efiboot-creator.h>
 #include <efiboot-loadopt.h>
-#include <efiboot-linux.h>
 
 #endif /* EFIBOOT_H */

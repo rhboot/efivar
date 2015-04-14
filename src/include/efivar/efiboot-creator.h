@@ -18,13 +18,16 @@
 #ifndef _EFIBOOT_CREATOR_H
 #define _EFIBOOT_CREATOR_H
 
-#define EFIBOOT_ABBREV_NONE		1
-#define EFIBOOT_ABBREV_HD			2
-#define EFIBOOT_ABBREV_FILE		3
+#define EFIBOOT_ABBREV_NONE	0x00000001
+#define EFIBOOT_ABBREV_HD	0x00000002
+#define EFIBOOT_ABBREV_FILE	0x00000003
+#define EFIBOOT_ABBREV_EDD10	0x80000000
 
 extern ssize_t efi_generate_file_device_path(uint8_t *buf, ssize_t size,
 					     const char const *filepath,
-					     uint32_t abbrev, int ignore_fs_err)
+					     uint32_t abbrev,
+					     uint32_t extra, /* :/ */
+					     int ignore_fs_err)
 	__attribute__((__nonnull__ (3)));
 
 extern ssize_t efi_generate_network_device_path(uint8_t *buf, ssize_t size,
