@@ -16,21 +16,16 @@
  * You should have received a copy of the GNU General Public License
  * along with this library.  If not, see <http://www.gnu.org/licenses/>.
  */
-#ifndef EFIBOOT_H
-#define EFIBOOT_H 1
+#ifndef _EFIBOOT_DISK_H
+#define _EFIBOOT_DISK_H
 
-#include <errno.h>
-#include <stdarg.h>
-#include <stdint.h>
-#include <string.h>
-#include <sys/stat.h>
-#include <sys/types.h>
-#include <unistd.h>
-#include <byteswap.h>
+extern ssize_t _make_hd_dn(uint8_t *buf, ssize_t size, int fd,
+			   uint32_t partition, int write_signature,
+			   int ignore_pmbr_error)
+	__attribute__((__visibility__ ("hidden")));
+#define make_hd_dn(buf, size, off, fd, partition, write_signature, \
+		   ignore_pmbr_error) \
+	_make_hd_dn(((buf)+(off)), ((size)?((size)-(off)):0), (fd),\
+		    (partition), (write_signature), (ignore_pmbr_error))
 
-#include <efivar.h>
-
-#include <efiboot-creator.h>
-#include <efiboot-loadopt.h>
-
-#endif /* EFIBOOT_H */
+#endif /* _EFIBOOT_DISK_H */

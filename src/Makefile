@@ -25,9 +25,10 @@ EFIVAR_LIBS = dl
 MAKEGUIDS_DEPS = .makeguids.c.P .efivar.h.P .util.h.P .guid.h.P
 
 EFIBOOT_OBJECTS =  \
-	creator.o linux.o loadopt.o
+	crc32.o creator.o disk.o gpt.o linux.o loadopt.o
 EFIBOOT_DEPS = \
-	.creator.c.P .linux.c.P .linux.h.P .loadopt.c.P \
+	.crc32.c.P .crc32.h.P .creator.c.P .disk.c.P .disk.h.P \
+	.gpt.c.P .gpt.h.P .linux.c.P .linux.h.P .loadopt.c.P \
 	include/efivar/.efivar-creator.h.P \
 	include/efivar/.efivar-loadopt.h.P
 

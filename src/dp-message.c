@@ -281,7 +281,7 @@ format_usb_class(char *buf, size_t size, const_efidp dp)
 
 ssize_t
 __attribute__((__visibility__ ("default")))
-format_message_dn(char *buf, size_t size, const_efidp dp)
+_format_message_dn(char *buf, size_t size, const_efidp dp)
 {
 	ssize_t off = 0;
 	ssize_t sz;

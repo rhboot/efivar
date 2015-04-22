@@ -24,6 +24,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <sys/ioctl.h>
+#include <sys/mount.h>
 #include <unistd.h>
 
 static inline int
@@ -87,6 +89,38 @@ read_file(int fd, uint8_t **buf, size_t *bufsize)
 
 	*bufsize = filesize;
 	return 0;
+}
+
+static inline uint64_t
+__attribute__((unused))
+lcm(uint64_t x, uint64_t y)
+{
+	uint64_t m = x, n = y, o;
+	while ((o = m % n)) {
+		m = n;
+		n = o;
+	}
+	return (x / n) * y;
+}
+
+/************************************************************
+ * get_sector_size
+ * Requires:
+ *  - filedes is an open file descriptor, suitable for reading
+ * Modifies: nothing
+ * Returns:
+ *  sector size, or 512.
+ ************************************************************/
+static inline int
+__attribute__((unused))
+get_sector_size(int filedes)
+{
+	int rc, sector_size = 512;
+
+	rc = ioctl(filedes, BLKSSZGET, &sector_size);
+	if (rc)
+		sector_size = 512;
+	return sector_size;
 }
 
 #endif /* EFIVAR_UTIL_H */

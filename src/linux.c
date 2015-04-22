@@ -1,19 +1,19 @@
 /*
- * libefivar - library for the manipulation of EFI variables
- *
+ * libefiboot - library for the manipulation of EFI boot variables
  * Copyright 2012-2015 Red Hat, Inc.
+ * Copyright (C) 2001 Dell Computer Corporation <Matt_Domsch@dell.com>
  *
- * This library is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Lesser General Public
- * License as published by the Free Software Foundation; either
- * version 2.1 of the License.
+ * This library is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License as published by the
+ * Free Software Foundation; either version 2 of the License, or (at your
+ * option) any later version.
  *
- * This library is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * This library is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Lesser General Public License for more details.
+ * General Public License for more details.
  *
- * You should have received a copy of the GNU Lesser General Public License
+ * You should have received a copy of the GNU General Public License
  * along with this library.  If not, see <http://www.gnu.org/licenses/>.
  */
 
@@ -147,12 +147,13 @@ eb_scsi_pci(int fd, const struct disk_info *info, uint8_t *bus,
 	int rc;
 	unsigned int b=0,d=0,f=0;
 
+	/*
+	 * Maybe if we're on an old enough kernel,
+	 * SCSI_IOCTL_GET_PCI gives b:d.f ...
+	 */
 	rc = ioctl(fd, SCSI_IOCTL_GET_PCI, buf);
 	if (rc < 0)
 		return rc;
-
-	if (!strncmp(buf, "virtio", 6))
-		return eb_virt_pci(info, bus, device, function);
 
 	rc = sscanf(buf, "%x:%x:%x", &b, &d, &f);
 	if (rc != 3) {
@@ -169,7 +170,7 @@ eb_scsi_pci(int fd, const struct disk_info *info, uint8_t *bus,
 
 int
 __attribute__((__visibility__ ("hidden")))
-eb_virt_pci(const struct disk_info *info, uint8_t *bus, uint8_t *device,
+eb_modern_block_pci(const struct disk_info *info, uint8_t *bus, uint8_t *device,
 	    uint8_t *function)
 {
 	char *inbuf = NULL, outbuf[128];

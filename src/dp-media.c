@@ -25,7 +25,7 @@
 
 ssize_t
 __attribute__((__visibility__ ("default")))
-format_media_dn(char *buf, size_t size, const_efidp dp)
+_format_media_dn(char *buf, size_t size, const_efidp dp)
 {
 	ssize_t off = 0;
 	switch (dp->subtype) {
@@ -151,7 +151,7 @@ efidp_make_file(uint8_t *buf, ssize_t size, char *filepath)
 	efidp_file *file = (efidp_file *)buf;
 	unsigned char *lf = (unsigned char *)filepath;
 	ssize_t sz;
-	ssize_t len = utf8len(lf, -1);
+	ssize_t len = utf8len(lf, -1) + 1;
 	ssize_t req = sizeof (*file) + len * sizeof (uint16_t);
 	sz = efidp_make_generic(buf, size, EFIDP_MEDIA_TYPE, EFIDP_MEDIA_FILE,
 				req);

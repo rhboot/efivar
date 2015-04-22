@@ -24,22 +24,24 @@
 #include "dp.h"
 
 static ssize_t
-format_acpi_adr(char *buf, size_t size, ssize_t off, const_efidp dp)
+_format_acpi_adr(char *buf, size_t size, const_efidp dp)
 {
 	ssize_t o = 0;
-	o += format(buf, size, off+o, "AcpiAdr(");
-	o += format_array(buf, size, off+o, "%"PRIu32,
+	o += format(buf, size, o, "AcpiAdr(");
+	o += format_array(buf, size, o, "%"PRIu32,
 			  typeof(dp->acpi_adr.adr[0]),
 			  dp->acpi_adr.adr,
 			  (efidp_node_size(dp)-4)/sizeof (dp->acpi_adr.adr[0]));
-	o += format(buf, size, off+o, ")");
+	o += format(buf, size, o, ")");
 	return o;
 }
+#define format_acpi_adr(buf, size, off, dp) \
+	_format_acpi_adr(((buf)+(off)), ((size)?((size)-(off)):0), (dp))
 
 
 ssize_t
 __attribute__((__visibility__ ("default")))
-format_acpi_dn(char *buf, size_t size, const_efidp dp)
+_format_acpi_dn(char *buf, size_t size, const_efidp dp)
 {
 	ssize_t off = 0;
 	const char *hidstr = NULL;

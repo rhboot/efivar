@@ -35,7 +35,7 @@ format_edd10_guid(char *buf, size_t size, const_efidp dp)
 
 ssize_t
 __attribute__((__visibility__ ("default")))
-format_hw_dn(char *buf, size_t size, const_efidp dp)
+_format_hw_dn(char *buf, size_t size, const_efidp dp)
 {
 	efi_guid_t edd10_guid = EDD10_HARDWARE_VENDOR_PATH_GUID;
 	off_t off = 0;

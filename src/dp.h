@@ -130,10 +130,22 @@ format_vendor_helper(char *buf, size_t size, char *label, const_efidp dp)
 		_off+off;						\
 	})
 
-extern ssize_t format_hw_dn(char *buf, size_t size, const_efidp dp);
-extern ssize_t format_acpi_dn(char *buf, size_t size, const_efidp dp);
-extern ssize_t format_message_dn(char *buf, size_t size, const_efidp dp);
-extern ssize_t format_media_dn(char *buf, size_t size, const_efidp dp);
-extern ssize_t format_bios_boot_dn(char *buf, size_t size, const_efidp dp);
+extern ssize_t _format_hw_dn(char *buf, size_t size, const_efidp dp);
+extern ssize_t _format_acpi_dn(char *buf, size_t size, const_efidp dp);
+extern ssize_t _format_message_dn(char *buf, size_t size, const_efidp dp);
+extern ssize_t _format_media_dn(char *buf, size_t size, const_efidp dp);
+extern ssize_t _format_bios_boot_dn(char *buf, size_t size, const_efidp dp);
+
+#define format_hw_dn(buf, size, off, dp) \
+	_format_hw_dn(((buf)+(off)), ((size)?((size)-(off)):0), (dp))
+#define format_acpi_dn(buf, size, off, dp) \
+	_format_acpi_dn(((buf)+(off)), ((size)?((size)-(off)):0), (dp))
+#define format_message_dn(buf, size, off, dp) \
+	_format_message_dn(((buf)+(off)), ((size)?((size)-(off)):0), (dp))
+#define format_media_dn(buf, size, off, dp) \
+	_format_media_dn(((buf)+(off)), ((size)?((size)-(off)):0), (dp))
+#define format_bios_boot_dn(buf, size, off, dp) \
+	_format_bios_boot_dn(((buf)+(off)), ((size)?((size)-(off)):0), (dp))
+
 
 #endif /* _EFIVAR_INTERNAL_DP_H */

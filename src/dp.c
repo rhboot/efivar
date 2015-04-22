@@ -284,25 +284,25 @@ efidp_format_device_path(char *buf, size_t size, const_efidp dp, ssize_t limit)
 
 		switch (dp->type) {
 		case EFIDP_HARDWARE_TYPE:
-			sz = format_hw_dn(buf+off, size?size-off:0, dp);
+			sz = format_hw_dn(buf, size, off, dp);
 			if (sz < 0)
 				return -1;
 			off += sz;
 			break;
 		case EFIDP_ACPI_TYPE:
-			sz = format_acpi_dn(buf+off, size?size-off:0, dp);
+			sz = format_acpi_dn(buf, size, off, dp);
 			if (sz < 0)
 				return -1;
 			off += sz;
 			break;
 		case EFIDP_MESSAGE_TYPE:
-			sz = format_message_dn(buf+off, size?size-off:0, dp);
+			sz = format_message_dn(buf, size, off, dp);
 			if (sz < 0)
 				return -1;
 			off += sz;
 			break;
 		case EFIDP_MEDIA_TYPE:
-			sz = format_media_dn(buf+off, size?size-off:0, dp);
+			sz = format_media_dn(buf, size, off, dp);
 			if (sz < 0)
 				return -1;
 			off += sz;
