@@ -21,7 +21,7 @@
 #include <stdlib.h>
 #include <uchar.h>
 
-#include "efivar.h"
+#include <efivar.h>
 #include "lib.h"
 
 #define EFIVAR_MAGIC 0xf3df1597

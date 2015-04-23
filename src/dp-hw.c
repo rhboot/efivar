@@ -19,7 +19,7 @@
 #include <errno.h>
 #include <inttypes.h>
 
-#include "efivar.h"
+#include <efivar.h>
 #include "dp.h"
 
 ssize_t

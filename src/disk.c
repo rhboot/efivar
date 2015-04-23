@@ -32,6 +32,7 @@
 #include <unistd.h>
 
 #include <efivar.h>
+#include <efiboot.h>
 
 #include "util.h"
 #include "crc32.h"
@@ -163,7 +164,7 @@ msdos_disk_get_partition_info (int fd, int write_signature,
 }
 
 static int
-get_partition_info(int fd, int write_signature, int ignore_pmbr_error,
+get_partition_info(int fd, uint32_t options,
 		   uint32_t part, uint64_t *start, uint64_t *size,
 		   uint8_t *signature, uint8_t *mbr_type,
 		   uint8_t *signature_type)
@@ -194,10 +195,10 @@ get_partition_info(int fd, int write_signature, int ignore_pmbr_error,
 						  signature,
 						  mbr_type,
 						  signature_type,
-						  ignore_pmbr_error);
+			(options & EFIBOOT_OPTIONS_IGNORE_PMBR_ERR)?1:0);
 	if (gpt_invalid) {
 		mbr_invalid = msdos_disk_get_partition_info(fd,
-							    write_signature,
+			(options & EFIBOOT_OPTIONS_WRITE_SIGNATURE)?1:0,
 							    mbr, part,
 							    start, size,
 							    signature,
@@ -217,7 +218,7 @@ get_partition_info(int fd, int write_signature, int ignore_pmbr_error,
 ssize_t
 __attribute__((__visibility__ ("hidden")))
 _make_hd_dn(uint8_t *buf, ssize_t size, int fd, uint32_t partition,
-	    int write_signature, int ignore_pmbr_error)
+	    uint32_t options)
 {
 	uint64_t part_start=0, part_size = 0;
 	uint8_t signature[16]="", format=0, signature_type=0;
@@ -228,7 +229,7 @@ _make_hd_dn(uint8_t *buf, ssize_t size, int fd, uint32_t partition,
 		report_errors = 1;
 	errno = 0;
 
-	rc = get_partition_info(fd, write_signature, ignore_pmbr_error,
+	rc = get_partition_info(fd, options,
 				partition, &part_start,
 				&part_size, signature, &format,
 				&signature_type);

@@ -16,16 +16,21 @@
  * You should have received a copy of the GNU General Public License
  * along with this library.  If not, see <http://www.gnu.org/licenses/>.
  */
-
+#define _GNU_SOURCE 1
+#include <dirent.h>
 #include <errno.h>
 #include <inttypes.h>
+#include <limits.h>
 #include <linux/nvme.h>
 #include <scsi/scsi.h>
 #include <stdio.h>
 #include <sys/ioctl.h>
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <unistd.h>
 
-#include "efivar.h"
-#include "efiboot.h"
+#include <efivar.h>
+#include <efiboot.h>
 #include "dp.h"
 #include "linux.h"
 
@@ -167,29 +172,120 @@ eb_scsi_pci(int fd, const struct disk_info *info, uint8_t *bus,
 	return 0;
 }
 
+int
+__attribute__((__visibility__ ("hidden")))
+get_disk_name(uint64_t major, unsigned char minor,
+	      char *pathname, size_t max)
+{
+	char path[PATH_MAX+1] = "";
+	char linkbuf[PATH_MAX+1] = "";
+	ssize_t rc;
+
+	rc = snprintf(path, PATH_MAX, "/sys/dev/block/%"PRIu64":%hhd",
+		      major, minor);
+	if (rc < 0)
+		return -1;
+
+	rc = readlink(path, linkbuf, PATH_MAX);
+	if (rc < 0)
+		return -1;
+	linkbuf[PATH_MAX]='\0';
+
+	char *dev;
+	dev = strrchr(linkbuf, '/');
+	if (!dev) {
+		errno = EINVAL;
+		return -1;
+	}
+	*dev = '\0';
+
+	dev = strrchr(linkbuf, '/');
+	if (!dev) {
+		errno = EINVAL;
+		return -1;
+	}
+
+	strncpy(pathname, dev+1, max);
+	return 0;
+}
 
 int
 __attribute__((__visibility__ ("hidden")))
-eb_modern_block_pci(const struct disk_info *info, uint8_t *bus, uint8_t *device,
-	    uint8_t *function)
+eb_blockdev_pci_fill(struct disk_info *info)
 {
-	char *inbuf = NULL, outbuf[128];
+	char leftbuf[PATH_MAX+1]="", rightbuf[PATH_MAX+1]="";
 	ssize_t linksz;
+	int off = 0;
+	int sz = 0;
 	int rc;
 
-	rc = asprintf(&inbuf, "/sys/dev/block/%"PRIu64":%u",
+	rc = snprintf(leftbuf, PATH_MAX, "/sys/dev/block/%"PRIu64":%u",
 		      info->major, info->minor);
 	if (rc < 0)
 		return -1;
 
-	linksz = readlink(inbuf, outbuf, sizeof (outbuf));
-	outbuf[linksz] = '\0';
-	free(inbuf);
+	linksz = readlink(leftbuf, rightbuf, sizeof (rightbuf));
+	rightbuf[linksz] = '\0';
 
-	rc = sscanf(outbuf, "../../devices/pci0000:00/0000:%hhx:%hhx.%hhx",
-		    bus, device, function);
-	if (rc != 3)
+	off = strlen("../../devices/pci0000:00/");
+	int found=0;
+	while (1) {
+		uint16_t domain;
+		uint8_t bus, device, function;
+		rc = sscanf(rightbuf+off, "%hx:%hhx:%hhx.%hhx/%n",
+			    &domain, &bus, &device, &function, &sz);
+		if (rc != 4)
+			break;
+		info->pci_domain = domain;
+		info->pci_bus = bus;
+		info->pci_device = device;
+		info->pci_function = function;
+		found=1;
+		off += sz;
+	}
+	if (!found)
 		return -1;
+
+	if (info->interface_type == scsi) {
+		char diskname[PATH_MAX+1]="";
+		rc = get_disk_name(info->major, info->minor, diskname,
+				   PATH_MAX);
+		if (rc < 0)
+			return 0;
+
+		rc = snprintf(rightbuf, PATH_MAX, "/sys/class/block/%s/device",
+			      diskname);
+		if (rc < 0)
+			return 0;
+
+		linksz = readlink(rightbuf, leftbuf, PATH_MAX);
+		leftbuf[linksz] = '\0';
+
+		rc = sscanf(leftbuf, "../../../%d:%d:%d:%llu",
+			    &info->scsi_bus, &info->scsi_device,
+			    &info->scsi_target,
+			    (unsigned long long int *)&info->scsi_lun);
+		if (rc != 4)
+			return -1;
+
+		if (!strncmp(rightbuf+off, "ata", 3)) {
+			printf("rightbuf: %s\n", rightbuf);
+			info->interface_type = sata;
+		} else {
+			struct stat statbuf = { 0, };
+
+			rc = snprintf(leftbuf, PATH_MAX,
+			    "/sys/dev/block/%"PRIu64":%u/device/sas_address",
+			    info->major, info->minor);
+			if (rc < 0)
+				return 0;
+
+			rc = stat(leftbuf, &statbuf);
+			if (rc >= 0)
+				info->interface_type = sas;
+		}
+	}
+
 	return 0;
 }
 

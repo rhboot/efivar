@@ -20,7 +20,7 @@
 #include <inttypes.h>
 #include <stddef.h>
 
-#include "efivar.h"
+#include <efivar.h>
 #include "dp.h"
 
 static ssize_t

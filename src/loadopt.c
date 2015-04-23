@@ -16,7 +16,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this library.  If not, see <http://www.gnu.org/licenses/>.
  */
-#include "efivar.h"
+#include <efivar.h>
 #include "dp.h"
 
 typedef struct efi_load_option_s {

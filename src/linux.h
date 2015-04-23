@@ -26,18 +26,29 @@ struct disk_info {
 	unsigned char part;
 	uint64_t major;
 	unsigned char minor;
+	uint32_t edd10_devicenum;
+
+	uint16_t pci_domain;
+	uint8_t pci_bus;
+	uint8_t pci_device;
+	uint8_t pci_function;
+
+	uint32_t scsi_bus;
+	uint32_t scsi_device;
+	uint32_t scsi_target;
+	uint64_t scsi_lun;
 };
 
 enum _bus_type {bus_type_unknown, isa, pci};
 enum _interface_type {interface_type_unknown,
-		      ata, atapi, scsi, usb,
+		      ata, atapi, scsi, sata, sas, usb,
 		      i1394, fibre, i2o, md,
 		      virtblk, nvme};
 
 extern int eb_disk_info_from_fd(int fd, struct disk_info *info);
-
-extern int eb_modern_block_pci(const struct disk_info *info, uint8_t *bus,
-		       uint8_t *device, uint8_t *function);
+extern int get_disk_name(uint64_t major, unsigned char minor,
+			 char *diskname, size_t max);
+extern int eb_blockdev_pci_fill(struct disk_info *info);
 extern int eb_scsi_pci(int fd, const struct disk_info *info, uint8_t *bus,
 		       uint8_t *device, uint8_t *function);
 extern int eb_ide_pci(int fd, const struct disk_info *info, uint8_t *bus,

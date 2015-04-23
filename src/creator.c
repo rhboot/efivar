@@ -27,11 +27,13 @@
 #include <sys/types.h>
 #include <sys/stat.h>
 
-#include "efivar.h"
-#include "efiboot.h"
+#include <efivar.h>
+#include <efiboot.h>
+
+#include "disk.h"
 #include "dp.h"
 #include "linux.h"
-#include "disk.h"
+#include "list.h"
 
 static int
 __attribute__((__nonnull__ (1,2,3)))
@@ -130,177 +132,228 @@ err:
 	return ret;
 }
 
-static int
-open_disk(const char *pathname, int flags)
+static inline int
+is_parent_bridge(struct pci_dev *p, uint8_t target_bus)
 {
-	char *path;
-	const char *slash;
-	size_t len;
-	char linkbuf[PATH_MAX+1] = "";
-
-	slash = strrchr(pathname, '/');
-	if (!slash) {
-		errno = EINVAL;
-		return -1;
-	}
-	len = strlen("/sys/class/block/")+strlen(slash+1) + 1;
-	path = alloca(len);
-	path[0] = '\0';
-
-	strcat(path, "/sys/class/block/");
-	strcat(path, slash+1);
-
-	ssize_t rc;
-	rc = readlink(path, linkbuf, PATH_MAX);
-	if (rc < 0)
-		return -1;
-	linkbuf[PATH_MAX]='\0';
-
-	char *dev;
-	dev = strrchr(linkbuf, '/');
-	if (!dev) {
-		errno = EINVAL;
-		return -1;
-	}
-	*dev = '\0';
-
-	dev = strrchr(linkbuf, '/');
-	if (!dev) {
-		errno = EINVAL;
-		return -1;
-	}
-
-	sprintf(path, "/dev%s", dev);
-	return open(path, flags);
+#if 0
+	uint32_t w = pci_read_word(p, PCI_HEADER_TYPE);
+	uint32_t b = pci_read_byte(p, PCI_SECONDARY_BUS);
+	printf("p: %p w: %08x w&0x7f: %08x sb: %hhx\n", p, w, w & 0x7f, b);
+#endif
+	if ((pci_read_word(p, PCI_HEADER_TYPE) & 0x7f)
+	    != PCI_HEADER_TYPE_BRIDGE)
+		return 0;
+	if (pci_read_byte(p, PCI_SECONDARY_BUS) != target_bus)
+		return 0;
+	return 1;
 }
 
-static ssize_t
-make_the_whole_path(uint8_t *buf, size_t size, int fd, struct disk_info *info,
-		    char *devpath, char *filepath, uint32_t abbrev,
-		    uint32_t extra, int write_signature, int ignore_pmbr_error)
+static inline struct pci_dev *
+find_parent(struct pci_access *pacc, uint8_t target_bus)
 {
+	struct pci_dev *p;
+
+	for (p = pacc->devices; p; p=p->next) {
+		if (is_parent_bridge(p, target_bus))
+			return p;
+	}
+	return NULL;
+}
+
+struct device {
+	struct pci_dev *pci_dev;
+	struct list_head node;
+};
+
+static ssize_t
+make_pci_path(uint8_t *buf, size_t size, int fd, struct disk_info *info,
+	      char *devpath)
+{
+	struct pci_access *pacc = NULL;
 	ssize_t ret=-1;
 	ssize_t off=0, sz;
-	struct pci_access *pacc = NULL;
-	uint8_t bus, device, function;
 	int rc = 0;
 
-	if ((abbrev & EFIBOOT_ABBREV_EDD10)
-	    && (!(EFIBOOT_ABBREV_FILE) && !(abbrev & EFIBOOT_ABBREV_HD))) {
-		sz = efidp_make_edd10(buf, size, extra);
-		if (sz < 0)
-			return -1;
-		off = sz;
-	} else if (!(abbrev & EFIBOOT_ABBREV_FILE)
-		   && !(abbrev & EFIBOOT_ABBREV_HD)) {
-		pacc = pci_alloc();
-		if (!pacc)
-			return -1;
+	pacc = pci_alloc();
+	if (!pacc)
+		return -1;
 
-		pci_init(pacc);
-		pci_scan_bus(pacc);
+	pci_init(pacc);
+	pci_scan_bus(pacc);
 
-		/*
-		 * We're probably on a modern kernel, so just parse the
-		 * symlink from /sys/dev/block/$major:$minor and get it
-		 * from there.
-		 */
-		rc = eb_modern_block_pci(info, &bus, &device, &function);
-		if (rc < 0) {
-			switch (info->interface_type) {
-			case ata:
-				rc = eb_ide_pci(fd, info, &bus, &device,
-						&function);
-				break;
-			case scsi:
-				rc = eb_scsi_pci(fd, info, &bus, &device,
-						 &function);
-				break;
-			default:
-				break;
-			}
-			if (rc < 0)
-				goto err;
+	/*
+	 * We're probably on a modern kernel, so just parse the
+	 * symlink from /sys/dev/block/$major:$minor and get it
+	 * from there.
+	 */
+	rc = eb_blockdev_pci_fill(info);
+	if (rc < 0) {
+		switch (info->interface_type) {
+		case ata:
+			rc = eb_ide_pci(fd, info, &info->pci_bus,
+					&info->pci_device,
+					&info->pci_function);
+			break;
+		case scsi:
+			rc = eb_scsi_pci(fd, info, &info->pci_bus,
+					 &info->pci_device,
+					 &info->pci_function);
+			break;
+		default:
+			break;
 		}
+		if (rc < 0)
+			goto err;
+	}
 
+	LIST_HEAD(pci_parent_list);
+	uint8_t bus = info->pci_bus;
+	struct pci_dev *pci_dev = NULL;
+	struct device *dev;
+	do {
+		pci_dev = find_parent(pacc, bus);
+		if (pci_dev) {
+			dev = alloca(sizeof(struct device));
+			list_add(&pci_parent_list, &dev->node);
+			dev->pci_dev = pci_dev;
+			bus = pci_dev->bus;
+		}
+	} while (pci_dev && bus);
+
+	if (!list_empty(&pci_parent_list)) {
 		/* If you haven't set _CID to PNP0A03 on your PCIe root hub,
 		 * you're not going to get this far before it stops working.
 		 */
 		sz = efidp_make_acpi_hid(buf+off, size?size-off:0,
-					 EFIDP_ACPI_PCI_ROOT_HID, bus);
+				 EFIDP_ACPI_PCI_ROOT_HID, dev->pci_dev->bus);
+		list_del(&dev->node);
+	} else {
+		sz = efidp_make_acpi_hid(buf+off, size?size-off:0,
+				EFIDP_ACPI_PCI_ROOT_HID, info->pci_bus);
+	}
+	if (sz < 0)
+		goto err;
+	off += sz;
+
+	struct list_head *pos, *n;
+	list_for_each_safe(pos, n, &pci_parent_list) {
+		dev = list_entry(pos, struct device, node);
+		sz = efidp_make_pci(buf+off, size?size-off:0, dev->pci_dev->dev,
+				    dev->pci_dev->func);
 		if (sz < 0)
 			goto err;
 		off += sz;
-
-		uint8_t target_bus = bus;
-		struct pci_dev *dev;
-		do {
-			dev = NULL;
-			for (struct pci_dev *p = pacc->devices; p; p=p->next) {
-				if ((pci_read_word(p, PCI_HEADER_TYPE) & 0x7f)
-				    != PCI_HEADER_TYPE_BRIDGE)
-					continue;
-				if (pci_read_byte(p, PCI_SECONDARY_BUS)
-				    != target_bus)
-					continue;
-				sz = efidp_make_pci(buf+off, size?size-off:0,
-						    p->dev, p->func);
-				if (sz < 0)
-					goto err;
-				off += sz;
-				target_bus = p->bus;
-				dev = p;
-				break;
-			}
-		} while (dev && target_bus);
-
-		sz = efidp_make_pci(buf+off, size?size-off:0, device, function);
-		if (sz < 0)
-			goto err;
-		off += sz;
-
-		switch (info->interface_type) {
-		case nvme:
-			{
-				uint32_t ns_id=0;
-				int rc = eb_nvme_ns_id(fd, &ns_id);
-				if (rc < 0)
-					goto err;
-
-				sz = efidp_make_nvme(buf+off, size?size-off:0,
-						     ns_id, NULL);
-				if (sz < 0)
-					goto err;
-				off += sz;
-				break;
-			}
-		case virtblk:
-			break;
-		default:
-			{
-				uint8_t host = 0, channel = 0, id = 0, lun = 0;
-				int rc = eb_scsi_idlun(fd, &host, &channel,
-						       &id, &lun);
-				if (rc < 0)
-					goto err;
-				sz = efidp_make_scsi(buf+off, size?size-off:0,
-						     id, lun);
-				if (sz < 0)
-					goto err;
-				off += sz;
-			}
-		}
+		list_del(&dev->node);
 	}
 
-	if (!(abbrev & EFIBOOT_ABBREV_FILE)) {
-		int disk_fd = open_disk(devpath,
-					write_signature ? O_RDWR : O_RDONLY);
+	sz = efidp_make_pci(buf+off, size?size-off:0, info->pci_device,
+			    info->pci_function);
+	if (sz < 0)
+		goto err;
+	off += sz;
+
+	switch (info->interface_type) {
+	case nvme:
+		{
+			uint32_t ns_id=0;
+			int rc = eb_nvme_ns_id(fd, &ns_id);
+			if (rc < 0)
+				goto err;
+
+			sz = efidp_make_nvme(buf+off, size?size-off:0,
+					     ns_id, NULL);
+			if (sz < 0)
+				goto err;
+			off += sz;
+			break;
+		}
+	case virtblk:
+		break;
+	case sata:
+		{
+			uint8_t host = 0, channel = 0, id = 0, lun = 0;
+			int rc = eb_scsi_idlun(fd, &host, &channel,
+					       &id, &lun);
+			if (rc < 0)
+				goto err;
+			sz = efidp_make_sata(buf+off, size?size-off:0,
+					     channel, id, lun);
+			if (sz < 0)
+				goto err;
+			off += sz;
+			break;
+		}
+	case sas:
+		break;
+	default:
+		{
+			uint8_t host = 0, channel = 0, id = 0, lun = 0;
+			int rc = eb_scsi_idlun(fd, &host, &channel,
+					       &id, &lun);
+			if (rc < 0)
+				goto err;
+			sz = efidp_make_scsi(buf+off, size?size-off:0,
+					     id, lun);
+			if (sz < 0)
+				goto err;
+			off += sz;
+		}
+	}
+	ret = off;
+	errno = 0;
+err:
+	if (pacc)
+		pci_cleanup(pacc);
+
+	return ret;
+}
+
+static int
+open_disk(struct disk_info *info, int flags)
+{
+	char diskname[PATH_MAX+1] = "";
+	char diskpath[PATH_MAX+1] = "";
+	int rc;
+
+	rc = get_disk_name(info->major, info->minor, diskname, PATH_MAX);
+	if (rc < 0)
+		return -1;
+
+	strcpy(diskpath, "/dev/");
+	strncat(diskpath, diskname, PATH_MAX - 5);
+	return open(diskpath, flags);
+}
+
+static ssize_t
+make_the_whole_path(uint8_t *buf, size_t size, int fd, struct disk_info *info,
+		    char *devpath, char *filepath, uint32_t options)
+{
+	ssize_t ret=-1;
+	ssize_t off=0, sz;
+
+	if ((options & EFIBOOT_ABBREV_EDD10)
+			&& (!(options & EFIBOOT_ABBREV_FILE)
+			    && !(options & EFIBOOT_ABBREV_HD))) {
+		sz = efidp_make_edd10(buf, size, info->edd10_devicenum);
+		if (sz < 0)
+			return -1;
+		off = sz;
+	} else if (!(options & EFIBOOT_ABBREV_FILE)
+		   && !(options & EFIBOOT_ABBREV_HD)) {
+		sz = make_pci_path(buf, size, fd, info, devpath);
+		if (sz < 0)
+			return -1;
+		off = sz;
+	}
+
+	if (!(options & EFIBOOT_ABBREV_FILE)) {
+		int disk_fd = open_disk(info,
+		    (options& EFIBOOT_OPTIONS_WRITE_SIGNATURE)?O_RDWR:O_RDONLY);
 		int saved_errno;
 		if (disk_fd < 0)
 			goto err;
 
-		sz = make_hd_dn(buf, size, off, disk_fd, info->part,
-				write_signature, ignore_pmbr_error);
+		sz = make_hd_dn(buf, size, off, disk_fd, info->part, options);
 		saved_errno = errno;
 		close(disk_fd);
 		errno = saved_errno;
@@ -314,11 +367,13 @@ make_the_whole_path(uint8_t *buf, size_t size, int fd, struct disk_info *info,
 		goto err;
 	off += sz;
 
+	sz = efidp_make_end_entire(buf+off, size?size-off:0);
+	if (sz < 0)
+		goto err;
+	off += sz;
+
 	ret = off;
 err:
-	if (pacc)
-		pci_cleanup(pacc);
-
 	return ret;
 }
 
@@ -327,12 +382,7 @@ __attribute__((__nonnull__ (3)))
 __attribute__((__visibility__ ("default")))
 efi_generate_file_device_path(uint8_t *buf, ssize_t size,
 			      const char const *filepath,
-			      uint32_t abbrev,
-			      uint32_t extra, /* :/ */
-			      int __attribute__((__unused__)) ignore_fs_err,
-			      int write_signature,
-			      int ignore_pmbr_error
-			      )
+			      uint32_t options, ...)
 {
 	int rc;
 	ssize_t ret = -1;
@@ -353,9 +403,17 @@ efi_generate_file_device_path(uint8_t *buf, ssize_t size,
 	if (rc < 0)
 		goto err;
 
+	if (options & EFIBOOT_ABBREV_EDD10) {
+		va_list ap;
+		va_start(ap, options);
+
+		info.edd10_devicenum = va_arg(ap, uint32_t);
+
+		va_end(ap);
+	}
+
 	ret = make_the_whole_path(buf, size, fd, &info, devpath,
-				  relpath, abbrev, extra,
-				  write_signature, ignore_pmbr_error);
+				  relpath, options);
 err:
 	if (fd >= 0)
 		close(fd);
@@ -371,7 +429,7 @@ __attribute__((__nonnull__ (3)))
 __attribute__((__visibility__ ("default")))
 efi_generate_network_device_path(uint8_t *buf, ssize_t size,
 			       const char const *ifname,
-			       uint32_t abbrev)
+			       uint32_t options)
 {
 	errno = ENOSYS;
 	return -1;

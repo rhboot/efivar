@@ -20,7 +20,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 
-#include "efivar.h"
+#include <efivar.h>
 #include "dp.h"
 
 static const efidp_header end_entire = {

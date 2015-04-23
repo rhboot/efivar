@@ -20,12 +20,10 @@
 #define _EFIBOOT_DISK_H
 
 extern ssize_t _make_hd_dn(uint8_t *buf, ssize_t size, int fd,
-			   uint32_t partition, int write_signature,
-			   int ignore_pmbr_error)
+			   uint32_t partition, uint32_t options)
 	__attribute__((__visibility__ ("hidden")));
-#define make_hd_dn(buf, size, off, fd, partition, write_signature, \
-		   ignore_pmbr_error) \
+#define make_hd_dn(buf, size, off, fd, partition, option) \
 	_make_hd_dn(((buf)+(off)), ((size)?((size)-(off)):0), (fd),\
-		    (partition), (write_signature), (ignore_pmbr_error))
+		    (partition), (options))
 
 #endif /* _EFIBOOT_DISK_H */

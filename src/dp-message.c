@@ -20,7 +20,7 @@
 #include <inttypes.h>
 #include <stddef.h>
 
-#include "efivar.h"
+#include <efivar.h>
 #include "endian.h"
 #include "dp.h"
 
@@ -617,3 +617,21 @@ efidp_make_sata(uint8_t *buf, ssize_t size, uint16_t hba_port,
 	}
 	return sz;
 }
+
+#if 0
+ssize_t
+__attribute__((__visibility__ ("default")))
+efidp_make_sas(uint8_t *buf, ssize_t size, uint16_t hba_port,
+		uint16_t port_multiplier_port, uint16_t lun)
+{
+	efidp_sas *sas = (efidp_sas *)buf;
+	ssize_t req = sizeof (*sas);
+	ssize_t sz;
+
+	sz = efidp_make_generic(buf, size, EFIDP_MESSAGE_TYPE,
+					EFIDP_MSG_SAS, sizeof (*sas));
+	if (size && sz == req) {
+	}
+	return sz;
+}
+#endif
