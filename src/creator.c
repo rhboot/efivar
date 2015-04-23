@@ -190,14 +190,14 @@ make_pci_path(uint8_t *buf, size_t size, int fd, struct disk_info *info,
 	if (rc < 0) {
 		switch (info->interface_type) {
 		case ata:
-			rc = eb_ide_pci(fd, info, &info->pci_bus,
-					&info->pci_device,
-					&info->pci_function);
+			rc = eb_ide_pci(fd, info, &info->pci_dev.pci_bus,
+					&info->pci_dev.pci_device,
+					&info->pci_dev.pci_function);
 			break;
 		case scsi:
-			rc = eb_scsi_pci(fd, info, &info->pci_bus,
-					 &info->pci_device,
-					 &info->pci_function);
+			rc = eb_scsi_pci(fd, info, &info->pci_dev.pci_bus,
+					 &info->pci_dev.pci_device,
+					 &info->pci_dev.pci_function);
 			break;
 		default:
 			break;
@@ -207,33 +207,31 @@ make_pci_path(uint8_t *buf, size_t size, int fd, struct disk_info *info,
 	}
 
 	LIST_HEAD(pci_parent_list);
-	uint8_t bus = info->pci_bus;
+	uint8_t bus = info->pci_dev.pci_bus;
 	struct pci_dev *pci_dev = NULL;
 	struct device *dev;
 	do {
 		pci_dev = find_parent(pacc, bus);
 		if (pci_dev) {
-			dev = alloca(sizeof(struct device));
+			dev = alloca(sizeof(*dev));
+			INIT_LIST_HEAD(&dev->node);
 			list_add(&pci_parent_list, &dev->node);
 			dev->pci_dev = pci_dev;
 			bus = pci_dev->bus;
 		}
 	} while (pci_dev && bus);
 
-	if (!list_empty(&pci_parent_list)) {
+	if (info->pci_root.root_pci_bus != 0xff) {
 		/* If you haven't set _CID to PNP0A03 on your PCIe root hub,
 		 * you're not going to get this far before it stops working.
 		 */
 		sz = efidp_make_acpi_hid(buf+off, size?size-off:0,
-				 EFIDP_ACPI_PCI_ROOT_HID, dev->pci_dev->bus);
-		list_del(&dev->node);
-	} else {
-		sz = efidp_make_acpi_hid(buf+off, size?size-off:0,
-				EFIDP_ACPI_PCI_ROOT_HID, info->pci_bus);
+				 EFIDP_ACPI_PCI_ROOT_HID,
+				 info->pci_root.root_pci_bus);
+		if (sz < 0)
+			goto err;
+		off += sz;
 	}
-	if (sz < 0)
-		goto err;
-	off += sz;
 
 	struct list_head *pos, *n;
 	list_for_each_safe(pos, n, &pci_parent_list) {
@@ -246,8 +244,8 @@ make_pci_path(uint8_t *buf, size_t size, int fd, struct disk_info *info,
 		list_del(&dev->node);
 	}
 
-	sz = efidp_make_pci(buf+off, size?size-off:0, info->pci_device,
-			    info->pci_function);
+	sz = efidp_make_pci(buf+off, size?size-off:0, info->pci_dev.pci_device,
+			    info->pci_dev.pci_function);
 	if (sz < 0)
 		goto err;
 	off += sz;
@@ -277,7 +275,9 @@ make_pci_path(uint8_t *buf, size_t size, int fd, struct disk_info *info,
 			if (rc < 0)
 				goto err;
 			sz = efidp_make_sata(buf+off, size?size-off:0,
-					     channel, id, lun);
+					     info->sata_info.ata_port,
+					     info->sata_info.ata_pmp,
+					     info->sata_info.ata_devno);
 			if (sz < 0)
 				goto err;
 			off += sz;

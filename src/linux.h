@@ -19,6 +19,43 @@
 #ifndef _EFIBOOT_LINUX_H
 #define _EFIBOOT_LINUX_H
 
+struct pci_root_info {
+	uint16_t root_pci_domain;
+	uint8_t root_pci_bus;
+};
+
+struct pci_dev_info {
+	uint16_t pci_domain;
+	uint8_t pci_bus;
+	uint8_t pci_device;
+	uint8_t pci_function;
+};
+
+struct scsi_info {
+	uint32_t scsi_bus;
+	uint32_t scsi_device;
+	uint32_t scsi_target;
+	uint64_t scsi_lun;
+};
+
+struct sas_info {
+	uint32_t scsi_bus;
+	uint32_t scsi_device;
+	uint32_t scsi_target;
+	uint64_t scsi_lun;
+};
+
+struct sata_info {
+	uint32_t scsi_bus;
+	uint32_t scsi_device;
+	uint32_t scsi_target;
+	uint64_t scsi_lun;
+
+	uint32_t ata_devno;
+	uint32_t ata_port;
+	uint32_t ata_pmp;
+};
+
 struct disk_info {
 	int interface_type;
 	unsigned int controllernum;
@@ -28,15 +65,17 @@ struct disk_info {
 	unsigned char minor;
 	uint32_t edd10_devicenum;
 
-	uint16_t pci_domain;
-	uint8_t pci_bus;
-	uint8_t pci_device;
-	uint8_t pci_function;
+	struct pci_root_info pci_root;
+	struct pci_dev_info pci_dev;
 
-	uint32_t scsi_bus;
-	uint32_t scsi_device;
-	uint32_t scsi_target;
-	uint64_t scsi_lun;
+	union {
+		struct scsi_info scsi_info;
+		struct sas_info sas_info;
+		struct sata_info sata_info;
+	};
+
+	char *disk_name;
+	char *part_name;
 };
 
 enum _bus_type {bus_type_unknown, isa, pci};

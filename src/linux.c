@@ -19,6 +19,7 @@
 #define _GNU_SOURCE 1
 #include <dirent.h>
 #include <errno.h>
+#include <fcntl.h>
 #include <inttypes.h>
 #include <limits.h>
 #include <linux/nvme.h>
@@ -26,13 +27,16 @@
 #include <stdio.h>
 #include <sys/ioctl.h>
 #include <sys/types.h>
+#include <sys/param.h>
 #include <sys/stat.h>
 #include <unistd.h>
 
 #include <efivar.h>
 #include <efiboot.h>
+
 #include "dp.h"
 #include "linux.h"
+#include "util.h"
 
 #ifndef SCSI_IOCTL_GET_IDLUN
 #define SCSI_IOCTL_GET_IDLUN 0x5382
@@ -209,6 +213,149 @@ get_disk_name(uint64_t major, unsigned char minor,
 	return 0;
 }
 
+static int
+sysfs_test_sata(const char *buf, ssize_t size)
+{
+	if (!strncmp(buf, "ata", MIN(size,3)))
+		return 1;
+	return 0;
+}
+
+static ssize_t
+sysfs_sata_get_port_info(uint32_t print_id, struct disk_info *info)
+{
+	DIR *d;
+	struct dirent *de;
+	int saved_errno;
+	char path[PATH_MAX+1]="";
+	uint8_t *buf = NULL;
+	size_t bufsize = -1;
+	int fd;
+	int rc;
+
+	d = opendir("/sys/class/ata_device/");
+	if (!d)
+		return -1;
+
+	while ((de = readdir(d)) != NULL) {
+		uint32_t found_print_id;
+		uint32_t found_pmp;
+		uint32_t found_devno = 0;
+
+		if (!strcmp(de->d_name, ".") || !strcmp(de->d_name, ".."))
+			continue;
+
+		int rc;
+		rc = sscanf(de->d_name, "dev%d.%d.%d", &found_print_id,
+			    &found_pmp, &found_devno);
+		if (rc == 2) {
+			found_devno = found_pmp;
+			found_pmp=0;
+		} else if (rc != 3) {
+			saved_errno = errno;
+			closedir(d);
+			errno = saved_errno;
+			return -1;
+		}
+		if (found_print_id == print_id) {
+			info->sata_info.ata_devno = found_devno;
+			info->sata_info.ata_pmp = found_pmp;
+			break;
+		}
+	}
+	closedir(d);
+
+	rc = snprintf(path, PATH_MAX, "/sys/class/ata_port/ata%d/port_no",
+		      print_id);
+	if (rc < 0)
+		return -1;
+
+	fd = open(path, O_RDONLY);
+	rc = read_file(fd, &buf, &bufsize);
+	saved_errno = errno;
+	close(fd);
+	errno = saved_errno;
+	if (rc < 0)
+		return -1;
+
+	buf[bufsize]='\0';
+	rc = sscanf((char *)buf, "%d", &info->sata_info.ata_port);
+	saved_errno = errno;
+	free(buf);
+	errno = saved_errno;
+	if (rc != 1)
+		return -1;
+
+	info->sata_info.ata_port -= 1;
+	return 0;
+}
+
+static ssize_t
+sysfs_parse_sata(const char *buf, ssize_t size, struct disk_info *info)
+{
+	ssize_t off = 0;
+	int sz = 0;
+	int rc;
+
+	uint32_t print_id;
+
+	uint32_t scsi_bus;
+	uint32_t scsi_device;
+	uint32_t scsi_target;
+	uint32_t scsi_lun;
+
+	/* find the ata info:
+	 * ata1/host0/target0:0:0/
+	 *    ^dev  ^host   x y z
+	 */
+	rc = sscanf(buf, "ata%d/host%d/target%d:%d:%d/%n",
+		    &print_id, &scsi_bus, &scsi_device, &scsi_target, &scsi_lun,
+		    &sz);
+	if (rc != 5)
+		return -1;
+	off += sz;
+
+	/* find the emulated scsi bits (and ignore them)
+	 * 0:0:0:0/
+	 */
+	uint16_t dummy0;
+	uint8_t dummy1, dummy2;
+	uint64_t dummy3;
+	rc = sscanf(buf+off, "%hx:%hhx:%hhx:%"PRIu64"/%n", &dummy0, &dummy1,
+		    &dummy2, &dummy3, &sz);
+	if (rc != 4)
+		return -1;
+	off += sz;
+
+	/* what's left is:
+	 * block/sda/sda4
+	 */
+	char *disk_name = NULL;
+	char *part_name = NULL;
+	rc = sscanf(buf+off, "block/%m[^/]/%m[^/]%n", &disk_name, &part_name,
+		    &sz);
+	if (rc != 2)
+		return -1;
+	off += sz;
+
+	info->sata_info.scsi_bus = scsi_bus;
+	info->sata_info.scsi_device = scsi_device;
+	info->sata_info.scsi_target = scsi_target;
+	info->sata_info.scsi_lun = scsi_lun;
+
+	rc = sysfs_sata_get_port_info(print_id, info);
+	if (rc < 0) {
+		free(disk_name);
+		free(part_name);
+		return -1;
+	}
+	info->disk_name = disk_name;
+	info->part_name = part_name;
+	info->interface_type = sata;
+
+	return off;
+}
+
 int
 __attribute__((__visibility__ ("hidden")))
 eb_blockdev_pci_fill(struct disk_info *info)
@@ -227,7 +374,25 @@ eb_blockdev_pci_fill(struct disk_info *info)
 	linksz = readlink(leftbuf, rightbuf, sizeof (rightbuf));
 	rightbuf[linksz] = '\0';
 
-	off = strlen("../../devices/pci0000:00/");
+	/*
+	 * find the pci root domain and port; they basically look like:
+	 * ../../devices/pci0000:00/
+	 *                  ^d   ^p
+	 */
+	uint16_t root_domain;
+	uint8_t root_bus;
+	rc = sscanf(rightbuf+off, "../../devices/pci%hx:%hhx/%n",
+		    &root_domain, &root_bus, &sz);
+	if (rc != 2)
+		return -1;
+	info->pci_root.root_pci_domain = root_domain;
+	info->pci_root.root_pci_bus = root_bus;
+	off += sz;
+
+	/* find the pci domain/bus/device/function:
+	 * 0000:00:01.0/0000:01:00.0/
+	 *              ^d   ^b ^d ^f (of the last one in the series)
+	 */
 	int found=0;
 	while (1) {
 		uint16_t domain;
@@ -236,17 +401,50 @@ eb_blockdev_pci_fill(struct disk_info *info)
 			    &domain, &bus, &device, &function, &sz);
 		if (rc != 4)
 			break;
-		info->pci_domain = domain;
-		info->pci_bus = bus;
-		info->pci_device = device;
-		info->pci_function = function;
+		info->pci_dev.pci_domain = domain;
+		info->pci_dev.pci_bus = bus;
+		info->pci_dev.pci_device = device;
+		info->pci_dev.pci_function = function;
 		found=1;
 		off += sz;
 	}
 	if (!found)
 		return -1;
 
-	if (info->interface_type == scsi) {
+	rc = sysfs_test_sata(rightbuf+off, PATH_MAX-off);
+	if (rc < 0)
+		return -1;
+	if (rc > 0) {
+		sz = sysfs_parse_sata(rightbuf+off, PATH_MAX-off, info);
+		if (sz < 0)
+			return sz;
+		off += sz;
+	}
+
+#if 0
+	rc = test_sas(rightbuf+off, PATH_MAX-off);
+
+	} else {
+		struct stat statbuf = { 0, };
+
+		rc = snprintf(leftbuf, PATH_MAX,
+			    "/sys/dev/block/%"PRIu64":%u/device/sas_address",
+			    info->major, info->minor);
+		if (rc < 0)
+			return -1;
+
+		rc = stat(leftbuf, &statbuf);
+		if (rc >= 0) {
+			sz = parse_sysfs_sas(rightbuf+off, PATH_MAX-off,
+					     &info->sas_info);
+		if (sz < 0)
+			return -1;
+		info->interface_type = sas;
+		off += sz;
+	}
+
+	if (info->interface_type == scsi
+	    || info->interface_type == sas) {
 		char diskname[PATH_MAX+1]="";
 		rc = get_disk_name(info->major, info->minor, diskname,
 				   PATH_MAX);
@@ -268,23 +466,8 @@ eb_blockdev_pci_fill(struct disk_info *info)
 		if (rc != 4)
 			return -1;
 
-		if (!strncmp(rightbuf+off, "ata", 3)) {
-			printf("rightbuf: %s\n", rightbuf);
-			info->interface_type = sata;
-		} else {
-			struct stat statbuf = { 0, };
-
-			rc = snprintf(leftbuf, PATH_MAX,
-			    "/sys/dev/block/%"PRIu64":%u/device/sas_address",
-			    info->major, info->minor);
-			if (rc < 0)
-				return 0;
-
-			rc = stat(leftbuf, &statbuf);
-			if (rc >= 0)
-				info->interface_type = sas;
-		}
 	}
+#endif
 
 	return 0;
 }
@@ -297,6 +480,10 @@ eb_disk_info_from_fd(int fd, struct disk_info *info)
 	int rc;
 
 	memset(info, 0, sizeof *info);
+
+	info->pci_root.root_pci_domain = 0xffff;
+	info->pci_root.root_pci_bus = 0xff;
+
 	memset(&buf, 0, sizeof(struct stat));
 	rc = fstat(fd, &buf);
 	if (rc == -1) {
