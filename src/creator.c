@@ -390,6 +390,7 @@ efi_generate_file_device_path(uint8_t *buf, ssize_t size,
 	char *relpath = NULL;
 	struct disk_info info = { 0, };
 	int fd = -1;
+	int saved_errno;
 
 	rc = find_file(filepath, &devpath, &relpath);
 	if (rc < 0)
@@ -415,12 +416,24 @@ efi_generate_file_device_path(uint8_t *buf, ssize_t size,
 	ret = make_the_whole_path(buf, size, fd, &info, devpath,
 				  relpath, options);
 err:
+	saved_errno = errno;
+	if (info.disk_name) {
+		free(info.disk_name);
+		info.disk_name = NULL;
+	}
+
+	if (info.part_name) {
+		free(info.part_name);
+		info.part_name = NULL;
+	}
+
 	if (fd >= 0)
 		close(fd);
 	if (devpath)
 		free(devpath);
 	if (relpath)
 		free(relpath);
+	errno = saved_errno;
 	return ret;
 }
 
