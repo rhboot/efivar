@@ -132,179 +132,38 @@ err:
 	return ret;
 }
 
-static inline int
-is_parent_bridge(struct pci_dev *p, uint8_t target_bus)
-{
-#if 0
-	uint32_t w = pci_read_word(p, PCI_HEADER_TYPE);
-	uint32_t b = pci_read_byte(p, PCI_SECONDARY_BUS);
-	printf("p: %p w: %08x w&0x7f: %08x sb: %hhx\n", p, w, w & 0x7f, b);
-#endif
-	if ((pci_read_word(p, PCI_HEADER_TYPE) & 0x7f)
-	    != PCI_HEADER_TYPE_BRIDGE)
-		return 0;
-	if (pci_read_byte(p, PCI_SECONDARY_BUS) != target_bus)
-		return 0;
-	return 1;
-}
-
-static inline struct pci_dev *
-find_parent(struct pci_access *pacc, uint8_t target_bus)
-{
-	struct pci_dev *p;
-
-	for (p = pacc->devices; p; p=p->next) {
-		if (is_parent_bridge(p, target_bus))
-			return p;
-	}
-	return NULL;
-}
-
-struct device {
-	struct pci_dev *pci_dev;
-	struct list_head node;
-};
-
 static ssize_t
 make_pci_path(uint8_t *buf, size_t size, int fd, struct disk_info *info,
 	      char *devpath)
 {
-	struct pci_access *pacc = NULL;
 	ssize_t ret=-1;
 	ssize_t off=0, sz;
-	int rc = 0;
-
-	pacc = pci_alloc();
-	if (!pacc)
-		return -1;
-
-	pci_init(pacc);
-	pci_scan_bus(pacc);
 
 	/*
 	 * We're probably on a modern kernel, so just parse the
 	 * symlink from /sys/dev/block/$major:$minor and get it
 	 * from there.
 	 */
-	rc = eb_blockdev_pci_fill(info);
-	if (rc < 0) {
-		switch (info->interface_type) {
-		case ata:
-			rc = eb_ide_pci(fd, info, &info->pci_dev.pci_bus,
-					&info->pci_dev.pci_device,
-					&info->pci_dev.pci_function);
-			break;
-		case scsi:
-			rc = eb_scsi_pci(fd, info, &info->pci_dev.pci_bus,
-					 &info->pci_dev.pci_device,
-					 &info->pci_dev.pci_function);
-			break;
-		default:
-			break;
-		}
-		if (rc < 0)
-			goto err;
-	}
-
-	LIST_HEAD(pci_parent_list);
-	uint8_t bus = info->pci_dev.pci_bus;
-	struct pci_dev *pci_dev = NULL;
-	struct device *dev;
-	do {
-		pci_dev = find_parent(pacc, bus);
-		if (pci_dev) {
-			dev = alloca(sizeof(*dev));
-			INIT_LIST_HEAD(&dev->node);
-			list_add(&pci_parent_list, &dev->node);
-			dev->pci_dev = pci_dev;
-			bus = pci_dev->bus;
-		}
-	} while (pci_dev && bus);
-
-	if (info->pci_root.root_pci_bus != 0xff) {
-		/* If you haven't set _CID to PNP0A03 on your PCIe root hub,
-		 * you're not going to get this far before it stops working.
-		 */
-		sz = efidp_make_acpi_hid(buf+off, size?size-off:0,
-				 EFIDP_ACPI_PCI_ROOT_HID,
-				 info->pci_root.root_pci_bus);
-		if (sz < 0)
-			goto err;
-		off += sz;
-	}
-
-	struct list_head *pos, *n;
-	list_for_each_safe(pos, n, &pci_parent_list) {
-		dev = list_entry(pos, struct device, node);
-		sz = efidp_make_pci(buf+off, size?size-off:0, dev->pci_dev->dev,
-				    dev->pci_dev->func);
-		if (sz < 0)
-			goto err;
-		off += sz;
-		list_del(&dev->node);
-	}
-
-	sz = efidp_make_pci(buf+off, size?size-off:0, info->pci_dev.pci_device,
-			    info->pci_dev.pci_function);
+	sz = eb_blockdev_pci_fill(buf, size, fd, info);
 	if (sz < 0)
-		goto err;
+		return -1;
 	off += sz;
 
-	switch (info->interface_type) {
-	case nvme:
-		{
-			uint32_t ns_id=0;
-			int rc = eb_nvme_ns_id(fd, &ns_id);
-			if (rc < 0)
-				goto err;
+	if (info->interface_type == nvme) {
+		uint32_t ns_id=0;
+		int rc = eb_nvme_ns_id(fd, &ns_id);
+		if (rc < 0)
+			goto err;
 
-			sz = efidp_make_nvme(buf+off, size?size-off:0,
-					     ns_id, NULL);
-			if (sz < 0)
-				goto err;
-			off += sz;
-			break;
-		}
-	case virtblk:
-		break;
-	case sata:
-		{
-			uint8_t host = 0, channel = 0, id = 0, lun = 0;
-			int rc = eb_scsi_idlun(fd, &host, &channel,
-					       &id, &lun);
-			if (rc < 0)
-				goto err;
-			sz = efidp_make_sata(buf+off, size?size-off:0,
-					     info->sata_info.ata_port,
-					     info->sata_info.ata_pmp,
-					     info->sata_info.ata_devno);
-			if (sz < 0)
-				goto err;
-			off += sz;
-			break;
-		}
-	case sas:
-		break;
-	default:
-		{
-			uint8_t host = 0, channel = 0, id = 0, lun = 0;
-			int rc = eb_scsi_idlun(fd, &host, &channel,
-					       &id, &lun);
-			if (rc < 0)
-				goto err;
-			sz = efidp_make_scsi(buf+off, size?size-off:0,
-					     id, lun);
-			if (sz < 0)
-				goto err;
-			off += sz;
-		}
+		sz = efidp_make_nvme(buf+off, size?size-off:0,
+				     ns_id, NULL);
+		if (sz < 0)
+			goto err;
+		off += sz;
 	}
 	ret = off;
 	errno = 0;
 err:
-	if (pacc)
-		pci_cleanup(pacc);
-
 	return ret;
 }
 

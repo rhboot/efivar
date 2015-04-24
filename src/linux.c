@@ -298,11 +298,15 @@ sysfs_sata_get_port_info(uint32_t print_id, struct disk_info *info)
 }
 
 static ssize_t
-sysfs_parse_sata(const char *buf, ssize_t size, struct disk_info *info)
+sysfs_parse_sata(uint8_t *buf, ssize_t size, ssize_t *off,
+		 const char *pbuf, ssize_t psize, ssize_t *poff,
+		 struct disk_info *info)
 {
-	ssize_t off = 0;
-	int sz = 0;
+	int psz = 0;
 	int rc;
+
+	*poff = 0;
+	*off = 0;
 
 	uint32_t print_id;
 
@@ -315,34 +319,34 @@ sysfs_parse_sata(const char *buf, ssize_t size, struct disk_info *info)
 	 * ata1/host0/target0:0:0/
 	 *    ^dev  ^host   x y z
 	 */
-	rc = sscanf(buf, "ata%d/host%d/target%d:%d:%d/%n",
+	rc = sscanf(pbuf, "ata%d/host%d/target%d:%d:%d/%n",
 		    &print_id, &scsi_bus, &scsi_device, &scsi_target, &scsi_lun,
-		    &sz);
+		    &psz);
 	if (rc != 5)
 		return -1;
-	off += sz;
+	*poff += psz;
 
 	/* find the emulated scsi bits (and ignore them)
 	 * 0:0:0:0/
 	 */
 	uint32_t dummy0, dummy1, dummy2;
 	uint64_t dummy3;
-	rc = sscanf(buf+off, "%d:%d:%d:%"PRIu64"/%n", &dummy0, &dummy1,
-		    &dummy2, &dummy3, &sz);
+	rc = sscanf(pbuf+*poff, "%d:%d:%d:%"PRIu64"/%n", &dummy0, &dummy1,
+		    &dummy2, &dummy3, &psz);
 	if (rc != 4)
 		return -1;
-	off += sz;
+	*poff += psz;
 
 	/* what's left is:
 	 * block/sda/sda4
 	 */
 	char *disk_name = NULL;
 	char *part_name = NULL;
-	rc = sscanf(buf+off, "block/%m[^/]/%m[^/]%n", &disk_name, &part_name,
-		    &sz);
+	rc = sscanf(pbuf+*poff, "block/%m[^/]/%m[^/]%n", &disk_name, &part_name,
+		    &psz);
 	if (rc != 2)
 		return -1;
-	off += sz;
+	*poff += psz;
 
 	info->sata_info.scsi_bus = scsi_bus;
 	info->sata_info.scsi_device = scsi_device;
@@ -356,7 +360,7 @@ sysfs_parse_sata(const char *buf, ssize_t size, struct disk_info *info)
 		return -1;
 	}
 
-	if (buf[off] != '\0') {
+	if (pbuf[*poff] != '\0') {
 		free(disk_name);
 		free(part_name);
 		errno = EINVAL;
@@ -367,17 +371,24 @@ sysfs_parse_sata(const char *buf, ssize_t size, struct disk_info *info)
 	info->part_name = part_name;
 	info->interface_type = sata;
 
-	return off;
+	*off = efidp_make_sata(buf, size, info->sata_info.ata_port,
+			       info->sata_info.ata_pmp,
+			       info->sata_info.ata_devno);
+	return *off;
 }
 
 static ssize_t
-sysfs_parse_sas(const char *buf, ssize_t size, struct disk_info *info)
+sysfs_parse_sas(uint8_t *buf, ssize_t size, ssize_t *off,
+		const char *pbuf, ssize_t psize, ssize_t *poff,
+		struct disk_info *info)
 {
 	int rc;
-	int sz = 0;
-	ssize_t off = 0;
+	int psz = 0;
 	char *filebuf = NULL;
 	uint64_t sas_address;
+
+	*poff = 0;
+	*off = 0;
 
 	/* buf is:
 	 * host4/port-4:0/end_device-4:0/target4:0:0/4:0:0:0/block/sdc/sdc1
@@ -388,17 +399,17 @@ sysfs_parse_sas(const char *buf, ssize_t size, struct disk_info *info)
 	 *    host4/port-4:0
 	 * or host4/port-4:0:0
 	 */
-	rc = sscanf(buf+off, "host%d/port-%d:%d%n", &tosser0, &tosser1,
-		    &tosser2, &sz);
+	rc = sscanf(pbuf+*poff, "host%d/port-%d:%d%n", &tosser0, &tosser1,
+		    &tosser2, &psz);
 	if (rc != 3)
 		return -1;
-	off += sz;
+	*poff += psz;
 
-	sz = 0;
-	rc = sscanf(buf+off, ":%d%n", &tosser0, &sz);
+	psz = 0;
+	rc = sscanf(pbuf+*poff, ":%d%n", &tosser0, &psz);
 	if (rc != 0 && rc != 1)
 		return -1;
-	off += sz;
+	*poff += psz;
 
 	/* next:
 	 *    /end_device-4:0
@@ -406,50 +417,52 @@ sysfs_parse_sas(const char *buf, ssize_t size, struct disk_info *info)
 	 * awesomely these are the exact same fields that go into port-blah,
 	 * but we don't care for now about any of them anyway.
 	 */
-	rc = sscanf(buf+off, "/end_device-%d:%d%n", &tosser0, &tosser1, &sz);
+	rc = sscanf(pbuf+*poff, "/end_device-%d:%d%n", &tosser0, &tosser1,
+		    &psz);
 	if (rc != 2)
 		return -1;
-	off += sz;
+	*poff += psz;
 
-	sz = 0;
-	rc = sscanf(buf+off, ":%d%n", &tosser0, &sz);
+	psz = 0;
+	rc = sscanf(pbuf+*poff, ":%d%n", &tosser0, &psz);
 	if (rc != 0 && rc != 1)
 		return -1;
-	off += sz;
+	*poff += psz;
 
 	/* now:
 	 * /target4:0:0/
 	 */
 	uint64_t tosser3;
-	rc = sscanf(buf+off, "/target%d:%d:%"PRIu64"/%n", &tosser0, &tosser1,
-		    &tosser3, &sz);
+	rc = sscanf(pbuf+*poff, "/target%d:%d:%"PRIu64"/%n", &tosser0, &tosser1,
+		    &tosser3, &psz);
 	if (rc != 3)
 		return -1;
-	off += sz;
+	*poff += psz;
 
 	/* now:
 	 * %d:%d:%d:%llu/
 	 */
-	rc = sscanf(buf+off, "%d:%d:%d:%"PRIu64"/%n", &info->sas_info.scsi_bus,
-			    &info->sas_info.scsi_device,
-			    &info->sas_info.scsi_target,
-			    &info->sas_info.scsi_lun, &sz);
+	rc = sscanf(pbuf+*poff, "%d:%d:%d:%"PRIu64"/%n",
+		    &info->sas_info.scsi_bus,
+		    &info->sas_info.scsi_device,
+		    &info->sas_info.scsi_target,
+		    &info->sas_info.scsi_lun, &psz);
 	if (rc != 4)
 		return -1;
-	off += sz;
+	*poff += psz;
 
 	/* what's left is:
 	 * block/sdc/sdc1
 	 */
 	char *disk_name = NULL;
 	char *part_name = NULL;
-	rc = sscanf(buf+off, "block/%m[^/]/%m[^/]%n", &disk_name, &part_name,
-		    &sz);
+	rc = sscanf(pbuf+*poff, "block/%m[^/]/%m[^/]%n", &disk_name, &part_name,
+		    &psz);
 	if (rc != 2)
 		return -1;
-	off += sz;
+	*poff += psz;
 
-	if (buf[off] != '\0') {
+	if (pbuf[*poff] != '\0') {
 		free(disk_name);
 		free(part_name);
 		errno = EINVAL;
@@ -473,17 +486,20 @@ sysfs_parse_sas(const char *buf, ssize_t size, struct disk_info *info)
 	info->disk_name = disk_name;
 	info->part_name = part_name;
 	info->interface_type = sas;
-	return off;
+
+	*off = efidp_make_sas(buf, size, sas_address);
+	return *off;
 }
 
 int
 __attribute__((__visibility__ ("hidden")))
-eb_blockdev_pci_fill(struct disk_info *info)
+eb_blockdev_pci_fill(uint8_t *buf, ssize_t size, int fd, struct disk_info *info)
 {
 	char *linkbuf = NULL;
-	int off = 0;
-	int sz = 0;
+	int loff = 0;
+	int lsz = 0;
 	int rc;
+	ssize_t off=0, sz=0;
 
 	rc = sysfs_readlink(&linkbuf, "/sys/dev/block/%"PRIu64":%u",
 			    info->major, info->minor);
@@ -497,12 +513,18 @@ eb_blockdev_pci_fill(struct disk_info *info)
 	 */
 	uint16_t root_domain;
 	uint8_t root_bus;
-	rc = sscanf(linkbuf+off, "../../devices/pci%hx:%hhx/%n",
-		    &root_domain, &root_bus, &sz);
+	rc = sscanf(linkbuf+loff, "../../devices/pci%hx:%hhx/%n",
+		    &root_domain, &root_bus, &lsz);
 	if (rc != 2)
 		return -1;
 	info->pci_root.root_pci_domain = root_domain;
 	info->pci_root.root_pci_bus = root_bus;
+	loff += lsz;
+
+	sz = efidp_make_acpi_hid(buf+off, size?size-off:0,
+				 EFIDP_ACPI_PCI_ROOT_HID, root_bus);
+	if (sz < 0)
+		return -1;
 	off += sz;
 
 	/* find the pci domain/bus/device/function:
@@ -513,8 +535,8 @@ eb_blockdev_pci_fill(struct disk_info *info)
 	while (1) {
 		uint16_t domain;
 		uint8_t bus, device, function;
-		rc = sscanf(linkbuf+off, "%hx:%hhx:%hhx.%hhx/%n",
-			    &domain, &bus, &device, &function, &sz);
+		rc = sscanf(linkbuf+loff, "%hx:%hhx:%hhx.%hhx/%n",
+			    &domain, &bus, &device, &function, &lsz);
 		if (rc != 4)
 			break;
 		info->pci_dev.pci_domain = domain;
@@ -522,6 +544,11 @@ eb_blockdev_pci_fill(struct disk_info *info)
 		info->pci_dev.pci_device = device;
 		info->pci_dev.pci_function = function;
 		found=1;
+		loff += lsz;
+
+		sz = efidp_make_pci(buf+off, size?size-off:0, device, function);
+		if (sz < 0)
+			return -1;
 		off += sz;
 	}
 	if (!found)
@@ -530,26 +557,34 @@ eb_blockdev_pci_fill(struct disk_info *info)
 	/* /dev/sda as SATA looks like:
 	 * /sys/dev/block/8:0 -> ../../devices/pci0000:00/0000:00:1f.2/ata1/host0/target0:0:0/0:0:0:0/block/sda
 	 */
-	rc = sysfs_test_sata(linkbuf+off, PATH_MAX-off);
+	rc = sysfs_test_sata(linkbuf+loff, PATH_MAX-off);
 	if (rc < 0)
 		return -1;
 	if (rc > 0) {
-		sz = sysfs_parse_sata(linkbuf+off, PATH_MAX-off, info);
-		if (sz < 0)
-			return sz;
+		ssize_t linksz=0;
+		rc = sysfs_parse_sata(buf+off, size?size-off:0, &sz,
+				       linkbuf+loff, PATH_MAX-off, &linksz,
+				       info);
+		if (rc < 0)
+			return -1;
+		loff += linksz;
 		off += sz;
 	}
 
 	/* /dev/sdc as SAS looks like:
 	 * /sys/dev/block/8:32 -> ../../devices/pci0000:00/0000:00:01.0/0000:01:00.0/host4/port-4:0/end_device-4:0/target4:0:0/4:0:0:0/block/sdc
 	 */
-	rc = sysfs_test_sas(linkbuf+off, PATH_MAX-off, info);
+	rc = sysfs_test_sas(linkbuf+loff, PATH_MAX-off, info);
 	if (rc < 0)
 		return -1;
 	if (rc > 0) {
-		sz = sysfs_parse_sas(linkbuf+off, PATH_MAX-off, info);
-		if (sz < 0)
+		ssize_t linksz=0;
+		rc = sysfs_parse_sas(buf+off, size?size-off:0, &sz,
+				      linkbuf+loff, PATH_MAX-off, &linksz,
+				      info);
+		if (rc < 0)
 			return -1;
+		loff += linksz;
 		off += sz;
 	}
 
@@ -573,9 +608,16 @@ eb_blockdev_pci_fill(struct disk_info *info)
 			    &info->scsi_info.scsi_lun);
 		if (rc != 4)
 			return -1;
+
+		sz = efidp_make_scsi(buf+off, size?size-off:0,
+				     info->scsi_info.scsi_target,
+				     info->scsi_info.scsi_lun);
+		if (sz < 0)
+			return -1;
+		off += sz;
 	}
 
-	return 0;
+	return off;
 }
 
 int
