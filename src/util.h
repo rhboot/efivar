@@ -22,6 +22,7 @@
 
 #include <errno.h>
 #include <stdio.h>
+#include <stdarg.h>
 #include <stdlib.h>
 #include <string.h>
 #include <sys/ioctl.h>
@@ -130,5 +131,80 @@ get_sector_size(int filedes)
 		sector_size = 512;
 	return sector_size;
 }
+
+#define asprintfa(str, fmt, args...)					\
+	({								\
+		char *_tmp = NULL;					\
+		int _rc;						\
+		*(str) = NULL;						\
+		_rc = asprintf((str), (fmt), ## args);			\
+		if (_rc > 0) {						\
+			_tmp = strdupa(*(str));				\
+			if (!_tmp) {					\
+				_rc = -1;				\
+			} else {					\
+				free(*(str));				\
+				*(str) = _tmp;				\
+			}						\
+		} else {						\
+			_rc = -1;					\
+		}							\
+		_rc;							\
+	})
+
+#define read_sysfs_file(buf, fmt, args...)				\
+	({								\
+		int _rc=-1;						\
+		char *_pathname;					\
+		uint8_t *_buf=NULL;					\
+		size_t _bufsize=-1;					\
+		int _saved_errno;					\
+									\
+		*(buf) = NULL;						\
+		_rc = asprintfa(&_pathname, (fmt), ## args);		\
+		if (_rc >= 0) {						\
+			int _fd;					\
+			_fd = open(_pathname, O_RDONLY);		\
+			_saved_errno = errno;				\
+			_rc = -1;					\
+			if (_fd >= 0) {					\
+				_rc = read_file(_fd, &_buf, &_bufsize);	\
+				_saved_errno = errno;			\
+				close(_fd);				\
+				errno = _saved_errno;			\
+			}						\
+		}							\
+		if (_rc >= 0) {						\
+			uint8_t *_buf2 = alloca(_bufsize);		\
+			_saved_errno = errno;				\
+			if (_buf2) {					\
+				memcpy(_buf2, _buf, _bufsize);		\
+				_rc = _bufsize;				\
+			}						\
+			free(_buf);					\
+			*((uint8_t **)buf) = _buf2;			\
+			errno = _saved_errno;				\
+		}							\
+		_rc;							\
+	})
+
+#define sysfs_readlink(linkbuf, fmt, args...)				\
+	({								\
+		char *_lb = alloca(PATH_MAX+1);				\
+		char *_pn;						\
+		int _rc;						\
+									\
+		*(linkbuf) = NULL;					\
+		_rc = asprintfa(&_pn, fmt, ## args);			\
+		if (_rc >= 0) {						\
+			ssize_t _linksz;				\
+			_linksz = readlink(_pn, _lb, PATH_MAX);		\
+			_rc = _linksz;					\
+			if (_linksz >= 0)				\
+				_lb[_linksz] = '\0';			\
+			*(linkbuf) = _lb;				\
+		}							\
+		_rc;							\
+	})
 
 #endif /* EFIVAR_UTIL_H */
