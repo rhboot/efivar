@@ -72,7 +72,7 @@ _format_media_dn(char *buf, size_t size, const_efidp dp)
 		off += format(buf, size, off, "File(");
 		off += format_ucs2(buf, size, off, dp->file.name,
 				   (efidp_node_size(dp)
-				   - offsetof(efidp_file, name)) / 2 + 1);
+				   - offsetof(efidp_file, name)) / 2);
 		off += format(buf, size, off, ")");
 		break;
 	case EFIDP_MEDIA_PROTOCOL:
