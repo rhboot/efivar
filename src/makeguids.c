@@ -106,6 +106,8 @@ main(int argc, char *argv[])
 	char *guidstr = inbuf;
 	unsigned int line;
 	for (line = 1; (uintptr_t)guidstr - (uintptr_t)inbuf < inlen; line++) {
+		if (guidstr && guidstr[0] == '\0')
+			break;
 		outbuf = realloc(outbuf, line * sizeof (struct guidname));
 		if (!outbuf)
 			err(1, "makeguids");

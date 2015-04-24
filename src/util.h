@@ -87,7 +87,15 @@ read_file(int fd, uint8_t **buf, size_t *bufsize)
 		}
 	} while (1);
 
-	*bufsize = filesize;
+	newbuf = realloc(*buf, filesize+1);
+	if (!newbuf) {
+		free(*buf);
+		*buf = NULL;
+		return -1;
+	}
+	newbuf[filesize] = '\0';
+	*buf = newbuf;
+	*bufsize = filesize+1;
 	return 0;
 }
 
