@@ -402,6 +402,7 @@ typedef struct {
 	uint8_t		drive_bay_id; /* If EFIDP_SAS_TOPOLOGY_NEXTBYTE set */
 	uint16_t	rtp;
 } efidp_sas;
+extern ssize_t efidp_make_sas(uint8_t *buf, ssize_t size, uint64_t sas_address);
 
 /* device_topology_info Bits 0:3 (enum) */
 #define EFIDP_SAS_TOPOLOGY_MASK		0x02

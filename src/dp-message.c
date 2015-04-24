@@ -618,20 +618,24 @@ efidp_make_sata(uint8_t *buf, ssize_t size, uint16_t hba_port,
 	return sz;
 }
 
-#if 0
 ssize_t
 __attribute__((__visibility__ ("default")))
-efidp_make_sas(uint8_t *buf, ssize_t size, uint16_t hba_port,
-		uint16_t port_multiplier_port, uint16_t lun)
+efidp_make_sas(uint8_t *buf, ssize_t size, uint64_t sas_address)
 {
 	efidp_sas *sas = (efidp_sas *)buf;
 	ssize_t req = sizeof (*sas);
 	ssize_t sz;
 
 	sz = efidp_make_generic(buf, size, EFIDP_MESSAGE_TYPE,
-					EFIDP_MSG_SAS, sizeof (*sas));
+					EFIDP_MSG_VENDOR, sizeof (*sas));
 	if (size && sz == req) {
+		sas->vendor_guid = EFIDP_MSG_SAS_GUID;
+		sas->reserved = 0;
+		sas->sas_address = sas_address;
+		sas->lun = 0;
+		sas->device_topology_info = 0;
+		sas->drive_bay_id = 0;
+		sas->rtp = 0;
 	}
 	return sz;
 }
-#endif

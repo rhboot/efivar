@@ -43,6 +43,8 @@ struct sas_info {
 	uint32_t scsi_device;
 	uint32_t scsi_target;
 	uint64_t scsi_lun;
+
+	uint64_t sas_address;
 };
 
 struct sata_info {
