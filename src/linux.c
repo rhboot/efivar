@@ -16,7 +16,6 @@
  * You should have received a copy of the GNU General Public License
  * along with this library.  If not, see <http://www.gnu.org/licenses/>.
  */
-#define _GNU_SOURCE 1
 #include <dirent.h>
 #include <errno.h>
 #include <fcntl.h>
@@ -181,19 +180,13 @@ __attribute__((__visibility__ ("hidden")))
 get_disk_name(uint64_t major, unsigned char minor,
 	      char *pathname, size_t max)
 {
-	char path[PATH_MAX+1] = "";
-	char linkbuf[PATH_MAX+1] = "";
+	char *linkbuf;
 	ssize_t rc;
 
-	rc = snprintf(path, PATH_MAX, "/sys/dev/block/%"PRIu64":%hhd",
+	rc = sysfs_readlink(&linkbuf, "/sys/dev/block/%"PRIu64":%hhd",
 		      major, minor);
 	if (rc < 0)
 		return -1;
-
-	rc = readlink(path, linkbuf, PATH_MAX);
-	if (rc < 0)
-		return -1;
-	linkbuf[PATH_MAX]='\0';
 
 	char *dev;
 	dev = strrchr(linkbuf, '/');
@@ -221,16 +214,39 @@ sysfs_test_sata(const char *buf, ssize_t size)
 	return 0;
 }
 
+static int
+sysfs_test_sas(const char *buf, ssize_t size, struct disk_info *info)
+{
+	int rc;
+	char *path;
+	struct stat statbuf = { 0, };
+
+	int host;
+	int sz;
+
+	errno = 0;
+	rc = sscanf(buf, "host%d/%n", &host, &sz);
+	if (rc < 1)
+		return (errno == 0) ? 0 : -1;
+
+	rc = asprintfa(&path, "/sys/class/scsi_host/host%d/host_sas_address",
+			host);
+	if (rc < 0)
+		return -1;
+
+	rc = stat(path, &statbuf);
+	if (rc >= 0)
+		return 1;
+	return 0;
+}
+
 static ssize_t
 sysfs_sata_get_port_info(uint32_t print_id, struct disk_info *info)
 {
 	DIR *d;
 	struct dirent *de;
 	int saved_errno;
-	char path[PATH_MAX+1]="";
 	uint8_t *buf = NULL;
-	size_t bufsize = -1;
-	int fd;
 	int rc;
 
 	d = opendir("/sys/class/ata_device/");
@@ -265,24 +281,15 @@ sysfs_sata_get_port_info(uint32_t print_id, struct disk_info *info)
 	}
 	closedir(d);
 
-	rc = snprintf(path, PATH_MAX, "/sys/class/ata_port/ata%d/port_no",
-		      print_id);
-	if (rc < 0)
+	rc = read_sysfs_file(&buf, "/sys/class/ata_port/ata%d/port_no",
+			     print_id);
+	if (rc <= 0)
 		return -1;
 
-	fd = open(path, O_RDONLY);
-	rc = read_file(fd, &buf, &bufsize);
-	saved_errno = errno;
-	close(fd);
-	errno = saved_errno;
-	if (rc < 0)
-		return -1;
-
-	buf[bufsize]='\0';
-	rc = sscanf((char *)buf, "%d", &info->sata_info.ata_port);
-	saved_errno = errno;
-	free(buf);
-	errno = saved_errno;
+	rc = sscanf(
+		    (char *)buf,
+		    "%d",
+		    &info->sata_info.ata_port);
 	if (rc != 1)
 		return -1;
 
@@ -318,10 +325,9 @@ sysfs_parse_sata(const char *buf, ssize_t size, struct disk_info *info)
 	/* find the emulated scsi bits (and ignore them)
 	 * 0:0:0:0/
 	 */
-	uint16_t dummy0;
-	uint8_t dummy1, dummy2;
+	uint32_t dummy0, dummy1, dummy2;
 	uint64_t dummy3;
-	rc = sscanf(buf+off, "%hx:%hhx:%hhx:%"PRIu64"/%n", &dummy0, &dummy1,
+	rc = sscanf(buf+off, "%d:%d:%d:%"PRIu64"/%n", &dummy0, &dummy1,
 		    &dummy2, &dummy3, &sz);
 	if (rc != 4)
 		return -1;
@@ -349,6 +355,14 @@ sysfs_parse_sata(const char *buf, ssize_t size, struct disk_info *info)
 		free(part_name);
 		return -1;
 	}
+
+	if (buf[off] != '\0') {
+		free(disk_name);
+		free(part_name);
+		errno = EINVAL;
+		return -1;
+	}
+
 	info->disk_name = disk_name;
 	info->part_name = part_name;
 	info->interface_type = sata;
@@ -356,23 +370,125 @@ sysfs_parse_sata(const char *buf, ssize_t size, struct disk_info *info)
 	return off;
 }
 
+static ssize_t
+sysfs_parse_sas(const char *buf, ssize_t size, struct disk_info *info)
+{
+	int rc;
+	int sz = 0;
+	ssize_t off = 0;
+	char *filebuf = NULL;
+	uint64_t sas_address;
+
+	/* buf is:
+	 * host4/port-4:0/end_device-4:0/target4:0:0/4:0:0:0/block/sdc/sdc1
+	 */
+	uint32_t tosser0, tosser1, tosser2;
+
+	/* ignore a bunch of stuff
+	 *    host4/port-4:0
+	 * or host4/port-4:0:0
+	 */
+	rc = sscanf(buf+off, "host%d/port-%d:%d%n", &tosser0, &tosser1,
+		    &tosser2, &sz);
+	if (rc != 3)
+		return -1;
+	off += sz;
+
+	sz = 0;
+	rc = sscanf(buf+off, ":%d%n", &tosser0, &sz);
+	if (rc != 0 && rc != 1)
+		return -1;
+	off += sz;
+
+	/* next:
+	 *    /end_device-4:0
+	 * or /end_device-4:0:0
+	 * awesomely these are the exact same fields that go into port-blah,
+	 * but we don't care for now about any of them anyway.
+	 */
+	rc = sscanf(buf+off, "/end_device-%d:%d%n", &tosser0, &tosser1, &sz);
+	if (rc != 2)
+		return -1;
+	off += sz;
+
+	sz = 0;
+	rc = sscanf(buf+off, ":%d%n", &tosser0, &sz);
+	if (rc != 0 && rc != 1)
+		return -1;
+	off += sz;
+
+	/* now:
+	 * /target4:0:0/
+	 */
+	uint64_t tosser3;
+	rc = sscanf(buf+off, "/target%d:%d:%"PRIu64"/%n", &tosser0, &tosser1,
+		    &tosser3, &sz);
+	if (rc != 3)
+		return -1;
+	off += sz;
+
+	/* now:
+	 * %d:%d:%d:%llu/
+	 */
+	rc = sscanf(buf+off, "%d:%d:%d:%"PRIu64"/%n", &info->sas_info.scsi_bus,
+			    &info->sas_info.scsi_device,
+			    &info->sas_info.scsi_target,
+			    &info->sas_info.scsi_lun, &sz);
+	if (rc != 4)
+		return -1;
+	off += sz;
+
+	/* what's left is:
+	 * block/sdc/sdc1
+	 */
+	char *disk_name = NULL;
+	char *part_name = NULL;
+	rc = sscanf(buf+off, "block/%m[^/]/%m[^/]%n", &disk_name, &part_name,
+		    &sz);
+	if (rc != 2)
+		return -1;
+	off += sz;
+
+	if (buf[off] != '\0') {
+		free(disk_name);
+		free(part_name);
+		errno = EINVAL;
+		return -1;
+	}
+
+	/*
+	 * we also need to get the actual sas_address from someplace...
+	 */
+	rc = read_sysfs_file(&filebuf,
+			     "/sys/class/block/%s/device/sas_address",
+			     disk_name);
+	if (rc < 0)
+		return -1;
+
+	rc = sscanf(filebuf, "%"PRIx64, &sas_address);
+	if (rc != 1)
+		return -1;
+
+	info->sas_info.sas_address = sas_address;
+	info->disk_name = disk_name;
+	info->part_name = part_name;
+	info->interface_type = sas;
+	return off;
+}
+
 int
 __attribute__((__visibility__ ("hidden")))
 eb_blockdev_pci_fill(struct disk_info *info)
 {
-	char leftbuf[PATH_MAX+1]="", rightbuf[PATH_MAX+1]="";
-	ssize_t linksz;
+	char *linkbuf = NULL;
 	int off = 0;
 	int sz = 0;
 	int rc;
 
-	rc = snprintf(leftbuf, PATH_MAX, "/sys/dev/block/%"PRIu64":%u",
-		      info->major, info->minor);
+	rc = sysfs_readlink(&linkbuf, "/sys/dev/block/%"PRIu64":%u",
+			    info->major, info->minor);
 	if (rc < 0)
 		return -1;
-
-	linksz = readlink(leftbuf, rightbuf, sizeof (rightbuf));
-	rightbuf[linksz] = '\0';
 
 	/*
 	 * find the pci root domain and port; they basically look like:
@@ -381,7 +497,7 @@ eb_blockdev_pci_fill(struct disk_info *info)
 	 */
 	uint16_t root_domain;
 	uint8_t root_bus;
-	rc = sscanf(rightbuf+off, "../../devices/pci%hx:%hhx/%n",
+	rc = sscanf(linkbuf+off, "../../devices/pci%hx:%hhx/%n",
 		    &root_domain, &root_bus, &sz);
 	if (rc != 2)
 		return -1;
@@ -397,7 +513,7 @@ eb_blockdev_pci_fill(struct disk_info *info)
 	while (1) {
 		uint16_t domain;
 		uint8_t bus, device, function;
-		rc = sscanf(rightbuf+off, "%hx:%hhx:%hhx.%hhx/%n",
+		rc = sscanf(linkbuf+off, "%hx:%hhx:%hhx.%hhx/%n",
 			    &domain, &bus, &device, &function, &sz);
 		if (rc != 4)
 			break;
@@ -411,63 +527,53 @@ eb_blockdev_pci_fill(struct disk_info *info)
 	if (!found)
 		return -1;
 
-	rc = sysfs_test_sata(rightbuf+off, PATH_MAX-off);
+	/* /dev/sda as SATA looks like:
+	 * /sys/dev/block/8:0 -> ../../devices/pci0000:00/0000:00:1f.2/ata1/host0/target0:0:0/0:0:0:0/block/sda
+	 */
+	rc = sysfs_test_sata(linkbuf+off, PATH_MAX-off);
 	if (rc < 0)
 		return -1;
 	if (rc > 0) {
-		sz = sysfs_parse_sata(rightbuf+off, PATH_MAX-off, info);
+		sz = sysfs_parse_sata(linkbuf+off, PATH_MAX-off, info);
 		if (sz < 0)
 			return sz;
 		off += sz;
 	}
 
-#if 0
-	rc = test_sas(rightbuf+off, PATH_MAX-off);
-
-	} else {
-		struct stat statbuf = { 0, };
-
-		rc = snprintf(leftbuf, PATH_MAX,
-			    "/sys/dev/block/%"PRIu64":%u/device/sas_address",
-			    info->major, info->minor);
-		if (rc < 0)
-			return -1;
-
-		rc = stat(leftbuf, &statbuf);
-		if (rc >= 0) {
-			sz = parse_sysfs_sas(rightbuf+off, PATH_MAX-off,
-					     &info->sas_info);
+	/* /dev/sdc as SAS looks like:
+	 * /sys/dev/block/8:32 -> ../../devices/pci0000:00/0000:00:01.0/0000:01:00.0/host4/port-4:0/end_device-4:0/target4:0:0/4:0:0:0/block/sdc
+	 */
+	rc = sysfs_test_sas(linkbuf+off, PATH_MAX-off, info);
+	if (rc < 0)
+		return -1;
+	if (rc > 0) {
+		sz = sysfs_parse_sas(linkbuf+off, PATH_MAX-off, info);
 		if (sz < 0)
 			return -1;
-		info->interface_type = sas;
 		off += sz;
 	}
 
-	if (info->interface_type == scsi
-	    || info->interface_type == sas) {
+	if (info->interface_type == scsi) {
 		char diskname[PATH_MAX+1]="";
+		char *linkbuf;
 		rc = get_disk_name(info->major, info->minor, diskname,
 				   PATH_MAX);
 		if (rc < 0)
 			return 0;
 
-		rc = snprintf(rightbuf, PATH_MAX, "/sys/class/block/%s/device",
+		rc = sysfs_readlink(&linkbuf, "/sys/class/block/%s/device",
 			      diskname);
 		if (rc < 0)
 			return 0;
 
-		linksz = readlink(rightbuf, leftbuf, PATH_MAX);
-		leftbuf[linksz] = '\0';
-
-		rc = sscanf(leftbuf, "../../../%d:%d:%d:%llu",
-			    &info->scsi_bus, &info->scsi_device,
-			    &info->scsi_target,
-			    (unsigned long long int *)&info->scsi_lun);
+		rc = sscanf(linkbuf, "../../../%d:%d:%d:%"PRIu64,
+			    &info->scsi_info.scsi_bus,
+			    &info->scsi_info.scsi_device,
+			    &info->scsi_info.scsi_target,
+			    &info->scsi_info.scsi_lun);
 		if (rc != 4)
 			return -1;
-
 	}
-#endif
 
 	return 0;
 }
