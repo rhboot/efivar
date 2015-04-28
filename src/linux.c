@@ -518,8 +518,50 @@ make_blockdev_path(uint8_t *buf, ssize_t size, int fd, struct disk_info *info)
 	info->pci_root.root_pci_bus = root_bus;
 	loff += lsz;
 
-	sz = efidp_make_acpi_hid(buf+off, size?size-off:0,
-				 EFIDP_ACPI_PCI_ROOT_HID, root_bus);
+	char *fbuf = NULL;
+	rc = read_sysfs_file(&fbuf, "/sys/devices/pci%04x:%02x/firmware_node/hid",
+			     root_domain, root_bus);
+	if (rc < 0)
+		return -1;
+
+	uint16_t acpi_hid;
+	rc = sscanf((char *)fbuf, "PNP%hx", &acpi_hid);
+	if (rc != 1)
+		return -1;
+	info->pci_root.root_pci_acpi_hid = EFIDP_EFI_PNP_ID(acpi_hid);
+
+	errno = 0;
+	fbuf = NULL;
+	rc = read_sysfs_file(&fbuf, "/sys/devices/pci%4x:%02x/firmware_node/uid",
+			     root_domain, root_bus);
+	uint64_t acpi_uid_int = 0;
+	int use_uid_str = 0;
+	if (rc <= 0 && errno != ENOENT)
+		return -1;
+	if (rc > 0) {
+		rc = sscanf((char *)fbuf, "%"PRIu64"\n", &acpi_uid_int);
+		if (rc != 1) {
+			/* kernel uses "%s\n" to print it, so there
+			 * should always be some value and a newline... */
+			int l = strlen((char *)buf);
+			if (l >= 1) {
+				use_uid_str=1;
+				fbuf[l-1] = '\0';
+			}
+		}
+	}
+	errno = 0;
+	info->pci_root.root_pci_acpi_uid = acpi_uid_int;
+
+	if (use_uid_str) {
+		sz = efidp_make_acpi_hid_ex(buf+off, size?size-off:0,
+					    info->pci_root.root_pci_acpi_hid,
+					    0, 0, "", (char *)fbuf, "");
+	} else {
+		sz = efidp_make_acpi_hid(buf+off, size?size-off:0,
+					 info->pci_root.root_pci_acpi_hid,
+					 info->pci_root.root_pci_acpi_uid);
+	}
 	if (sz < 0)
 		return -1;
 	off += sz;

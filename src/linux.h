@@ -22,6 +22,8 @@
 struct pci_root_info {
 	uint16_t root_pci_domain;
 	uint8_t root_pci_bus;
+	uint32_t root_pci_acpi_hid;
+	uint32_t root_pci_acpi_uid;
 };
 
 struct pci_dev_info {
