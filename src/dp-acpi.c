@@ -177,3 +177,38 @@ efidp_make_acpi_hid(uint8_t *buf, ssize_t size, uint32_t hid, uint32_t uid)
 
 	return sz;
 }
+
+ssize_t
+__attribute__((__visibility__ ("default")))
+__attribute__((__nonnull__ (6,7,8)))
+efidp_make_acpi_hid_ex(uint8_t *buf, ssize_t size,
+		       uint32_t hid, uint32_t uid, uint32_t cid,
+		       char *hidstr, char *uidstr, char *cidstr)
+{
+	efidp_acpi_hid_ex *acpi_hid = (efidp_acpi_hid_ex *)buf;
+	ssize_t req;
+	ssize_t sz;
+
+	if (!hidstr || !uidstr || !cidstr) {
+		errno = EINVAL;
+		return -1;
+	}
+
+	req = sizeof (*acpi_hid) + 3 +
+		strlen(hidstr) + strlen(uidstr) + strlen(cidstr);
+	sz = efidp_make_generic(buf, size, EFIDP_ACPI_TYPE, EFIDP_ACPI_HID_EX,
+				req);
+	if (size && sz == req) {
+		acpi_hid->uid = uid;
+		acpi_hid->hid = hid;
+		acpi_hid->cid = cid;
+		char *next = (char *)buf+offsetof(efidp_acpi_hid_ex, hidstr);
+		strcpy(next, hidstr);
+		next += strlen(hidstr) + 1;
+		strcpy(next, uidstr);
+		next += strlen(uidstr) + 1;
+		strcpy(next, cidstr);
+	}
+
+	return sz;
+}
