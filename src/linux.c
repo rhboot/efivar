@@ -286,10 +286,7 @@ sysfs_sata_get_port_info(uint32_t print_id, struct disk_info *info)
 	if (rc <= 0)
 		return -1;
 
-	rc = sscanf(
-		    (char *)buf,
-		    "%d",
-		    &info->sata_info.ata_port);
+	rc = sscanf((char *)buf, "%d", &info->sata_info.ata_port);
 	if (rc != 1)
 		return -1;
 
@@ -493,7 +490,7 @@ sysfs_parse_sas(uint8_t *buf, ssize_t size, ssize_t *off,
 
 int
 __attribute__((__visibility__ ("hidden")))
-eb_blockdev_pci_fill(uint8_t *buf, ssize_t size, int fd, struct disk_info *info)
+make_blockdev_path(uint8_t *buf, ssize_t size, int fd, struct disk_info *info)
 {
 	char *linkbuf = NULL;
 	int loff = 0;
@@ -554,13 +551,45 @@ eb_blockdev_pci_fill(uint8_t *buf, ssize_t size, int fd, struct disk_info *info)
 	if (!found)
 		return -1;
 
+	found = 0;
+
+	if (info->interface_type == interface_type_unknown ||
+	    info->interface_type == ata ||
+	    info->interface_type == atapi ||
+	    info->interface_type == usb ||
+	    info->interface_type == i1394 ||
+	    info->interface_type == fibre ||
+	    info->interface_type == i2o ||
+	    info->interface_type == md) {
+		errno = ENOSYS;
+		return -1;
+	}
+
+	if (info->interface_type == virtblk) {
+		found = 1;
+	}
+
+	if (info->interface_type == nvme) {
+		uint32_t ns_id=0;
+		int rc = eb_nvme_ns_id(fd, &ns_id);
+		if (rc < 0)
+			return -1;
+
+		sz = efidp_make_nvme(buf+off, size?size-off:0,
+				     ns_id, NULL);
+		if (sz < 0)
+			return -1;
+		off += sz;
+		found = 1;
+	}
+
 	/* /dev/sda as SATA looks like:
 	 * /sys/dev/block/8:0 -> ../../devices/pci0000:00/0000:00:1f.2/ata1/host0/target0:0:0/0:0:0:0/block/sda
 	 */
 	rc = sysfs_test_sata(linkbuf+loff, PATH_MAX-off);
 	if (rc < 0)
 		return -1;
-	if (rc > 0) {
+	if (!found && rc > 0) {
 		ssize_t linksz=0;
 		rc = sysfs_parse_sata(buf+off, size?size-off:0, &sz,
 				       linkbuf+loff, PATH_MAX-off, &linksz,
@@ -569,6 +598,7 @@ eb_blockdev_pci_fill(uint8_t *buf, ssize_t size, int fd, struct disk_info *info)
 			return -1;
 		loff += linksz;
 		off += sz;
+		found = 1;
 	}
 
 	/* /dev/sdc as SAS looks like:
@@ -577,7 +607,7 @@ eb_blockdev_pci_fill(uint8_t *buf, ssize_t size, int fd, struct disk_info *info)
 	rc = sysfs_test_sas(linkbuf+loff, PATH_MAX-off, info);
 	if (rc < 0)
 		return -1;
-	if (rc > 0) {
+	if (!found && rc > 0) {
 		ssize_t linksz=0;
 		rc = sysfs_parse_sas(buf+off, size?size-off:0, &sz,
 				      linkbuf+loff, PATH_MAX-off, &linksz,
@@ -586,9 +616,10 @@ eb_blockdev_pci_fill(uint8_t *buf, ssize_t size, int fd, struct disk_info *info)
 			return -1;
 		loff += linksz;
 		off += sz;
+		found = 1;
 	}
 
-	if (info->interface_type == scsi) {
+	if (!found && info->interface_type == scsi) {
 		char diskname[PATH_MAX+1]="";
 		char *linkbuf;
 		rc = get_disk_name(info->major, info->minor, diskname,
@@ -615,6 +646,12 @@ eb_blockdev_pci_fill(uint8_t *buf, ssize_t size, int fd, struct disk_info *info)
 		if (sz < 0)
 			return -1;
 		off += sz;
+		found = 1;
+	}
+
+	if (!found) {
+		errno = ENOENT;
+		return -1;
 	}
 
 	return off;

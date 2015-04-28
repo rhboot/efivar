@@ -132,41 +132,6 @@ err:
 	return ret;
 }
 
-static ssize_t
-make_pci_path(uint8_t *buf, size_t size, int fd, struct disk_info *info,
-	      char *devpath)
-{
-	ssize_t ret=-1;
-	ssize_t off=0, sz;
-
-	/*
-	 * We're probably on a modern kernel, so just parse the
-	 * symlink from /sys/dev/block/$major:$minor and get it
-	 * from there.
-	 */
-	sz = eb_blockdev_pci_fill(buf, size, fd, info);
-	if (sz < 0)
-		return -1;
-	off += sz;
-
-	if (info->interface_type == nvme) {
-		uint32_t ns_id=0;
-		int rc = eb_nvme_ns_id(fd, &ns_id);
-		if (rc < 0)
-			goto err;
-
-		sz = efidp_make_nvme(buf+off, size?size-off:0,
-				     ns_id, NULL);
-		if (sz < 0)
-			goto err;
-		off += sz;
-	}
-	ret = off;
-	errno = 0;
-err:
-	return ret;
-}
-
 static int
 open_disk(struct disk_info *info, int flags)
 {
@@ -199,10 +164,15 @@ make_the_whole_path(uint8_t *buf, size_t size, int fd, struct disk_info *info,
 		off = sz;
 	} else if (!(options & EFIBOOT_ABBREV_FILE)
 		   && !(options & EFIBOOT_ABBREV_HD)) {
-		sz = make_pci_path(buf, size, fd, info, devpath);
+		/*
+		 * We're probably on a modern kernel, so just parse the
+		 * symlink from /sys/dev/block/$major:$minor and get it
+		 * from there.
+		 */
+		sz = make_blockdev_path(buf, size, fd, info);
 		if (sz < 0)
 			return -1;
-		off = sz;
+		off += sz;
 	}
 
 	if (!(options & EFIBOOT_ABBREV_FILE)) {

@@ -89,7 +89,7 @@ enum _interface_type {interface_type_unknown,
 extern int eb_disk_info_from_fd(int fd, struct disk_info *info);
 extern int get_disk_name(uint64_t major, unsigned char minor,
 			 char *diskname, size_t max);
-extern int eb_blockdev_pci_fill(uint8_t *buf, ssize_t size, int fd,
+extern int make_blockdev_path(uint8_t *buf, ssize_t size, int fd,
 				struct disk_info *info);
 extern int eb_scsi_pci(int fd, const struct disk_info *info, uint8_t *bus,
 		       uint8_t *device, uint8_t *function);
