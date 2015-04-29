@@ -22,11 +22,12 @@
 typedef struct efi_load_option_s efi_load_option;
 
 extern ssize_t efi_make_load_option(uint8_t *buf, ssize_t size,
-				    uint32_t attributes, efidp dp,
+				    uint32_t attributes,
+				    efidp dp, ssize_t dp_size,
 				    unsigned char *description,
 				    uint8_t *optional_data,
 				    size_t optional_data_size)
-	__attribute__((__nonnull__ (4,5)));
+	__attribute__((__nonnull__ (6)));
 
 extern efidp efi_load_option_path(efi_load_option *opt)
 	__attribute__((__nonnull__ (1)));

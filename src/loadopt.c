@@ -28,19 +28,21 @@ typedef struct efi_load_option_s {
 } efi_load_option;
 
 ssize_t
-__attribute__((__nonnull__ (4,5)))
+__attribute__((__nonnull__ (6)))
 __attribute__((__visibility__ ("default")))
 efi_make_load_option(uint8_t *buf, ssize_t size, uint32_t attributes,
-		     efidp dp, unsigned char *description,
+		     efidp dp, ssize_t dp_size, unsigned char *description,
 		     uint8_t *optional_data, size_t optional_data_size)
 {
-	if (!dp || !description ||
-			(!optional_data && optional_data_size != 0)) {
+	if (!description || (!optional_data && optional_data_size != 0)) {
+		errno = EINVAL;
+		return -1;
+	}
+	if (!dp && dp_size == 0) {
 		errno = EINVAL;
 		return -1;
 	}
 
-	uint16_t dp_size = efidp_size(dp);
 	ssize_t desc_len = utf8len((uint8_t *)description, 1024) * 2 + 2;
 	ssize_t sz = sizeof (attributes)
 		     + sizeof (uint16_t) + desc_len
@@ -58,7 +60,7 @@ efi_make_load_option(uint8_t *buf, ssize_t size, uint32_t attributes,
 	pos += sizeof (attributes);
 
 	*(uint16_t *)pos = dp_size;
-	pos += sizeof (dp_size);
+	pos += sizeof (uint16_t);
 
 	utf8_to_ucs2((uint16_t *)pos, desc_len, 1, (uint8_t *)description);
 	pos += desc_len;
