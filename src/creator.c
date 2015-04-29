@@ -34,6 +34,7 @@
 #include "dp.h"
 #include "linux.h"
 #include "list.h"
+#include "util.h"
 
 static int
 __attribute__((__nonnull__ (1,2,3)))
@@ -135,16 +136,13 @@ err:
 static int
 open_disk(struct disk_info *info, int flags)
 {
-	char diskname[PATH_MAX+1] = "";
-	char diskpath[PATH_MAX+1] = "";
+	char *diskpath = NULL;
 	int rc;
 
-	rc = get_disk_name(info->major, info->minor, diskname, PATH_MAX);
+	rc = asprintfa(&diskpath, "/dev/%s", info->disk_name);
 	if (rc < 0)
 		return -1;
 
-	strcpy(diskpath, "/dev/");
-	strncat(diskpath, diskname, PATH_MAX - 5);
 	return open(diskpath, flags);
 }
 
@@ -186,9 +184,16 @@ make_the_whole_path(uint8_t *buf, size_t size, int fd, struct disk_info *info,
 	}
 
 	if (!(options & EFIBOOT_ABBREV_FILE)) {
-		int disk_fd = open_disk(info,
-		    (options& EFIBOOT_OPTIONS_WRITE_SIGNATURE)?O_RDWR:O_RDONLY);
+		int disk_fd;
 		int saved_errno;
+		int rc;
+
+		rc = set_disk_and_part_name(info);
+		if (rc < 0)
+			goto err;
+
+		disk_fd = open_disk(info,
+		    (options& EFIBOOT_OPTIONS_WRITE_SIGNATURE)?O_RDWR:O_RDONLY);
 		if (disk_fd < 0)
 			goto err;
 
@@ -218,23 +223,16 @@ err:
 }
 
 ssize_t
-__attribute__((__nonnull__ (3)))
-__attribute__((__visibility__ ("default")))
-efi_generate_file_device_path(uint8_t *buf, ssize_t size,
-			      const char const *filepath,
-			      uint32_t options, ...)
+efi_va_generate_file_device_path_from_esp(uint8_t *buf, ssize_t size,
+				       const char *devpath, int partition,
+				       const char *relpath,
+				       uint32_t options, va_list ap)
 {
 	int rc;
 	ssize_t ret = -1;
-	char *devpath = NULL;
-	char *relpath = NULL;
 	struct disk_info info = { 0, };
 	int fd = -1;
 	int saved_errno;
-
-	rc = find_file(filepath, &devpath, &relpath);
-	if (rc < 0)
-		return -1;
 
 	fd = open(devpath, O_RDONLY);
 	if (fd < 0)
@@ -244,17 +242,21 @@ efi_generate_file_device_path(uint8_t *buf, ssize_t size,
 	if (rc < 0)
 		goto err;
 
+	if (partition > 0)
+		info.part = partition;
+
 	if (options & EFIBOOT_ABBREV_EDD10) {
-		va_list ap;
-		va_start(ap, options);
+		va_list aq;
+		va_copy(aq, ap);
 
-		info.edd10_devicenum = va_arg(ap, uint32_t);
+		info.edd10_devicenum = va_arg(aq, uint32_t);
 
-		va_end(ap);
+		va_end(aq);
 	}
 
-	ret = make_the_whole_path(buf, size, fd, &info, devpath,
-				  relpath, options);
+	char *dp = strdupa(devpath);
+	char *rp = strdupa(relpath);
+	ret = make_the_whole_path(buf, size, fd, &info, dp, rp, options);
 err:
 	saved_errno = errno;
 	if (info.disk_name) {
@@ -269,6 +271,57 @@ err:
 
 	if (fd >= 0)
 		close(fd);
+	errno = saved_errno;
+	return ret;
+}
+
+ssize_t
+__attribute__((__nonnull__ (3, 5)))
+__attribute__((__visibility__ ("default")))
+efi_generate_file_device_path_from_esp(uint8_t *buf, ssize_t size,
+				       const char *devpath, int partition,
+				       const char *relpath,
+				       uint32_t options, ...)
+{
+	ssize_t ret;
+	int saved_errno;
+	va_list ap;
+
+	va_start(ap, options);
+	ret = efi_va_generate_file_device_path_from_esp(buf, size, devpath,
+							partition, relpath,
+							options, ap);
+	saved_errno = errno;
+	va_end(ap);
+	errno = saved_errno;
+	return ret;
+}
+
+
+ssize_t
+__attribute__((__nonnull__ (3)))
+__attribute__((__visibility__ ("default")))
+efi_generate_file_device_path(uint8_t *buf, ssize_t size,
+			      const char const *filepath,
+			      uint32_t options, ...)
+{
+	int rc;
+	ssize_t ret;
+	char *devpath = NULL;
+	char *relpath = NULL;
+	va_list ap;
+	int saved_errno;
+
+	rc = find_file(filepath, &devpath, &relpath);
+	if (rc < 0)
+		return -1;
+
+	va_start(ap, options);
+
+	ret = efi_va_generate_file_device_path_from_esp(buf, size, devpath,
+						       0, relpath, options, ap);
+	saved_errno = errno;
+	va_end(ap);
 	if (devpath)
 		free(devpath);
 	if (relpath)

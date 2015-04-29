@@ -32,6 +32,15 @@ extern ssize_t efi_generate_file_device_path(uint8_t *buf, ssize_t size,
 					     uint32_t options, ...)
 	__attribute__((__nonnull__ (3)));
 
+extern ssize_t efi_generate_file_device_path_from_esp(uint8_t *buf,
+						      ssize_t size,
+						      const char *devpath,
+						      int partition,
+						      const char *relpath,
+						      uint32_t options, ...)
+	__attribute__((__nonnull__ (3, 5)))
+	__attribute__((__visibility__ ("default")));
+
 extern ssize_t efi_generate_network_device_path(uint8_t *buf, ssize_t size,
 						const char const *ifname,
 						uint32_t options)

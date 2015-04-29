@@ -177,32 +177,58 @@ eb_scsi_pci(int fd, const struct disk_info *info, uint8_t *bus,
 
 int
 __attribute__((__visibility__ ("hidden")))
-get_disk_name(uint64_t major, unsigned char minor,
-	      char *pathname, size_t max)
+set_disk_and_part_name(struct disk_info *info)
 {
 	char *linkbuf;
 	ssize_t rc;
 
 	rc = sysfs_readlink(&linkbuf, "/sys/dev/block/%"PRIu64":%hhd",
-		      major, minor);
+		      info->major, info->minor);
 	if (rc < 0)
 		return -1;
 
-	char *dev;
-	dev = strrchr(linkbuf, '/');
-	if (!dev) {
+	char *ultimate;
+	ultimate = strrchr(linkbuf, '/');
+	if (!ultimate) {
 		errno = EINVAL;
 		return -1;
 	}
-	*dev = '\0';
+	*ultimate = '\0';
+	ultimate++;
 
-	dev = strrchr(linkbuf, '/');
-	if (!dev) {
+	char *penultimate;
+	penultimate = strrchr(linkbuf, '/');
+	if (!penultimate) {
 		errno = EINVAL;
 		return -1;
 	}
+	penultimate++;
 
-	strncpy(pathname, dev+1, max);
+	if (!strcmp(penultimate, "block")) {
+		if (!info->disk_name) {
+			info->disk_name = strdup(ultimate);
+			if (!info->disk_name)
+				return -1;
+		}
+		if (!info->part_name) {
+			rc = asprintf(&info->part_name, "%s%d", info->disk_name,
+				      info->part);
+			if (rc < 0)
+				return -1;
+		}
+	} else {
+		if (!info->disk_name) {
+			info->disk_name = strdup(penultimate);
+			if (!info->disk_name)
+				return -1;
+		}
+		if (!info->part_name) {
+			info->part_name = strdup(ultimate);
+			if (!info->part_name)
+				return -1;
+		}
+	}
+
 	return 0;
 }
 
@@ -339,11 +365,23 @@ sysfs_parse_sata(uint8_t *buf, ssize_t size, ssize_t *off,
 	 */
 	char *disk_name = NULL;
 	char *part_name = NULL;
-	rc = sscanf(pbuf+*poff, "block/%m[^/]/%m[^/]%n", &disk_name, &part_name,
-		    &psz);
-	if (rc != 2)
+	int psz1 = 0;
+	rc = sscanf(pbuf+*poff, "block/%m[^/]%n/%m[^/]%n", &disk_name, &psz,
+		    &part_name, &psz1);
+	if (rc == 1) {
+		rc = asprintf(&part_name, "%s%d", disk_name, info->part);
+		if (rc < 0) {
+			free(disk_name);
+			errno = EINVAL;
+			return -1;
+		}
+		*poff += psz;
+	} else if (rc != 2) {
+		errno = EINVAL;
 		return -1;
-	*poff += psz;
+	} else {
+		*poff += psz1;
+	}
 
 	info->sata_info.scsi_bus = scsi_bus;
 	info->sata_info.scsi_device = scsi_device;

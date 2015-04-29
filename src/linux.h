@@ -89,8 +89,7 @@ enum _interface_type {interface_type_unknown,
 		      virtblk, nvme};
 
 extern int eb_disk_info_from_fd(int fd, struct disk_info *info);
-extern int get_disk_name(uint64_t major, unsigned char minor,
-			 char *diskname, size_t max);
+extern int set_disk_and_part_name(struct disk_info *info);
 extern int make_blockdev_path(uint8_t *buf, ssize_t size, int fd,
 				struct disk_info *info);
 extern int eb_scsi_pci(int fd, const struct disk_info *info, uint8_t *bus,
