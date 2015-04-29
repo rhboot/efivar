@@ -148,6 +148,16 @@ open_disk(struct disk_info *info, int flags)
 	return open(diskpath, flags);
 }
 
+static char *
+tilt_slashes(char *s)
+{
+	char *p;
+	for (p = s; *p; p++)
+		if (*p == '/')
+			*p = '\\';
+	return s;
+}
+
 static ssize_t
 make_the_whole_path(uint8_t *buf, size_t size, int fd, struct disk_info *info,
 		    char *devpath, char *filepath, uint32_t options)
@@ -191,6 +201,7 @@ make_the_whole_path(uint8_t *buf, size_t size, int fd, struct disk_info *info,
 		off += sz;
 	}
 
+	tilt_slashes(filepath);
 	sz = efidp_make_file(buf+off, size?size-off:0, filepath);
 	if (sz < 0)
 		goto err;
