@@ -16,6 +16,7 @@
  * along with this library.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include <arpa/inet.h>
 #include <errno.h>
 #include <inttypes.h>
 #include <stddef.h>
@@ -546,7 +547,7 @@ _format_message_dn(char *buf, size_t size, const_efidp dp)
 ssize_t
 __attribute__((__visibility__ ("default")))
 efidp_make_mac_addr(uint8_t *buf, ssize_t size, uint8_t if_type,
-		    uint8_t *mac_addr, ssize_t mac_addr_size)
+		    const uint8_t const *mac_addr, ssize_t mac_addr_size)
 {
 	efidp_mac_addr *mac = (efidp_mac_addr *)buf;
 
@@ -557,6 +558,32 @@ efidp_make_mac_addr(uint8_t *buf, ssize_t size, uint8_t if_type,
 		mac->if_type = if_type;
 		memcpy(mac->mac_addr, mac_addr,
 		       mac_addr_size > 32 ? 32 : mac_addr_size);
+	}
+	return sz;
+}
+
+ssize_t
+__attribute__((__visibility__ ("default")))
+efidp_make_ipv4(uint8_t *buf, ssize_t size, uint32_t local, uint32_t remote,
+		uint32_t gateway, uint32_t netmask,
+		uint16_t local_port, uint16_t remote_port,
+		uint16_t protocol, int is_static)
+{
+	efidp_ipv4_addr *ipv4 = (efidp_ipv4_addr *)buf;
+	ssize_t sz = efidp_make_generic(buf, size, EFIDP_MESSAGE_TYPE,
+					EFIDP_MSG_IPv4, sizeof (*ipv4));
+	ssize_t req = sizeof (*ipv4);
+	if (size && sz == req) {
+		*((uint32_t *)ipv4->local_ipv4_addr) = htonl(local);
+		*((uint32_t *)ipv4->remote_ipv4_addr) = htonl(remote);
+		ipv4->local_port = htons(local_port);
+		ipv4->remote_port = htons(remote_port);
+		ipv4->protocol = htons(protocol);
+		ipv4->static_ip_addr = 0;
+		if (is_static)
+			ipv4->static_ip_addr = 1;
+		*((uint32_t *)ipv4->gateway) = htonl(gateway);
+		*((uint32_t *)ipv4->netmask) = htonl(netmask);
 	}
 	return sz;
 }

@@ -41,9 +41,18 @@ extern ssize_t efi_generate_file_device_path_from_esp(uint8_t *buf,
 	__attribute__((__nonnull__ (3, 5)))
 	__attribute__((__visibility__ ("default")));
 
-extern ssize_t efi_generate_network_device_path(uint8_t *buf, ssize_t size,
-						const char const *ifname,
-						uint32_t options)
-	__attribute__((__nonnull__ (3)));
+
+extern ssize_t efi_generate_ipv4_device_path(uint8_t *buf, ssize_t size,
+					     const char const *ifname,
+					     const char const *local_addr,
+					     const char const *remote_addr,
+					     const char const *gateway_addr,
+					     const char const *netmask,
+					     uint16_t local_port,
+					     uint16_t remote_port,
+					     uint16_t protocol,
+					     uint8_t addr_origin)
+	__attribute__((__nonnull__ (3,4,5,6,7)))
+	__attribute__((__visibility__ ("default")));
 
 #endif /* _EFIBOOT_CREATOR_H */

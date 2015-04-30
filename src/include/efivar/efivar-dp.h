@@ -279,10 +279,12 @@ typedef struct {
 	uint8_t		if_type;
 } efidp_mac_addr;
 extern ssize_t efidp_make_mac_addr(uint8_t *buf, ssize_t size,
-				   uint8_t if_type, uint8_t *mac_addr,
+				   uint8_t if_type,
+				   const uint8_t const *mac_addr,
 				   ssize_t mac_addr_size);
 
 #define EFIDP_MSG_IPv4		0x0c
+
 typedef struct {
 	efidp_header	header;
 	uint8_t		local_ipv4_addr[4];
@@ -294,6 +296,12 @@ typedef struct {
 	uint8_t		gateway[4];
 	uint8_t		netmask[4];
 } efidp_ipv4_addr;
+/* everything here is in host byte order */
+extern ssize_t efidp_make_ipv4(uint8_t *buf, ssize_t size,
+			       uint32_t local, uint32_t remote,
+			       uint32_t gateway, uint32_t netmask,
+			       uint16_t local_port, uint16_t remote_port,
+			       uint16_t protocol, int is_static);
 
 #define EFIDP_IPv4_ORIGIN_DHCP		0x00
 #define EFIDP_IPv4_ORIGIN_STATIC	0x01

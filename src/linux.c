@@ -21,10 +21,14 @@
 #include <fcntl.h>
 #include <inttypes.h>
 #include <limits.h>
+#include <linux/ethtool.h>
 #include <linux/nvme.h>
+#include <linux/sockios.h>
+#include <net/if.h>
 #include <scsi/scsi.h>
 #include <stdio.h>
 #include <sys/ioctl.h>
+#include <sys/socket.h>
 #include <sys/types.h>
 #include <sys/param.h>
 #include <sys/stat.h>
@@ -526,54 +530,55 @@ sysfs_parse_sas(uint8_t *buf, ssize_t size, ssize_t *off,
 	return *off;
 }
 
-int
-__attribute__((__visibility__ ("hidden")))
-make_blockdev_path(uint8_t *buf, ssize_t size, int fd, struct disk_info *info)
+static ssize_t
+make_pci_path(uint8_t *buf, ssize_t size, char *pathstr, ssize_t *pathoff)
 {
-	char *linkbuf = NULL;
-	int loff = 0;
-	int lsz = 0;
-	int rc;
 	ssize_t off=0, sz=0;
+	ssize_t poff = 0;
+	int psz;
+	int rc;
 
-	rc = sysfs_readlink(&linkbuf, "/sys/dev/block/%"PRIu64":%u",
-			    info->major, info->minor);
-	if (rc < 0)
+	if (pathstr == NULL || pathoff == NULL || pathstr[0] == '\0') {
+		errno = EINVAL;
 		return -1;
+	}
 
-	/*
-	 * find the pci root domain and port; they basically look like:
-	 * ../../devices/pci0000:00/
-	 *                  ^d   ^p
-	 */
+	*pathoff = 0;
+
 	uint16_t root_domain;
 	uint8_t root_bus;
-	rc = sscanf(linkbuf+loff, "../../devices/pci%hx:%hhx/%n",
-		    &root_domain, &root_bus, &lsz);
+	uint32_t acpi_hid = 0;
+	uint64_t acpi_uid_int = 0;
+	/*
+	 * find the pci root domain and port; they basically look like:
+	 * pci0000:00/
+	 *    ^d   ^p
+	 */
+	rc = sscanf(pathstr+poff, "pci%hx:%hhx/%n", &root_domain,
+		    &root_bus, &psz);
 	if (rc != 2)
 		return -1;
-	info->pci_root.root_pci_domain = root_domain;
-	info->pci_root.root_pci_bus = root_bus;
-	loff += lsz;
+	poff += psz;
 
 	char *fbuf = NULL;
-	rc = read_sysfs_file(&fbuf, "/sys/devices/pci%04x:%02x/firmware_node/hid",
+	rc = read_sysfs_file(&fbuf,
+			     "/sys/devices/pci%04x:%02x/firmware_node/hid",
 			     root_domain, root_bus);
 	if (rc < 0)
 		return -1;
 
-	uint16_t acpi_hid;
-	rc = sscanf((char *)fbuf, "PNP%hx", &acpi_hid);
+	uint16_t tmp16 = 0;
+	rc = sscanf((char *)fbuf, "PNP%hx", &tmp16);
 	if (rc != 1)
 		return -1;
-	info->pci_root.root_pci_acpi_hid = EFIDP_EFI_PNP_ID(acpi_hid);
+	acpi_hid = EFIDP_EFI_PNP_ID(tmp16);
 
 	errno = 0;
 	fbuf = NULL;
-	rc = read_sysfs_file(&fbuf, "/sys/devices/pci%4x:%02x/firmware_node/uid",
-			     root_domain, root_bus);
-	uint64_t acpi_uid_int = 0;
 	int use_uid_str = 0;
+	rc = read_sysfs_file(&fbuf,
+			     "/sys/devices/pci%4x:%02x/firmware_node/uid",
+			     root_domain, root_bus);
 	if (rc <= 0 && errno != ENOENT)
 		return -1;
 	if (rc > 0) {
@@ -589,16 +594,14 @@ make_blockdev_path(uint8_t *buf, ssize_t size, int fd, struct disk_info *info)
 		}
 	}
 	errno = 0;
-	info->pci_root.root_pci_acpi_uid = acpi_uid_int;
 
 	if (use_uid_str) {
 		sz = efidp_make_acpi_hid_ex(buf+off, size?size-off:0,
-					    info->pci_root.root_pci_acpi_hid,
-					    0, 0, "", (char *)fbuf, "");
+					    acpi_hid, 0, 0, "", (char *)fbuf,
+					    "");
 	} else {
 		sz = efidp_make_acpi_hid(buf+off, size?size-off:0,
-					 info->pci_root.root_pci_acpi_hid,
-					 info->pci_root.root_pci_acpi_uid);
+					 acpi_hid, acpi_uid_int);
 	}
 	if (sz < 0)
 		return -1;
@@ -612,16 +615,12 @@ make_blockdev_path(uint8_t *buf, ssize_t size, int fd, struct disk_info *info)
 	while (1) {
 		uint16_t domain;
 		uint8_t bus, device, function;
-		rc = sscanf(linkbuf+loff, "%hx:%hhx:%hhx.%hhx/%n",
-			    &domain, &bus, &device, &function, &lsz);
+		rc = sscanf(pathstr+poff, "%hx:%hhx:%hhx.%hhx/%n",
+			    &domain, &bus, &device, &function, &psz);
 		if (rc != 4)
 			break;
-		info->pci_dev.pci_domain = domain;
-		info->pci_dev.pci_bus = bus;
-		info->pci_dev.pci_device = device;
-		info->pci_dev.pci_function = function;
 		found=1;
-		loff += lsz;
+		poff += psz;
 
 		sz = efidp_make_pci(buf+off, size?size-off:0, device, function);
 		if (sz < 0)
@@ -631,7 +630,40 @@ make_blockdev_path(uint8_t *buf, ssize_t size, int fd, struct disk_info *info)
 	if (!found)
 		return -1;
 
-	found = 0;
+	*pathoff = poff;
+	return off;
+}
+
+int
+__attribute__((__visibility__ ("hidden")))
+make_blockdev_path(uint8_t *buf, ssize_t size, int fd, struct disk_info *info)
+{
+	char *linkbuf = NULL;
+	ssize_t off=0, sz=0, loff=0;
+	int lsz = 0;
+	int rc;
+	int found = 0;
+
+	rc = sysfs_readlink(&linkbuf, "/sys/dev/block/%"PRIu64":%u",
+			    info->major, info->minor);
+	if (rc < 0)
+		return -1;
+
+	/*
+	 * the sysfs path basically looks like:
+	 * ../../devices/pci$PCI_STUFF/$BLOCKDEV_STUFF/block/$DISK/$PART
+	 */
+	rc = sscanf(linkbuf+loff, "../../devices/%n", &lsz);
+	if (rc != 0)
+		return -1;
+	loff += lsz;
+
+	ssize_t tmplsz=0;
+	sz = make_pci_path(buf, size, linkbuf+loff, &tmplsz);
+	if (sz < 0)
+		return -1;
+	loff += tmplsz;
+	off += sz;
 
 	if (info->interface_type == interface_type_unknown ||
 	    info->interface_type == ata ||
@@ -841,4 +873,82 @@ eb_disk_info_from_fd(int fd, struct disk_info *info)
 
 	errno = ENOSYS;
 	return -1;
+}
+
+static ssize_t
+make_net_pci_path(uint8_t *buf, ssize_t size, const char const *ifname)
+{
+	char *linkbuf = NULL;
+	ssize_t off=0, sz=0, loff=0;
+	int lsz = 0;
+	int rc;
+
+	rc = sysfs_readlink(&linkbuf, "/sys/class/net/%s", ifname);
+	if (rc < 0)
+		return -1;
+
+	/*
+	 * the sysfs path basically looks like:
+	 * ../../devices/$PCI_STUFF/net/$IFACE
+	 */
+	rc = sscanf(linkbuf+loff, "../../devices/%n", &lsz);
+	if (rc != 0)
+		return -1;
+	loff += lsz;
+
+	ssize_t tmplsz = 0;
+	sz = make_pci_path(buf, size, linkbuf+loff, &tmplsz);
+	if (sz < 0)
+		return -1;
+	off += sz;
+	loff += tmplsz;
+
+	return off;
+}
+
+ssize_t
+__attribute__((__visibility__ ("hidden")))
+make_mac_path(uint8_t *buf, ssize_t size, const char const *ifname)
+{
+	struct ifreq ifr = { 0, };
+	struct ethtool_drvinfo drvinfo = { 0, };
+	int fd, rc;
+	ssize_t ret = -1, sz, off=0;
+	char busname[PATH_MAX+1] = "";
+
+	strncpy(ifr.ifr_name, ifname, IF_NAMESIZE);
+	drvinfo.cmd = ETHTOOL_GDRVINFO;
+	ifr.ifr_data = (caddr_t)&drvinfo;
+
+	fd = socket(AF_INET, SOCK_DGRAM, 0);
+	if (fd < 0)
+		return -1;
+
+	rc = ioctl(fd, SIOCETHTOOL, &ifr);
+	if (rc < 0)
+		goto err;
+
+	strncpy(busname, drvinfo.bus_info, PATH_MAX);
+
+	rc = ioctl(fd, SIOCGIFHWADDR, &ifr);
+	if (rc < 0)
+		goto err;
+
+	sz = make_net_pci_path(buf, size, ifname);
+	if (sz < 0)
+		goto err;
+	off += sz;
+
+	sz = efidp_make_mac_addr(buf+off, size?size-off:0,
+				 ifr.ifr_ifru.ifru_hwaddr.sa_family,
+				 (uint8_t *)ifr.ifr_ifru.ifru_hwaddr.sa_data,
+				 sizeof(ifr.ifr_ifru.ifru_hwaddr.sa_data));
+	if (sz < 0)
+		return -1;
+	off += sz;
+	ret = off;
+err:
+	if (fd >= 0)
+		close(fd);
+	return ret;
 }

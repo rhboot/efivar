@@ -21,11 +21,14 @@
 #include <inttypes.h>
 #include <limits.h>
 #include <mntent.h>
+#include <netinet/in.h>
+#include <netinet/ip.h>
 #include <pci/pci.h>
 #include <stdlib.h>
 #include <stdio.h>
 #include <sys/types.h>
 #include <sys/stat.h>
+#include <sys/socket.h>
 
 #include <efivar.h>
 #include <efiboot.h>
@@ -157,8 +160,9 @@ tilt_slashes(char *s)
 }
 
 static ssize_t
-make_the_whole_path(uint8_t *buf, size_t size, int fd, struct disk_info *info,
-		    char *devpath, char *filepath, uint32_t options)
+make_whole_blockdev_path(uint8_t *buf, size_t size, int fd,
+			 struct disk_info *info, char *devpath,
+			 char *filepath, uint32_t options)
 {
 	ssize_t ret=-1;
 	ssize_t off=0, sz;
@@ -256,7 +260,7 @@ efi_va_generate_file_device_path_from_esp(uint8_t *buf, ssize_t size,
 
 	char *dp = strdupa(devpath);
 	char *rp = strdupa(relpath);
-	ret = make_the_whole_path(buf, size, fd, &info, dp, rp, options);
+	ret = make_whole_blockdev_path(buf, size, fd, &info, dp, rp, options);
 err:
 	saved_errno = errno;
 	if (info.disk_name) {
@@ -297,7 +301,6 @@ efi_generate_file_device_path_from_esp(uint8_t *buf, ssize_t size,
 	return ret;
 }
 
-
 ssize_t
 __attribute__((__nonnull__ (3)))
 __attribute__((__visibility__ ("default")))
@@ -330,13 +333,57 @@ efi_generate_file_device_path(uint8_t *buf, ssize_t size,
 	return ret;
 }
 
-ssize_t
-__attribute__((__nonnull__ (3)))
-__attribute__((__visibility__ ("default")))
-efi_generate_network_device_path(uint8_t *buf, ssize_t size,
-			       const char const *ifname,
-			       uint32_t options)
+static ssize_t
+__attribute__((__nonnull__ (3,4,5,6)))
+make_ipv4_path(uint8_t *buf, ssize_t size,
+	       const char const *local_addr, const char const *remote_addr,
+	       const char const *gateway_addr, const char const *netmask,
+	       uint16_t local_port, uint16_t remote_port,
+	       uint16_t protocol, uint8_t addr_origin)
 {
-	errno = ENOSYS;
-	return -1;
+#if 0
+	if (local_addr == NULL || remote_addr == NULL ||
+	    gateway_addr == NULL || netmask == NULL) {
+		errno = EINVAL;
+		return -1;
+	}
+#endif
+	return efidp_make_ipv4(buf, size, 0, 0, 0, 0, 0, 0, 0, 0);
+}
+
+ssize_t
+__attribute__((__nonnull__ (3,4,5,6,7)))
+__attribute__((__visibility__ ("default")))
+efi_generate_ipv4_device_path(uint8_t *buf, ssize_t size,
+			      const char const *ifname,
+			      const char const *local_addr,
+			      const char const *remote_addr,
+			      const char const *gateway_addr,
+			      const char const *netmask,
+			      uint16_t local_port,
+			      uint16_t remote_port,
+			      uint16_t protocol,
+			      uint8_t addr_origin)
+{
+	ssize_t off = 0;
+	ssize_t sz;
+
+	sz = make_mac_path(buf, size, ifname);
+	if (sz < 0)
+		return -1;
+	off += sz;
+
+	sz = make_ipv4_path(buf+off, size?size-off:0, local_addr, remote_addr,
+			    gateway_addr, netmask, local_port, remote_port,
+			    protocol, addr_origin);
+	if (sz < 0)
+		return -1;
+	off += sz;
+
+	sz = efidp_make_end_entire(buf+off, size?size-off:0);
+	if (sz < 0)
+		return -1;
+	off += sz;
+
+	return off;
 }
