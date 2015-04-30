@@ -145,7 +145,7 @@ efivarfs_get_variable(efi_guid_t guid, const char *name, uint8_t **data,
 
 	*attributes = ret_attributes;
 	*data = ret_data;
-	*data_size = size;
+	*data_size = size - 1; // read_file pads out 1 extra byte to NUL it */
 
 	ret = 0;
 err:
