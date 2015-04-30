@@ -700,15 +700,10 @@ make_blockdev_path(uint8_t *buf, ssize_t size, int fd, struct disk_info *info)
 	}
 
 	if (!found && info->interface_type == scsi) {
-		char diskname[PATH_MAX+1]="";
 		char *linkbuf;
-		rc = get_disk_name(info->major, info->minor, diskname,
-				   PATH_MAX);
-		if (rc < 0)
-			return 0;
 
 		rc = sysfs_readlink(&linkbuf, "/sys/class/block/%s/device",
-			      diskname);
+			      info->disk_name);
 		if (rc < 0)
 			return 0;
 
