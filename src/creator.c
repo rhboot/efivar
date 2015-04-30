@@ -159,73 +159,6 @@ tilt_slashes(char *s)
 	return s;
 }
 
-static ssize_t
-make_whole_blockdev_path(uint8_t *buf, size_t size, int fd,
-			 struct disk_info *info, char *devpath,
-			 char *filepath, uint32_t options)
-{
-	ssize_t ret=-1;
-	ssize_t off=0, sz;
-
-	if ((options & EFIBOOT_ABBREV_EDD10)
-			&& (!(options & EFIBOOT_ABBREV_FILE)
-			    && !(options & EFIBOOT_ABBREV_HD))) {
-		sz = efidp_make_edd10(buf, size, info->edd10_devicenum);
-		if (sz < 0)
-			return -1;
-		off = sz;
-	} else if (!(options & EFIBOOT_ABBREV_FILE)
-		   && !(options & EFIBOOT_ABBREV_HD)) {
-		/*
-		 * We're probably on a modern kernel, so just parse the
-		 * symlink from /sys/dev/block/$major:$minor and get it
-		 * from there.
-		 */
-		sz = make_blockdev_path(buf, size, fd, info);
-		if (sz < 0)
-			return -1;
-		off += sz;
-	}
-
-	if (!(options & EFIBOOT_ABBREV_FILE)) {
-		int disk_fd;
-		int saved_errno;
-		int rc;
-
-		rc = set_disk_and_part_name(info);
-		if (rc < 0)
-			goto err;
-
-		disk_fd = open_disk(info,
-		    (options& EFIBOOT_OPTIONS_WRITE_SIGNATURE)?O_RDWR:O_RDONLY);
-		if (disk_fd < 0)
-			goto err;
-
-		sz = make_hd_dn(buf, size, off, disk_fd, info->part, options);
-		saved_errno = errno;
-		close(disk_fd);
-		errno = saved_errno;
-		if (sz < 0)
-			goto err;
-		off += sz;
-	}
-
-	tilt_slashes(filepath);
-	sz = efidp_make_file(buf+off, size?size-off:0, filepath);
-	if (sz < 0)
-		goto err;
-	off += sz;
-
-	sz = efidp_make_end_entire(buf+off, size?size-off:0);
-	if (sz < 0)
-		goto err;
-	off += sz;
-
-	ret = off;
-err:
-	return ret;
-}
-
 ssize_t
 efi_va_generate_file_device_path_from_esp(uint8_t *buf, ssize_t size,
 				       const char *devpath, int partition,
@@ -233,7 +166,7 @@ efi_va_generate_file_device_path_from_esp(uint8_t *buf, ssize_t size,
 				       uint32_t options, va_list ap)
 {
 	int rc;
-	ssize_t ret = -1;
+	ssize_t ret = -1, off=0, sz;
 	struct disk_info info = { 0, };
 	int fd = -1;
 	int saved_errno;
@@ -258,9 +191,60 @@ efi_va_generate_file_device_path_from_esp(uint8_t *buf, ssize_t size,
 		va_end(aq);
 	}
 
-	char *dp = strdupa(devpath);
-	char *rp = strdupa(relpath);
-	ret = make_whole_blockdev_path(buf, size, fd, &info, dp, rp, options);
+	if ((options & EFIBOOT_ABBREV_EDD10)
+			&& (!(options & EFIBOOT_ABBREV_FILE)
+			    && !(options & EFIBOOT_ABBREV_HD))) {
+		sz = efidp_make_edd10(buf, size, info.edd10_devicenum);
+		if (sz < 0)
+			return -1;
+		off = sz;
+	} else if (!(options & EFIBOOT_ABBREV_FILE)
+		   && !(options & EFIBOOT_ABBREV_HD)) {
+		/*
+		 * We're probably on a modern kernel, so just parse the
+		 * symlink from /sys/dev/block/$major:$minor and get it
+		 * from there.
+		 */
+		sz = make_blockdev_path(buf, size, fd, &info);
+		if (sz < 0)
+			return -1;
+		off += sz;
+	}
+
+	if (!(options & EFIBOOT_ABBREV_FILE)) {
+		int disk_fd;
+		int saved_errno;
+		int rc;
+
+		rc = set_disk_and_part_name(&info);
+		if (rc < 0)
+			goto err;
+
+		disk_fd = open_disk(&info,
+		    (options& EFIBOOT_OPTIONS_WRITE_SIGNATURE)?O_RDWR:O_RDONLY);
+		if (disk_fd < 0)
+			goto err;
+
+		sz = make_hd_dn(buf, size, off, disk_fd, info.part, options);
+		saved_errno = errno;
+		close(disk_fd);
+		errno = saved_errno;
+		if (sz < 0)
+			goto err;
+		off += sz;
+	}
+
+	char *filepath = strdupa(relpath);
+	tilt_slashes(filepath);
+	sz = efidp_make_file(buf+off, size?size-off:0, filepath);
+	if (sz < 0)
+		goto err;
+	off += sz;
+
+	sz = efidp_make_end_entire(buf+off, size?size-off:0);
+	if (sz < 0)
+		goto err;
+	off += sz;
 err:
 	saved_errno = errno;
 	if (info.disk_name) {
