@@ -1,7 +1,7 @@
 TOPDIR = $(shell echo $$PWD)
 
 SUBDIRS := src docs
-VERSION := 0.17
+VERSION := 0.18
 
 all : $(SUBDIRS) efivar.spec
 
