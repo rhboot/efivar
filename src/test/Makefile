@@ -16,7 +16,8 @@ clean :
 test : tester
 	./tester
 
-tester :: tester.o -ldl
+tester :: tester.o
+	$(CC) $(cflags) $(LDFLAGS) -Wl,-rpath,$(TOPDIR)/src -L$(TOPDIR)/src -o $@ $^ -ldl -lefivar
 
 .PHONY: all clean install test
 

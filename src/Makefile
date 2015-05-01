@@ -57,7 +57,8 @@ fakeguid.o : guid.c
 makeguids.o : makeguids.c
 	$(CC) $(cflags) -DEFIVAR_BUILD_ENVIRONMENT -c -o $@ $^
 
-makeguids : makeguids.o fakeguid.o -ldl
+makeguids : makeguids.o fakeguid.o
+	$(CC) $(cflags) -o $@ $^ -ldl
 
 include/efivar/efivar-guids.h : makeguids guids.txt
 	./makeguids guids.txt guids.bin names.bin guid-symbols.S $@
