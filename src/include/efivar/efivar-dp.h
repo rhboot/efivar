@@ -18,6 +18,8 @@
 #ifndef _EFIVAR_DP_H
 #define _EFIVAR_DP_H 1
 
+#include <limits.h>
+
 /* Generic device path header */
 typedef struct {
 	uint8_t type;
@@ -852,6 +854,64 @@ efidp_instance_size(const_efidp dpi)
 		dpi = next;
 	}
 	return ret;
+}
+
+static inline int
+__attribute__((__unused__))
+__attribute__((__nonnull__ (1)))
+efidp_is_valid(const_efidp dp, ssize_t limit)
+{
+	efidp_header *hdr = (efidp_header *)dp;
+	/* just to make it so I'm not checking for negatives everywhere,
+	 * limit this at a truly absurdly large size. */
+	if (limit < 0)
+		limit = INT_MAX;
+
+	while (limit > 0 && hdr) {
+		if (limit < (int64_t)(sizeof (efidp_header)))
+			return 0;
+
+		switch (hdr->type) {
+		case EFIDP_HARDWARE_TYPE:
+			if (hdr->subtype != EFIDP_HW_VENDOR &&
+			    hdr->length > 1024)
+				return 0;
+			break;
+		case EFIDP_ACPI_TYPE:
+			if (hdr->length > 1024)
+				return 0;
+			break;
+		case EFIDP_MESSAGE_TYPE:
+			if (hdr->subtype != EFIDP_MSG_VENDOR &&
+			    hdr->length > 1024)
+				return 0;
+			break;
+		case EFIDP_MEDIA_TYPE:
+			if (hdr->subtype != EFIDP_MEDIA_VENDOR &&
+			    hdr->length > 1024)
+				return 0;
+			break;
+		case EFIDP_BIOS_BOOT_TYPE:
+			break;
+		case EFIDP_END_TYPE:
+			if (hdr->length > 4)
+				return 0;
+			break;
+		default:
+			return 0;
+		}
+
+		if (limit < hdr->length)
+			return 0;
+		limit -= hdr->length;
+
+		if (hdr->type != EFIDP_END_TYPE &&
+		    hdr->type != EFIDP_END_ENTIRE)
+			break;
+
+		hdr = (efidp_header *)((uint8_t *)hdr + hdr->length);
+	}
+	return (limit >= 0);
 }
 
 /* and now, printing and parsing */

@@ -64,4 +64,11 @@ efi_load_option_args_as_ucs2(uint16_t *buf, ssize_t size, char *utf8)
 	__attribute__((__nonnull__ (3)))
 	__attribute__((__visibility__ ("default")));
 
+extern ssize_t efi_loadopt_optional_data_size(efi_load_option *opt, size_t size)
+	__attribute__((__nonnull__ (1)))
+	__attribute__((__visibility__ ("default")));
+extern int efi_loadopt_is_valid(efi_load_option *opt, size_t size)
+	__attribute__((__nonnull__ (1)))
+	__attribute__((__visibility__ ("default")));
+
 #endif /* _EFIBOOT_LOADOPT_H */

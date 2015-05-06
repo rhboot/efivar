@@ -38,6 +38,7 @@ efi_make_load_option(uint8_t *buf, ssize_t size, uint32_t attributes,
 		errno = EINVAL;
 		return -1;
 	}
+
 	if (!dp && dp_size == 0) {
 		errno = EINVAL;
 		return -1;
@@ -72,6 +73,48 @@ efi_make_load_option(uint8_t *buf, ssize_t size, uint32_t attributes,
 		memcpy(pos, optional_data, optional_data_size);
 
 	return sz;
+}
+
+ssize_t
+__attribute__((__nonnull__ (1)))
+__attribute__((__visibility__ ("default")))
+efi_loadopt_optional_data_size(efi_load_option *opt, size_t size)
+{
+	size_t sz;
+	uint8_t *p;
+
+	if (!opt)
+		return -1;
+
+	if (size < sizeof(*opt))
+		return -1;
+	size -= sizeof(*opt);
+	if (size < opt->file_path_list_length)
+		return -1;
+	sz = ucs2size(opt->description, size);
+	if (sz == size) // since there's no room for a file path...
+		return -1;
+	p = (uint8_t *)(opt->description) + sz;
+	size -= sz;
+
+	if (!efidp_is_valid((const_efidp)p, size))
+		return -1;
+	sz = efidp_size((const_efidp)p);
+	p += sz;
+	size -= sz;
+
+	return size;
+}
+
+int
+__attribute__((__nonnull__ (1)))
+__attribute__((__visibility__ ("default")))
+efi_loadopt_is_valid(efi_load_option *opt, size_t size)
+{
+	ssize_t rc;
+
+	rc = efi_loadopt_optional_data_size(opt, size);
+	return (rc >= 0);
 }
 
 uint32_t
