@@ -111,7 +111,7 @@ _format_media_dn(char *buf, size_t size, const_efidp dp)
 		for (int i = 0; !efi_guid_is_zero(&subtypes[i].guid); i++) {
 			if (efi_guid_cmp(&subtypes[i].guid,
 					  &dp->ramdisk.disk_type_guid))
-			continue;
+				continue;
 
 			label = subtypes[i].label;
 			break;
