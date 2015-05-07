@@ -23,7 +23,6 @@
 #include <mntent.h>
 #include <netinet/in.h>
 #include <netinet/ip.h>
-#include <pci/pci.h>
 #include <stdlib.h>
 #include <stdio.h>
 #include <sys/types.h>
