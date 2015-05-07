@@ -102,6 +102,9 @@ extern int eb_nvme_ns_id(int fd, uint32_t *ns_id);
 extern int eb_scsi_idlun(int fd, uint8_t *host, uint8_t *channel,
 			      uint8_t *id, uint8_t *lun);
 
+extern int get_partition_number(const char *devpath)
+	__attribute__((__visibility__ ("hidden")));
+
 extern ssize_t make_mac_path(uint8_t *buf, ssize_t size,
 			     const char const *ifname)
 	__attribute__((__visibility__ ("hidden")));

@@ -236,6 +236,43 @@ set_disk_and_part_name(struct disk_info *info)
 	return 0;
 }
 
+int
+__attribute__((__visibility__ ("hidden")))
+get_partition_number(const char *devpath)
+{
+	struct stat statbuf = { 0, };
+	int rc;
+	unsigned int maj, min;
+	char *linkbuf;
+	char *partbuf;
+	int ret = -1;
+
+	rc = stat(devpath, &statbuf);
+	if (rc < 0)
+		return -1;
+
+	if (!S_ISBLK(statbuf.st_mode)) {
+		errno = EINVAL;
+		return -1;
+	}
+
+	maj = gnu_dev_major(statbuf.st_rdev);
+	min = gnu_dev_minor(statbuf.st_rdev);
+
+	rc = sysfs_readlink(&linkbuf, "/sys/dev/block/%u:%u", maj, min);
+	if (rc < 0)
+		return -1;
+
+	rc = read_sysfs_file(&partbuf, "/sys/dev/block/%s/partition", linkbuf);
+	if (rc < 0)
+		return -1;
+
+	rc = sscanf(partbuf, "%d\n", &ret);
+	if (rc != 1)
+		return -1;
+	return ret;
+}
+
 static int
 sysfs_test_sata(const char *buf, ssize_t size)
 {

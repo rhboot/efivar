@@ -230,12 +230,12 @@ _make_hd_dn(uint8_t *buf, ssize_t size, int fd, uint32_t partition,
 	errno = 0;
 
 	rc = get_partition_info(fd, options,
-				partition, &part_start,
+				partition>0?partition:1, &part_start,
 				&part_size, signature, &format,
 				&signature_type);
 	if (rc < 0)
 		return rc;
 
-	return efidp_make_hd(buf, size, partition, part_start, part_size,
-			     signature, format, signature_type);
+	return efidp_make_hd(buf, size, partition>0?partition:1, part_start,
+			     part_size, signature, format, signature_type);
 }
