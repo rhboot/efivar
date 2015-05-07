@@ -175,7 +175,7 @@ efi_va_generate_file_device_path_from_esp(uint8_t *buf, ssize_t size,
 		goto err;
 
 	rc = eb_disk_info_from_fd(fd, &info);
-	if (rc < 0)
+	if (rc < 0 && errno != ENOSYS)
 		goto err;
 
 	if (partition > 0)
@@ -244,6 +244,7 @@ efi_va_generate_file_device_path_from_esp(uint8_t *buf, ssize_t size,
 	if (sz < 0)
 		goto err;
 	off += sz;
+	ret = off;
 err:
 	saved_errno = errno;
 	if (info.disk_name) {
@@ -292,7 +293,7 @@ efi_generate_file_device_path(uint8_t *buf, ssize_t size,
 			      uint32_t options, ...)
 {
 	int rc;
-	ssize_t ret;
+	ssize_t ret = -1;
 	char *devpath = NULL;
 	char *relpath = NULL;
 	va_list ap;
