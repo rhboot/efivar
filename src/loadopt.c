@@ -25,7 +25,9 @@ typedef struct efi_load_option_s {
 	uint16_t description[];
 	// uint8_t file_path_list[];
 	// uint8_t optional_data[];
-} efi_load_option;
+}
+__attribute__((packed))
+efi_load_option;
 
 ssize_t
 __attribute__((__nonnull__ (6)))
@@ -92,7 +94,7 @@ efi_loadopt_optional_data_size(efi_load_option *opt, size_t size)
 	if (size < opt->file_path_list_length)
 		return -1;
 	sz = ucs2size(opt->description, size);
-	if (sz == size) // since there's no room for a file path...
+	if (sz >= size) // since there's no room for a file path...
 		return -1;
 	p = (uint8_t *)(opt->description) + sz;
 	size -= sz;
