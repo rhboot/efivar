@@ -761,7 +761,7 @@ efidp_next_instance(const_efidp in, const_efidp *out)
 
 static inline int
 __attribute__((__unused__))
-efidp_dp_is_multiinstance(const_efidp dn)
+efidp_is_multiinstance(const_efidp dn)
 {
 	while (1) {
 		const_efidp next;
