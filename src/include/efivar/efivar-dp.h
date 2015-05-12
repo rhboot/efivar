@@ -175,6 +175,8 @@ typedef struct {
 	uint8_t		slave;
 	uint16_t	lun;
 } efidp_atapi;
+extern ssize_t efidp_make_atapi(uint8_t *buf, ssize_t size, uint16_t primary,
+		uint16_t slave, uint16_t lun);
 
 #define EFIDP_MSG_SCSI		0x02
 typedef struct {

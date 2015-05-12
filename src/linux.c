@@ -396,11 +396,18 @@ sysfs_parse_sata(uint8_t *buf, ssize_t size, ssize_t *off,
 
 	info->disk_name = disk_name;
 	info->part_name = part_name;
-	info->interface_type = sata;
+	if (info->interface_type == interface_type_unknown)
+		info->interface_type = sata;
 
-	*off = efidp_make_sata(buf, size, info->sata_info.ata_port,
-			       info->sata_info.ata_pmp,
-			       info->sata_info.ata_devno);
+	if (info->interface_type == ata) {
+		*off = efidp_make_atapi(buf, size, info->sata_info.ata_port,
+					info->sata_info.ata_pmp,
+					info->sata_info.ata_devno);
+	} else {
+		*off = efidp_make_sata(buf, size, info->sata_info.ata_port,
+				       info->sata_info.ata_pmp,
+				       info->sata_info.ata_devno);
+	}
 	return *off;
 }
 
@@ -627,6 +634,7 @@ __attribute__((__visibility__ ("hidden")))
 make_blockdev_path(uint8_t *buf, ssize_t size, int fd, struct disk_info *info)
 {
 	char *linkbuf = NULL;
+	char *driverbuf = NULL;
 	ssize_t off=0, sz=0, loff=0;
 	int lsz = 0;
 	int rc;
@@ -653,8 +661,23 @@ make_blockdev_path(uint8_t *buf, ssize_t size, int fd, struct disk_info *info)
 	loff += tmplsz;
 	off += sz;
 
+	char *tmppath = strdupa(linkbuf);
+	if (!tmppath)
+		return -1;
+	tmppath[loff] = '\0';
+	rc = sysfs_readlink(&driverbuf, "/sys/dev/block/%s/driver", tmppath);
+	if (rc < 0)
+		return -1;
+
+	char *driver = strrchr(driverbuf, '/');
+	if (!driver || !*driver)
+		return -1;
+	driver+=1;
+
+	if (!strncmp(driver, "pata_", 5) || !(strcmp(driver, "ata_piix")))
+		info->interface_type = ata;
+
 	if (info->interface_type == interface_type_unknown ||
-	    info->interface_type == ata ||
 	    info->interface_type == atapi ||
 	    info->interface_type == usb ||
 	    info->interface_type == i1394 ||

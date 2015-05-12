@@ -647,6 +647,26 @@ efidp_make_sata(uint8_t *buf, ssize_t size, uint16_t hba_port,
 
 ssize_t
 __attribute__((__visibility__ ("default")))
+efidp_make_atapi(uint8_t *buf, ssize_t size, uint16_t primary,
+		uint16_t slave, uint16_t lun)
+{
+	efidp_atapi *atapi = (efidp_atapi *)buf;
+	ssize_t req = sizeof (*atapi);
+	ssize_t sz;
+
+	sz = efidp_make_generic(buf, size, EFIDP_MESSAGE_TYPE,
+					EFIDP_MSG_ATAPI, sizeof (*atapi));
+	if (size && sz == req) {
+		atapi->primary = primary;
+		atapi->slave = slave;
+		atapi->lun = lun;
+	}
+	return sz;
+}
+
+
+ssize_t
+__attribute__((__visibility__ ("default")))
 efidp_make_sas(uint8_t *buf, ssize_t size, uint64_t sas_address)
 {
 	efidp_sas *sas = (efidp_sas *)buf;
