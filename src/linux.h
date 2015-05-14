@@ -92,15 +92,8 @@ extern int eb_disk_info_from_fd(int fd, struct disk_info *info);
 extern int set_disk_and_part_name(struct disk_info *info);
 extern int make_blockdev_path(uint8_t *buf, ssize_t size, int fd,
 				struct disk_info *info);
-extern int eb_scsi_pci(int fd, const struct disk_info *info, uint8_t *bus,
-		       uint8_t *device, uint8_t *function);
-extern int eb_ide_pci(int fd, const struct disk_info *info, uint8_t *bus,
-		      uint8_t *device, uint8_t *function);
 
 extern int eb_nvme_ns_id(int fd, uint32_t *ns_id);
-
-extern int eb_scsi_idlun(int fd, uint8_t *host, uint8_t *channel,
-			      uint8_t *id, uint8_t *lun);
 
 extern int get_partition_number(const char *devpath)
 	__attribute__((__visibility__ ("hidden")));

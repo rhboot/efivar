@@ -41,10 +41,6 @@
 #include "linux.h"
 #include "util.h"
 
-#ifndef SCSI_IOCTL_GET_IDLUN
-#define SCSI_IOCTL_GET_IDLUN 0x5382
-#endif
-
 int
 __attribute__((__visibility__ ("hidden")))
 eb_nvme_ns_id(int fd, uint32_t *ns_id)
@@ -53,80 +49,6 @@ eb_nvme_ns_id(int fd, uint32_t *ns_id)
 	if ((int)ret < 0)
 		return ret;
 	*ns_id = (uint32_t)ret;
-	return 0;
-}
-
-typedef struct scsi_idlun_s {
-	uint32_t dev_id;
-	uint32_t host_unique_id;
-} scsi_idlun;
-
-int
-__attribute__((__visibility__ ("hidden")))
-eb_scsi_idlun(int fd, uint8_t *host, uint8_t *channel, uint8_t *id,
-		   uint8_t *lun)
-{
-	int rc;
-	scsi_idlun idlun = {0, 0};
-
-	if (fd < 0 || !host || !channel || !id || !lun) {
-		errno = EINVAL;
-		return -1;
-	}
-
-	rc = ioctl(fd, SCSI_IOCTL_GET_IDLUN, &idlun);
-	if (rc < 0)
-		return rc;
-
-	*host =	(idlun.dev_id >> 24) & 0xff;
-	*channel = (idlun.dev_id >> 16) & 0xff;
-	*lun = (idlun.dev_id >> 8) & 0xff;
-	*id = idlun.dev_id & 0xff;
-	return 0;
-}
-
-int
-__attribute__((__visibility__ ("hidden")))
-eb_ide_pci(int fd, const struct disk_info *info, uint8_t *bus, uint8_t *device,
-	   uint8_t *function)
-{
-	return -1;
-}
-
-#ifndef SCSI_IOCTL_GET_PCI
-#define SCSI_IOCTL_GET_PCI 0x5387
-#endif
-
-/* see scsi_ioctl_get_pci() in linux/drivers/scsi/scsi_ioctl.c */
-#define SLOT_NAME_SIZE ((size_t)21)
-
-/* TODO: move this to get it from sysfs? */
-int
-__attribute__((__visibility__ ("hidden")))
-eb_scsi_pci(int fd, const struct disk_info *info, uint8_t *bus,
-	    uint8_t *device, uint8_t *function)
-{
-	char buf[SLOT_NAME_SIZE] = "";
-	int rc;
-	unsigned int b=0,d=0,f=0;
-
-	/*
-	 * Maybe if we're on an old enough kernel,
-	 * SCSI_IOCTL_GET_PCI gives b:d.f ...
-	 */
-	rc = ioctl(fd, SCSI_IOCTL_GET_PCI, buf);
-	if (rc < 0)
-		return rc;
-
-	rc = sscanf(buf, "%x:%x:%x", &b, &d, &f);
-	if (rc != 3) {
-		errno = EINVAL;
-		return -1;
-	}
-
-	*bus = b & 0xff;
-	*device = d & 0xff;
-	*function = f & 0xff;
 	return 0;
 }
 
