@@ -1,0 +1,7 @@
+- lots of work still on device path generation and parsing in -lefiboot:
+ - network paths of all kinds
+ - fcoe - no idea
+ - fc - no idea
+ - iscsi - right now we write out HD paths, but we need to write out:
+   PciRoot(0x0)/Pci(0x3,0x0)/MAC(c0ffeec0ffee,1)/IPv4(192.168.100.182:0<->10.0.0.29:3260,6,0)/iSCSI(iqn.2012-07.lenovoemc:storage.pjones-iscsi.vol0,1,0x0,None,None,None,TCP) or something like that.
+ - lots of man pages
