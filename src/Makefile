@@ -44,6 +44,10 @@ efivar : efivar.o libefivar.so
 	$(CCLD) $(ccldflags) -L. -lefivar -o $@ $^ \
 		-lpopt $(foreach lib,$(EFIVAR_LIBS),-l$(lib))
 
+efivar-static : efivar.o libefivar.a
+	$(CCLD) $(ccldflags) -static -L. -o $@ $^ \
+		-lpopt $(foreach lib,$(EFIVAR_LIBS),-l$(lib))
+
 %.pc : %.pc.in
 	sed -e "s,@@VERSION@@,$(VERSION),g" \
 	    -e "s,@@LIBDIR@@,$(libdir),g" \

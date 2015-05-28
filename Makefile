@@ -5,6 +5,9 @@ VERSION := 0.18
 
 all : $(SUBDIRS) efivar.spec
 
+efivar efivar-static :
+	$(MAKE) -C src TOPDIR=$(TOPDIR) SRCDIR=$(TOPDIR)/$@/ ARCH=$(ARCH) VERSION=$(VERSION) $@
+
 $(SUBDIRS) :
 	$(MAKE) -C $@ TOPDIR=$(TOPDIR) SRCDIR=$(TOPDIR)/$@/ ARCH=$(ARCH) VERSION=$(VERSION)
 
