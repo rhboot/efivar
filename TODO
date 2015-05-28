@@ -2,6 +2,14 @@
  - network paths of all kinds
  - fcoe - no idea
  - fc - no idea
- - iscsi - right now we write out HD paths, but we need to write out:
-   PciRoot(0x0)/Pci(0x3,0x0)/MAC(c0ffeec0ffee,1)/IPv4(192.168.100.182:0<->10.0.0.29:3260,6,0)/iSCSI(iqn.2012-07.lenovoemc:storage.pjones-iscsi.vol0,1,0x0,None,None,None,TCP) or something like that.
+ - iscsi - right now we write out HD paths that don't work because edk2 and
+   similar don't put an HD() below iSCSI(), and there's no such thing as an
+   "abbreviated iscsi device path"
+   - but 9.3.5.21.2 actually /shows/ it having an HD() path.
+   - so we need to write out:
+     PciRoot(0x0)/Pci(0x3,0x0)/MAC(c0ffeec0ffee,1)/IPv4(192.168.100.182:0<->10.0.0.29:3260,6,0)/iSCSI(iqn.2012-07.lenovoemc:storage.pjones-iscsi.vol0,1,0x0,None,None,None,TCP) or something like that.
+     - this is ugly :/
+     - not sure how to tell from the OS side what parts should be DHCP based
+     - pretty ugly when ens3 changes addresses every time
+     - would IPv4(0.0.0.0:0<->10.0.0.29:3260,6,0) be valid?
  - lots of man pages
