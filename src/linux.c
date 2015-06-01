@@ -490,6 +490,14 @@ make_pci_path(uint8_t *buf, ssize_t size, char *pathstr, ssize_t *pathoff)
 		return -1;
 	acpi_hid = EFIDP_EFI_PNP_ID(tmp16);
 
+	/* Apparently basically nothing can look up a PcieRoot() node,
+	 * because they just check _CID.  So since _CID for the root pretty
+	 * much always has to be PNP0A03 anyway, just use that no matter
+	 * what.
+	 */
+	if (acpi_hid == EFIDP_ACPI_PCIE_ROOT_HID)
+		acpi_hid = EFIDP_ACPI_PCI_ROOT_HID;
+
 	errno = 0;
 	fbuf = NULL;
 	int use_uid_str = 0;
