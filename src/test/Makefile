@@ -17,7 +17,7 @@ test : tester
 	./tester
 
 tester :: tester.o
-	$(CC) $(cflags) $(LDFLAGS) -Wl,-rpath,$(TOPDIR)/src -L$(TOPDIR)/src -o $@ $^ -ldl -lefivar
+	$(CC) $(cflags) $(LDFLAGS) -Wl,-rpath,$(TOPDIR)/src -L$(TOPDIR)/src -o $@ $^ -lefivar -ldl
 
 .PHONY: all clean install test
 
