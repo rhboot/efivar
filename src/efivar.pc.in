@@ -7,5 +7,5 @@ Name: efivar
 Description: UEFI Variable Management
 Version: @@VERSION@@
 Requires:
-Libs: -L${libdir} -lefivar -ldl
+Libs: -L${libdir} -ldl -lefivar
 Cflags: -I${includedir}/efivar

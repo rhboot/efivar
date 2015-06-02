@@ -7,5 +7,5 @@ Name: efiboot
 Description: UEFI Boot variable support
 Version: @@VERSION@@
 Requires:
-Libs: -L${libdir} -lefivar -lefiboot -ldl
+Libs: -L${libdir} -ldl -lefivar -lefiboot
 Cflags: -I${includedir}/efivar
