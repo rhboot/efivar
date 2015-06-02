@@ -68,7 +68,14 @@ rm -rf $RPM_BUILD_ROOT
 %{_libdir}/*.so.*
 
 %changelog
-* Thu May 28 2015 Peter Jones <pjones@redhat.com> - @@VERSION@@-1
+* Tue Jun 02 2015 Peter Jones <pjones@redhat.com> - 0.20-1
+- Update to 0.20
+- Make sure tester is build with the right link order for libraries.
+- Adjust linker order for pkg-config
+- Work around LocateDevicePath() not grokking PcieRoot() devices properly.
+- Rectify some missing changelog entries
+
+* Thu May 28 2015 Peter Jones <pjones@redhat.com> - 0.19-1
 - Update to 0.19
 - add API from efibootmgr so fwupdate and other tools can use it.
 
