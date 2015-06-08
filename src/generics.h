@@ -34,12 +34,6 @@ generic_get_next_variable_name(char *path, efi_guid_t **guid, char **name)
 		return -1;
 	}
 
-	/* if they're both NULL, we're starting over */
-	if (guid == NULL && dir != NULL) {
-		closedir(dir);
-		dir = NULL;
-	}
-
 	/* if dir is NULL, we're also starting over */
 	if (!dir) {
 		dir = opendir(path);
