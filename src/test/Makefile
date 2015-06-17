@@ -2,6 +2,7 @@ SRCDIR = $(realpath .)
 TOPDIR = $(realpath $(SRCDIR)/../..)
 
 include $(TOPDIR)/Make.defaults
+include $(TOPDIR)/Make.version
 
 ccldflags += -L$(TOPDIR)/src/ -Wl,-rpath=$(TOPDIR)/src/
 LIBS=efivar

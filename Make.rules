@@ -4,11 +4,14 @@
 % : %.o
 	$(CCLD) $(ccldflags) -o $@ $^ $(foreach lib,$(LIBS),-l$(lib))
 
-%.so.$(SONAME_VERSION) : 
-	$(CCLD) $(cflags) -Wl,-soname,$@ $(ccldflags) $(LIBFLAGS) $^ -o $@ $(foreach lib,$(LIBS),-l$(lib))
+%.so.$(VERSION) :
+	$(CCLD) $(cflags) -Wl,-soname,$(patsubst %.so.$(VERSION),%.so.$(MAJOR_VERSION),$@) $(ccldflags) $(LIBFLAGS) $^ -o $@ $(foreach lib,$(LIBS),-l$(lib))
 
-%.so : %.so.$(SONAME_VERSION)
-	ln -sf $^ $@
+%.so : %.so.$(VERSION)
+	ln -sf $< $@
+
+%.so.$(MAJOR_VERSION) : %.so.$(VERSION)
+	ln -sf $< $@
 
 %.o: %.c
 	$(CC) $(cflags) $(CPPFLAGS) -c -o $@ $<

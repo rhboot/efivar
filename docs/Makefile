@@ -2,6 +2,7 @@ SRCDIR = .
 TOPDIR = $(SRCDIR)/..
 
 include $(TOPDIR)/Make.defaults
+include $(TOPDIR)/Make.version
 
 MAN1TARGETS = efivar.1
 MAN3TARGETS = efi_append_variable.3 \

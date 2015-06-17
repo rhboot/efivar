@@ -7,7 +7,7 @@
 *.S
 !src/guids.S
 *.so
-*.so.?
+*.so.*
 *.tar.*
 .*.c.P
 .*.h.P

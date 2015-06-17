@@ -23,5 +23,3 @@ ccldflags := $(cflags) $(CCLDFLAGS) $(LDFLAGS) \
 	$(if $(filter $(CCLD),clang),$(clang_ccldflags),) \
 	$(if $(filter $(CCLD),gcc),$(gcc_ccldflags),)
 LIBFLAGS += -shared
-
-SONAME_VERSION := 0

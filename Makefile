@@ -1,22 +1,23 @@
 TOPDIR = $(shell echo $$PWD)
 
+include $(TOPDIR)/Make.version
+
 SUBDIRS := src docs
-VERSION := 0.20
 
 all : $(SUBDIRS) efivar.spec
 
 efivar efivar-static :
-	$(MAKE) -C src TOPDIR=$(TOPDIR) SRCDIR=$(TOPDIR)/$@/ ARCH=$(ARCH) VERSION=$(VERSION) $@
+	$(MAKE) -C src TOPDIR=$(TOPDIR) SRCDIR=$(TOPDIR)/$@/ ARCH=$(ARCH) $@
 
 $(SUBDIRS) :
-	$(MAKE) -C $@ TOPDIR=$(TOPDIR) SRCDIR=$(TOPDIR)/$@/ ARCH=$(ARCH) VERSION=$(VERSION)
+	$(MAKE) -C $@ TOPDIR=$(TOPDIR) SRCDIR=$(TOPDIR)/$@/ ARCH=$(ARCH)
 
 clean :
 	@set -e ; for x in $(SUBDIRS) ; do $(MAKE) -C $${x} TOPDIR=$(TOPDIR) SRCDIR=$(TOPDIR)/$@/ ARCH=$(ARCH) $@ ; done
 	@rm -vf efivar.spec
 
 install :
-	@set -e ; for x in $(SUBDIRS) ; do $(MAKE) -C $${x} TOPDIR=$(TOPDIR) SRCDIR=$(TOPDIR)/$@/ ARCH=$(ARCH) VERSION=$(VERSION) DESTDIR=$(DESTDIR) includedir=$(includedir) bindir=$(bindir) libdir=$(libdir) PCDIR=$(PCDIR) $@ ; done
+	@set -e ; for x in $(SUBDIRS) ; do $(MAKE) -C $${x} TOPDIR=$(TOPDIR) SRCDIR=$(TOPDIR)/$@/ ARCH=$(ARCH) DESTDIR=$(DESTDIR) includedir=$(includedir) bindir=$(bindir) libdir=$(libdir) PCDIR=$(PCDIR) $@ ; done
 
 test : all
 	@set -e ; for x in $(SUBDIRS) ; do $(MAKE) -C $${x} TOPDIR=$(TOPDIR) SRCDIR=$(TOPDIR)/$@/ ARCH=$(ARCH) $@ ; done

@@ -2,8 +2,9 @@ SRCDIR = $(realpath .)
 TOPDIR = $(realpath ..)
 
 include $(TOPDIR)/Make.defaults
+include $(TOPDIR)/Make.version
 
-LIBTARGETS = libefivar.so.$(SONAME_VERSION) libefiboot.so.$(SONAME_VERSION)
+LIBTARGETS = $(foreach x,libefivar libefiboot,$(x).so.$(VERSION) $(x).so.$(MAJOR_VERSION))
 PCTARGETS = efivar.pc efiboot.pc
 BINTARGETS = efivar
 INCTARGETS = include/efivar/efivar-guids.h
@@ -33,12 +34,10 @@ EFIBOOT_DEPS = \
 	include/efivar/.efivar-loadopt.h.P
 
 libefivar.a :: $(EFIVAR_OBJECTS)
-
-libefivar.so.$(SONAME_VERSION) :: $(EFIVAR_OBJECTS)
+libefivar.so.$(VERSION) : $(EFIVAR_OBJECTS)
 
 libefiboot.a :: $(EFIBOOT_OBJECTS)
-
-libefiboot.so.$(SONAME_VERSION) :: $(EFIBOOT_OBJECTS)
+libefiboot.so.$(VERSION) : $(EFIBOOT_OBJECTS)
 
 efivar : efivar.o libefivar.so
 	$(CCLD) $(ccldflags) -L. -lefivar -o $@ $^ \
@@ -82,7 +81,7 @@ deps : $(EFIVAR_DEPS) $(EFIBOOT_DEPS) $(MAKEGUIDS_DEPS)
 -include $(MAKEGUIDS_DEPS)
 
 clean : 
-	@rm -rfv *~ *.o *.a *.so *.so.$(SONAME_VERSION) .*.c.P .*.h.P $(PCTARGETS) $(BINTARGETS) $(INCTARGETS) *.bin guid-symbols.S makeguids include/efivar/.*.h.P $(LIBTARGETS)
+	@rm -rfv *~ *.o *.a *.so *.so.$(MAJOR_VERSION) *.so.$(VERSION) .*.c.P .*.h.P $(PCTARGETS) $(BINTARGETS) $(INCTARGETS) *.bin guid-symbols.S makeguids include/efivar/.*.h.P $(LIBTARGETS)
 	@$(MAKE) -C test TOPDIR=$(TOPDIR) SRCDIR=$(TOPDIR)/src/ $@
 
 install : all
@@ -94,7 +93,8 @@ install : all
 	$(foreach x, $(wildcard $(TOPDIR)/src/include/efivar/*.h), $(INSTALL) -m 644 $(x) $(DESTDIR)$(includedir)/efivar/$(notdir $(x));)
 	$(INSTALL) -d -m 755 $(DESTDIR)$(bindir)
 	$(foreach x, $(BINTARGETS), $(INSTALL) -m 755 $(x) $(DESTDIR)$(bindir);)
-	$(foreach x, $(wildcard *.so.$(SONAME_VERSION)), ln -fs $(x) $(patsubst %.so.$(SONAME_VERSION),%.so,$(DESTDIR)$(libdir)/$(x));)
+	$(foreach x, $(wildcard *.so.$(VERSION)), ln -fs $(x) $(patsubst %.so.$(VERSION),%.so,$(DESTDIR)$(libdir)/$(x));)
+	$(foreach x, $(wildcard *.so.$(VERSION)), ln -fs $(x) $(patsubst %.so.$(VERSION),%.so.$(MAJOR_VERSION),$(DESTDIR)$(libdir)/$(x));)
 
 test :all
 	$(MAKE) -C test TOPDIR=$(TOPDIR) SRCDIR=$(TOPDIR)/src/ $@
