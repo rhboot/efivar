@@ -285,10 +285,17 @@ vars_get_variable(efi_guid_t guid, const char *name, uint8_t **data,
 	if (rc < 0)
 		goto err;
 
+	bufsize -= 1; /* read_file pads out 1 extra byte to NUL it */
 
 	if (is_64bit()) {
-		efi_kernel_variable_64_t *var64 = (void *)buf;
+		efi_kernel_variable_64_t *var64;
 
+		if (bufsize != sizeof(efi_kernel_variable_64_t)) {
+			errno = EFBIG;
+			goto err;
+		}
+
+		var64 = (void *)buf;
 		*data = malloc(var64->DataSize);
 		if (!*data)
 			goto err;
@@ -296,8 +303,14 @@ vars_get_variable(efi_guid_t guid, const char *name, uint8_t **data,
 		*data_size = var64->DataSize;
 		*attributes = var64->Attributes;
 	} else {
-		efi_kernel_variable_32_t *var32 = (void *)buf;
+		efi_kernel_variable_32_t *var32;
 
+		if (bufsize != sizeof(efi_kernel_variable_32_t)) {
+			errno = EFBIG;
+			goto err;
+		}
+
+		var32 = (void *)buf;
 		*data = malloc(var32->DataSize);
 		if (!*data)
 			goto err;
