@@ -345,9 +345,14 @@ vars_del_variable(efi_guid_t guid, const char *name)
 
 	rc = read_file(fd, &buf, &buf_size);
 	buf_size -= 1; /* read_file pads out 1 extra byte to NUL it */
-	if (rc < 0 || (buf_size != sizeof(efi_kernel_variable_64_t) &&
-		       buf_size != sizeof(efi_kernel_variable_32_t)))
+	if (rc < 0)
 		goto err;
+
+	if (buf_size != sizeof(efi_kernel_variable_64_t) &&
+		       buf_size != sizeof(efi_kernel_variable_32_t)) {
+		errno = EFBIG;
+		goto err;
+	}
 
 	close(fd);
 	fd = open(VARS_PATH "del_var", O_WRONLY);
