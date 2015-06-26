@@ -1,7 +1,8 @@
 efivar
-=========
+======
 
-Tools and library to manipulate EFI variables.
+Tools and libraries to manipulate EFI variables
+---------------------------------------------
 
 This library is free software; you can redistribute it and/or
 modify it under the terms of the GNU Lesser General Public
@@ -14,4 +15,12 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
 Lesser General Public License for more details.
 
 You should have received a copy of the GNU Lesser General Public License
-along with this library.  If not, see <http://www.gnu.org/licenses/>.
+along with this library.  If not, see [http://www.gnu.org/licenses/].
+
+[http://www.gnu.org/licenses/]: http://www.gnu.org/licenses/
+
+WARNING
+=======
+You should probably not run "make a brick" *ever*, unless you're already
+reasonably sure it won't permanently corrupt your firmware.  This is not a
+joke.

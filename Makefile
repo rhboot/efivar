@@ -19,10 +19,16 @@ clean :
 install :
 	@set -e ; for x in $(SUBDIRS) ; do $(MAKE) -C $${x} TOPDIR=$(TOPDIR) SRCDIR=$(TOPDIR)/$@/ ARCH=$(ARCH) DESTDIR=$(DESTDIR) includedir=$(includedir) bindir=$(bindir) libdir=$(libdir) PCDIR=$(PCDIR) $@ ; done
 
-test : all
-	@set -e ; for x in $(SUBDIRS) ; do $(MAKE) -C $${x} TOPDIR=$(TOPDIR) SRCDIR=$(TOPDIR)/$@/ ARCH=$(ARCH) $@ ; done
+brick : all
+	@set -e ; for x in $(SUBDIRS) ; do $(MAKE) -C $${x} TOPDIR=$(TOPDIR) SRCDIR=$(TOPDIR)/$@/ ARCH=$(ARCH) test ; done
 
-.PHONY: $(SUBDIRS) all clean install test
+a :
+	@if [ $${EUID} != 0 ]; then \
+		echo no 1>&2 ; \
+		exit 1 ; \
+	fi
+
+.PHONY: $(SUBDIRS) all clean install a brick
 
 include $(TOPDIR)/Make.defaults
 include $(TOPDIR)/Make.rules
