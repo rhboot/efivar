@@ -6,6 +6,6 @@ includedir=/usr/include
 Name: efiboot
 Description: UEFI Boot variable support
 Version: @@VERSION@@
-Requires:
-Libs: -L${libdir} -ldl -lefivar -lefiboot
+Requires.private: efivar
+Libs: -L${libdir} -lefiboot
 Cflags: -I${includedir}/efivar
