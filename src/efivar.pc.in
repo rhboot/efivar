@@ -6,6 +6,6 @@ includedir=/usr/include
 Name: efivar
 Description: UEFI Variable Management
 Version: @@VERSION@@
-Requires:
-Libs: -L${libdir} -ldl -lefivar
+Libs: -L${libdir} -lefivar
+Libs.private: -ldl
 Cflags: -I${includedir}/efivar
