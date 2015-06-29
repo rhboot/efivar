@@ -34,6 +34,7 @@ EFIBOOT_DEPS = \
 	include/efivar/.efivar-loadopt.h.P
 
 libefivar.a :: $(EFIVAR_OBJECTS)
+libefivar.so.$(VERSION) : LIBS = $(EFIVAR_LIBS)
 libefivar.so.$(VERSION) : $(EFIVAR_OBJECTS)
 
 libefiboot.a :: $(EFIBOOT_OBJECTS)
