@@ -37,7 +37,7 @@ libefivar.a :: $(EFIVAR_OBJECTS)
 libefivar.so.$(VERSION) : $(EFIVAR_OBJECTS)
 
 libefiboot.a :: $(EFIBOOT_OBJECTS)
-libefiboot.so.$(VERSION) : $(EFIBOOT_OBJECTS)
+libefiboot.so.$(VERSION) : $(EFIBOOT_OBJECTS) libefivar.so
 
 efivar : efivar.o libefivar.so
 	$(CCLD) $(ccldflags) -L. -lefivar -o $@ $^ \
