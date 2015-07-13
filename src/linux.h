@@ -99,7 +99,7 @@ extern int get_partition_number(const char *devpath)
 	__attribute__((__visibility__ ("hidden")));
 
 extern ssize_t make_mac_path(uint8_t *buf, ssize_t size,
-			     const char const *ifname)
+			     const char * const ifname)
 	__attribute__((__visibility__ ("hidden")));
 
 #endif /* _EFIBOOT_LINUX_H */

@@ -138,7 +138,7 @@ static ssize_t
 format_sas(char *buf, size_t size, const_efidp dp)
 {
 	size_t off = 0;
-	const efidp_sas const *s = &dp->sas;
+	const efidp_sas * const s = &dp->sas;
 
 	int more_info = 0;
 	int sassata = 0;
@@ -146,9 +146,9 @@ format_sas(char *buf, size_t size, const_efidp dp)
 	int connect = 0;
 	int drive_bay = -1;
 
-	const char const *sassata_label[] = {"NoTopology", "SAS", "SATA"};
-	const char const *location_label[] = {"Internal", "External" };
-	const char const *connect_label[] = {"Direct", "Expanded" };
+	const char * const sassata_label[] = {"NoTopology", "SAS", "SATA"};
+	const char * const location_label[] = {"Internal", "External" };
+	const char * const connect_label[] = {"Direct", "Expanded" };
 
 	more_info = s->device_topology_info & EFIDP_SAS_TOPOLOGY_MASK;
 
@@ -547,7 +547,7 @@ _format_message_dn(char *buf, size_t size, const_efidp dp)
 ssize_t
 __attribute__((__visibility__ ("default")))
 efidp_make_mac_addr(uint8_t *buf, ssize_t size, uint8_t if_type,
-		    const uint8_t const *mac_addr, ssize_t mac_addr_size)
+		    const uint8_t * const mac_addr, ssize_t mac_addr_size)
 {
 	efidp_mac_addr *mac = (efidp_mac_addr *)buf;
 

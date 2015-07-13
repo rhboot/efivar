@@ -6,7 +6,7 @@
 
 static inline size_t
 __attribute__((__unused__))
-ucs2len(const uint16_t const *s, ssize_t limit)
+ucs2len(const uint16_t * const s, ssize_t limit)
 {
 	ssize_t i;
 	for (i = 0; i < (limit >= 0 ? limit : i+1) && s[i] != L'\0'; i++)
@@ -16,7 +16,7 @@ ucs2len(const uint16_t const *s, ssize_t limit)
 
 static inline size_t
 __attribute__((__unused__))
-ucs2size(const uint16_t const *s, ssize_t limit)
+ucs2size(const uint16_t * const s, ssize_t limit)
 {
 	size_t rc = ucs2len(s, limit);
 	rc *= sizeof (uint16_t);
@@ -58,7 +58,7 @@ utf8size(uint8_t *s, ssize_t limit)
 
 static inline unsigned char *
 __attribute__((__unused__))
-ucs2_to_utf8(const uint16_t const *chars, ssize_t limit)
+ucs2_to_utf8(const uint16_t * const chars, ssize_t limit)
 {
 	ssize_t i, j;
 	unsigned char *ret;

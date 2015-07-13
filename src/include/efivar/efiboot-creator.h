@@ -28,7 +28,7 @@
 #define EFIBOOT_OPTIONS_IGNORE_PMBR_ERR	0x00000040
 
 extern ssize_t efi_generate_file_device_path(uint8_t *buf, ssize_t size,
-					     const char const *filepath,
+					     const char * const filepath,
 					     uint32_t options, ...)
 	__attribute__((__nonnull__ (3)));
 
@@ -43,11 +43,11 @@ extern ssize_t efi_generate_file_device_path_from_esp(uint8_t *buf,
 
 
 extern ssize_t efi_generate_ipv4_device_path(uint8_t *buf, ssize_t size,
-					     const char const *ifname,
-					     const char const *local_addr,
-					     const char const *remote_addr,
-					     const char const *gateway_addr,
-					     const char const *netmask,
+					     const char * const ifname,
+					     const char * const local_addr,
+					     const char * const remote_addr,
+					     const char * const gateway_addr,
+					     const char * const netmask,
 					     uint16_t local_port,
 					     uint16_t remote_port,
 					     uint16_t protocol,

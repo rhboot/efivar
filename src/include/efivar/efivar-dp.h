@@ -284,7 +284,7 @@ typedef struct {
 } efidp_mac_addr;
 extern ssize_t efidp_make_mac_addr(uint8_t *buf, ssize_t size,
 				   uint8_t if_type,
-				   const uint8_t const *mac_addr,
+				   const uint8_t * const mac_addr,
 				   ssize_t mac_addr_size);
 
 #define EFIDP_MSG_IPv4		0x0c
@@ -687,7 +687,7 @@ typedef union {
 	efidp_bios_boot bios_boot;
 } efidp_data;
 typedef efidp_data *efidp;
-typedef const efidp_data const *const_efidp;
+typedef const efidp_data *const_efidp;
 
 extern int efidp_set_node_data(const_efidp dn, void *buf, size_t bufsize);
 extern int efidp_duplicate_path(const_efidp dp, efidp *out);
@@ -740,7 +740,7 @@ efidp_next_node(const_efidp in, const_efidp *out)
 		return -1;
 
 	/* I love you gcc. */
-	*out = (const_efidp)(const efidp_header const *)((uint8_t *)in + sz);
+	*out = (const_efidp)(const efidp_header *)((uint8_t *)in + sz);
 	return 0;
 }
 
@@ -757,7 +757,7 @@ efidp_next_instance(const_efidp in, const_efidp *out)
 		return -1;
 
 	/* I love you gcc. */
-	*out = (const_efidp)(const efidp_header const *)((uint8_t *)in + sz);
+	*out = (const_efidp)(const efidp_header *)((uint8_t *)in + sz);
 	return 0;
 }
 
@@ -793,7 +793,7 @@ efidp_get_next_end(const_efidp in, const_efidp *out)
 		if (sz < 0)
 			break;
 
-		in = (const_efidp)(const efidp_header const *)((uint8_t *)in + sz);
+		in = (const_efidp)(const efidp_header *)((uint8_t *)in + sz);
 	}
 	return -1;
 }

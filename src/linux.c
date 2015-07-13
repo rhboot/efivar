@@ -813,7 +813,7 @@ eb_disk_info_from_fd(int fd, struct disk_info *info)
 }
 
 static ssize_t
-make_net_pci_path(uint8_t *buf, ssize_t size, const char const *ifname)
+make_net_pci_path(uint8_t *buf, ssize_t size, const char * const ifname)
 {
 	char *linkbuf = NULL;
 	ssize_t off=0, sz=0, loff=0;
@@ -845,7 +845,7 @@ make_net_pci_path(uint8_t *buf, ssize_t size, const char const *ifname)
 
 ssize_t
 __attribute__((__visibility__ ("hidden")))
-make_mac_path(uint8_t *buf, ssize_t size, const char const *ifname)
+make_mac_path(uint8_t *buf, ssize_t size, const char * const ifname)
 {
 	struct ifreq ifr = { 0, };
 	struct ethtool_drvinfo drvinfo = { 0, };

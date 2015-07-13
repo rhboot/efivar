@@ -65,14 +65,14 @@
 
 static inline ssize_t
 __attribute__((__unused__))
-format_hex_helper(char *buf, size_t size, const void const *addr,
+format_hex_helper(char *buf, size_t size, const void * const addr,
 		  const size_t len)
 {
 	ssize_t off = 0;
 	ssize_t sz;
 	for (size_t i = 0; i < len; i++) {
 		sz = format(buf, size, off, "%02x",
-			     *((const unsigned char const *)addr+i));
+			     *((const unsigned char * const )addr+i));
 		if (sz < 0)
 			return -1;
 		off += sz;

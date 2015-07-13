@@ -155,7 +155,7 @@ efidp_append_node(const_efidp dp, const_efidp dn, efidp *out)
 	int rc;
 
 	if (!dp && !dn)
-		return efidp_duplicate_path((const_efidp)(const efidp_header const *)&end_entire, out);
+		return efidp_duplicate_path((const_efidp)(const efidp_header * const)&end_entire, out);
 
 	if (dp && !dn)
 		return efidp_duplicate_path(dp, out);
