@@ -12,7 +12,8 @@ ARCH = $(shell uname -m)
 clang_cflags =
 gcc_cflags = -Wmaybe-uninitialized
 cflags	:= $(CFLAGS) \
-	-Wall -Wsign-compare -std=gnu11 -fshort-wchar -fPIC \
+	-Werror -Wall -Wsign-compare -Wstrict-aliasing \
+	-std=gnu11 -fshort-wchar -fPIC \
 	-fvisibility=hidden \
 	-D_GNU_SOURCE -I${TOPDIR}/src/include/efivar/ \
 	$(if $(filter $(CC),clang),$(clang_cflags),) \

@@ -574,16 +574,16 @@ efidp_make_ipv4(uint8_t *buf, ssize_t size, uint32_t local, uint32_t remote,
 					EFIDP_MSG_IPv4, sizeof (*ipv4));
 	ssize_t req = sizeof (*ipv4);
 	if (size && sz == req) {
-		*((uint32_t *)ipv4->local_ipv4_addr) = htonl(local);
-		*((uint32_t *)ipv4->remote_ipv4_addr) = htonl(remote);
+		*((char *)ipv4->local_ipv4_addr) = htonl(local);
+		*((char *)ipv4->remote_ipv4_addr) = htonl(remote);
 		ipv4->local_port = htons(local_port);
 		ipv4->remote_port = htons(remote_port);
 		ipv4->protocol = htons(protocol);
 		ipv4->static_ip_addr = 0;
 		if (is_static)
 			ipv4->static_ip_addr = 1;
-		*((uint32_t *)ipv4->gateway) = htonl(gateway);
-		*((uint32_t *)ipv4->netmask) = htonl(netmask);
+		*((char *)ipv4->gateway) = htonl(gateway);
+		*((char *)ipv4->netmask) = htonl(netmask);
 	}
 	return sz;
 }

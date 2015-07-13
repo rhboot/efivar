@@ -36,7 +36,7 @@ _format_media_dn(char *buf, size_t size, const_efidp dp)
 		case EFIDP_HD_SIGNATURE_MBR:
 			off += format(buf, size, off,
 				      "MBR,0x%"PRIu32",0x%"PRIx64",0x%"PRIx64")",
-				      *(uint32_t *)dp->hd.signature,
+				      *(char *)dp->hd.signature,
 				      dp->hd.start, dp->hd.size);
 			break;
 		case EFIDP_HD_SIGNATURE_GUID:
