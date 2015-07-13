@@ -6,7 +6,7 @@ bindir	?= /usr/bin/
 PCDIR	?= $(libdir)/pkgconfig/
 CC	:= $(if $(filter default,$(origin CC)),gcc,$(CC))
 CCLD	:= $(if $(filter undefined,$(origin CCLD)),$(CC),$(CCLD))
-CFLAGS	?= -O0 -g
+CFLAGS	?= -O2 -g
 
 ARCH = $(shell uname -m)
 clang_cflags =
