@@ -8,7 +8,8 @@ LIBTARGETS = $(foreach x,libefivar libefiboot,$(x).so.$(VERSION) $(x).so.$(MAJOR
 PCTARGETS = efivar.pc efiboot.pc
 BINTARGETS = efivar
 INCTARGETS = include/efivar/efivar-guids.h
-all : $(LIBTARGETS) $(PCTARGETS) $(BINTARGETS) $(INCTARGETS) libefiboot.so
+all : $(EFIVAR_DEPS) $(INCTARGETS) deps
+all : $(LIBTARGETS) $(PCTARGETS) $(BINTARGETS) libefiboot.so
 	@$(MAKE) -C test TOPDIR=$(TOPDIR) SRCDIR=$(SRCDIR)/test $@
 
 EFIVAR_OBJECTS = dp.o dp-acpi.o dp-hw.o dp-media.o dp-message.o \
@@ -23,15 +24,15 @@ EFIVAR_DEPS = .dp.c.P .dp-acpi.c.P .dp-hw.c.P .dp-media.c.P .dp-message.c.P \
 	include/efivar/.efivar-guids.h.P
 EFIVAR_LIBS = dl
 
-MAKEGUIDS_DEPS = .makeguids.c.P .efivar.h.P .util.h.P .guid.h.P
+MAKEGUIDS_DEPS = .makeguids.c.P include/efivar/.efivar.h.P .util.h.P .guid.h.P
 
 EFIBOOT_OBJECTS =  \
 	crc32.o creator.o disk.o gpt.o linux.o loadopt.o
 EFIBOOT_DEPS = \
 	.crc32.c.P .crc32.h.P .creator.c.P .disk.c.P .disk.h.P \
 	.gpt.c.P .gpt.h.P .linux.c.P .linux.h.P .loadopt.c.P \
-	include/efivar/.efivar-creator.h.P \
-	include/efivar/.efivar-loadopt.h.P
+	include/efivar/.efiboot-creator.h.P \
+	include/efivar/.efiboot-loadopt.h.P
 
 libefivar.a :: $(EFIVAR_OBJECTS)
 libefivar.so.$(VERSION) : LIBS = $(EFIVAR_LIBS)
@@ -56,10 +57,10 @@ efivar-static : efivar.o libefivar.a
 include/efivar/efivar.h : include/efivar/efivar-guids.h
 
 fakeguid.o : guid.c
-	$(CC) $(cflags) -DEFIVAR_BUILD_ENVIRONMENT -c -o $@ $^
+	$(CC) $(cflags) -DEFIVAR_BUILD_ENVIRONMENT -c -o $@ $<
 
 makeguids.o : makeguids.c
-	$(CC) $(cflags) -DEFIVAR_BUILD_ENVIRONMENT -c -o $@ $^
+	$(CC) $(cflags) -DEFIVAR_BUILD_ENVIRONMENT -c -o $@ $<
 
 makeguids : makeguids.o fakeguid.o
 	$(CC) $(cflags) -o $@ $^ -ldl
@@ -67,7 +68,7 @@ makeguids : makeguids.o fakeguid.o
 include/efivar/efivar-guids.h : makeguids guids.txt
 	./makeguids guids.txt guids.bin names.bin guid-symbols.S $@
 
-guidlist.o : include/efivar/efivar-guids.h
+guidlist.o : guids.S include/efivar/efivar-guids.h
 	$(CC) $(cflags) -c -o guidlist.o guids.S
 
 guid-symbols.o : guid-symbols.S
