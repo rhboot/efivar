@@ -36,12 +36,7 @@ efi_loadopt_create(uint8_t *buf, ssize_t size, uint32_t attributes,
 		   efidp dp, ssize_t dp_size, unsigned char *description,
 		   uint8_t *optional_data, size_t optional_data_size)
 {
-	if (!description || (!optional_data && optional_data_size != 0)) {
-		errno = EINVAL;
-		return -1;
-	}
-
-	if (!dp && dp_size == 0) {
+	if (!description) {
 		errno = EINVAL;
 		return -1;
 	}
@@ -54,6 +49,16 @@ efi_loadopt_create(uint8_t *buf, ssize_t size, uint32_t attributes,
 		return sz;
 	if (size < sz) {
 		errno = ENOSPC;
+		return -1;
+	}
+
+	if (!optional_data && optional_data_size != 0) {
+		errno = EINVAL;
+		return -1;
+	}
+
+	if (!dp && dp_size == 0) {
+		errno = EINVAL;
 		return -1;
 	}
 
