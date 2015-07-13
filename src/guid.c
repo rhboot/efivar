@@ -117,7 +117,7 @@ efi_guid_to_name(efi_guid_t *guid, char **name)
 {
 	struct guidname *result;
 	int rc = _get_common_guidname(guid, &result);
-	if (rc < 0) {
+	if (rc >= 0) {
 		*name = strndup(result->name, sizeof (result->name) -1);
 		return *name ? (int)strlen(*name) : -1;
 	}
@@ -131,7 +131,7 @@ efi_guid_to_symbol(efi_guid_t *guid, char **symbol)
 {
 	struct guidname *result;
 	int rc = _get_common_guidname(guid, &result);
-	if (rc < 0) {
+	if (rc >= 0) {
 		*symbol = strndup(result->symbol, sizeof (result->symbol) -1);
 		return *symbol ? (int)strlen(*symbol) : -1;
 	}
