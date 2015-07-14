@@ -129,8 +129,8 @@ get_partition_number(const char *devpath)
 		return -1;
 	}
 
-	maj = gnu_dev_major(statbuf.st_rdev);
-	min = gnu_dev_minor(statbuf.st_rdev);
+	maj = major(statbuf.st_rdev);
+	min = minor(statbuf.st_rdev);
 
 	rc = sysfs_readlink(&linkbuf, "/sys/dev/block/%u:%u", maj, min);
 	if (rc < 0)
