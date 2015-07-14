@@ -847,12 +847,13 @@ ssize_t
 __attribute__((__visibility__ ("hidden")))
 make_mac_path(uint8_t *buf, ssize_t size, const char * const ifname)
 {
-	struct ifreq ifr = { 0, };
+	struct ifreq ifr;
 	struct ethtool_drvinfo drvinfo = { 0, };
 	int fd, rc;
 	ssize_t ret = -1, sz, off=0;
 	char busname[PATH_MAX+1] = "";
 
+	memset(&ifr, 0, sizeof (ifr));
 	strncpy(ifr.ifr_name, ifname, IF_NAMESIZE);
 	drvinfo.cmd = ETHTOOL_GDRVINFO;
 	ifr.ifr_data = (caddr_t)&drvinfo;
