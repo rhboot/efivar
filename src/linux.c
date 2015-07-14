@@ -206,7 +206,7 @@ sysfs_sata_get_port_info(uint32_t print_id, struct disk_info *info)
 			    &found_pmp, &found_devno);
 		if (rc == 2) {
 			found_devno = found_pmp;
-			found_pmp=0;
+			found_pmp=0xffff;
 		} else if (rc != 3) {
 			saved_errno = errno;
 			closedir(d);
