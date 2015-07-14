@@ -13,7 +13,7 @@ clang_cflags =
 gcc_cflags = -Wmaybe-uninitialized
 cflags	:= $(CFLAGS) \
 	-Werror -Wall -Wsign-compare -Wstrict-aliasing \
-	-std=gnu11 -fshort-wchar -fPIC \
+	-std=gnu11 -fPIC \
 	-fvisibility=hidden \
 	-D_GNU_SOURCE -I${TOPDIR}/src/include/efivar/ \
 	$(if $(filter $(CC),clang),$(clang_cflags),) \
