@@ -1,26 +1,26 @@
 TOPDIR = $(shell echo $$PWD)
 
 include $(TOPDIR)/Make.version
+include $(TOPDIR)/Make.rules
+include $(TOPDIR)/Make.defaults
 
 SUBDIRS := src docs
 
-all : $(SUBDIRS) efivar.spec
+all clean install deps :: | Make.version
+	@set -e ; for x in $(SUBDIRS) ; do \
+		$(MAKE) -C $$x $@ ; \
+	done
+
+all :: efivar.spec
 
 efivar efivar-static :
-	$(MAKE) -C src TOPDIR=$(TOPDIR) SRCDIR=$(TOPDIR)/$@/ ARCH=$(ARCH) $@
+	$(MAKE) -C src $@
 
 $(SUBDIRS) :
-	$(MAKE) -C $@ TOPDIR=$(TOPDIR) SRCDIR=$(TOPDIR)/$@/ ARCH=$(ARCH)
-
-clean :
-	@set -e ; for x in $(SUBDIRS) ; do $(MAKE) -C $${x} TOPDIR=$(TOPDIR) SRCDIR=$(TOPDIR)/$@/ ARCH=$(ARCH) $@ ; done
-	@rm -vf efivar.spec
-
-install :
-	@set -e ; for x in $(SUBDIRS) ; do $(MAKE) -C $${x} TOPDIR=$(TOPDIR) SRCDIR=$(TOPDIR)/$@/ ARCH=$(ARCH) DESTDIR=$(DESTDIR) includedir=$(includedir) bindir=$(bindir) libdir=$(libdir) PCDIR=$(PCDIR) $@ ; done
+	$(MAKE) -C $@
 
 brick : all
-	@set -e ; for x in $(SUBDIRS) ; do $(MAKE) -C $${x} TOPDIR=$(TOPDIR) SRCDIR=$(TOPDIR)/$@/ ARCH=$(ARCH) test ; done
+	@set -e ; for x in $(SUBDIRS) ; do $(MAKE) -C $${x} test ; done
 
 a :
 	@if [ $${EUID} != 0 ]; then \
@@ -28,13 +28,12 @@ a :
 		exit 1 ; \
 	fi
 
-.PHONY: $(SUBDIRS) all clean install a brick
+.PHONY: $(SUBDIRS) a brick
 
-include $(TOPDIR)/Make.defaults
-include $(TOPDIR)/Make.rules
+efivar.spec : | Makefile Make.version
 
-efivar.spec : efivar.spec.in Makefile
-	@sed -e "s,@@VERSION@@,$(VERSION),g" $< > $@
+clean ::
+	@rm -vf efivar.spec
 
 GITTAG = $(VERSION)
 

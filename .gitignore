@@ -11,6 +11,7 @@
 *.tar.*
 .*.c.P
 .*.h.P
+.*.d
 core.*
 *.spec
 src/efivar
