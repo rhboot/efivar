@@ -63,7 +63,7 @@ efi_guid_to_str(const efi_guid_t *guid, char **sp)
 }
 
 extern struct guidname efi_well_known_guids[], efi_well_known_names[];
-extern char efi_well_known_guids_end, efi_well_known_names_end;
+extern struct guidname efi_well_known_guids_end, efi_well_known_names_end;
 
 static int
 __attribute__((__nonnull__ (1, 2)))

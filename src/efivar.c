@@ -329,10 +329,10 @@ int main(int argc, char *argv[])
 			prepare_data(file, &data, &data_size);
 			append_variable(name, data, data_size, attributes);
 		case ACTION_LIST_GUIDS: {
-			extern struct guidname efi_well_known_guids;
+			extern struct guidname efi_well_known_guids[];
 			extern struct guidname efi_well_known_guids_end;
 
-			for (struct guidname *guid = &efi_well_known_guids;
+			for (struct guidname *guid = efi_well_known_guids;
 			     guid != &efi_well_known_guids_end;
 			     guid++)
 			{

@@ -32,11 +32,11 @@ efi_guid_t const efi_guid_empty = {0};
 
 struct guidname efi_well_known_guids[] = {
 };
-char efi_well_known_guids_end;
+struct guidname efi_well_known_guids_end;
 
 struct guidname efi_well_known_names[] = {
 };
-char efi_well_known_names_end;
+struct guidname efi_well_known_names_end;
 
 static int
 cmpguidp(const void *p1, const void *p2)
