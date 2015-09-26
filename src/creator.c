@@ -116,6 +116,8 @@ find_file(const char * const filepath, char **devicep, char **relpathp)
 				errno = ENAMETOOLONG;
 				goto err;
 			}
+			if (strncmp(linkbuf, me->mnt_dir, mntlen))
+				continue;
 			*devicep = strdup(me->mnt_fsname);
 			if (!*devicep)
 				goto err;
