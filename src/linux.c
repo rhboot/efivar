@@ -59,7 +59,7 @@ set_disk_and_part_name(struct disk_info *info)
 	char *linkbuf;
 	ssize_t rc;
 
-	rc = sysfs_readlink(&linkbuf, "/sys/dev/block/%"PRIu64":%hhd",
+	rc = sysfs_readlink(&linkbuf, "/sys/dev/block/%"PRIu64":%hhu",
 		      info->major, info->minor);
 	if (rc < 0)
 		return -1;
