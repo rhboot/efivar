@@ -39,6 +39,8 @@ makeguids : $(MAKEGUIDS_SOURCES)
 
 guids.o : guids.S | guids.bin names.bin
 
+$(LIBEFIVAR_OBJECTS) $(LIBEFIBOOT_OBJECTS) : | $(GENERATED_SOURCES)
+
 libefivar.a : $(LIBEFIVAR_OBJECTS)
 libefivar.a : | $(GENERATED_SOURCES)
 
