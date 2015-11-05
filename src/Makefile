@@ -46,6 +46,7 @@ libefivar.a : | $(GENERATED_SOURCES)
 
 libefivar.so : $(LIBEFIVAR_OBJECTS)
 libefivar.so : | $(GENERATED_SOURCES)
+libefivar.so : LIBS=dl
 
 efivar : efivar.c | libefivar.so
 efivar : ccldflags+=-L.
