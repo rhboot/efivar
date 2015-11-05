@@ -91,5 +91,6 @@ test : all
 .PHONY: test
 .SECONDARY : libefivar.so.$(VERSION) libefivar.so.$(MAJOR_VERSION)
 .SECONDARY : libefiboot.so.$(VERSION) libefiboot.so.$(MAJOR_VERSION)
-.INTERMEDIATE : include/efivar/efivar-guids.h guid-symbols.S guids.bin names.bin
-.PRECIOUS : makeguids
+.SECONDARY : include/efivar/efivar-guids.h guid-symbols.S
+.INTERMEDIATE : guids.bin names.bin
+.PRECIOUS : guid-symbols.o makeguids
