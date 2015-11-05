@@ -185,7 +185,6 @@ sysfs_sata_get_port_info(uint32_t print_id, struct disk_info *info)
 {
 	DIR *d;
 	struct dirent *de;
-	int saved_errno;
 	uint8_t *buf = NULL;
 	int rc;
 
@@ -204,19 +203,18 @@ sysfs_sata_get_port_info(uint32_t print_id, struct disk_info *info)
 		int rc;
 		rc = sscanf(de->d_name, "dev%d.%d.%d", &found_print_id,
 			    &found_pmp, &found_devno);
-		if (rc == 2) {
-			found_devno = found_pmp;
-			found_pmp=0xffff;
-		} else if (rc != 3) {
-			saved_errno = errno;
-			closedir(d);
-			errno = saved_errno;
-			return -1;
-		}
-		if (found_print_id == print_id) {
-			info->sata_info.ata_devno = found_devno;
+		if (rc == 3) {
+			info->sata_info.ata_devno = 0;
 			info->sata_info.ata_pmp = found_pmp;
 			break;
+		} else if (rc == 2) {
+			info->sata_info.ata_devno = 0;
+			info->sata_info.ata_pmp = 0x8000;
+			break;
+		} else {
+			closedir(d);
+			errno = EINVAL;
+			return -1;
 		}
 	}
 	closedir(d);
@@ -230,7 +228,6 @@ sysfs_sata_get_port_info(uint32_t print_id, struct disk_info *info)
 	if (rc != 1)
 		return -1;
 
-	info->sata_info.ata_port -= 1;
 	return 0;
 }
 
