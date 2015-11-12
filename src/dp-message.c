@@ -408,6 +408,7 @@ _format_message_dn(char *buf, size_t size, const_efidp dp)
 						- sizeof (efidp_header)
 						- sizeof (efi_guid_t));
 		}
+		off += format(buf, size, off, ")");
 		break;
 			       }
 	case EFIDP_MSG_IPv6: {
