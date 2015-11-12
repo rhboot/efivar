@@ -770,6 +770,7 @@ efidp_is_multiinstance(const_efidp dn)
 		int rc = efidp_next_node(dn, &next);
 		if (rc < 0)
 			break;
+		dn = next;
 	}
 
 	if (efidp_type(dn) == EFIDP_END_TYPE &&
@@ -851,7 +852,7 @@ efidp_instance_size(const_efidp dpi)
 			break;
 
 		int rc = efidp_next_node(dpi, &next);
-		if (rc < 1)
+		if (rc < 0)
 			return -1;
 		dpi = next;
 	}
