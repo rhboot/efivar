@@ -127,7 +127,7 @@ format_vendor_helper(char *buf, size_t size, char *label, const_efidp dp)
 			_off += format(buf, size, off+_off, fmt,	\
 				      ((type *)addr)[_i]);		\
 		}							\
-		_off+off;						\
+		_off;							\
 	})
 
 extern ssize_t _format_hw_dn(char *buf, size_t size, const_efidp dp);
