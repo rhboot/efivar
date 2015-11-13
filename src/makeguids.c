@@ -182,10 +182,10 @@ main(int argc, char *argv[])
 		fprintf(symout, "%s_end:\n", outbuf[i].symbol);
 		if (!strcmp(outbuf[i].symbol, "efi_guid_zero")) {
 			fprintf(symout, "efi_guid_empty_end:\n");
-			fprintf(header, "extern const efi_guid_t efi_guid_empty;\n");
+			fprintf(header, "extern const efi_guid_t efi_guid_empty __attribute__((__visibility__ (\"default\")));\n");
 		}
 
-		fprintf(header, "extern const efi_guid_t %s;\n", outbuf[i].symbol);
+		fprintf(header, "extern const efi_guid_t %s __attribute__((__visibility__ (\"default\")));\n", outbuf[i].symbol);
 	}
 
 	fprintf(header, "\n#endif /* EFIVAR_GUIDS_H */\n");

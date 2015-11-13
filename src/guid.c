@@ -62,8 +62,14 @@ efi_guid_to_str(const efi_guid_t *guid, char **sp)
 	return rc;
 }
 
-extern struct guidname efi_well_known_guids[], efi_well_known_names[];
-extern struct guidname efi_well_known_guids_end, efi_well_known_names_end;
+extern struct guidname efi_well_known_guids[]
+	__attribute__((__visibility__ ("default")));
+extern struct guidname efi_well_known_names[]
+	__attribute__((__visibility__ ("default")));
+extern struct guidname efi_well_known_guids_end
+	__attribute__((__visibility__ ("default")));
+extern struct guidname efi_well_known_names_end
+	__attribute__((__visibility__ ("default")));
 
 static int
 __attribute__((__nonnull__ (1, 2)))
