@@ -56,6 +56,7 @@ rm -rf $RPM_BUILD_ROOT
 %license COPYING
 %doc README.md
 %{_bindir}/efivar
+%exclude %{_bindir}/efivar-static
 %{_mandir}/man1/*
 
 %files devel
