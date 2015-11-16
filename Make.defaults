@@ -37,6 +37,5 @@ ccldflags = $(cflags) $(CCLDFLAGS) $(LDFLAGS) \
 	$(if $(filter $(CCLD),clang),$(clang_ccldflags),) \
 	$(if $(filter $(CCLD),gcc),$(gcc_ccldflags),) \
 	$(call pkg-config-ccldflags)
-CPPFLAGS?=
 SOFLAGS=-shared
 LDLIBS=$(foreach lib,$(LIBS),-l$(lib)) $(call pkg-config-ldlibs)

@@ -15,23 +15,23 @@ TARGETS=$(LIBTARGETS) $(STATICLIBTARGETS) $(BINTARGETS) $(PCTARGETS)
 LIBEFIBOOT_SOURCES = crc32.c creator.c disk.c gpt.c linux.c loadopt.c
 LIBEFIBOOT_OBJECTS = $(patsubst %.c,%.o,$(LIBEFIBOOT_SOURCES))
 LIBEFIVAR_SOURCES = dp.c dp-acpi.c dp-hw.c dp-media.c dp-message.c \
-	efivarfs.c export.c guid.c guids.S guid-symbols.S \
+	efivarfs.c export.c guid.c guids.S guid-symbols.c \
 	lib.c vars.c
 LIBEFIVAR_OBJECTS = $(patsubst %.S,%.o,$(patsubst %.c,%.o,$(LIBEFIVAR_SOURCES)))
 EFIVAR_SOURCES = efivar.c
-GENERATED_SOURCES = include/efivar/efivar-guids.h guid-symbols.S
+GENERATED_SOURCES = include/efivar/efivar-guids.h guid-symbols.c
 MAKEGUIDS_SOURCES = makeguids.c guid.c
 ALL_SOURCES=$(LIBEFIBOOT_SOURCES) $(LIBEFIVAR_SOURCES) $(MAKEGUIDS_SOURCES) \
 	$(wildcard include/efivar/*.h) $(GENERATED_SOURCES) $(EFIVAR_SOURCES)
 
 all : deps $(TARGETS)
 
-./guid-symbols.S : include/efivar/efivar-guids.h
+./guid-symbols.c : include/efivar/efivar-guids.h
 ./guids.bin : include/efivar/efivar-guids.h
 ./names.bin : include/efivar/efivar-guids.h
 include/efivar/efivar-guids.h : makeguids guids.txt
 	./makeguids guids.txt guids.bin names.bin \
-		guid-symbols.S include/efivar/efivar-guids.h
+		guid-symbols.c include/efivar/efivar-guids.h
 
 makeguids : CPPFLAGS+=-DEFIVAR_BUILD_ENVIRONMENT
 makeguids : LIBS=dl
@@ -68,7 +68,7 @@ deps :: $(ALL_SOURCES)
 
 clean : 
 	@rm -rfv *~ *.o *.a *.E *.so *.so.* *.pc *.bin .*.d \
-		makeguids guid-symbols.S include/efivar/efivar-guids.h \
+		makeguids guid-symbols.c include/efivar/efivar-guids.h \
 		$(BINTARGETS)
 	@# remove the deps files we used to create, as well.
 	@rm -rfv .*.P .*.h.P *.S.P include/efivar/.*.h.P
@@ -92,6 +92,6 @@ test : all
 .PHONY: test
 .SECONDARY : libefivar.so.$(VERSION) libefivar.so.$(MAJOR_VERSION)
 .SECONDARY : libefiboot.so.$(VERSION) libefiboot.so.$(MAJOR_VERSION)
-.SECONDARY : include/efivar/efivar-guids.h guid-symbols.S
+.SECONDARY : include/efivar/efivar-guids.h guid-symbols.c
 .INTERMEDIATE : guids.bin names.bin
 .PRECIOUS : guid-symbols.o makeguids

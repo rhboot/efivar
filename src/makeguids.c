@@ -150,46 +150,37 @@ main(int argc, char *argv[])
 
 	fprintf(header, "#ifndef EFIVAR_GUIDS_H\n#define EFIVAR_GUIDS_H 1\n\n");
 
+	fprintf(symout, "#include <efivar.h>\n\n");
+
 	for (unsigned int i = 0; i < line-1; i++) {
-		if (!strcmp(outbuf[i].symbol, "efi_guid_zero"))
-			fprintf(symout, "\t.globl %s\n"
-					"\t.data\n"
-					"\t.balign 1\n"
-					"\t.type %s, %%object\n"
-					"\t.size %s, %s_end - %s\n",
-				"efi_guid_empty", "efi_guid_empty",
-				"efi_guid_empty", "efi_guid_empty",
-				"efi_guid_empty");
-		fprintf(symout, "\t.globl %s\n"
-				"\t.data\n"
-				"\t.balign 1\n"
-				"\t.type %s, %%object\n"
-				"\t.size %s, %s_end - %s\n"
-				"%s:\n",
-			outbuf[i].symbol,
-			outbuf[i].symbol,
-			outbuf[i].symbol,
-			outbuf[i].symbol,
-			outbuf[i].symbol,
-			outbuf[i].symbol);
-		if (!strcmp(outbuf[i].symbol, "efi_guid_zero"))
-			fprintf(symout, "efi_guid_empty:\n");
-
 		uint8_t *guid_data = (uint8_t *) &outbuf[i].guid;
-		for (unsigned int j = 0; j < sizeof (efi_guid_t); j++)
-			fprintf(symout,"\t.byte 0x%02x\n", guid_data[j]);
 
-		fprintf(symout, "%s_end:\n", outbuf[i].symbol);
 		if (!strcmp(outbuf[i].symbol, "efi_guid_zero")) {
-			fprintf(symout, "efi_guid_empty_end:\n");
+			fprintf(symout, "const efi_guid_t\n"
+				"__attribute__((__visibility__ (\"default\")))\n"
+				"efi_guid_empty = {0x1,0x0,0x0,0x0,{0x0,0x0,0x0,0x0,0x0,0x0}};\n\n");
+		}
+		if (!strcmp(outbuf[i].symbol, "efi_guid_zero")) {
 			fprintf(header, "extern const efi_guid_t efi_guid_empty __attribute__((__visibility__ (\"default\")));\n");
 		}
 
 		fprintf(header, "extern const efi_guid_t %s __attribute__((__visibility__ (\"default\")));\n", outbuf[i].symbol);
+
+		fprintf(symout, "const \n"
+			"__attribute__((__visibility__ (\"default\")))\n"
+			"efi_guid_t %s = {0x%02x%02x%02x%02x,0x%02x%02x,0x%02x%02x,0x%02x%02x,{0x%02x,0x%02x,0x%02x,0x%02x,0x%02x,0x%02x}};\n\n",
+			outbuf[i].symbol,
+			guid_data[3], guid_data[2],
+			  guid_data[1], guid_data[0],
+			guid_data[5], guid_data[4],
+			guid_data[7], guid_data[6],
+			guid_data[8], guid_data[9],
+			guid_data[10], guid_data[11],
+			  guid_data[12], guid_data[13],
+			  guid_data[14], guid_data[15]);
 	}
 
 	fprintf(header, "\n#endif /* EFIVAR_GUIDS_H */\n");
-	fprintf(symout, "#if defined(__linux__) && defined(__ELF__)\n.section .note.GNU-stack,\"\",%%progbits\n#endif");
 	fclose(header);
 	fclose(symout);
 
