@@ -38,7 +38,7 @@ git config --unset user.email
 git config --unset user.name
 
 %build
-make libdir=%{_libdir} bindir=%{_bindir} OPT_FLAGS="$RPM_OPT_FLAGS"
+make libdir=%{_libdir} bindir=%{_bindir} CFLAGS="$RPM_OPT_FLAGS" LDFLAGS="$RPM_LD_FLAGS"
 
 %install
 rm -rf $RPM_BUILD_ROOT
