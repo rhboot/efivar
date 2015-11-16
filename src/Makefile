@@ -41,25 +41,24 @@ guids.o : guids.S | guids.bin names.bin
 
 $(LIBEFIVAR_OBJECTS) $(LIBEFIBOOT_OBJECTS) : | $(GENERATED_SOURCES)
 
-libefivar.a : $(LIBEFIVAR_OBJECTS)
 libefivar.a : | $(GENERATED_SOURCES)
+libefivar.a : $(patsubst %.o,%.static.o,$(LIBEFIVAR_OBJECTS))
 
 libefivar.so : $(LIBEFIVAR_OBJECTS)
 libefivar.so : | $(GENERATED_SOURCES)
 libefivar.so : LIBS=dl
 
 efivar : efivar.c | libefivar.so
-efivar : ccldflags+=-L.
+efivar : ccldflags+=-L. -fPIE -Wl,-z,now -pie
 efivar : LIBS=efivar dl
 efivar : PKGS=popt
 
-efivar-static : efivar.c $(LIBEFIVAR_OBJECTS)
+efivar-static : efivar.c $(patsubst %.o,%.static.o,$(LIBEFIVAR_OBJECTS))
 efivar-static : | $(GENERATED_SOURCES)
-efivar-static : ccldflags+=-static -Wl,-no-fatal-warnings
 efivar-static : LIBS=dl
 efivar-static : PKGS=popt
 
-libefiboot.a : $(LIBEFIBOOT_OBJCETS)
+libefiboot.a : $(patsubst %.o,%.static.o,$(LIBEFIBOOT_OBJECTS))
 
 libefiboot.so : $(LIBEFIBOOT_OBJECTS)
 

@@ -24,9 +24,9 @@ PKGS	=
 
 clang_cflags =
 gcc_cflags = -Wmaybe-uninitialized
-cflags	= $(CFLAGS) \
+cflags	= $(CFLAGS)  -I${TOPDIR}/src/include/efivar/ \
 	-Werror -Wall -Wsign-compare -Wstrict-aliasing \
-	-std=gnu11 -fshort-wchar -fPIC -flto \
+	-std=gnu11 -fshort-wchar -flto \
 	-fvisibility=hidden \
 	-D_GNU_SOURCE -I${TOPDIR}/src/include/efivar/ \
 	$(if $(filter $(CC),clang),$(clang_cflags),) \
@@ -35,7 +35,7 @@ cflags	= $(CFLAGS) \
 clang_ccldflags =
 gcc_ccldflags = -fno-merge-constants \
 	-Wl,--fatal-warnings,--no-allow-shlib-undefined,--default-symver \
-	-Wl,-O2 -Wl,--no-undefined-version,--add-needed \
+	-Wl,-O2 -Wl,--no-undefined-version,--add-needed
 ccldflags = $(cflags) $(CCLDFLAGS) $(LDFLAGS) \
 	$(if $(filter $(CCLD),clang),$(clang_ccldflags),) \
 	$(if $(filter $(CCLD),gcc),$(gcc_ccldflags),) \

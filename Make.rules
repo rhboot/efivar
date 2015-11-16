@@ -4,7 +4,7 @@ default : all
 
 include $(TOPDIR)/Make.version
 
-%.a : %.so
+%.a :
 	$(AR) -cvqs $@ $^
 
 % : %.c
@@ -12,16 +12,27 @@ include $(TOPDIR)/Make.version
 % : %.c
 	$(CCLD) $(ccldflags) $(CPPFLAGS) -o $@ $^ $(LDLIBS)
 
+%-static : ccldflags+=-Wl,-z,now,-no-fatal-warnings,--build-id -fPIE -static -r
 %-static : %.c
 	$(CCLD) $(ccldflags) $(CPPFLAGS) -o $@ $^ $(LDLIBS)
 
+%.so : ccldflags+=-Wl,-z,relro,-z,now -fPIC
 %.so :
 	$(CCLD) $(ccldflags) $(CPPFLAGS) $(SOFLAGS) \
 	  -Wl,-soname,$@.$(MAJOR_VERSION) \
 	  -o $@ $^ $(LDLIBS)
 
 %.o : %.c
-	$(CC) $(cflags) $(CPPFLAGS) -c -o $@ $(filter %.c %.o %.S,$^)
+	$(CC) $(cflags) -fPIC $(CPPFLAGS) -c -o $@ $(filter %.c %.o %.S,$^)
+
+%.static.o : %.c
+	$(CC) $(cflags) -fPIE $(CPPFLAGS) -c -o $@ $(filter %.c %.o %.S,$^)
+
+%.o : %.S
+	$(CC) $(cflags) -fPIC $(CPPFLAGS) -c -o $@ $(filter %.c %.o %.S,$^)
+
+%.static.o : %.S
+	$(CC) $(cflags) -fPIE $(CPPFLAGS) -c -o $@ $(filter %.c %.o %.S,$^)
 
 %.S: %.c
 	$(CC) $(cflags) $(CPPFLAGS) -S $< -o $@
