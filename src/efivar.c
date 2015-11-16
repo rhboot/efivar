@@ -329,21 +329,26 @@ int main(int argc, char *argv[])
 			prepare_data(file, &data, &data_size);
 			append_variable(name, data, data_size, attributes);
 		case ACTION_LIST_GUIDS: {
-			extern struct guidname efi_well_known_guids[];
+			efi_guid_t sentinal = {0xffffffff,0xffff,0xffff,0xffff,
+					       {0xff,0xff,0xff,0xff,0xff,0xff}};
+			extern struct guidname efi_well_known_guids;
 			extern struct guidname efi_well_known_guids_end;
+			intptr_t start = (intptr_t)&efi_well_known_guids;
+			intptr_t end = (intptr_t)&efi_well_known_guids_end;
+			unsigned int i;
 
-			for (struct guidname *guid = efi_well_known_guids;
-			     guid != &efi_well_known_guids_end;
-			     guid++)
-			{
+			struct guidname *guid = &efi_well_known_guids;
+			for (i = 0; i < (end-start) / sizeof(*guid); i++) {
+				if (!efi_guid_cmp(&sentinal, &guid[i].guid))
+					break;
 				printf("{"GUID_FORMAT"} {%s} %s %s\n",
-					guid->guid.a, guid->guid.b,
-					guid->guid.c, bswap_16(guid->guid.d),
-					guid->guid.e[0], guid->guid.e[1],
-					guid->guid.e[2], guid->guid.e[3],
-					guid->guid.e[4], guid->guid.e[5],
-					guid->symbol + strlen("efi_guid_"),
-					guid->symbol, guid->name);
+					guid[i].guid.a, guid[i].guid.b,
+					guid[i].guid.c, bswap_16(guid[i].guid.d),
+					guid[i].guid.e[0], guid[i].guid.e[1],
+					guid[i].guid.e[2], guid[i].guid.e[3],
+					guid[i].guid.e[4], guid[i].guid.e[5],
+					guid[i].symbol + strlen("efi_guid_"),
+					guid[i].symbol, guid[i].name);
 			}
 		}
 	};

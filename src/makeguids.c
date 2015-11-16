@@ -30,12 +30,9 @@
 efi_guid_t const efi_guid_zero = {0};
 efi_guid_t const efi_guid_empty = {0};
 
-struct guidname efi_well_known_guids[] = {
-};
+struct guidname efi_well_known_guids;
 struct guidname efi_well_known_guids_end;
-
-struct guidname efi_well_known_names[] = {
-};
+struct guidname efi_well_known_names;
 struct guidname efi_well_known_names_end;
 
 static int
@@ -154,6 +151,9 @@ main(int argc, char *argv[])
 
 	for (unsigned int i = 0; i < line-1; i++) {
 		uint8_t *guid_data = (uint8_t *) &outbuf[i].guid;
+
+		if (!strcmp(outbuf[i].symbol, "efi_guid_zzignore-this-guid"))
+			break;
 
 		if (!strcmp(outbuf[i].symbol, "efi_guid_zero")) {
 			fprintf(symout, "const efi_guid_t\n"

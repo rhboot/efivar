@@ -30,3 +30,4 @@ d719b2cb-3d3a-4596-a3bc-dad00e67656f	security	EFI Security Database
 e2b36190-879b-4a3d-ad8d-f2e7bba32784	rsa2048_sha256	RSA 2048 with SHA-256
 ff3e5307-9fd0-48c9-85f1-8ad56c701e01	sha384	SHA-384
 f46ee6f4-4785-43a3-923d-7f786c3c8479	lenovo_startup_interrupt	Lenovo Startup Interrupt Menu
+ffffffff-ffff-ffff-ffff-ffffffffffff	zzignore-this-guid	zzignore-this-guid
