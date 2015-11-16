@@ -23,19 +23,13 @@ RANLIB	:= $(CROSS_COMPILE)gcc-ranlib
 PKGS	=
 
 clang_cflags =
-gcc_cflags = -Wmaybe-uninitialized
-cflags	= $(CFLAGS)  -I${TOPDIR}/src/include/efivar/ \
-	-Werror -Wall -Wsign-compare -Wstrict-aliasing \
-	-std=gnu11 -fshort-wchar -flto \
-	-fvisibility=hidden \
-	-D_GNU_SOURCE -I${TOPDIR}/src/include/efivar/ \
+gcc_cflags = -specs=$(TOPDIR)/gcc.specs
+cflags	= $(CFLAGS) -I${TOPDIR}/src/include/efivar/ \
 	$(if $(filter $(CC),clang),$(clang_cflags),) \
 	$(if $(filter $(CC),gcc),$(gcc_cflags),) \
 	$(call pkg-config-cflags)
 clang_ccldflags =
-gcc_ccldflags = -fno-merge-constants \
-	-Wl,--fatal-warnings,--no-allow-shlib-undefined,--default-symver \
-	-Wl,-O2 -Wl,--no-undefined-version,--add-needed
+gcc_ccldflags =
 ccldflags = $(cflags) $(CCLDFLAGS) $(LDFLAGS) \
 	$(if $(filter $(CCLD),clang),$(clang_ccldflags),) \
 	$(if $(filter $(CCLD),gcc),$(gcc_ccldflags),) \

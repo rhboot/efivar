@@ -12,11 +12,10 @@ include $(TOPDIR)/Make.version
 % : %.c
 	$(CCLD) $(ccldflags) $(CPPFLAGS) -o $@ $^ $(LDLIBS)
 
-%-static : ccldflags+=-Wl,-z,now,-no-fatal-warnings,--build-id -fPIE -static -r
+%-static : ccldflags+=-static
 %-static : %.c
 	$(CCLD) $(ccldflags) $(CPPFLAGS) -o $@ $^ $(LDLIBS)
 
-%.so : ccldflags+=-Wl,-z,relro,-z,now -fPIC
 %.so :
 	$(CCLD) $(ccldflags) $(CPPFLAGS) $(SOFLAGS) \
 	  -Wl,-soname,$@.$(MAJOR_VERSION) \

@@ -1,0 +1,17 @@
+*cpp:
++ -D_GNU_SOURCE
+
+*efivar_cpp_options:
+ -Werror -Wall -std=gnu11 -fshort-wchar
+
+*cpp_options:
++ %(efivar_cpp_options)
+
+*cc1_options:
++ %(efivar_cpp_options) -Wmaybe-uninitialized -fno-merge-constants -flto -fvisibility=hidden %{!r:%{!fpie:%{!fPIE:%{!fpic:%{!fPIC:%{!fno-pic:-fPIE}}}}}}
+
+*self_spec:
++ %{!shared:%{!static:%{!r:-pie}}} %{static:-Wl,-no-fatal-warnings -Wl,-static -static -Wl,-z,relro,-z,now}
+
+*link:
++ %{!static:--fatal-warnings} --default-symver --no-undefined-version --no-allow-shlib-undefined --add-needed -z now --build-id %{!static:%{!shared:-fPIE}} %{shared:-z relro -fPIC} %{static:%<pie}

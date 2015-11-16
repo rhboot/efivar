@@ -49,7 +49,6 @@ libefivar.so : | $(GENERATED_SOURCES)
 libefivar.so : LIBS=dl
 
 efivar : efivar.c | libefivar.so
-efivar : ccldflags+=-L. -fPIE -Wl,-z,now -pie
 efivar : LIBS=efivar dl
 efivar : PKGS=popt
 
