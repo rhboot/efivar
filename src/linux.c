@@ -81,6 +81,10 @@ set_disk_and_part_name(struct disk_info *info)
 	}
 	penultimate++;
 
+	/*
+	 * If there's a better way to figure this out, it'd be good, because
+	 * I don't want to have to change this for every new disk type...
+	 */
 	if (!strcmp(penultimate, "block")) {
 		if (!info->disk_name) {
 			info->disk_name = strdup(ultimate);
@@ -90,6 +94,18 @@ set_disk_and_part_name(struct disk_info *info)
 		if (!info->part_name) {
 			rc = asprintf(&info->part_name, "%s%d", info->disk_name,
 				      info->part);
+			if (rc < 0)
+				return -1;
+		}
+	} else if (!strncmp(penultimate, "nvme", 4)) {
+		if (!info->disk_name) {
+			info->disk_name = strdup(ultimate);
+			if (!info->disk_name)
+				return -1;
+		}
+		if (!info->part_name) {
+			rc = asprintf(&info->part_name, "%sp%d",
+				      info->disk_name, info->part);
 			if (rc < 0)
 				return -1;
 		}
