@@ -22,7 +22,7 @@
 #include <stddef.h>
 
 #include <efivar.h>
-#include "endian.h"
+#include "efivar_endian.h"
 #include "dp.h"
 
 static ssize_t
