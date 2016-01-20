@@ -297,7 +297,7 @@ sysfs_parse_nvme(uint8_t *buf, ssize_t size, ssize_t *off,
 {
 	int rc;
 	int psz = 0;
-	char *filebuf = NULL;
+	uint8_t *filebuf = NULL;
 
 	*poff = 0;
 	*off = 0;
@@ -339,7 +339,7 @@ sysfs_parse_nvme(uint8_t *buf, ssize_t size, ssize_t *off,
 			errno = EINVAL;
 			return -1;
 		}
-		rc = sscanf(filebuf,
+		rc = sscanf((char *)filebuf,
 			    "%02hhx-%02hhx-%02hhx-%02hhx-"
 			    "%02hhx-%02hhx-%02hhx-%02hhx",
 			    &eui[0], &eui[1], &eui[2], &eui[3],
