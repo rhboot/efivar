@@ -9,7 +9,7 @@ __attribute__((__unused__))
 ucs2len(const uint16_t * const s, ssize_t limit)
 {
 	ssize_t i;
-	for (i = 0; i < (limit >= 0 ? limit : i+1) && s[i] != L'\0'; i++)
+	for (i = 0; i < (limit >= 0 ? limit : i+1) && s[i] != (uint16_t)0; i++)
 		;
 	return i;
 }
@@ -156,7 +156,7 @@ utf8_to_ucs2(uint16_t *ucs2, ssize_t size, int terminate, uint8_t *utf8)
 		ucs2[j] = val;
 	}
 	if (terminate)
-		ucs2[j++] = L'\0';
+		ucs2[j++] = (uint16_t)0;
 	return j;
 };
 

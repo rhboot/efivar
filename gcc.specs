@@ -2,7 +2,7 @@
 + -D_GNU_SOURCE
 
 *efivar_cpp_options:
- -Werror -Wall -std=gnu11 -fshort-wchar
+ -Werror -Wall -std=gnu11
 
 *cpp_options:
 + %(efivar_cpp_options)
