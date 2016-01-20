@@ -120,7 +120,7 @@ utf8_to_ucs2(uint16_t *ucs2, ssize_t size, int terminate, uint8_t *utf8)
 	ssize_t req;
 	ssize_t i, j;
 
-	if (!utf8 || (!ucs2 && size > 0)) {
+	if (!ucs2 && size > 0) {
 		errno = EINVAL;
 		return -1;
 	}

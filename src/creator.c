@@ -49,11 +49,6 @@ find_file(const char * const filepath, char **devicep, char **relpathp)
 	char linkbuf[PATH_MAX+1] = "";
 	ssize_t linklen = 0;
 
-	if (!filepath || !devicep || !relpathp) {
-		errno = EINVAL;
-		return -1;
-	}
-
 	linklen = strlen(filepath);
 	if (linklen > PATH_MAX) {
 		errno = ENAMETOOLONG;

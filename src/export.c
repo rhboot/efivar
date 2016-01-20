@@ -68,9 +68,6 @@ efi_variable_import(uint8_t *data, size_t size, efi_variable_t **var_out)
 	if (size <= min)
 		return -1;
 
-	if (!var_out)
-		return -1;
-
 	uint8_t *ptr = data;
 	uint32_t magic = EFIVAR_MAGIC;
 	if (memcmp(data, &magic, sizeof (uint32_t)) ||
@@ -149,10 +146,6 @@ __attribute__((__nonnull__ (1)))
 __attribute__((__visibility__ ("default")))
 efi_variable_export(efi_variable_t *var, uint8_t *data, size_t size)
 {
-	if (!var) {
-		errno = EINVAL;
-		return -1;
-	}
 	size_t name_len = strlen(var->name);
 
 	size_t needed = sizeof (uint32_t)		/* magic */
@@ -248,11 +241,6 @@ __attribute__((__nonnull__ (1, 2)))
 __attribute__((__visibility__ ("default")))
 efi_variable_set_name(efi_variable_t *var, char *name)
 {
-	if (!var || !name) {
-		errno = EINVAL;
-		return -1;
-	}
-
 	var->name = name;
 	return 0;
 }
@@ -267,11 +255,6 @@ __attribute__((__visibility__ ("default")))
 #endif
 efi_variable_get_name(efi_variable_t *var)
 {
-	if (!var) {
-		errno = EINVAL;
-		return NULL;
-	}
-
 	if (!var->name) {
 		errno = ENOENT;
 	} else {
@@ -285,11 +268,6 @@ __attribute__((__nonnull__ (1, 2)))
 __attribute__((__visibility__ ("default")))
 efi_variable_set_guid(efi_variable_t *var, efi_guid_t *guid)
 {
-	if (!var || !guid) {
-		errno = EINVAL;
-		return -1;
-	}
-
 	var->guid = guid;
 	return 0;
 }
@@ -299,11 +277,6 @@ __attribute__((__nonnull__ (1, 2)))
 __attribute__((__visibility__ ("default")))
 efi_variable_get_guid(efi_variable_t *var, efi_guid_t **guid)
 {
-	if (!var || !guid) {
-		errno = EINVAL;
-		return -1;
-	}
-
 	if (!var->guid) {
 		errno = ENOENT;
 		return -1;
@@ -318,7 +291,7 @@ __attribute__((__nonnull__ (1, 2)))
 __attribute__((__visibility__ ("default")))
 efi_variable_set_data(efi_variable_t *var, uint8_t *data, size_t size)
 {
-	if (!var || !data || !size) {
+	if (!size) {
 		errno = EINVAL;
 		return -1;
 	}
@@ -333,11 +306,6 @@ __attribute__((__nonnull__ (1, 2, 3)))
 __attribute__((__visibility__ ("default")))
 efi_variable_get_data(efi_variable_t *var, uint8_t **data, size_t *size)
 {
-	if (!var || !data || !size) {
-		errno = EINVAL;
-		return -1;
-	}
-
 	if (var->data || !var->data_size) {
 		errno = ENOENT;
 		return -1;
@@ -353,11 +321,6 @@ __attribute__((__nonnull__ (1)))
 __attribute__((__visibility__ ("default")))
 efi_variable_set_attributes(efi_variable_t *var, uint64_t attrs)
 {
-	if (!var) {
-		errno = -EINVAL;
-		return -1;
-	}
-
 	var->attrs = attrs;
 	return 0;
 }
@@ -367,11 +330,6 @@ __attribute__((__nonnull__ (1, 2)))
 __attribute__((__visibility__ ("default")))
 efi_variable_get_attributes(efi_variable_t *var, uint64_t *attrs)
 {
-	if (!var || !attrs) {
-		errno = -EINVAL;
-		return -1;
-	}
-
 	if (var->attrs == ATTRS_UNSET) {
 		errno = ENOENT;
 		return -1;
@@ -386,11 +344,6 @@ __attribute__((__nonnull__ (1)))
 __attribute__((__visibility__ ("default")))
 efi_variable_realize(efi_variable_t *var)
 {
-	if (!var) {
-		errno = -EINVAL;
-		return -1;
-	}
-
 	if (!var->name || !var->data || !var->data_size ||
 			var->attrs == ATTRS_UNSET) {
 		errno = -EINVAL;

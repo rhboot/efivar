@@ -36,11 +36,6 @@ efi_loadopt_create(uint8_t *buf, ssize_t size, uint32_t attributes,
 		   efidp dp, ssize_t dp_size, unsigned char *description,
 		   uint8_t *optional_data, size_t optional_data_size)
 {
-	if (!description) {
-		errno = EINVAL;
-		return -1;
-	}
-
 	ssize_t desc_len = utf8len((uint8_t *)description, 1024) * 2 + 2;
 	ssize_t sz = sizeof (attributes)
 		     + sizeof (uint16_t) + desc_len
@@ -89,9 +84,6 @@ efi_loadopt_optional_data_size(efi_load_option *opt, size_t size)
 {
 	size_t sz;
 	uint8_t *p;
-
-	if (!opt)
-		return -1;
 
 	if (size < sizeof(*opt))
 		return -1;
@@ -162,10 +154,6 @@ __attribute__((__visibility__ ("default")))
 efi_loadopt_path(efi_load_option *opt)
 {
 	char *p = (char *)opt;
-	if (!opt) {
-		errno = EINVAL;
-		return NULL;
-	}
 	efidp dp = (efidp)(p + sizeof (opt->attributes)
 		   + sizeof (opt->file_path_list_length)
 		   + ucs2size(opt->description, -1));
@@ -179,10 +167,6 @@ efi_loadopt_optional_data(efi_load_option *opt, size_t opt_size,
 			  unsigned char **datap, size_t *len)
 {
 	unsigned char *p = (unsigned char *)opt;
-	if (!opt || !datap) {
-		errno = EINVAL;
-		return -1;
-	}
 	*datap = (unsigned char *)(p + sizeof (opt->attributes)
 		   + sizeof (opt->file_path_list_length)
 		   + ucs2size(opt->description, -1)
@@ -203,7 +187,7 @@ efi_loadopt_args_from_file(uint8_t *buf, ssize_t size, char *filename)
 	int saved_errno;
 	FILE *f;
 
-	if (!filename || (!buf && size > 0)) {
+	if (!buf && size > 0) {
 		errno = -EINVAL;
 		return -1;
 	}
@@ -241,7 +225,7 @@ __attribute__((__visibility__ ("default")))
 efi_loadopt_args_as_utf8(uint8_t *buf, ssize_t size, char *utf8)
 {
 	ssize_t req;
-	if (!utf8 || (!buf && size > 0)) {
+	if (!buf && size > 0) {
 		errno = EINVAL;
 		return -1;
 	}
@@ -268,7 +252,7 @@ __attribute__((__visibility__ ("default")))
 efi_loadopt_args_as_ucs2(uint16_t *buf, ssize_t size, uint8_t *utf8)
 {
 	ssize_t req;
-	if (!utf8 || (!buf && size > 0)) {
+	if (!buf && size > 0) {
 		errno = EINVAL;
 		return -1;
 	}

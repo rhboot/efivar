@@ -133,7 +133,7 @@ get_partition_number(const char *devpath)
 	int rc;
 	unsigned int maj, min;
 	char *linkbuf;
-	char *partbuf;
+	uint8_t *partbuf;
 	int ret = -1;
 
 	rc = stat(devpath, &statbuf);
@@ -156,7 +156,7 @@ get_partition_number(const char *devpath)
 	if (rc < 0)
 		return -1;
 
-	rc = sscanf(partbuf, "%d\n", &ret);
+	rc = sscanf((char *)partbuf, "%d\n", &ret);
 	if (rc != 1)
 		return -1;
 	return ret;
@@ -353,7 +353,7 @@ sysfs_parse_sas(uint8_t *buf, ssize_t size, ssize_t *off,
 {
 	int rc;
 	int psz = 0;
-	char *filebuf = NULL;
+	uint8_t *filebuf = NULL;
 	uint64_t sas_address;
 
 	*poff = 0;
@@ -447,7 +447,7 @@ sysfs_parse_sas(uint8_t *buf, ssize_t size, ssize_t *off,
 	if (rc < 0)
 		return -1;
 
-	rc = sscanf(filebuf, "%"PRIx64, &sas_address);
+	rc = sscanf((char *)filebuf, "%"PRIx64, &sas_address);
 	if (rc != 1)
 		return -1;
 
@@ -490,7 +490,7 @@ make_pci_path(uint8_t *buf, ssize_t size, char *pathstr, ssize_t *pathoff)
 		return -1;
 	poff += psz;
 
-	char *fbuf = NULL;
+	uint8_t *fbuf = NULL;
 	rc = read_sysfs_file(&fbuf,
 			     "/sys/devices/pci%04x:%02x/firmware_node/hid",
 			     root_domain, root_bus);

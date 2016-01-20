@@ -28,11 +28,6 @@ static const efidp_header end_entire = {
 	.subtype = EFIDP_END_ENTIRE,
 	.length = 4
 };
-static const efidp_header end_instance = {
-	.type = EFIDP_END_TYPE,
-	.subtype = EFIDP_END_INSTANCE,
-	.length = 4
-};
 
 static inline void *
 efidp_data_address(const_efidp dp)

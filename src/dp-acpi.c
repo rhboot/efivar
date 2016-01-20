@@ -189,11 +189,6 @@ efidp_make_acpi_hid_ex(uint8_t *buf, ssize_t size,
 	ssize_t req;
 	ssize_t sz;
 
-	if (!hidstr || !uidstr || !cidstr) {
-		errno = EINVAL;
-		return -1;
-	}
-
 	req = sizeof (*acpi_hid) + 3 +
 		strlen(hidstr) + strlen(uidstr) + strlen(cidstr);
 	sz = efidp_make_generic(buf, size, EFIDP_ACPI_TYPE, EFIDP_ACPI_HID_EX,
