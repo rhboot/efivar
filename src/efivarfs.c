@@ -33,6 +33,8 @@
 #include "generics.h"
 #include "util.h"
 
+#include <linux/fs.h>
+
 #define EFIVARS_PATH "/sys/firmware/efi/efivars/"
 
 #ifndef EFIVARFS_MAGIC
@@ -65,6 +67,39 @@ efivarfs_probe(void)
 			(guid).e[0], (guid).e[1], (guid).e[2],		\
 			(guid).e[3], (guid).e[4], (guid).e[5]);		\
 	})
+
+static int
+efivarfs_set_immutable(char *path, int immutable)
+{
+	unsigned int flags;
+	typeof(errno) error = 0;
+	int fd;
+	int rc = 0;
+
+	fd = open(path, O_WRONLY);
+	if (fd < 0)
+		return fd;
+
+	rc = ioctl(fd, FS_IOC_GETFLAGS, &flags);
+	if (rc < 0) {
+		if (errno != ENOTTY)
+			error = errno;
+	} else if ((immutable && !(flags & FS_IMMUTABLE_FL)) ||
+		   (!immutable && (flags & FS_IMMUTABLE_FL))) {
+		if (immutable)
+			flags |= FS_IMMUTABLE_FL;
+		else
+			flags &= ~FS_IMMUTABLE_FL;
+
+		rc = ioctl(fd, FS_IOC_SETFLAGS, &flags);
+		if (rc < 0)
+			error = errno;
+	}
+
+	close(fd);
+	errno = error;
+	return rc;
+}
 
 static int
 efivarfs_get_variable_size(efi_guid_t guid, const char *name, size_t *size)
@@ -169,7 +204,9 @@ efivarfs_del_variable(efi_guid_t guid, const char *name)
 	if (rc < 0)
 		return -1;
 
-	rc = unlink(path);
+	rc = efivarfs_set_immutable(path, 0);
+	if (rc >= 0)
+		rc = unlink(path);
 
 	typeof(errno) errno_value = errno;
 	free(path);
@@ -216,6 +253,7 @@ efivarfs_set_variable(efi_guid_t guid, const char *name, uint8_t *data,
 	} else {
 		unlink(path);
 	}
+	efivarfs_set_immutable(path, 1);
 err:
 	errno_value = errno;
 
