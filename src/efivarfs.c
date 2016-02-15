@@ -76,14 +76,21 @@ efivarfs_set_immutable(char *path, int immutable)
 	int fd;
 	int rc = 0;
 
-	fd = open(path, O_WRONLY);
-	if (fd < 0)
-		return fd;
+	fd = open(path, O_RDONLY);
+	if (fd < 0) {
+		if (errno == ENOTTY)
+			return 0;
+		else
+			return fd;
+	}
 
 	rc = ioctl(fd, FS_IOC_GETFLAGS, &flags);
 	if (rc < 0) {
-		if (errno != ENOTTY)
+		if (errno == ENOTTY) {
+			rc = 0;
+		} else {
 			error = errno;
+		}
 	} else if ((immutable && !(flags & FS_IMMUTABLE_FL)) ||
 		   (!immutable && (flags & FS_IMMUTABLE_FL))) {
 		if (immutable)
