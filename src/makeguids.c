@@ -147,7 +147,21 @@ main(int argc, char *argv[])
 
 	fprintf(header, "#ifndef EFIVAR_GUIDS_H\n#define EFIVAR_GUIDS_H 1\n\n");
 
-	fprintf(symout, "#include <efivar.h>\n\n");
+	fprintf(symout, "#include <efivar.h>\n");
+	fprintf(symout, "#include <endian.h>\n");
+	fprintf(symout, """\n\
+#if BYTE_ORDER == BIG_ENDIAN\n\
+#define cpu_to_be32(n) (n)\n\
+#define cpu_to_be16(n) (n)\n\
+#define cpu_to_le32(n) (__bswap_constant_32(n))\n\
+#define cpu_to_le16(n) (__bswap_constant_16(n))\n\
+#else\n\
+#define cpu_to_le32(n) (n)\n\
+#define cpu_to_le16(n) (n)\n\
+#define cpu_to_be32(n) (__bswap_constant_32(n))\n\
+#define cpu_to_be16(n) (__bswap_constant_16(n))\n\
+#endif\n\
+""");
 
 	for (unsigned int i = 0; i < line-1; i++) {
 		uint8_t *guid_data = (uint8_t *) &outbuf[i].guid;
@@ -158,7 +172,7 @@ main(int argc, char *argv[])
 		if (!strcmp(outbuf[i].symbol, "efi_guid_zero")) {
 			fprintf(symout, "const efi_guid_t\n"
 				"__attribute__((__visibility__ (\"default\")))\n"
-				"efi_guid_empty = {0x1,0x0,0x0,0x0,{0x0,0x0,0x0,0x0,0x0,0x0}};\n\n");
+				"efi_guid_empty = {0x0,0x0,0x0,0x0,{0x0,0x0,0x0,0x0,0x0,0x0}};\n\n");
 		}
 		if (!strcmp(outbuf[i].symbol, "efi_guid_zero")) {
 			fprintf(header, "extern const efi_guid_t efi_guid_empty __attribute__((__visibility__ (\"default\")));\n");
@@ -168,7 +182,7 @@ main(int argc, char *argv[])
 
 		fprintf(symout, "const \n"
 			"__attribute__((__visibility__ (\"default\")))\n"
-			"efi_guid_t %s = {0x%02x%02x%02x%02x,0x%02x%02x,0x%02x%02x,0x%02x%02x,{0x%02x,0x%02x,0x%02x,0x%02x,0x%02x,0x%02x}};\n\n",
+			"efi_guid_t %s = {cpu_to_le32(0x%02x%02x%02x%02x),cpu_to_le16(0x%02x%02x),cpu_to_le16(0x%02x%02x),cpu_to_be16(0x%02x%02x),{0x%02x,0x%02x,0x%02x,0x%02x,0x%02x,0x%02x}};\n\n",
 			outbuf[i].symbol,
 			guid_data[3], guid_data[2],
 			  guid_data[1], guid_data[0],

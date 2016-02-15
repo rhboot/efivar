@@ -24,6 +24,7 @@
 #include <limits.h>
 #include <stdlib.h>
 #include <string.h>
+#include "efivar_endian.h"
 
 #define GUID_FORMAT "%08x-%04x-%04x-%04x-%02x%02x%02x%02x%02x%02x"
 
@@ -105,6 +106,7 @@ text_to_guid(const char *text, efi_guid_t *guid)
 	if (check_segment_sanity(eightbytes, 8) < 0)
 		return -1;
 	guid->a = (uint32_t)strtoul(eightbytes, NULL, 16);
+	guid->a = cpu_to_le32(guid->a);
 
 	/* 84be9c3e-8a32-42c0-891c-4cd3b072becc
 	 *          ^ */
@@ -112,6 +114,7 @@ text_to_guid(const char *text, efi_guid_t *guid)
 	if (check_segment_sanity(fourbytes, 4) < 0)
 		return -1;
 	guid->b = (uint16_t)strtoul(fourbytes, NULL, 16);
+	guid->b = cpu_to_le16(guid->b);
 
 	/* 84be9c3e-8a32-42c0-891c-4cd3b072becc
 	 *               ^ */
@@ -119,13 +122,15 @@ text_to_guid(const char *text, efi_guid_t *guid)
 	if (check_segment_sanity(fourbytes, 4) < 0)
 		return -1;
 	guid->c = (uint16_t)strtoul(fourbytes, NULL, 16);
+	guid->c = cpu_to_le16(guid->c);
 
 	/* 84be9c3e-8a32-42c0-891c-4cd3b072becc
 	 *                    ^ */
 	strncpy(fourbytes, text+19, 4);
 	if (check_segment_sanity(fourbytes, 4) < 0)
 		return -1;
-	guid->d = bswap_16((uint16_t)strtoul(fourbytes, NULL, 16));
+	guid->d = (uint16_t)strtoul(fourbytes, NULL, 16);
+	guid->d = cpu_to_be16(guid->d);
 
 	/* 84be9c3e-8a32-42c0-891c-4cd3b072becc
 	 *                         ^ */
