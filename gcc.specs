@@ -14,4 +14,4 @@
 + %{!shared:%{!static:%{!r:-pie}}} %{static:-Wl,-no-fatal-warnings -Wl,-static -static -Wl,-z,relro,-z,now}
 
 *link:
-+ %{!static:--fatal-warnings} --default-symver --no-undefined-version --no-allow-shlib-undefined --add-needed -z now --build-id %{!static:%{!shared:-fPIE}} %{shared:-z relro -fPIC} %{static:%<pie}
++ %{!static:--fatal-warnings} --default-symver --no-undefined-version --no-allow-shlib-undefined --add-needed -z now --build-id %{!static:%{!shared:-PIE}} %{shared:-z relro -PIC} %{static:%<pie}
