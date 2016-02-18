@@ -360,7 +360,9 @@ efidp_format_device_path(char *buf, size_t size, const_efidp dp, ssize_t limit)
 
 ssize_t
 __attribute__((__visibility__ ("default")))
-efidp_parse_device_node(char *path, efidp out, size_t size)
+efidp_parse_device_node(char *path __attribute__((unused)),
+			efidp out __attribute__((unused)),
+			size_t size __attribute__((unused)))
 {
 	errno = -ENOSYS;
 	return -1;
@@ -368,7 +370,9 @@ efidp_parse_device_node(char *path, efidp out, size_t size)
 
 ssize_t
 __attribute__((__visibility__ ("default")))
-efidp_parse_device_path(char *path, efidp out, size_t size)
+efidp_parse_device_path(char *path __attribute__((unused)),
+			efidp out __attribute__((unused)),
+			size_t size __attribute__((unused)))
 {
 	errno = -ENOSYS;
 	return -1;
