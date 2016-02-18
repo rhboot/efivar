@@ -282,7 +282,7 @@ teardown(void)
 
 __attribute__((__nonnull__ (1)))
 __attribute__((__visibility__ ("default")))
-const unsigned char * const
+const unsigned char const *
 efi_loadopt_desc(efi_load_option *opt)
 {
 	if (last_desc) {

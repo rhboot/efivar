@@ -30,7 +30,7 @@ extern ssize_t efi_loadopt_create(uint8_t *buf, ssize_t size,
 
 extern efidp efi_loadopt_path(efi_load_option *opt)
 	__attribute__((__nonnull__ (1)));
-extern const unsigned char * const efi_loadopt_desc(efi_load_option *opt)
+extern const unsigned char const * efi_loadopt_desc(efi_load_option *opt)
 	__attribute__((__visibility__ ("default")))
 	__attribute__((__nonnull__ (1)));
 extern uint32_t efi_loadopt_attrs(efi_load_option *opt)
