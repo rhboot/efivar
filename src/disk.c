@@ -69,9 +69,11 @@ is_mbr_valid(legacy_mbr *mbr)
  *
  ************************************************************/
 static int
-msdos_disk_get_extended_partition_info (int fd, legacy_mbr *mbr,
-					uint32_t num,
-					uint64_t *start, uint64_t *size)
+msdos_disk_get_extended_partition_info (int fd __attribute__((unused)),
+					legacy_mbr *mbr __attribute__((unused)),
+					uint32_t num __attribute__((unused)),
+					uint64_t *start __attribute__((unused)),
+					uint64_t *size __attribute__((unused)))
 {
         /* Until I can handle these... */
         //fprintf(stderr, "Extended partition info not supported.\n");

@@ -324,10 +324,14 @@ err:
 static ssize_t
 __attribute__((__nonnull__ (3,4,5,6)))
 make_ipv4_path(uint8_t *buf, ssize_t size,
-	       const char * const local_addr, const char * const remote_addr,
-	       const char * const gateway_addr, const char * const netmask,
-	       uint16_t local_port, uint16_t remote_port,
-	       uint16_t protocol, uint8_t addr_origin)
+	       const char * const local_addr __attribute__((unused)),
+	       const char * const remote_addr __attribute__((unused)),
+	       const char * const gateway_addr __attribute__((unused)),
+	       const char * const netmask __attribute__((unused)),
+	       uint16_t local_port __attribute__((unused)),
+	       uint16_t remote_port __attribute__((unused)),
+	       uint16_t protocol __attribute__((unused)),
+	       uint8_t addr_origin __attribute__((unused)))
 {
 #if 0
 	if (local_addr == NULL || remote_addr == NULL ||

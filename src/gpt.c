@@ -201,7 +201,7 @@ last_lba(int filedes)
 
 
 static ssize_t
-read_lastoddsector(int fd, uint64_t lba, void *buffer, size_t count)
+read_lastoddsector(int fd, void *buffer, size_t count)
 {
 	int rc;
 	struct blkdev_ioctl_param ioctl_param;
@@ -252,7 +252,7 @@ read_lba(int fd, uint64_t lba, void *buffer, size_t bytes)
 	   one sector, so we don't have to be fancy.
 	*/
 	if (!bytesread && !(last_lba(fd) & 1) && lba == last_lba(fd)) {
-		bytesread = read_lastoddsector(fd, lba, buffer, bytes);
+		bytesread = read_lastoddsector(fd, buffer, bytes);
 	}
 	return bytesread;
 }

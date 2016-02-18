@@ -176,17 +176,23 @@ sysfs_test_sata(const char *buf, ssize_t size)
 }
 
 static int
-sysfs_test_sas(const char *buf, ssize_t size, struct disk_info *info)
+sysfs_test_sas(const char *buf, ssize_t size)
 {
 	int rc;
 	char *path;
 	struct stat statbuf = { 0, };
+	char *newbuf;
 
 	int host;
 	int sz;
 
+	newbuf = strndupa(buf, size+1);
+	if (!newbuf)
+		return -1;
+	newbuf[size] = '\0';
+
 	errno = 0;
-	rc = sscanf(buf, "host%d/%n", &host, &sz);
+	rc = sscanf(newbuf, "host%d/%n", &host, &sz);
 	if (rc < 1)
 		return (errno == 0) ? 0 : -1;
 
@@ -270,11 +276,18 @@ sysfs_parse_sata(uint8_t *buf, ssize_t size, ssize_t *off,
 	uint32_t scsi_target;
 	uint32_t scsi_lun;
 
+	char *newpbuf;
+
+	newpbuf = strndupa(pbuf, psize+1);
+	if (!newpbuf)
+		return -1;
+	newpbuf[psize] = '\0';
+
 	/* find the ata info:
 	 * ata1/host0/target0:0:0/
 	 *    ^dev  ^host   x y z
 	 */
-	rc = sscanf(pbuf, "ata%d/host%d/target%d:%d:%d/%n",
+	rc = sscanf(newpbuf, "ata%d/host%d/target%d:%d:%d/%n",
 		    &print_id, &scsi_bus, &scsi_device, &scsi_target, &scsi_lun,
 		    &psz);
 	if (rc != 5)
@@ -286,7 +299,7 @@ sysfs_parse_sata(uint8_t *buf, ssize_t size, ssize_t *off,
 	 */
 	uint32_t dummy0, dummy1, dummy2;
 	uint64_t dummy3;
-	rc = sscanf(pbuf+*poff, "%d:%d:%d:%"PRIu64"/%n", &dummy0, &dummy1,
+	rc = sscanf(newpbuf+*poff, "%d:%d:%d:%"PRIu64"/%n", &dummy0, &dummy1,
 		    &dummy2, &dummy3, &psz);
 	if (rc != 4)
 		return -1;
@@ -298,7 +311,7 @@ sysfs_parse_sata(uint8_t *buf, ssize_t size, ssize_t *off,
 	char *disk_name = NULL;
 	char *part_name = NULL;
 	int psz1 = 0;
-	rc = sscanf(pbuf+*poff, "block/%m[^/]%n/%m[^/]%n", &disk_name, &psz,
+	rc = sscanf(newpbuf+*poff, "block/%m[^/]%n/%m[^/]%n", &disk_name, &psz,
 		    &part_name, &psz1);
 	if (rc == 1) {
 		rc = asprintf(&part_name, "%s%d", disk_name, info->part);
@@ -327,6 +340,7 @@ sysfs_parse_sata(uint8_t *buf, ssize_t size, ssize_t *off,
 		return -1;
 	}
 
+	/* check the original of this; it's guaranteed in our copy */
 	if (pbuf[*poff] != '\0') {
 		free(disk_name);
 		free(part_name);
@@ -361,6 +375,13 @@ sysfs_parse_sas(uint8_t *buf, ssize_t size, ssize_t *off,
 	uint8_t *filebuf = NULL;
 	uint64_t sas_address;
 
+	char *newpbuf;
+
+	newpbuf = strndupa(pbuf, psize+1);
+	if (!newpbuf)
+		return -1;
+	newpbuf[psize] = '\0';
+
 	*poff = 0;
 	*off = 0;
 
@@ -373,7 +394,7 @@ sysfs_parse_sas(uint8_t *buf, ssize_t size, ssize_t *off,
 	 *    host4/port-4:0
 	 * or host4/port-4:0:0
 	 */
-	rc = sscanf(pbuf+*poff, "host%d/port-%d:%d%n", &tosser0, &tosser1,
+	rc = sscanf(newpbuf+*poff, "host%d/port-%d:%d%n", &tosser0, &tosser1,
 		    &tosser2, &psz);
 	if (rc != 3)
 		return -1;
@@ -391,14 +412,14 @@ sysfs_parse_sas(uint8_t *buf, ssize_t size, ssize_t *off,
 	 * awesomely these are the exact same fields that go into port-blah,
 	 * but we don't care for now about any of them anyway.
 	 */
-	rc = sscanf(pbuf+*poff, "/end_device-%d:%d%n", &tosser0, &tosser1,
+	rc = sscanf(newpbuf+*poff, "/end_device-%d:%d%n", &tosser0, &tosser1,
 		    &psz);
 	if (rc != 2)
 		return -1;
 	*poff += psz;
 
 	psz = 0;
-	rc = sscanf(pbuf+*poff, ":%d%n", &tosser0, &psz);
+	rc = sscanf(newpbuf+*poff, ":%d%n", &tosser0, &psz);
 	if (rc != 0 && rc != 1)
 		return -1;
 	*poff += psz;
@@ -407,8 +428,8 @@ sysfs_parse_sas(uint8_t *buf, ssize_t size, ssize_t *off,
 	 * /target4:0:0/
 	 */
 	uint64_t tosser3;
-	rc = sscanf(pbuf+*poff, "/target%d:%d:%"PRIu64"/%n", &tosser0, &tosser1,
-		    &tosser3, &psz);
+	rc = sscanf(newpbuf+*poff, "/target%d:%d:%"PRIu64"/%n", &tosser0,
+		    &tosser1, &tosser3, &psz);
 	if (rc != 3)
 		return -1;
 	*poff += psz;
@@ -416,7 +437,7 @@ sysfs_parse_sas(uint8_t *buf, ssize_t size, ssize_t *off,
 	/* now:
 	 * %d:%d:%d:%llu/
 	 */
-	rc = sscanf(pbuf+*poff, "%d:%d:%d:%"PRIu64"/%n",
+	rc = sscanf(newpbuf+*poff, "%d:%d:%d:%"PRIu64"/%n",
 		    &info->sas_info.scsi_bus,
 		    &info->sas_info.scsi_device,
 		    &info->sas_info.scsi_target,
@@ -430,12 +451,13 @@ sysfs_parse_sas(uint8_t *buf, ssize_t size, ssize_t *off,
 	 */
 	char *disk_name = NULL;
 	char *part_name = NULL;
-	rc = sscanf(pbuf+*poff, "block/%m[^/]/%m[^/]%n", &disk_name, &part_name,
-		    &psz);
+	rc = sscanf(newpbuf+*poff, "block/%m[^/]/%m[^/]%n", &disk_name,
+		    &part_name, &psz);
 	if (rc != 2)
 		return -1;
 	*poff += psz;
 
+	/* check the original of this; it's guaranteed in our copy */
 	if (pbuf[*poff] != '\0') {
 		free(disk_name);
 		free(part_name);
@@ -684,7 +706,7 @@ make_blockdev_path(uint8_t *buf, ssize_t size, int fd, struct disk_info *info)
 	 * /sys/dev/block/8:32 -> ../../devices/pci0000:00/0000:00:01.0/0000:01:00.0/host4/port-4:0/end_device-4:0/target4:0:0/4:0:0:0/block/sdc
 	 */
 	if (!found) {
-		rc = sysfs_test_sas(linkbuf+loff, PATH_MAX-off, info);
+		rc = sysfs_test_sas(linkbuf+loff, PATH_MAX-off);
 		if (rc < 0)
 			return -1;
 		else if (rc > 0) {
