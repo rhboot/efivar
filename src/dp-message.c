@@ -367,14 +367,24 @@ _format_message_dn(char *buf, size_t size, const_efidp dp)
 			ssize_t (*formatter)(char *buf, size_t size,
 					     const_efidp dp);
 		} subtypes[] = {
-			{ EFIDP_PC_ANSI_GUID, "VenPcAnsi" },
-			{ EFIDP_VT_100_GUID, "VenVt100" },
-			{ EFIDP_VT_100_PLUS_GUID, "VenVt100Plus" },
-			{ EFIDP_VT_UTF8_GUID, "VenUtf8" },
-			{ EFIDP_MSG_DEBUGPORT_GUID, "DebugPort" },
-			{ EFIDP_MSG_UART_GUID, "", format_uart },
-			{ EFIDP_MSG_SAS_GUID, "", format_sas },
-			{ efi_guid_empty, "" }
+			{ .guid = EFIDP_PC_ANSI_GUID,
+			  .label = "VenPcAnsi" },
+			{ .guid = EFIDP_VT_100_GUID,
+			  .label = "VenVt100" },
+			{ .guid = EFIDP_VT_100_PLUS_GUID,
+			  .label = "VenVt100Plus" },
+			{ .guid = EFIDP_VT_UTF8_GUID,
+			  .label = "VenUtf8" },
+			{ .guid = EFIDP_MSG_DEBUGPORT_GUID,
+			  .label = "DebugPort" },
+			{ .guid = EFIDP_MSG_UART_GUID,
+			  .label = "",
+			  .formatter = format_uart },
+			{ .guid = EFIDP_MSG_SAS_GUID,
+			  .label = "",
+			  .formatter = format_sas },
+			{ .guid = efi_guid_empty,
+			  .label = "" }
 		};
 		char *label = NULL;
 		ssize_t (*formatter)(char *buf, size_t size,
