@@ -23,11 +23,6 @@
 #include <limits.h>
 #include <linux/ethtool.h>
 #include <linux/version.h>
-#if LINUX_VERSION_CODE >= KERNEL_VERSION(4, 4, 0)
-#include <linux/nvme_ioctl.h>
-#else
-#include <linux/nvme.h>
-#endif
 #include <linux/sockios.h>
 #include <net/if.h>
 #include <scsi/scsi.h>
@@ -45,17 +40,6 @@
 #include "dp.h"
 #include "linux.h"
 #include "util.h"
-
-int
-__attribute__((__visibility__ ("hidden")))
-eb_nvme_ns_id(int fd, uint32_t *ns_id)
-{
-	uint64_t ret = ioctl(fd, NVME_IOCTL_ID, NULL);
-	if ((int)ret < 0)
-		return ret;
-	*ns_id = (uint32_t)ret;
-	return 0;
-}
 
 int
 __attribute__((__visibility__ ("hidden")))
@@ -168,6 +152,23 @@ get_partition_number(const char *devpath)
 }
 
 static int
+sysfs_test_nvme(const char *buf, ssize_t size)
+{
+	int rc;
+
+	int32_t tosser0;
+	int32_t ctrl_id;
+	int32_t ns_id;
+
+	errno = 0;
+	rc = sscanf(buf, "nvme/nvme%d/nvme%dn%d", &tosser0, &ctrl_id, &ns_id);
+	if (rc < 1)
+		return (errno == 0) ? 0 : -1;
+
+	return 1;
+}
+
+static int
 sysfs_test_sata(const char *buf, ssize_t size)
 {
 	if (!strncmp(buf, "ata", MIN(size,3)))
@@ -257,6 +258,69 @@ sysfs_sata_get_port_info(uint32_t print_id, struct disk_info *info)
 
 	return 0;
 }
+
+static ssize_t
+sysfs_parse_nvme(uint8_t *buf, ssize_t size, ssize_t *off,
+		const char *pbuf, ssize_t psize, ssize_t *poff,
+		struct disk_info *info)
+{
+	int rc;
+	int psz = 0;
+	char *filebuf = NULL;
+
+	*poff = 0;
+	*off = 0;
+
+	int32_t tosser0;
+	int32_t ctrl_id;
+	int32_t ns_id;
+
+	/* buf is:
+	 * nvme/nvme0/nvme0n1
+	 */
+	rc = sscanf(pbuf+*poff, "nvme/nvme%d/nvme%dn%d%n", &tosser0,
+		    &ctrl_id, &ns_id, &psz);
+	if (rc != 3)
+		return -1;
+	*poff += psz;
+
+	info->nvme_info.ctrl_id = ctrl_id;
+	info->nvme_info.ns_id = ns_id;
+	info->nvme_info.has_eui = 0;
+	info->interface_type = nvme;
+
+	/*
+	 * now fish the eui out of sysfs is there is one...
+	 */
+	rc = read_sysfs_file(&filebuf,
+			     "/sys/class/block/nvme%dn%d/device/eui",
+			     ctrl_id, ns_id);
+	if (rc >= 0) {
+		uint8_t eui[8];
+		if (rc < 23) {
+			errno = EINVAL;
+			return -1;
+		}
+		rc = sscanf(filebuf,
+			    "%02hhx-%02hhx-%02hhx-%02hhx-"
+			    "%02hhx-%02hhx-%02hhx-%02hhx",
+			    &eui[0], &eui[1], &eui[2], &eui[3],
+			    &eui[4], &eui[5], &eui[6], &eui[7]);
+		if (rc < 8) {
+			errno = EINVAL;
+			return -1;
+		}
+		info->nvme_info.has_eui = 1;
+		memcpy(info->nvme_info.eui, eui, sizeof(eui));
+	}
+
+	*off = efidp_make_nvme(buf, size,
+			       info->nvme_info.ns_id,
+			       info->nvme_info.has_eui ? info->nvme_info.eui
+						       : NULL);
+	return *off;
+}
+
 
 static ssize_t
 sysfs_parse_sata(uint8_t *buf, ssize_t size, ssize_t *off,
@@ -665,20 +729,25 @@ make_blockdev_path(uint8_t *buf, ssize_t size, int fd, struct disk_info *info)
 			loff += tmpoff;
 			found = 1;
 		}
+	}
 
-		if (!found) {
-			uint32_t ns_id=0;
-			int rc = eb_nvme_ns_id(fd, &ns_id);
-			if (rc >= 0) {
-				sz = efidp_make_nvme(buf+off, size?size-off:0,
-						     ns_id, NULL);
-				if (sz < 0)
-					return -1;
-
-				info->interface_type = nvme;
-				off += sz;
-				found = 1;
-			}
+	/* /dev/nvme0n1 looks like:
+	 * /sys/dev/block/259:0 -> ../../devices/pci0000:00/0000:00:1d.0/0000:05:00.0/nvme/nvme0/nvme0n1
+	 */
+	if (!found) {
+		rc = sysfs_test_nvme(linkbuf+loff, PATH_MAX-off);
+		if (rc < 0)
+			return -1;
+		else if (rc > 0) {
+			ssize_t linksz;
+			rc = sysfs_parse_nvme(buf+off, size?size-off:0, &sz,
+					      linkbuf+loff, PATH_MAX-off,
+					      &linksz, info);
+			if (rc < 0)
+				return -1;
+			loff += linksz;
+			off += sz;
+			found = 1;
 		}
 	}
 

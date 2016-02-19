@@ -60,6 +60,13 @@ struct sata_info {
 	uint32_t ata_pmp;
 };
 
+struct nvme_info {
+	int32_t ctrl_id;
+	int32_t ns_id;
+	int has_eui;
+	uint8_t eui[8];
+};
+
 struct disk_info {
 	int interface_type;
 	unsigned int controllernum;
@@ -76,6 +83,7 @@ struct disk_info {
 		struct scsi_info scsi_info;
 		struct sas_info sas_info;
 		struct sata_info sata_info;
+		struct nvme_info nvme_info;
 	};
 
 	char *disk_name;
