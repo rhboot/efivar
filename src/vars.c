@@ -416,7 +416,7 @@ _vars_chmod_variable(char *path, mode_t mode)
 				ret = -1;
 			}
 			free(new_path);
-		} else if (ret < 0) {
+		} else if (rc < 0) {
 			if (saved_errno == 0)
 				saved_errno = errno;
 			ret = -1;
