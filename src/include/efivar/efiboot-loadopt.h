@@ -28,9 +28,10 @@ extern ssize_t efi_loadopt_create(uint8_t *buf, ssize_t size,
 				  size_t optional_data_size)
 	__attribute__((__nonnull__ (6)));
 
-extern efidp efi_loadopt_path(efi_load_option *opt)
+extern efidp efi_loadopt_path(efi_load_option *opt, ssize_t limit)
 	__attribute__((__nonnull__ (1)));
-extern const unsigned char const * efi_loadopt_desc(efi_load_option *opt)
+extern const unsigned char const * efi_loadopt_desc(efi_load_option *opt,
+						    ssize_t limit)
 	__attribute__((__visibility__ ("default")))
 	__attribute__((__nonnull__ (1)));
 extern uint32_t efi_loadopt_attrs(efi_load_option *opt)
@@ -42,7 +43,7 @@ extern void efi_loadopt_attr_set(efi_load_option *opt, uint16_t attr)
 extern void efi_loadopt_attr_clear(efi_load_option *opt, uint16_t attr)
 	__attribute__((__nonnull__ (1)))
 	__attribute__((__visibility__ ("default")));
-extern uint16_t efi_loadopt_pathlen(efi_load_option *opt)
+extern uint16_t efi_loadopt_pathlen(efi_load_option *opt, ssize_t limit)
 	__attribute__((__nonnull__ (1)))
 	__attribute__((__visibility__ ("default")));
 extern int efi_loadopt_optional_data(efi_load_option *opt, size_t opt_size,

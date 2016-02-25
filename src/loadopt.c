@@ -144,20 +144,26 @@ efi_loadopt_attr_clear(efi_load_option *opt, uint16_t attr)
 uint16_t
 __attribute__((__nonnull__ (1)))
 __attribute__((__visibility__ ("default")))
-efi_loadopt_pathlen(efi_load_option *opt)
+efi_loadopt_pathlen(efi_load_option *opt, ssize_t limit)
 {
-	return opt->file_path_list_length;
+	uint16_t len = opt->file_path_list_length;
+	if (limit >= 0 && len > limit)
+		return 0;
+	return len;
 }
 
 efidp
 __attribute__((__nonnull__ (1)))
 __attribute__((__visibility__ ("default")))
-efi_loadopt_path(efi_load_option *opt)
+efi_loadopt_path(efi_load_option *opt, ssize_t limit)
 {
 	char *p = (char *)opt;
 	efidp dp = (efidp)(p + sizeof (opt->attributes)
 		   + sizeof (opt->file_path_list_length)
 		   + ucs2size(opt->description, -1));
+	long long size = (unsigned long)dp - (unsigned long)opt;
+	if (limit >= 0 && size > limit)
+		return NULL;
 	return dp;
 }
 
@@ -168,10 +174,29 @@ efi_loadopt_optional_data(efi_load_option *opt, size_t opt_size,
 			  unsigned char **datap, size_t *len)
 {
 	unsigned char *p = (unsigned char *)opt;
-	*datap = (unsigned char *)(p + sizeof (opt->attributes)
-		   + sizeof (opt->file_path_list_length)
-		   + ucs2size(opt->description, -1)
-		   + opt->file_path_list_length);
+	size_t l = sizeof (opt->attributes)
+		    + sizeof (opt->file_path_list_length);
+	size_t ul;
+
+	if (l > opt_size) {
+over_limit:
+		*len = 0;
+		errno = EINVAL;
+		return -1;
+	}
+
+	ul = ucs2size(opt->description, opt_size - l);
+	if (opt->file_path_list_length > opt_size)
+		goto over_limit;
+	if (ul > opt_size)
+		goto over_limit;
+	if (opt_size - ul < opt->file_path_list_length)
+		goto over_limit;
+	l += ul + opt->file_path_list_length;
+	if (l > opt_size)
+		goto over_limit;
+
+	*datap = (unsigned char *)(p + l);
 	if (len && opt_size > 0)
 		*len = (p+opt_size) - *datap;
 	return 0;
@@ -284,13 +309,13 @@ teardown(void)
 __attribute__((__nonnull__ (1)))
 __attribute__((__visibility__ ("default")))
 const unsigned char const *
-efi_loadopt_desc(efi_load_option *opt)
+efi_loadopt_desc(efi_load_option *opt, ssize_t limit)
 {
 	if (last_desc) {
 		free(last_desc);
 		last_desc = NULL;
 	}
 
-	last_desc = ucs2_to_utf8(opt->description, -1);
+	last_desc = ucs2_to_utf8(opt->description, limit);
 	return last_desc;
 }
