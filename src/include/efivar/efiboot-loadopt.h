@@ -55,11 +55,11 @@ extern ssize_t efi_loadopt_args_from_file(uint8_t *buf, ssize_t size,
 	__attribute__((__nonnull__ (3)))
 	__attribute__((__visibility__ ("default")));
 extern ssize_t efi_loadopt_args_as_utf8(uint8_t *buf, ssize_t size,
-					char *utf8)
+					uint8_t *utf8)
 	__attribute__((__nonnull__ (3)))
 	__attribute__((__visibility__ ("default")));
 extern ssize_t efi_loadopt_args_as_ucs2(uint16_t *buf, ssize_t size,
-					char *utf8)
+					uint8_t *utf8)
 	__attribute__((__nonnull__ (3)))
 	__attribute__((__visibility__ ("default")));
 

@@ -223,7 +223,7 @@ err:
 ssize_t
 __attribute__((__nonnull__ (3)))
 __attribute__((__visibility__ ("default")))
-efi_loadopt_args_as_utf8(uint8_t *buf, ssize_t size, char *utf8)
+efi_loadopt_args_as_utf8(uint8_t *buf, ssize_t size, uint8_t *utf8)
 {
 	ssize_t req;
 	if (!buf && size > 0) {
@@ -233,7 +233,7 @@ efi_loadopt_args_as_utf8(uint8_t *buf, ssize_t size, char *utf8)
 
 	/* we specifically want the storage size without NUL here,
 	 * not the size with NUL or the number of utf8 characters */
-	req = strlen(utf8);
+	req = strlen((char *)utf8);
 
 	if (size == 0)
 		return req;
