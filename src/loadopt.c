@@ -18,6 +18,7 @@
  */
 #include <efivar.h>
 #include "dp.h"
+#include "include/efivar/efiboot-loadopt.h"
 
 typedef struct efi_load_option_s {
 	uint32_t attributes;
