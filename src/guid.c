@@ -244,7 +244,7 @@ efi_name_to_guid(const char *name, efi_guid_t *guid)
 	if (namelen > 2 && name[0] == '{' && name[namelen - 1] == '}') {
 		namelen -= 2;
 		memcpy(key.name, name + 1, namelen);
-		memset(key.name + namelen, '\0', sizeof(key.name) - namelen);
+		key.name[namelen] = 0;
 	}
 
 	key.name[sizeof(key.name) - 1] = '\0';
