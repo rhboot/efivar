@@ -665,7 +665,7 @@ make_pci_path(uint8_t *buf, ssize_t size, char *pathstr, ssize_t *pathoff)
 
 int
 __attribute__((__visibility__ ("hidden")))
-make_blockdev_path(uint8_t *buf, ssize_t size, int fd, struct disk_info *info)
+make_blockdev_path(uint8_t *buf, ssize_t size, struct disk_info *info)
 {
 	char *linkbuf = NULL;
 	char *driverbuf = NULL;
