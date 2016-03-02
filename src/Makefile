@@ -45,8 +45,9 @@ libefivar.a : | $(GENERATED_SOURCES)
 libefivar.a : $(patsubst %.o,%.static.o,$(LIBEFIVAR_OBJECTS))
 
 libefivar.so : $(LIBEFIVAR_OBJECTS)
-libefivar.so : | $(GENERATED_SOURCES)
+libefivar.so : | $(GENERATED_SOURCES) libefivar.map
 libefivar.so : LIBS=dl
+libefivar.so : MAP=libefivar.map
 
 efivar : efivar.c | libefivar.so
 efivar : LIBS=efivar dl
@@ -60,6 +61,9 @@ efivar-static : PKGS=popt
 libefiboot.a : $(patsubst %.o,%.static.o,$(LIBEFIBOOT_OBJECTS))
 
 libefiboot.so : $(LIBEFIBOOT_OBJECTS)
+libefiboot.so : | libefiboot.map
+libefiboot.so : LIBS=efivar
+libefiboot.so : MAP=libefiboot.map
 
 deps :: $(ALL_SOURCES)
 	$(MAKE) -f $(SRCDIR)/Make.deps deps SOURCES="$(ALL_SOURCES)"

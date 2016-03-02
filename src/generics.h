@@ -144,7 +144,7 @@ generic_append_variable(efi_guid_t guid, const char *name,
 		 * really not much to do about it, so return the error and
 		 * let our caller attempt to clean up :/
 		 */
-		rc = _efi_set_variable(guid, name, d, ds, attributes, 0);
+		rc = efi_set_variable(guid, name, d, ds, attributes, 0600);
 		free(d);
 		free(data);
 		return rc;
@@ -152,7 +152,8 @@ generic_append_variable(efi_guid_t guid, const char *name,
 		data = new_data;
 		data_size = new_data_size;
 		attributes = new_attributes & ~EFI_VARIABLE_APPEND_WRITE;
-		rc = _efi_set_variable(guid, name, data, data_size, attributes, 0);
+		rc = efi_set_variable(guid, name, data, data_size,
+				      attributes, 0600);
 		return rc;
 	}
 	return rc;

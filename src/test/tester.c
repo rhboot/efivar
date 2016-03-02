@@ -106,7 +106,7 @@ int do_test(struct test *test)
 			      testdata, test->size,
 			      EFI_VARIABLE_BOOTSERVICE_ACCESS |
 			      EFI_VARIABLE_RUNTIME_ACCESS |
-			      EFI_VARIABLE_NON_VOLATILE);
+			      EFI_VARIABLE_NON_VOLATILE, 0600);
 	if (rc < 0) {
 		report_error(test, ret, rc, "set test failed: %m\n");
 	}
@@ -159,21 +159,12 @@ int do_test(struct test *test)
 	if (rc < 0)
 		report_error(test, ret, rc, "del test failed: %m\n");
 
-	printf("testing efi_set_variable() with too many arguments\n");
 	rc = efi_set_variable(TEST_GUID, test->name,
 			      testdata, test->size,
 			      EFI_VARIABLE_BOOTSERVICE_ACCESS |
 			      EFI_VARIABLE_RUNTIME_ACCESS |
-			      EFI_VARIABLE_NON_VOLATILE, 0644, 1);
-	if (rc < 0) {
-		report_error(test, ret, -1, "set test failed: %m\n");
-	}
-
-	rc = efi_set_variable(TEST_GUID, test->name,
-			      testdata, test->size,
-			      EFI_VARIABLE_BOOTSERVICE_ACCESS |
-			      EFI_VARIABLE_RUNTIME_ACCESS |
-			      EFI_VARIABLE_NON_VOLATILE);
+			      EFI_VARIABLE_NON_VOLATILE,
+			      0600);
 	if (rc < 0) {
 		report_error(test, ret, rc, "set test failed: %m\n");
 	}

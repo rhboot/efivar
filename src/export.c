@@ -360,5 +360,5 @@ efi_variable_realize(efi_variable_t *var)
 					var->data, var->data_size, attrs);
 	}
 	return efi_set_variable(*var->guid, var->name, var->data,
-				var->data_size, attrs);
+				var->data_size, attrs, 0600);
 }

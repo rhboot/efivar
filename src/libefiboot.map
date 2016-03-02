@@ -1,0 +1,26 @@
+libefiboot.so.0 {
+	global: efi_generate_file_device_path;
+		efi_generate_file_device_path_from_esp;
+		efi_generate_ipv4_device_path;
+		efi_va_generate_file_device_path_from_esp;
+		efi_loadopt_args_as_ucs2;
+		efi_loadopt_args_as_utf8;
+		efi_loadopt_args_from_file;
+		efi_loadopt_attr_clear;
+		efi_loadopt_attr_set;
+		efi_loadopt_attrs;
+		efi_loadopt_create;
+		efi_loadopt_desc;
+		efi_loadopt_is_valid;
+		efi_loadopt_optional_data;
+		efi_loadopt_optional_data_size;
+		efi_loadopt_path;
+		efi_loadopt_pathlen;
+	local: *;
+};
+
+LIBEFIBOOT_0.0 {
+} libefiboot.so.0;
+
+LIBEFIBOOT_0.24 {
+};

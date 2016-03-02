@@ -43,25 +43,31 @@ int
 __attribute__((__nonnull__ (2, 3)))
 __attribute__((__visibility__ ("default")))
 _efi_set_variable(efi_guid_t guid, const char *name, uint8_t *data,
-		 size_t data_size, uint32_t attributes, mode_t mode)
+		  size_t data_size, uint32_t attributes)
 {
-	return ops->set_variable(guid, name, data, data_size, attributes, mode);
+	return ops->set_variable(guid, name, data, data_size, attributes, 0600);
 }
+__asm__(".symver _efi_set_variable,_efi_set_variable@");
 
 int
 __attribute__((__nonnull__ (2, 3)))
 __attribute__((__visibility__ ("default")))
 _efi_set_variable_variadic(efi_guid_t guid, const char *name, uint8_t *data,
-                 size_t data_size, uint32_t attributes, ...)
+			   size_t data_size, uint32_t attributes, ...)
 {
-	va_list ap;
-	va_start(ap, attributes);
-	mode_t mode = va_arg(ap, mode_t);
-	va_end(ap);
+	return ops->set_variable(guid, name, data, data_size, attributes, 0600);
+}
+__asm__(".symver _efi_set_variable_variadic,efi_set_variable@");
+
+int
+__attribute__((__nonnull__ (2, 3)))
+__attribute__((__visibility__ ("default")))
+efi_set_variable(efi_guid_t guid, const char *name, uint8_t *data,
+		 size_t data_size, uint32_t attributes, mode_t mode)
+{
 	return ops->set_variable(guid, name, data, data_size, attributes, mode);
 }
-extern typeof(_efi_set_variable_variadic) efi_set_variable
-	__attribute__ ((alias ("_efi_set_variable_variadic")));
+__asm__(".symver efi_set_variable,efi_set_variable@@LIBEFIVAR_0.24");
 
 int
 __attribute__((__nonnull__ (2, 3)))
