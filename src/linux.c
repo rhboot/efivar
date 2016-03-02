@@ -154,24 +154,15 @@ get_partition_number(const char *devpath)
 static int
 sysfs_test_nvme(const char *buf, ssize_t size)
 {
-	int rc;
-
-	int32_t tosser0;
-	int32_t ctrl_id;
-	int32_t ns_id;
-
-	errno = 0;
-	rc = sscanf(buf, "nvme/nvme%d/nvme%dn%d", &tosser0, &ctrl_id, &ns_id);
-	if (rc < 1)
-		return (errno == 0) ? 0 : -1;
-
-	return 1;
+	if (!strncmp(buf, "nvme/", MIN(size, 5)))
+		return 1;
+	return 0;
 }
 
 static int
 sysfs_test_sata(const char *buf, ssize_t size)
 {
-	if (!strncmp(buf, "ata", MIN(size,3)))
+	if (!strncmp(buf, "ata", MIN(size, 3)))
 		return 1;
 	return 0;
 }
@@ -271,6 +262,13 @@ sysfs_parse_nvme(uint8_t *buf, ssize_t size, ssize_t *off,
 	*poff = 0;
 	*off = 0;
 
+	char *newpbuf;
+
+	newpbuf = strndupa(pbuf, psize+1);
+	if (!newpbuf)
+		return -1;
+	newpbuf[psize] = '\0';
+
 	int32_t tosser0;
 	int32_t ctrl_id;
 	int32_t ns_id;
@@ -278,7 +276,7 @@ sysfs_parse_nvme(uint8_t *buf, ssize_t size, ssize_t *off,
 	/* buf is:
 	 * nvme/nvme0/nvme0n1
 	 */
-	rc = sscanf(pbuf+*poff, "nvme/nvme%d/nvme%dn%d%n", &tosser0,
+	rc = sscanf(newpbuf, "nvme/nvme%d/nvme%dn%d%n", &tosser0,
 		    &ctrl_id, &ns_id, &psz);
 	if (rc != 3)
 		return -1;
