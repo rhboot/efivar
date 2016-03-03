@@ -152,7 +152,7 @@ get_partition_number(const char *devpath)
 }
 
 static int
-sysfs_test_nvme(const char *buf, ssize_t size)
+sysfs_test_nvme(const char *buf)
 {
 	int rc;
 
@@ -261,7 +261,7 @@ sysfs_sata_get_port_info(uint32_t print_id, struct disk_info *info)
 
 static ssize_t
 sysfs_parse_nvme(uint8_t *buf, ssize_t size, ssize_t *off,
-		const char *pbuf, ssize_t psize, ssize_t *poff,
+		const char *pbuf, ssize_t *poff,
 		struct disk_info *info)
 {
 	int rc;
@@ -665,7 +665,7 @@ make_pci_path(uint8_t *buf, ssize_t size, char *pathstr, ssize_t *pathoff)
 
 int
 __attribute__((__visibility__ ("hidden")))
-make_blockdev_path(uint8_t *buf, ssize_t size, int fd, struct disk_info *info)
+make_blockdev_path(uint8_t *buf, ssize_t size, struct disk_info *info)
 {
 	char *linkbuf = NULL;
 	char *driverbuf = NULL;
@@ -735,13 +735,13 @@ make_blockdev_path(uint8_t *buf, ssize_t size, int fd, struct disk_info *info)
 	 * /sys/dev/block/259:0 -> ../../devices/pci0000:00/0000:00:1d.0/0000:05:00.0/nvme/nvme0/nvme0n1
 	 */
 	if (!found) {
-		rc = sysfs_test_nvme(linkbuf+loff, PATH_MAX-off);
+		rc = sysfs_test_nvme(linkbuf+loff);
 		if (rc < 0)
 			return -1;
 		else if (rc > 0) {
 			ssize_t linksz;
 			rc = sysfs_parse_nvme(buf+off, size?size-off:0, &sz,
-					      linkbuf+loff, PATH_MAX-off,
+					      linkbuf+loff,
 					      &linksz, info);
 			if (rc < 0)
 				return -1;
