@@ -201,7 +201,7 @@ efi_va_generate_file_device_path_from_esp(uint8_t *buf, ssize_t size,
 		 * symlink from /sys/dev/block/$major:$minor and get it
 		 * from there.
 		 */
-		sz = make_blockdev_path(buf, size, fd, &info);
+		sz = make_blockdev_path(buf, size, &info);
 		if (sz < 0)
 			return -1;
 		off += sz;
