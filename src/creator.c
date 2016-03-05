@@ -291,31 +291,38 @@ efi_generate_file_device_path(uint8_t *buf, ssize_t size,
 {
 	int rc;
 	ssize_t ret = -1;
-	char *devpath = NULL;
+	char *child_devpath = NULL;
+	char *parent_devpath = NULL;
 	char *relpath = NULL;
 	va_list ap;
 	int saved_errno;
 
-	rc = find_file(filepath, &devpath, &relpath);
+	rc = find_file(filepath, &child_devpath, &relpath);
 	if (rc < 0)
 		return -1;
 
-	rc = get_partition_number(devpath);
+	rc = find_parent_devpath(child_devpath, &parent_devpath);
+	if (rc < 0)
+		return -1;
+
+	rc = get_partition_number(child_devpath);
 	if (rc < 0)
 		goto err;
 
 	va_start(ap, options);
 
-	ret = efi_va_generate_file_device_path_from_esp(buf, size, devpath,
-							rc, relpath, options,
-							ap);
+	ret = efi_va_generate_file_device_path_from_esp(buf, size,
+							parent_devpath, rc,
+							relpath, options, ap);
 	saved_errno = errno;
 	va_end(ap);
 	errno = saved_errno;
 err:
 	saved_errno = errno;
-	if (devpath)
-		free(devpath);
+	if (child_devpath)
+		free(child_devpath);
+	if (parent_devpath)
+			free(parent_devpath);
 	if (relpath)
 		free(relpath);
 	errno = saved_errno;
