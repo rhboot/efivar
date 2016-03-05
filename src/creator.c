@@ -307,7 +307,7 @@ efi_generate_file_device_path(uint8_t *buf, ssize_t size,
 	va_start(ap, options);
 
 	ret = efi_va_generate_file_device_path_from_esp(buf, size, devpath,
-						       0, relpath, options, ap);
+						       rc, relpath, options, ap);
 	saved_errno = errno;
 	va_end(ap);
 	errno = saved_errno;
