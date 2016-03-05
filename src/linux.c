@@ -151,6 +151,46 @@ get_partition_number(const char *devpath)
 	return ret;
 }
 
+int
+__attribute__((__visibility__ ("hidden")))
+find_parent_devpath(const char * const child, char **parent)
+{
+	int ret;
+	char *node;
+	char *linkbuf;
+
+	/* strip leading /dev/ */
+	node = strrchr(child, '/');
+	if (!node)
+		return -1;
+	node++;
+
+	/* look up full path symlink */
+	ret = sysfs_readlink(&linkbuf, "/sys/class/block/%s", node);
+	if (ret < 0)
+		return ret;
+
+	/* strip child */
+	node = strrchr(linkbuf, '/');
+	if (!node)
+		return -1;
+	*node = '\0';
+
+	/* read parent */
+	node = strrchr(linkbuf, '/');
+	if (!node)
+		return -1;
+	*node = '\0';
+	node++;
+
+	/* write out new path */
+	ret = asprintf(parent, "/dev/%s", node);
+	if (ret < 0)
+		return ret;
+
+	return 0;
+}
+
 static int
 sysfs_test_nvme(const char *buf)
 {
