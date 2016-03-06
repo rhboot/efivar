@@ -98,12 +98,15 @@ enum _interface_type {interface_type_unknown,
 
 extern int eb_disk_info_from_fd(int fd, struct disk_info *info);
 extern int set_disk_and_part_name(struct disk_info *info);
-extern int make_blockdev_path(uint8_t *buf, ssize_t size, int fd,
+extern int make_blockdev_path(uint8_t *buf, ssize_t size,
 				struct disk_info *info);
 
 extern int eb_nvme_ns_id(int fd, uint32_t *ns_id);
 
 extern int get_partition_number(const char *devpath)
+	__attribute__((__visibility__ ("hidden")));
+
+extern int find_parent_devpath(const char * const child, char **parent)
 	__attribute__((__visibility__ ("hidden")));
 
 extern ssize_t make_mac_path(uint8_t *buf, ssize_t size,
