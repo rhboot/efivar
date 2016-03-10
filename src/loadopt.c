@@ -16,7 +16,10 @@
  * You should have received a copy of the GNU General Public License
  * along with this library.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 #include <efivar.h>
+#include <stddef.h>
+
 #include "dp.h"
 #include "include/efivar/efiboot-loadopt.h"
 
@@ -147,8 +150,12 @@ __attribute__((__visibility__ ("default")))
 efi_loadopt_pathlen(efi_load_option *opt, ssize_t limit)
 {
 	uint16_t len = opt->file_path_list_length;
-	if (limit >= 0 && len > limit)
-		return 0;
+	if (limit >= 0) {
+		if (len > limit)
+			return 0;
+		if (limit - offsetof(efi_load_option, file_path_list_length) < len)
+			return 0;
+	}
 	return len;
 }
 
@@ -158,11 +165,20 @@ __attribute__((__visibility__ ("default")))
 efi_loadopt_path(efi_load_option *opt, ssize_t limit)
 {
 	char *p = (char *)opt;
-	efidp dp = (efidp)(p + sizeof (opt->attributes)
-		   + sizeof (opt->file_path_list_length)
-		   + ucs2size(opt->description, -1));
-	long long size = (unsigned long)dp - (unsigned long)opt;
-	if (limit >= 0 && size > limit)
+	size_t l;
+	ssize_t desc_limit;
+	efidp dp;
+
+	l = (size_t)limit;
+	if (l <= offsetof(efi_load_option, description))
+		return NULL;
+	desc_limit = limit - offsetof(efi_load_option, description);
+
+	dp = (efidp)(p + sizeof (opt->attributes)
+		       + sizeof (opt->file_path_list_length)
+		       + ucs2size(opt->description, desc_limit));
+	limit -= (unsigned long)dp - (unsigned long)opt;
+	if (!efidp_is_valid(dp, limit))
 		return NULL;
 	return dp;
 }
