@@ -4,7 +4,6 @@ TOPDIR = $(realpath ..)
 include $(TOPDIR)/Make.version
 include $(TOPDIR)/Make.rules
 include $(TOPDIR)/Make.defaults
--include $(call deps-of,$(ALL_SOURCES))
 
 LIBTARGETS=libefivar.so libefiboot.so
 STATICLIBTARGETS=libefivar.a libefiboot.a
@@ -24,7 +23,10 @@ MAKEGUIDS_SOURCES = makeguids.c guid.c
 ALL_SOURCES=$(LIBEFIBOOT_SOURCES) $(LIBEFIVAR_SOURCES) $(MAKEGUIDS_SOURCES) \
 	$(wildcard include/efivar/*.h) $(GENERATED_SOURCES) $(EFIVAR_SOURCES)
 
-all : deps $(TARGETS)
+$(call deps-of,$(ALL_SOURCES)) : | deps
+-include $(call deps-of,$(ALL_SOURCES))
+
+all : $(TARGETS)
 
 ./guid-symbols.c : include/efivar/efivar-guids.h
 ./guids.bin : include/efivar/efivar-guids.h
@@ -61,11 +63,11 @@ efivar-static : PKGS=popt
 libefiboot.a : $(patsubst %.o,%.static.o,$(LIBEFIBOOT_OBJECTS))
 
 libefiboot.so : $(LIBEFIBOOT_OBJECTS)
-libefiboot.so : | libefiboot.map
+libefiboot.so : | libefiboot.map libefivar.so
 libefiboot.so : LIBS=efivar
 libefiboot.so : MAP=libefiboot.map
 
-deps :: $(ALL_SOURCES)
+deps : $(ALL_SOURCES)
 	$(MAKE) -f $(SRCDIR)/Make.deps deps SOURCES="$(ALL_SOURCES)"
 
 clean : 
@@ -91,7 +93,7 @@ install : all
 test : all
 	$(MAKE) -C test $@
 
-.PHONY: test
+.PHONY: test deps
 .SECONDARY : libefivar.so.$(VERSION) libefivar.so.$(MAJOR_VERSION)
 .SECONDARY : libefiboot.so.$(VERSION) libefiboot.so.$(MAJOR_VERSION)
 .SECONDARY : include/efivar/efivar-guids.h guid-symbols.c

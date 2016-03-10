@@ -1,6 +1,8 @@
 SRCDIR = $(realpath .)
 TOPDIR = $(realpath ..)
 
+all : deps
+
 include $(TOPDIR)/Make.version
 include $(TOPDIR)/Make.rules
 include $(TOPDIR)/Make.defaults
@@ -14,3 +16,5 @@ include $(TOPDIR)/Make.defaults
 SOURCES ?=
 
 deps : $(call deps-of,$(filter-out %.h,$(SOURCES)))
+
+.PHONY: deps

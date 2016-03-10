@@ -6,12 +6,16 @@ include $(TOPDIR)/Make.defaults
 
 SUBDIRS := src docs
 
-all clean install deps :: | Make.version
+all : | efivar.spec Make.version
+all :
 	@set -e ; for x in $(SUBDIRS) ; do \
 		$(MAKE) -C $$x $@ ; \
 	done
 
-all :: efivar.spec
+install :
+	@set -e ; for x in $(SUBDIRS) ; do \
+		$(MAKE) -C $$x $@ ; \
+	done
 
 efivar efivar-static :
 	$(MAKE) -C src $@
@@ -32,7 +36,10 @@ a :
 
 efivar.spec : | Makefile Make.version
 
-clean ::
+clean :
+	@set -e ; for x in $(SUBDIRS) ; do \
+		$(MAKE) -C $$x $@ ; \
+	done
 	@rm -vf efivar.spec
 
 GITTAG = $(VERSION)

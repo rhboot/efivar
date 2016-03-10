@@ -1,6 +1,6 @@
 default : all
 
-.PHONY: default all deps clean install test
+.PHONY: default all clean install test
 
 include $(TOPDIR)/Make.version
 
