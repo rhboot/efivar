@@ -22,7 +22,7 @@ RANLIB	:= $(CROSS_COMPILE)gcc-ranlib
 
 PKGS	=
 
-clang_cflags =
+clang_cflags = -D_GNU_SOURCE
 gcc_cflags = -specs=$(TOPDIR)/gcc.specs
 cflags	= $(CFLAGS) -I${TOPDIR}/src/include/efivar/ \
 	$(if $(findstring clang,$(CC)),$(clang_cflags),) \
