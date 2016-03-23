@@ -42,7 +42,7 @@ include $(TOPDIR)/Make.version
 
 %.c : %.h
 
-define substitute-version =
+define substitute-version
 	sed						\
 		-e "s,@@VERSION@@,$(VERSION),g"		\
 		-e "s,@@LIBDIR@@,$(libdir),g"		\
@@ -61,7 +61,7 @@ pkg-config-ldflags = \
 pkg-config-ldlibs = \
 	$(shell if [ -n "$(PKGS)" ]; then $(PKG_CONFIG) --libs-only-l $(PKGS) ; fi)
 
-define deps-of =
+define deps-of
 	$(foreach src,$(filter %.c,$(1)),$(patsubst %.c,.%.d,$(src))) \
 	$(foreach src,$(filter %.S,$(1)),$(patsubst %.S,.%.d,$(src)))
 endef
