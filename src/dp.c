@@ -262,6 +262,9 @@ efidp_format_device_path(char *buf, size_t size, const_efidp dp, ssize_t limit)
 	ssize_t off = 0;
 	int first = 1;
 
+	if (!dp) {
+		return -1;
+	}
 	while (1) {
 		if (limit >= 0 && (limit < 4 || efidp_node_size(dp) > limit)) {
 			if (off)
