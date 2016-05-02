@@ -71,9 +71,31 @@ efivarfs_probe(void)
 	})
 
 static int
-efivarfs_set_immutable(char *path, int immutable)
+efivarfs_set_fd_immutable(int fd, int immutable)
 {
 	unsigned int flags;
+	int rc = 0;
+
+	rc = ioctl(fd, FS_IOC_GETFLAGS, &flags);
+	if (rc < 0) {
+		if (errno == ENOTTY)
+			rc = 0;
+	} else if ((immutable && !(flags & FS_IMMUTABLE_FL)) ||
+		   (!immutable && (flags & FS_IMMUTABLE_FL))) {
+		if (immutable)
+			flags |= FS_IMMUTABLE_FL;
+		else
+			flags &= ~FS_IMMUTABLE_FL;
+
+		rc = ioctl(fd, FS_IOC_SETFLAGS, &flags);
+	}
+
+	return rc;
+}
+
+static int
+efivarfs_set_immutable(char *path, int immutable)
+{
 	typeof(errno) error = 0;
 	int fd;
 	int rc = 0;
@@ -86,25 +108,8 @@ efivarfs_set_immutable(char *path, int immutable)
 			return fd;
 	}
 
-	rc = ioctl(fd, FS_IOC_GETFLAGS, &flags);
-	if (rc < 0) {
-		if (errno == ENOTTY) {
-			rc = 0;
-		} else {
-			error = errno;
-		}
-	} else if ((immutable && !(flags & FS_IMMUTABLE_FL)) ||
-		   (!immutable && (flags & FS_IMMUTABLE_FL))) {
-		if (immutable)
-			flags |= FS_IMMUTABLE_FL;
-		else
-			flags &= ~FS_IMMUTABLE_FL;
-
-		rc = ioctl(fd, FS_IOC_SETFLAGS, &flags);
-		if (rc < 0)
-			error = errno;
-	}
-
+	rc = efivarfs_set_fd_immutable(fd, immutable);
+	error = errno;
 	close(fd);
 	errno = error;
 	return rc;
@@ -213,9 +218,8 @@ efivarfs_del_variable(efi_guid_t guid, const char *name)
 	if (rc < 0)
 		return -1;
 
-	rc = efivarfs_set_immutable(path, 0);
-	if (rc >= 0)
-		rc = unlink(path);
+	efivarfs_set_immutable(path, 0);
+	rc = unlink(path);
 
 	typeof(errno) errno_value = errno;
 	free(path);
@@ -253,16 +257,18 @@ efivarfs_set_variable(efi_guid_t guid, const char *name, uint8_t *data,
 	fd = open(path, O_WRONLY|O_CREAT, mode);
 	if (fd < 0)
 		goto err;
+	efivarfs_set_fd_immutable(fd, 0);
 
 	memcpy(buf, &attributes, sizeof (attributes));
 	memcpy(buf + sizeof (attributes), data, data_size);
 	rc = write(fd, buf, sizeof (attributes) + data_size);
 	if (rc >= 0) {
 		ret = 0;
+		efivarfs_set_fd_immutable(fd, 1);
 	} else {
+		efivarfs_set_fd_immutable(fd, 0);
 		unlink(path);
 	}
-	efivarfs_set_immutable(path, 1);
 err:
 	errno_value = errno;
 
