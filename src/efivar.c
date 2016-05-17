@@ -33,6 +33,10 @@
 #define ACTION_PRINT		0x2
 #define ACTION_APPEND		0x4
 #define ACTION_LIST_GUIDS	0x8
+#define ACTION_WRITE		0x10
+
+#define EDIT_APPEND	0
+#define EDIT_WRITE	1
 
 static const char *attribute_names[] = {
 	"Non-Volatile",
@@ -187,7 +191,7 @@ show_variable(char *guid_name)
 }
 
 static void
-append_variable(const char *guid_name, void *data, size_t data_size, int attrib)
+edit_variable(const char *guid_name, void *data, size_t data_size, int attrib, int edit_type)
 {
 	efi_guid_t guid;
 	char *name = NULL;
@@ -204,8 +208,17 @@ append_variable(const char *guid_name, void *data, size_t data_size, int attrib)
 	if (attrib != 0)
 		old_attributes = attrib;
 
-	rc = efi_append_variable(guid, name, data, data_size,
-				old_attributes);
+	switch (edit_type){
+		case EDIT_APPEND:
+			rc = efi_append_variable(guid, name, data, data_size,
+					old_attributes);
+			break;
+		case EDIT_WRITE:
+			rc = efi_set_variable(guid, name, data, data_size,
+					old_attributes, 0644);
+			break;
+	}
+
 	if (rc < 0) {
 		fprintf(stderr, "efivar: %m\n");
 		exit(1);
@@ -308,6 +321,12 @@ int main(int argc, char *argv[])
 		 .arg = &action,
 		 .val = ACTION_LIST_GUIDS,
 		 .descrip = "show internal guid list", },
+		{.longName = "write",
+		 .shortName = 'w',
+		 .argInfo = POPT_ARG_VAL,
+		 .arg = &action,
+		 .val = ACTION_WRITE,
+		 .descrip = "write to variable specified by --name" },
 		POPT_AUTOALIAS
 		POPT_AUTOHELP
 		POPT_TABLEEND
@@ -356,7 +375,13 @@ int main(int argc, char *argv[])
 		case ACTION_APPEND | ACTION_PRINT:
 			validate_name(name);
 			prepare_data(file, &data, &data_size);
-			append_variable(name, data, data_size, attributes);
+			edit_variable(name, data, data_size, attributes, EDIT_APPEND);
+			break;
+		case ACTION_WRITE | ACTION_PRINT:
+			validate_name(name);
+			prepare_data(file, &data, &data_size);
+			edit_variable(name, data, data_size, attributes, EDIT_WRITE);
+			break;
 		case ACTION_LIST_GUIDS: {
 			efi_guid_t sentinal = {0xffffffff,0xffff,0xffff,0xffff,
 					       {0xff,0xff,0xff,0xff,0xff,0xff}};
