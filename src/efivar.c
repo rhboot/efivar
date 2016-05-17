@@ -34,9 +34,13 @@
 #define ACTION_APPEND		0x4
 #define ACTION_LIST_GUIDS	0x8
 #define ACTION_WRITE		0x10
+#define ACTION_PRINT_DEC	0x20
 
 #define EDIT_APPEND	0
 #define EDIT_WRITE	1
+
+#define SHOW_VERBOSE	0
+#define SHOW_DECIMAL	1
 
 static const char *attribute_names[] = {
 	"Non-Volatile",
@@ -126,7 +130,7 @@ bad_name:
 }
 
 static void
-show_variable(char *guid_name)
+show_variable(char *guid_name, int display_type)
 {
 	efi_guid_t guid;
 	char *name = NULL;
@@ -145,48 +149,65 @@ show_variable(char *guid_name)
 		exit(1);
 	}
 
-	printf("GUID: "GUID_FORMAT "\n",
-			guid.a, guid.b, guid.c, bswap_16(guid.d),
-			guid.e[0], guid.e[1], guid.e[2], guid.e[3],
-			guid.e[4], guid.e[5]);
-	printf("Name: \"%s\"\n", name);
-	printf("Attributes:\n");
-	for (int i = 0; attribute_names[i][0] != '\0'; i++) {
-		if(attributes & (1 << i))
-			printf("\t%s\n", attribute_names[i]);
-	}
-	printf("Value:\n");
+	if(display_type == SHOW_VERBOSE) {
+		printf("GUID: "GUID_FORMAT "\n",
+				guid.a, guid.b, guid.c, bswap_16(guid.d),
+				guid.e[0], guid.e[1], guid.e[2], guid.e[3],
+				guid.e[4], guid.e[5]);
+		printf("Name: \"%s\"\n", name);
+		printf("Attributes:\n");
+		for (int i = 0; attribute_names[i][0] != '\0'; i++) {
+			if(attributes & (1 << i))
+				printf("\t%s\n", attribute_names[i]);
+		}
+		printf("Value:\n");
 
-	uint32_t index = 0;
-	while (index < data_size) {
-		char charbuf[] = "................";
-		printf("%08x  ", index);
-		/* print the hex values, and render the ascii bits into
-		 * charbuf */
+		uint32_t index = 0;
 		while (index < data_size) {
-			printf("%02x ", data[index]);
-			if (index % 8 == 7)
-				printf(" ");
-			if (isprint(data[index]))
-				charbuf[index % 16] = data[index];
-			index++;
-			if (index % 16 == 0)
-				break;
-		}
+			char charbuf[] = "................";
+			printf("%08x  ", index);
+			/* print the hex values, and render the ascii bits into
+			 * charbuf */
+			while (index < data_size) {
+				printf("%02x ", data[index]);
+				if (index % 8 == 7)
+					printf(" ");
+				if (isprint(data[index]))
+					charbuf[index % 16] = data[index];
+				index++;
+				if (index % 16 == 0)
+					break;
+			}
 
-		/* If we're above data_size, finish out the line with space,
-		 * and also finish out charbuf with space */
-		while (index >= data_size && index % 16 != 0) {
-			if (index % 8 == 7)
-				printf(" ");
-			printf("   ");
-			charbuf[index % 16] = ' ';
+			/* If we're above data_size, finish out the line with space,
+			 * and also finish out charbuf with space */
+			while (index >= data_size && index % 16 != 0) {
+				if (index % 8 == 7)
+					printf(" ");
+				printf("   ");
+				charbuf[index % 16] = ' ';
 
-			index++;
-			if (index % 16 == 0)
-				break;
+				index++;
+				if (index % 16 == 0)
+					break;
+			}
+			printf("|%s|\n", charbuf);
 		}
-		printf("|%s|\n", charbuf);
+	}
+	else if(display_type == SHOW_DECIMAL) {
+		uint32_t index = 0;
+		while (index < data_size) {
+			// print the dec values
+			while (index < data_size) {
+				printf("%d ", data[index]);
+				if (index % 8 == 7)
+					printf(" ");
+				index++;
+				if (index % 16 == 0)
+					break;
+			}
+		}
+		printf("\n");
 	}
 }
 
@@ -291,6 +312,12 @@ int main(int argc, char *argv[])
 		 .arg = &action,
 		 .val = ACTION_PRINT,
 		 .descrip = "print variable specified by --name", },
+		{.longName = "print-decimal",
+		 .shortName = 'd',
+		 .argInfo = POPT_ARG_VAL,
+		 .arg = &action,
+		 .val = ACTION_PRINT_DEC,
+		 .descrip = "print variable in decimal values specified by --name" },
 		{.longName = "name",
 		 .shortName = 'n',
 		 .argInfo = POPT_ARG_STRING,
@@ -370,7 +397,11 @@ int main(int argc, char *argv[])
 			break;
 		case ACTION_PRINT:
 			validate_name(name);
-			show_variable(name);
+			show_variable(name, SHOW_VERBOSE);
+			break;
+		case ACTION_PRINT_DEC | ACTION_PRINT:
+			validate_name(name);
+			show_variable(name, SHOW_DECIMAL);
 			break;
 		case ACTION_APPEND | ACTION_PRINT:
 			validate_name(name);
