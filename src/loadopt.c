@@ -96,17 +96,18 @@ efi_loadopt_optional_data_size(efi_load_option *opt, size_t size)
 	size -= sizeof(*opt);
 	if (size < opt->file_path_list_length)
 		return -1;
+	size -= opt->file_path_list_length;
+	/* "size" as the limit means sz will be size or less in all cases; no
+	 * need to test it.  if it /is/ size, there's no optional data. */
 	sz = ucs2size(opt->description, size);
-	if (sz >= size) // since there's no room for a file path...
-		return -1;
 	p = (uint8_t *)(opt->description) + sz;
 	size -= sz;
 
-	if (!efidp_is_valid((const_efidp)p, size))
+	if (!efidp_is_valid((const_efidp)p, opt->file_path_list_length))
 		return -1;
 	sz = efidp_size((const_efidp)p);
-	p += sz;
-	size -= sz;
+	if (sz != opt->file_path_list_length)
+		return -1;
 
 	return size;
 }
@@ -167,20 +168,27 @@ __attribute__((__visibility__ ("default")))
 efi_loadopt_path(efi_load_option *opt, ssize_t limit)
 {
 	char *p = (char *)opt;
-	size_t l;
-	ssize_t desc_limit;
+	size_t sz;
+	size_t left;
 	efidp dp;
 
-	l = (size_t)limit;
-	if (l <= offsetof(efi_load_option, description))
+	left = (size_t)limit;
+	if (left <= offsetof(efi_load_option, description))
 		return NULL;
-	desc_limit = limit - offsetof(efi_load_option, description);
+	left -= offsetof(efi_load_option, description);
+	p += offsetof(efi_load_option, description);
 
-	dp = (efidp)(p + sizeof (opt->attributes)
-		       + sizeof (opt->file_path_list_length)
-		       + ucs2size(opt->description, desc_limit));
-	limit -= (unsigned long)dp - (unsigned long)opt;
-	if (!efidp_is_valid(dp, limit))
+	sz = ucs2size(opt->description, left);
+	if (sz >= left) // since there's no room for a file path...
+		return NULL;
+	p += sz;
+	left -= sz;
+
+	if (left < opt->file_path_list_length)
+		return NULL;
+
+	dp = (efidp)p;
+	if (!efidp_is_valid(dp, opt->file_path_list_length))
 		return NULL;
 	return dp;
 }

@@ -265,7 +265,10 @@ efidp_format_device_path(char *buf, size_t size, const_efidp dp, ssize_t limit)
 	if (!dp)
 		return -1;
 
-	while (1) {
+	if (buf && size)
+		memset(buf, 0, size);
+
+	while (limit) {
 		if (limit >= 0 && (limit < 4 || efidp_node_size(dp) > limit)) {
 			if (off)
 				return off;
@@ -346,7 +349,7 @@ efidp_format_device_path(char *buf, size_t size, const_efidp dp, ssize_t limit)
 				off += format(buf, size, off, ",");
 				break;
 			}
-			return off;
+			return off + 1;
 		default:
 			off += format(buf, size, off, "Path(%d,%d,", dp->type,
 				      dp->subtype);
