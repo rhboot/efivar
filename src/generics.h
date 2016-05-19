@@ -35,7 +35,7 @@ static DIR *dir;
 
 static inline int
 __attribute__((unused))
-generic_get_next_variable_name(char *path, efi_guid_t **guid, char **name)
+generic_get_next_variable_name(const char *path, efi_guid_t **guid, char **name)
 {
 	static char ret_name[NAME_MAX+1];
 	static efi_guid_t ret_guid;

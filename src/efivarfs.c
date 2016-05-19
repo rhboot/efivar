@@ -37,24 +37,44 @@
 
 #include <linux/fs.h>
 
-#define EFIVARS_PATH "/sys/firmware/efi/efivars/"
-
 #ifndef EFIVARFS_MAGIC
 #  define EFIVARFS_MAGIC 0xde5e81e4
 #endif
 
+static const char const default_efivarfs_path[] = "/sys/firmware/efi/efivars/";
+
+static const char const *
+get_efivarfs_path(void)
+{
+	static const char *path;
+	if (path)
+		return path;
+
+	path = getenv("EFIVARFS_PATH");
+	if (!path)
+		path = default_efivarfs_path;
+	return path;
+}
+
 static int
 efivarfs_probe(void)
 {
-	if (!access(EFIVARS_PATH, F_OK)) {
+	const char const *path = get_efivarfs_path();
+
+	if (!access(path, F_OK)) {
 		int rc = 0;
 		struct statfs buf;
 
 		memset(&buf, '\0', sizeof (buf));
-		rc = statfs(EFIVARS_PATH, &buf);
+		rc = statfs(path, &buf);
 		if (rc == 0) {
+			char *tmp;
 			typeof(buf.f_type) magic = EFIVARFS_MAGIC;
 			if (!memcmp(&buf.f_type, &magic, sizeof (magic)))
+				return 1;
+
+			tmp = getenv("EFIVARFS_PATH");
+			if (tmp && !strcmp(tmp, path))
 				return 1;
 		}
 	}
@@ -63,7 +83,7 @@ efivarfs_probe(void)
 }
 
 #define make_efivarfs_path(str, guid, name) ({				\
-		asprintf(str, EFIVARS_PATH "%s-" GUID_FORMAT,		\
+		asprintf(str, "%s%s-" GUID_FORMAT, get_efivarfs_path(),	\
 			name, (guid).a, (guid).b, (guid).c,		\
 			bswap_16((guid).d),				\
 			(guid).e[0], (guid).e[1], (guid).e[2],		\
@@ -293,7 +313,7 @@ efivarfs_append_variable(efi_guid_t guid, const char *name, uint8_t *data,
 static int
 efivarfs_get_next_variable_name(efi_guid_t **guid, char **name)
 {
-	return generic_get_next_variable_name(EFIVARS_PATH, guid, name);
+	return generic_get_next_variable_name(get_efivarfs_path(), guid, name);
 }
 
 static int

@@ -32,7 +32,21 @@
 #include "generics.h"
 #include "util.h"
 
-#define VARS_PATH "/sys/firmware/efi/vars/"
+static const char const default_vars_path[] = "/sys/firmware/efi/vars/";
+
+static const char const *
+get_vars_path(void)
+{
+	static const char *path;
+	if (path)
+		return path;
+
+	path = getenv("VARS_PATH");
+	if (!path)
+		path = default_vars_path;
+	return path;
+}
+
 
 typedef struct efi_kernel_variable_32_t {
 	uint16_t	VariableName[1024/sizeof(uint16_t)];
@@ -120,7 +134,7 @@ is_64bit(void)
 	if (sixtyfour_bit != -1)
 		return sixtyfour_bit;
 
-	dir = opendir(VARS_PATH);
+	dir = opendir(get_vars_path());
 	if (!dir)
 		goto err;
 
@@ -205,10 +219,14 @@ err:
 static int
 vars_probe(void)
 {
+	char *newvar;
+
 	/* If we can't tell if it's 64bit or not, this interface is no good. */
 	if (is_64bit() < 0)
 		return 0;
-	if (!access(VARS_PATH "new_var", F_OK))
+	if (asprintfa(&newvar, "%s%s", get_vars_path(), "new_var") < 0)
+		return 0;
+	if (!access(newvar, F_OK))
 		return 1;
 	return 0;
 }
@@ -220,7 +238,7 @@ vars_get_variable_size(efi_guid_t guid, const char *name, size_t *size)
 	int ret = -1;
 
 	char *path = NULL;
-	int rc = asprintf(&path, VARS_PATH "%s-"GUID_FORMAT"/size",
+	int rc = asprintf(&path, "%s%s-"GUID_FORMAT"/size", get_vars_path(),
 			  name, guid.a, guid.b, guid.c, bswap_16(guid.d),
 			  guid.e[0], guid.e[1], guid.e[2], guid.e[3],
 			  guid.e[4], guid.e[5]);
@@ -272,7 +290,8 @@ vars_get_variable(efi_guid_t guid, const char *name, uint8_t **data,
 	uint8_t *buf = NULL;
 	size_t bufsize = -1;
 	char *path;
-	int rc = asprintf(&path, VARS_PATH "%s-" GUID_FORMAT "/raw_var",
+	int rc = asprintf(&path, "%s%s-" GUID_FORMAT "/raw_var",
+			  get_vars_path(),
 			  name, guid.a, guid.b, guid.c, bswap_16(guid.d),
 			  guid.e[0], guid.e[1], guid.e[2],
 			  guid.e[3], guid.e[4], guid.e[5]);
@@ -344,7 +363,8 @@ vars_del_variable(efi_guid_t guid, const char *name)
 	int errno_value;
 	int ret = -1;
 	char *path;
-	int rc = asprintf(&path, VARS_PATH "%s-" GUID_FORMAT "/raw_var",
+	int rc = asprintf(&path, "%s%s-" GUID_FORMAT "/raw_var",
+			  get_vars_path(),
 			  name, guid.a, guid.b, guid.c, bswap_16(guid.d),
 			  guid.e[0], guid.e[1], guid.e[2],
 			  guid.e[3], guid.e[4], guid.e[5]);
@@ -353,6 +373,7 @@ vars_del_variable(efi_guid_t guid, const char *name)
 
 	uint8_t *buf = NULL;
 	size_t buf_size = 0;
+	char *delvar;
 
 	int fd = open(path, O_RDONLY);
 	if (fd < 0)
@@ -369,8 +390,11 @@ vars_del_variable(efi_guid_t guid, const char *name)
 		goto err;
 	}
 
+	if (asprintfa(&delvar, "%s%s", get_vars_path(), "del_var") < 0)
+		goto err;
+
 	close(fd);
-	fd = open(VARS_PATH "del_var", O_WRONLY);
+	fd = open(delvar, O_WRONLY);
 	if (fd < 0)
 		goto err;
 
@@ -438,7 +462,7 @@ vars_chmod_variable(efi_guid_t guid, const char *name, mode_t mode)
 	}
 
 	char *path;
-	int rc = asprintf(&path, VARS_PATH "%s-" GUID_FORMAT,
+	int rc = asprintf(&path, "%s%s-" GUID_FORMAT, get_vars_path(),
 			  name, guid.a, guid.b, guid.c, bswap_16(guid.d),
 			  guid.e[0], guid.e[1], guid.e[2], guid.e[3],
 			  guid.e[4], guid.e[5]);
@@ -470,7 +494,7 @@ vars_set_variable(efi_guid_t guid, const char *name, uint8_t *data,
 	}
 
 	char *path;
-	int rc = asprintf(&path, VARS_PATH "%s-" GUID_FORMAT "/data",
+	int rc = asprintf(&path, "%s%s-" GUID_FORMAT "/data", get_vars_path(),
 			  name, guid.a, guid.b, guid.c, bswap_16(guid.d),
 			  guid.e[0], guid.e[1], guid.e[2], guid.e[3],
 			  guid.e[4], guid.e[5]);
@@ -485,6 +509,10 @@ vars_set_variable(efi_guid_t guid, const char *name, uint8_t *data,
 		if (rc < 0)
 			goto err;
 	}
+	char *newvar;
+	if (asprintfa(&newvar, "%s%s", get_vars_path(), "new_var") < 0)
+		goto err;
+
 
 	if (is_64bit()) {
 		efi_kernel_variable_64_t var64 = {
@@ -498,7 +526,7 @@ vars_set_variable(efi_guid_t guid, const char *name, uint8_t *data,
 			var64.VariableName[i] = name[i];
 		memcpy(var64.Data, data, data_size);
 
-		fd = open(VARS_PATH "new_var", O_WRONLY);
+		fd = open(newvar, O_WRONLY);
 		if (fd < 0)
 			goto err;
 
@@ -514,7 +542,7 @@ vars_set_variable(efi_guid_t guid, const char *name, uint8_t *data,
 			var32.VariableName[i] = name[i];
 		memcpy(var32.Data, data, data_size);
 
-		fd = open(VARS_PATH "new_var", O_WRONLY);
+		fd = open(newvar, O_WRONLY);
 		if (fd < 0)
 			goto err;
 
@@ -545,7 +573,7 @@ err:
 static int
 vars_get_next_variable_name(efi_guid_t **guid, char **name)
 {
-	return generic_get_next_variable_name(VARS_PATH, guid, name);
+	return generic_get_next_variable_name(get_vars_path(), guid, name);
 }
 
 struct efi_var_operations vars_ops = {
