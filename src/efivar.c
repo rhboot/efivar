@@ -153,7 +153,7 @@ show_variable(char *guid_name, int display_type)
 
 	if (display_type == SHOW_VERBOSE) {
 		printf("GUID: "GUID_FORMAT "\n",
-		       guid.a, guid.b, guid.c, bswap_16(guid.d)
+		       guid.a, guid.b, guid.c, bswap_16(guid.d),
 		       guid.e[0], guid.e[1], guid.e[2], guid.e[3],
 		       guid.e[4], guid.e[5]);
 		printf("Name: \"%s\"\n", name);
