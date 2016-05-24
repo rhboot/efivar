@@ -150,6 +150,7 @@ efi_loadopt_attr_clear(efi_load_option *opt, uint16_t attr)
 uint16_t
 __attribute__((__nonnull__ (1)))
 __attribute__((__visibility__ ("default")))
+/* limit here is the /whole/ load option */
 efi_loadopt_pathlen(efi_load_option *opt, ssize_t limit)
 {
 	uint16_t len = opt->file_path_list_length;
@@ -165,6 +166,7 @@ efi_loadopt_pathlen(efi_load_option *opt, ssize_t limit)
 efidp
 __attribute__((__nonnull__ (1)))
 __attribute__((__visibility__ ("default")))
+/* limit here is the /whole/ load option */
 efi_loadopt_path(efi_load_option *opt, ssize_t limit)
 {
 	char *p = (char *)opt;
