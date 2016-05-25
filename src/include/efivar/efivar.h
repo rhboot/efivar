@@ -115,7 +115,7 @@ efi_guid_cmp(const efi_guid_t *a, const efi_guid_t *b)
 
 extern const efi_guid_t efi_guid_zero;
 
-static inline int
+inline int
 __attribute__ ((unused))
 __attribute__((__nonnull__ (1)))
 efi_guid_is_zero(const efi_guid_t *guid)
