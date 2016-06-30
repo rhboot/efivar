@@ -41,9 +41,9 @@
 #  define EFIVARFS_MAGIC 0xde5e81e4
 #endif
 
-static const char const default_efivarfs_path[] = "/sys/firmware/efi/efivars/";
+static char const default_efivarfs_path[] = "/sys/firmware/efi/efivars/";
 
-static const char const *
+static char const *
 get_efivarfs_path(void)
 {
 	static const char *path;
@@ -59,7 +59,7 @@ get_efivarfs_path(void)
 static int
 efivarfs_probe(void)
 {
-	const char const *path = get_efivarfs_path();
+	const char *path = get_efivarfs_path();
 
 	if (!access(path, F_OK)) {
 		int rc = 0;

@@ -32,9 +32,9 @@
 #include "generics.h"
 #include "util.h"
 
-static const char const default_vars_path[] = "/sys/firmware/efi/vars/";
+static const char default_vars_path[] = "/sys/firmware/efi/vars/";
 
-static const char const *
+static const char *
 get_vars_path(void)
 {
 	static const char *path;
