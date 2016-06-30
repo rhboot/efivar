@@ -96,4 +96,5 @@ LIBEFIVAR_0.0 {
 
 LIBEFIVAR_0.24 {
 	global: efi_set_variable;
+		efi_guid_cmp;
 } LIBEFIVAR_0.0;

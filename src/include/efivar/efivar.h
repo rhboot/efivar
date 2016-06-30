@@ -105,29 +105,11 @@ extern int efi_id_guid_to_guid(const char *name, efi_guid_t *guid)
 extern int efi_symbol_to_guid(const char *symbol, efi_guid_t *guid)
 			     __attribute__((__nonnull__ (1, 2)));
 
-static inline int
-__attribute__ ((unused))
-__attribute__((__nonnull__ (1, 2)))
-efi_guid_cmp(const efi_guid_t *a, const efi_guid_t *b)
-{
-	return memcmp(a, b, sizeof (efi_guid_t));
-}
-
 extern const efi_guid_t efi_guid_zero;
 
-inline int
-__attribute__ ((unused))
-__attribute__((__nonnull__ (1)))
-efi_guid_is_zero(const efi_guid_t *guid)
-{
-	return !efi_guid_cmp(guid,&efi_guid_zero);
-}
-extern int
-efi_guid_is_empty(const efi_guid_t *guid)
-__attribute__ ((unused))
-__attribute__((__nonnull__ (1)))
-__attribute__((__visibility__ ("default")))
-__attribute__ ((weak, alias ("efi_guid_is_zero")));
+extern int efi_guid_is_zero(const efi_guid_t *guid);
+extern int efi_guid_is_empty(const efi_guid_t *guid);
+extern int efi_guid_cmp(const efi_guid_t *a, const efi_guid_t *b);
 
 /* import / export functions */
 typedef struct efi_variable efi_variable_t;

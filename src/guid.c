@@ -30,6 +30,28 @@
 int
 __attribute__((__nonnull__ (1, 2)))
 __attribute__((__visibility__ ("default")))
+efi_guid_cmp(const efi_guid_t *a, const efi_guid_t *b)
+{
+	return memcmp(a, b, sizeof (efi_guid_t));
+}
+
+int
+__attribute__((__nonnull__ (1)))
+__attribute__((__visibility__ ("default")))
+efi_guid_is_zero(const efi_guid_t *guid)
+{
+	return !efi_guid_cmp(guid,&efi_guid_zero);
+}
+
+int
+efi_guid_is_empty(const efi_guid_t *guid)
+__attribute__((__nonnull__ (1)))
+__attribute__((__visibility__ ("default")))
+__attribute__ ((weak, alias ("efi_guid_is_zero")));
+
+int
+__attribute__((__nonnull__ (1, 2)))
+__attribute__((__visibility__ ("default")))
 efi_str_to_guid(const char *s, efi_guid_t *guid)
 {
 	return text_to_guid(s, guid);
