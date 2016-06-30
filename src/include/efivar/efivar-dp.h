@@ -733,10 +733,12 @@ static inline int
 __attribute__((__unused__))
 efidp_next_node(const_efidp in, const_efidp *out)
 {
+	ssize_t sz;
+
 	if (efidp_type(in) == EFIDP_END_TYPE)
 		return -1;
 
-	ssize_t sz = efidp_node_size(in);
+	sz = efidp_node_size(in);
 	if (sz < 0)
 		return -1;
 
@@ -749,11 +751,13 @@ static inline int
 __attribute__((__unused__))
 efidp_next_instance(const_efidp in, const_efidp *out)
 {
+	ssize_t sz;
+
 	if (efidp_type(in) != EFIDP_END_TYPE ||
 			efidp_subtype(in) != EFIDP_END_INSTANCE)
 		return -1;
 
-	ssize_t sz = efidp_node_size(in);
+	sz = efidp_node_size(in);
 	if (sz < 0)
 		return -1;
 
@@ -768,7 +772,9 @@ efidp_is_multiinstance(const_efidp dn)
 {
 	while (1) {
 		const_efidp next;
-		int rc = efidp_next_node(dn, &next);
+		int rc;
+
+		rc = efidp_next_node(dn, &next);
 		if (rc < 0)
 			break;
 		dn = next;
@@ -785,12 +791,13 @@ __attribute__((__unused__))
 efidp_get_next_end(const_efidp in, const_efidp *out)
 {
 	while (1) {
+		ssize_t sz;
+
 		if (efidp_type(in) == EFIDP_END_TYPE) {
 			*out = in;
 			return 0;
 		}
 
-		ssize_t sz;
 		sz = efidp_node_size(in);
 		if (sz < 0)
 			break;
@@ -843,6 +850,7 @@ efidp_instance_size(const_efidp dpi)
 	while (1) {
 		ssize_t sz;
 		const_efidp next;
+		int rc;
 
 		sz = efidp_node_size(dpi);
 		if (sz < 0)
@@ -852,7 +860,7 @@ efidp_instance_size(const_efidp dpi)
 		if (efidp_type(dpi) == EFIDP_END_TYPE)
 			break;
 
-		int rc = efidp_next_node(dpi, &next);
+		rc = efidp_next_node(dpi, &next);
 		if (rc < 0)
 			return -1;
 		dpi = next;
