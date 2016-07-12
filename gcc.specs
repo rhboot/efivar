@@ -2,7 +2,7 @@
 + -D_GNU_SOURCE
 
 *efivar_cpp_options:
- -Werror -Wall -std=gnu11 -Wextra -Wno-error=deprecated-declarations
+ -Werror -Wall -std=gnu11 -Wextra
 
 *cpp_options:
 + %(efivar_cpp_options)
