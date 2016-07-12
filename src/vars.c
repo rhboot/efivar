@@ -142,19 +142,15 @@ is_64bit(void)
 	if (dfd < 0)
 		goto err;
 
-	struct dirent entry;
-	struct dirent *result = NULL;
 	while (1) {
-		int rc = readdir_r(dir, &entry, &result);
-		if (rc != 0)
-			break;
-		if (result == NULL)
+		struct dirent *entry = readdir(dir);
+		if (entry == NULL)
 			break;
 
-		if (!strcmp(entry.d_name, "..") || !strcmp(entry.d_name, "."))
+		if (!strcmp(entry->d_name, "..") || !strcmp(entry->d_name, "."))
 			continue;
 
-		ssize_t size = get_file_data_size(dfd, entry.d_name);
+		ssize_t size = get_file_data_size(dfd, entry->d_name);
 		if (size < 0) {
 			continue;
 		} else if (size == 2084) {
