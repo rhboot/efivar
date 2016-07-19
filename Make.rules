@@ -18,7 +18,7 @@ include $(TOPDIR)/Make.version
 
 %.so :
 	$(CCLD) $(ccldflags) $(CPPFLAGS) $(SOFLAGS) \
-	  -Wl,-soname,$@.$(MAJOR_VERSION) \
+	  -Wl,-soname,$@.$(VERSION) \
 	  -Wl,--version-script=$(MAP) \
 	  -o $@ $^ $(LDLIBS)
 
@@ -52,6 +52,8 @@ endef
 %.pc : %.pc.in
 	@$(call substitute-version,$<,$@)
 %.spec : %.spec.in
+	@$(call substitute-version,$<,$@)
+%.map : %.map.in
 	@$(call substitute-version,$<,$@)
 
 pkg-config-cflags = \

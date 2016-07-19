@@ -71,7 +71,7 @@ deps : $(ALL_SOURCES)
 	$(MAKE) -f $(SRCDIR)/Make.deps deps SOURCES="$(ALL_SOURCES)"
 
 clean : 
-	@rm -rfv *~ *.o *.a *.E *.so *.so.* *.pc *.bin .*.d \
+	@rm -rfv *~ *.o *.a *.E *.so *.so.* *.pc *.bin .*.d *.map \
 		makeguids guid-symbols.c include/efivar/efivar-guids.h \
 		$(BINTARGETS)
 	@# remove the deps files we used to create, as well.
@@ -81,7 +81,6 @@ install : all
 	$(INSTALL) -d -m 755 $(DESTDIR)$(libdir)
 	$(foreach x,$(LIBTARGETS), \
 		$(INSTALL) -m 755 $(x) $(DESTDIR)$(libdir)/$(x).$(VERSION) ;\
-		ln -fs $(x).$(VERSION) $(DESTDIR)$(libdir)/$(x).$(MAJOR_VERSION);\
 		ln -fs $(x).$(VERSION) $(DESTDIR)$(libdir)/$(x); )
 	$(INSTALL) -d -m 755 $(DESTDIR)$(PCDIR)
 	$(foreach x, $(PCTARGETS), $(INSTALL) -m 644 $(x) $(DESTDIR)$(PCDIR) ;)
@@ -94,8 +93,8 @@ test : all
 	$(MAKE) -C test $@
 
 .PHONY: test deps
-.SECONDARY : libefivar.so.$(VERSION) libefivar.so.$(MAJOR_VERSION)
-.SECONDARY : libefiboot.so.$(VERSION) libefiboot.so.$(MAJOR_VERSION)
+.SECONDARY : libefivar.so.$(VERSION)
+.SECONDARY : libefiboot.so.$(VERSION)
 .SECONDARY : include/efivar/efivar-guids.h guid-symbols.c
 .INTERMEDIATE : guids.bin names.bin
 .PRECIOUS : guid-symbols.o makeguids
