@@ -100,4 +100,7 @@ LIBEFIVAR_0.24 {
 } LIBEFIVAR_0.0;
 
 LIBEFIVAR_@@VERSION@@ {
+	global: efi_error_set;
+		efi_error_get;
+		efi_error_clear;
 };

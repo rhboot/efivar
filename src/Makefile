@@ -14,7 +14,7 @@ TARGETS=$(LIBTARGETS) $(STATICLIBTARGETS) $(BINTARGETS) $(PCTARGETS)
 LIBEFIBOOT_SOURCES = crc32.c creator.c disk.c gpt.c linux.c loadopt.c
 LIBEFIBOOT_OBJECTS = $(patsubst %.c,%.o,$(LIBEFIBOOT_SOURCES))
 LIBEFIVAR_SOURCES = dp.c dp-acpi.c dp-hw.c dp-media.c dp-message.c \
-	efivarfs.c export.c guid.c guids.S guid-symbols.c \
+	efivarfs.c error.c export.c guid.c guids.S guid-symbols.c \
 	lib.c vars.c
 LIBEFIVAR_OBJECTS = $(patsubst %.S,%.o,$(patsubst %.c,%.o,$(LIBEFIVAR_SOURCES)))
 EFIVAR_SOURCES = efivar.c

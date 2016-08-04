@@ -151,6 +151,64 @@ extern int efi_variable_get_attributes(efi_variable_t *var, uint64_t *attrs)
 extern int efi_variable_realize(efi_variable_t *var)
 			__attribute__((__nonnull__ (1)));
 
+#ifndef EFIVAR_BUILD_ENVIRONMENT
+extern int efi_error_get(unsigned int n,
+			 char ** const filename,
+			 char ** const function,
+			 int *line,
+			 char ** const message,
+			 int *error)
+			__attribute__((__nonnull__ (2, 3, 4, 5, 6)));
+extern int efi_error_set(const char *filename,
+			 const char *function,
+			 int line,
+			 int error,
+			 const char *fmt, ...)
+			__attribute__((__visibility__ ("default")))
+			__attribute__((__nonnull__ (1, 2, 5)))
+			__attribute__((__format__ (printf, 5, 6)));
+extern void efi_error_clear(void);
+#else
+static inline int
+__attribute__((__nonnull__ (2, 3, 4, 5, 6)))
+efi_error_get(unsigned int n __attribute__((__unused__)),
+	      char ** const filename __attribute__((__unused__)),
+	      char ** const function __attribute__((__unused__)),
+	      int *line __attribute__((__unused__)),
+	      char ** const message __attribute__((__unused__)),
+	      int *error __attribute__((__unused__)))
+{
+	return 0;
+}
+
+static inline int
+__attribute__((__nonnull__ (1, 2, 5)))
+__attribute__((__format__ (printf, 5, 6)))
+efi_error_set(const char *filename __attribute__((__unused__)),
+	      const char *function __attribute__((__unused__)),
+	      int line __attribute__((__unused__)),
+	      int error __attribute__((__unused__)),
+	      const char *fmt __attribute__((__unused__)),
+	      ...)
+{
+	return 0;
+}
+
+static inline void
+efi_error_clear(void)
+{
+	return;
+}
+#endif
+
+#define efi_error_real__(errval, file, function, line, fmt, args...) \
+	efi_error_set(file, function, line, errval, (fmt), ## args)
+
+#define efi_error(fmt, args...) \
+	efi_error_real__(errno, __FILE__, __func__, __LINE__, (fmt), ## args)
+#define efi_error_val(errval, msg, args...) \
+	efi_error_real__(errval, __FILE__, __func__, __LINE__, (fmt), ## args)
+
 #include <efivar-dp.h>
 
 #endif /* EFIVAR_H */

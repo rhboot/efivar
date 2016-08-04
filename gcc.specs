@@ -2,7 +2,7 @@
 + -D_GNU_SOURCE
 
 *efivar_cpp_options:
- -Werror -Wall -std=gnu11 -Wextra
+ -Werror -Wall -std=gnu11 -Wextra -Wno-nonnull-compare
 
 *cpp_options:
 + %(efivar_cpp_options)
