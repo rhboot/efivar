@@ -305,6 +305,17 @@ sysfs_sata_get_port_info(uint32_t print_id, struct disk_info *info)
 	if (rc != 1)
 		return -1;
 
+	/*
+	 * ata_port numbers are 1-indexed from libata in the kernel, but
+	 * they're 0-indexed in the spec.  For maximal confusion.
+	 */
+	if (info->sata_info.ata_port == 0) {
+		errno = EINVAL;
+		return -1;
+	} else {
+		info->sata_info.ata_port -= 1;
+	}
+
 	return 0;
 }
 
