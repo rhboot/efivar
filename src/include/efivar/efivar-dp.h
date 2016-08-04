@@ -269,7 +269,7 @@ typedef struct {
 } efidp_sata;
 #define SATA_HBA_DIRECT_CONNECT_FLAG	0x8000
 extern ssize_t efidp_make_sata(uint8_t *buf, ssize_t size, uint16_t hba_port,
-			       uint16_t port_multiplier_port, uint16_t lun);
+			       int16_t port_multiplier_port, uint16_t lun);
 
 #define	EFIDP_MSG_I2O		0x06
 typedef struct {

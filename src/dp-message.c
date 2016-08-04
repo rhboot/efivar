@@ -641,7 +641,7 @@ efidp_make_nvme(uint8_t *buf, ssize_t size, uint32_t namespace_id,
 ssize_t
 __attribute__((__visibility__ ("default")))
 efidp_make_sata(uint8_t *buf, ssize_t size, uint16_t hba_port,
-		uint16_t port_multiplier_port, uint16_t lun)
+		int16_t port_multiplier_port, uint16_t lun)
 {
 	efidp_sata *sata = (efidp_sata *)buf;
 	ssize_t req = sizeof (*sata);

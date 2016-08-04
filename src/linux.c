@@ -268,18 +268,30 @@ sysfs_sata_get_port_info(uint32_t print_id, struct disk_info *info)
 		int rc;
 		rc = sscanf(de->d_name, "dev%d.%d.%d", &found_print_id,
 			    &found_pmp, &found_devno);
-		if (rc == 3) {
+		if (rc < 2 || rc > 3) {
+			closedir(d);
+			errno = EINVAL;
+			return -1;
+		} else if (found_print_id != print_id) {
+			continue;
+		} else if (rc == 3) {
+			/*
+			 * the kernel doesn't't ever tell us the SATA PMPN
+			 * sentinal value, it'll give us devM.N instead of
+			 * devM.N.O in that case instead.
+			 */
+			if (found_pmp > 0x7fff) {
+				closedir(d);
+				errno = EINVAL;
+				return -1;
+			}
 			info->sata_info.ata_devno = 0;
 			info->sata_info.ata_pmp = found_pmp;
 			break;
 		} else if (rc == 2) {
 			info->sata_info.ata_devno = 0;
-			info->sata_info.ata_pmp = 0x8000;
+			info->sata_info.ata_pmp = 0xffff;
 			break;
-		} else {
-			closedir(d);
-			errno = EINVAL;
-			return -1;
 		}
 	}
 	closedir(d);
