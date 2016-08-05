@@ -22,13 +22,82 @@
 #define EFIVAR_UTIL_H 1
 
 #include <errno.h>
+#include <limits.h>
 #include <stdio.h>
 #include <stdarg.h>
 #include <stdlib.h>
 #include <string.h>
 #include <sys/ioctl.h>
 #include <sys/mount.h>
+#include <tgmath.h>
 #include <unistd.h>
+
+/*
+ * I'm not actually sure when these appear, but they're present in the
+ * version in front of me.
+ */
+#if defined(__GNUC__) && defined(__GNUC_MINOR__)
+#if __GNUC__ >= 5 && __GNUC_MINOR__ >= 1
+#define long_add(a, b, c) __builtin_add_overflow(a, b, c)
+#define long_mult(a, b, c) __builtin_mul_overflow(a, b, c)
+#define ulong_add(a, b, c) __builtin_add_overflow(a, b, c)
+#define ulong_mult(a, b, c) __builtin_mul_overflow(a, b, c)
+#endif
+#endif
+#ifndef long_add
+#define long_add(a, b, c) ({					\
+		const long _limit = LONG_MAX;			\
+		int _ret;					\
+		_ret = _limit - (a) > (b);			\
+		if (!_ret)					\
+			*(c) = ((a) + (b));			\
+		_ret;						\
+	})
+#endif
+#ifndef long_mult
+#define long_mult(a, b, c) ({					\
+		const long _limit = LONG_MAX;			\
+		int _ret = 1;					\
+		if ((a) == 0 || (b) == 0)			\
+			_ret = 0;				\
+		else						\
+			_ret = _limit / (a) < (b);		\
+		if (!_ret)					\
+			*(c) = ((a) * (b));			\
+		_ret;						\
+	})
+#endif
+#ifndef ulong_add
+#define ulong_add(a, b, c) ({					\
+		const unsigned long _limit = ULONG_MAX;		\
+		int _ret;					\
+		_ret = _limit - (a) > (b);			\
+		if (!_ret)					\
+			*(c) = ((a) + (b));			\
+		_ret;						\
+	})
+#endif
+#ifndef ulong_mult
+#define ulong_mult(a, b, c) ({					\
+		const unsigned long _limit = ULONG_MAX;		\
+		int _ret = 1;					\
+		if ((a) == 0 || (b) == 0)			\
+			_ret = 0;				\
+		else						\
+			_ret = _limit / (a) < (b);		\
+		if (!_ret)					\
+			*(c) = ((a) * (b));			\
+		_ret;						\
+	})
+#endif
+
+#define add(a, b, c) _Generic((c),					\
+			      long *: long_add(a,b,c),			\
+			      unsigned long *: ulong_add(a,b,c))
+
+#define mult(a, b, c) _Generic((c),					\
+			      long *: long_mult(a,b,c),			\
+			      unsigned long *: ulong_mult(a,b,c))
 
 static inline int
 __attribute__((unused))

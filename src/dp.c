@@ -24,6 +24,7 @@
 
 #include <efivar.h>
 #include "dp.h"
+#include "util.h"
 
 static const efidp_header end_entire = {
 	.type = EFIDP_END_TYPE,
@@ -60,7 +61,7 @@ static inline int
 efidp_duplicate_extra(const_efidp dp, efidp *out, size_t extra)
 {
 	ssize_t sz;
-	size_t plus;
+	ssize_t plus;
 
 	efidp new;
 
@@ -68,9 +69,8 @@ efidp_duplicate_extra(const_efidp dp, efidp *out, size_t extra)
 	if (sz < 0)
 		return sz;
 
-	plus = (size_t)sz + extra;
-	if (plus < (size_t)sz || plus < extra) {
-		errno = ENOSPC;
+	if (add(sz, extra, &plus)) {
+		errno = EOVERFLOW;
 		return -1;
 	}
 
@@ -94,7 +94,7 @@ int
 __attribute__((__visibility__ ("default")))
 efidp_append_path(const_efidp dp0, const_efidp dp1, efidp *out)
 {
-	ssize_t lsz, rsz;
+	ssize_t lsz, rsz, newsz = 0;
 	const_efidp le;
 	int rc;
 
@@ -132,10 +132,13 @@ efidp_append_path(const_efidp dp0, const_efidp dp1, efidp *out)
 	}
 
 	efidp new;
-	new = malloc(lsz + rsz);
+	if (add(lsz, rsz, &newsz)) {
+		errno = EOVERFLOW;
+		return -1;
+	}
+	new = malloc(newsz);
 	if (!new)
 		return -1;
-
 	*out = new;
 
 	memcpy(new, dp0, lsz);
@@ -148,17 +151,30 @@ int
 __attribute__((__visibility__ ("default")))
 efidp_append_node(const_efidp dp, const_efidp dn, efidp *out)
 {
-	ssize_t lsz, rsz;
+	ssize_t lsz, rsz, newsz;
 	int rc;
 
 	if (!dp && !dn)
 		return efidp_duplicate_path((const_efidp)(const efidp_header * const)&end_entire, out);
 
+	lsz = efidp_size(dp);
+	if (lsz < 0)
+		return -1;
+
+
 	if (dp && !dn)
 		return efidp_duplicate_path(dp, out);
 
+	rsz = efidp_node_size(dn);
+	if (rsz < 0)
+		return -1;
+
 	if (!dp && dn) {
-		efidp new = malloc(efidp_node_size(dn) + sizeof (end_entire));
+		if (add(rsz, sizeof(end_entire), &newsz)) {
+			errno = EOVERFLOW;
+			return -1;
+		}
+		efidp new = malloc(rsz + sizeof (end_entire));
 		if (!new)
 			return -1;
 
@@ -183,8 +199,6 @@ efidp_append_node(const_efidp dp, const_efidp dn, efidp *out)
 		if (efidp_type(le) == EFIDP_END_TYPE &&
 				efidp_subtype(le) == EFIDP_END_ENTIRE) {
 			ssize_t lesz = efidp_size(le);
-			if (lesz < 0)
-				return -1;
 			lsz -= lesz;
 			break;
 		}
@@ -194,7 +208,12 @@ efidp_append_node(const_efidp dp, const_efidp dn, efidp *out)
 			return -1;
 	}
 
-	efidp new = malloc(lsz + rsz + sizeof (end_entire));
+	if (add(lsz, rsz, &newsz) || add(newsz, sizeof(end_entire), &newsz)) {
+		errno = EOVERFLOW;
+		return -1;
+	}
+
+	efidp new = malloc(newsz);
 	if (!new)
 		return -1;
 
