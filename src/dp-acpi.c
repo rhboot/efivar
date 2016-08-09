@@ -180,6 +180,9 @@ efidp_make_acpi_hid(uint8_t *buf, ssize_t size, uint32_t hid, uint32_t uid)
 		acpi_hid->hid = hid;
 	}
 
+	if (sz < 0)
+		efi_error("efidp_make_generic failed");
+
 	return sz;
 }
 
@@ -209,6 +212,9 @@ efidp_make_acpi_hid_ex(uint8_t *buf, ssize_t size,
 		next += strlen(uidstr) + 1;
 		strcpy(next, cidstr);
 	}
+
+	if (sz < 0)
+		efi_error("efidp_make_generic failed");
 
 	return sz;
 }

@@ -72,11 +72,19 @@ efivarfs_probe(void)
 			typeof(buf.f_type) magic = EFIVARFS_MAGIC;
 			if (!memcmp(&buf.f_type, &magic, sizeof (magic)))
 				return 1;
+			else
+				efi_error("bad fs type for %s", path);
 
 			tmp = getenv("EFIVARFS_PATH");
-			if (tmp && !strcmp(tmp, path))
+			if (tmp && !strcmp(tmp, path)) {
+				efi_error_clear();
 				return 1;
+			}
+		} else {
+			efi_error("statfs(%s) failed", path);
 		}
+	} else {
+		efi_error("access(%s, F_OK) failed", path);
 	}
 
 	return 0;
@@ -100,6 +108,8 @@ efivarfs_set_fd_immutable(int fd, int immutable)
 	if (rc < 0) {
 		if (errno == ENOTTY)
 			rc = 0;
+		else
+			efi_error("ioctl(%d, FS_IOC_GETFLAGS) failed", fd);
 	} else if ((immutable && !(flags & FS_IMMUTABLE_FL)) ||
 		   (!immutable && (flags & FS_IMMUTABLE_FL))) {
 		if (immutable)
@@ -108,6 +118,8 @@ efivarfs_set_fd_immutable(int fd, int immutable)
 			flags &= ~FS_IMMUTABLE_FL;
 
 		rc = ioctl(fd, FS_IOC_SETFLAGS, &flags);
+		if (rc < 0)
+			efi_error("ioctl(%d, FS_IOC_SETFLAGS) failed", fd);
 	}
 
 	return rc;
@@ -122,16 +134,21 @@ efivarfs_set_immutable(char *path, int immutable)
 
 	fd = open(path, O_RDONLY);
 	if (fd < 0) {
-		if (errno == ENOTTY)
+		if (errno == ENOTTY) {
+			efi_error("open(%s, O_RDONLY) failed", path);
 			return 0;
-		else
+		} else {
 			return fd;
+		}
 	}
 
 	rc = efivarfs_set_fd_immutable(fd, immutable);
 	error = errno;
 	close(fd);
 	errno = error;
+	if (rc < 0)
+		efi_error("efivarfs_set_fd_immutable(%d, %d) on %s failed",
+			  fd, immutable, path);
 	return rc;
 }
 
@@ -144,13 +161,17 @@ efivarfs_get_variable_size(efi_guid_t guid, const char *name, size_t *size)
 	typeof(errno) errno_value;
 
 	rc = make_efivarfs_path(&path, guid, name);
-	if (rc < 0)
+	if (rc < 0) {
+		efi_error("make_efivarfs_path failed");
 		goto err;
+	}
 
 	struct stat statbuf = { 0, };
 	rc = stat(path, &statbuf);
-	if (rc < 0)
+	if (rc < 0) {
+		efi_error("stat(%s) failed", path);
 		goto err;
+	}
 
 	ret = 0;
 	/* Compensate for the size of the Attributes field. */
@@ -176,8 +197,10 @@ efivarfs_get_variable_attributes(efi_guid_t guid, const char *name,
 	uint32_t attribs;
 
 	ret = efi_get_variable(guid, name, &data, &data_size, &attribs);
-	if (ret < 0)
+	if (ret < 0) {
+		efi_error("efi_get_variable failed");
 		return ret;
+	}
 
 	*attributes = attribs;
 	if (data)
@@ -197,20 +220,28 @@ efivarfs_get_variable(efi_guid_t guid, const char *name, uint8_t **data,
 
 	char *path;
 	int rc = make_efivarfs_path(&path, guid, name);
-	if (rc < 0)
+	if (rc < 0) {
+		efi_error("make_efivarfs_path failed");
 		return -1;
+	}
 
 	int fd = open(path, O_RDONLY);
-	if (fd < 0)
+	if (fd < 0) {
+		efi_error("open(%s)", path);
 		goto err;
+	}
 
 	rc = read(fd, &ret_attributes, sizeof (ret_attributes));
-	if (rc < 0)
+	if (rc < 0) {
+		efi_error("read failed");
 		goto err;
+	}
 
 	rc = read_file(fd, &ret_data, &size);
-	if (rc < 0)
+	if (rc < 0) {
+		efi_error("read_file failed");
 		goto err;
+	}
 
 	*attributes = ret_attributes;
 	*data = ret_data;
@@ -235,11 +266,15 @@ efivarfs_del_variable(efi_guid_t guid, const char *name)
 {
 	char *path;
 	int rc = make_efivarfs_path(&path, guid, name);
-	if (rc < 0)
+	if (rc < 0) {
+		efi_error("make_efivarfs_path failed");
 		return -1;
+	}
 
 	efivarfs_set_immutable(path, 0);
 	rc = unlink(path);
+	if (rc < 0)
+		efi_error("unlink failed");
 
 	typeof(errno) errno_value = errno;
 	free(path);
@@ -257,35 +292,48 @@ efivarfs_set_variable(efi_guid_t guid, const char *name, uint8_t *data,
 	int ret = -1;
 
 	if (strlen(name) > 1024) {
+		efi_error("name too long (%zd of 1024)", strlen(name));
 		errno = EINVAL;
 		return -1;
 	}
 
 	char *path;
 	int rc = make_efivarfs_path(&path, guid, name);
-	if (rc < 0)
+	if (rc < 0) {
+		efi_error("make_efivarfs_path failed");
 		return -1;
+	}
 
 	int fd = -1;
 
 	if (!access(path, F_OK) && !(attributes & EFI_VARIABLE_APPEND_WRITE)) {
 		rc = efi_del_variable(guid, name);
-		if (rc < 0)
+		if (rc < 0) {
+			efi_error("efi_del_variable failed");
 			goto err;
+		}
 	}
 
 	fd = open(path, O_WRONLY|O_CREAT, mode);
-	if (fd < 0)
+	if (fd < 0) {
+		efi_error("open(%s, O_WRONLY|O_CREAT, mode) failed", path);
 		goto err;
+	}
 	efivarfs_set_fd_immutable(fd, 0);
 
 	memcpy(buf, &attributes, sizeof (attributes));
 	memcpy(buf + sizeof (attributes), data, data_size);
-	rc = write(fd, buf, sizeof (attributes) + data_size);
+#if 0
+		errno = ENOSPC;
+		rc = -1;
+#else
+		rc = write(fd, buf, sizeof (attributes) + data_size);
+#endif
 	if (rc >= 0) {
 		ret = 0;
 		efivarfs_set_fd_immutable(fd, 1);
 	} else {
+		efi_error("write failed");
 		efivarfs_set_fd_immutable(fd, 0);
 		unlink(path);
 	}
@@ -306,14 +354,22 @@ static int
 efivarfs_append_variable(efi_guid_t guid, const char *name, uint8_t *data,
 	size_t data_size, uint32_t attributes)
 {
+	int rc;
 	attributes |= EFI_VARIABLE_APPEND_WRITE;
-	return efivarfs_set_variable(guid, name, data, data_size, attributes, 0);
+	rc = efivarfs_set_variable(guid, name, data, data_size, attributes, 0);
+	if (rc < 0)
+		efi_error("efivarfs_set_variable failed");
+	return rc;
 }
 
 static int
 efivarfs_get_next_variable_name(efi_guid_t **guid, char **name)
 {
-	return generic_get_next_variable_name(get_efivarfs_path(), guid, name);
+	int rc;
+	rc = generic_get_next_variable_name(get_efivarfs_path(), guid, name);
+	if (rc < 0)
+		efi_error("generic_get_next_variable_name failed");
+	return rc;
 }
 
 static int
@@ -321,11 +377,15 @@ efivarfs_chmod_variable(efi_guid_t guid, const char *name, mode_t mode)
 {
 	char *path;
 	int rc = make_efivarfs_path(&path, guid, name);
-	if (rc < 0)
+	if (rc < 0) {
+		efi_error("make_efivarfs_path failed");
 		return -1;
+	}
 
 	rc = chmod(path, mode);
 	int saved_errno = errno;
+	if (rc < 0)
+		efi_error("chmod(%s,0%o) failed", path, mode);
 	free(path);
 	errno = saved_errno;
 	return -1;

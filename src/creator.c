@@ -53,6 +53,7 @@ find_file(const char * const filepath, char **devicep, char **relpathp)
 	linklen = strlen(filepath);
 	if (linklen > PATH_MAX) {
 		errno = ENAMETOOLONG;
+		efi_error("filepath length exceeds PATH_MAX");
 		return -1;
 	}
 	strcpy(linkbuf, filepath);
@@ -67,8 +68,10 @@ find_file(const char * const filepath, char **devicep, char **relpathp)
 			ssize_t l;
 
 			l = readlink(linkbuf, tmp, PATH_MAX);
-			if (l < 0)
+			if (l < 0) {
+				efi_error("readlink failed");
 				return -1;
+			}
 			tmp[l] = '\0';
 			linklen = l;
 			strcpy(linkbuf, tmp);
@@ -78,8 +81,10 @@ find_file(const char * const filepath, char **devicep, char **relpathp)
 	} while (1);
 
 	mounts = fopen("/proc/self/mounts", "r");
-	if (mounts == NULL)
-		return rc;
+	if (mounts == NULL) {
+		efi_error("couldn not open /proc/self/mounts");
+		return -1;
+	}
 
 	struct mntent *me;
 	while (1) {
@@ -88,8 +93,10 @@ find_file(const char * const filepath, char **devicep, char **relpathp)
 		errno = 0;
 		me = getmntent(mounts);
 		if (!me) {
-			if (feof(mounts))
+			if (feof(mounts)) {
 				errno = ENOENT;
+				efi_error("could not find mountpoint");
+			}
 			goto err;
 		}
 
@@ -100,6 +107,7 @@ find_file(const char * const filepath, char **devicep, char **relpathp)
 		if (rc < 0) {
 			if (errno == ENOENT)
 				continue;
+			efi_error("could not stat mountpoint");
 			goto err;
 		}
 
@@ -113,12 +121,17 @@ find_file(const char * const filepath, char **devicep, char **relpathp)
 			if (strncmp(linkbuf, me->mnt_dir, mntlen))
 				continue;
 			*devicep = strdup(me->mnt_fsname);
-			if (!*devicep)
+			if (!*devicep) {
+				errno = ENOMEM;
+				efi_error("strdup failed");
 				goto err;
+			}
 			*relpathp = strdup(linkbuf + mntlen);
 			if (!*relpathp) {
 				free(*devicep);
 				*devicep = NULL;
+				errno = ENOMEM;
+				efi_error("strdup failed");
 				goto err;
 			}
 			ret = 0;
@@ -138,10 +151,16 @@ open_disk(struct disk_info *info, int flags)
 	int rc;
 
 	rc = asprintfa(&diskpath, "/dev/%s", info->disk_name);
-	if (rc < 0)
+	if (rc < 0) {
+		efi_error("could not allocate buffer");
 		return -1;
+	}
 
-	return open(diskpath, flags);
+	rc = open(diskpath, flags);
+	if (rc < 0)
+		efi_error("could not open disk");
+
+	return rc;
 }
 
 static char *
@@ -167,12 +186,16 @@ efi_va_generate_file_device_path_from_esp(uint8_t *buf, ssize_t size,
 	int saved_errno;
 
 	fd = open(devpath, O_RDONLY);
-	if (fd < 0)
+	if (fd < 0) {
+		efi_error("could not open device for ESP");
 		goto err;
+	}
 
 	rc = eb_disk_info_from_fd(fd, &info);
-	if (rc < 0 && errno != ENOSYS)
+	if (rc < 0 && errno != ENOSYS) {
+		efi_error("could not get ESP disk info");
 		goto err;
+	}
 
 	if (partition > 0)
 		info.part = partition;
@@ -190,8 +213,10 @@ efi_va_generate_file_device_path_from_esp(uint8_t *buf, ssize_t size,
 			&& (!(options & EFIBOOT_ABBREV_FILE)
 			    && !(options & EFIBOOT_ABBREV_HD))) {
 		sz = efidp_make_edd10(buf, size, info.edd10_devicenum);
-		if (sz < 0)
+		if (sz < 0) {
+			efi_error("could not make EDD 1.0 device path");
 			return -1;
+		}
 		off = sz;
 	} else if (!(options & EFIBOOT_ABBREV_FILE)
 		   && !(options & EFIBOOT_ABBREV_HD)) {
@@ -201,8 +226,10 @@ efi_va_generate_file_device_path_from_esp(uint8_t *buf, ssize_t size,
 		 * from there.
 		 */
 		sz = make_blockdev_path(buf, size, &info);
-		if (sz < 0)
+		if (sz < 0) {
+			efi_error("could not create device path");
 			return -1;
+		}
 		off += sz;
 	}
 
@@ -212,33 +239,44 @@ efi_va_generate_file_device_path_from_esp(uint8_t *buf, ssize_t size,
 		int rc;
 
 		rc = set_disk_and_part_name(&info);
-		if (rc < 0)
+		if (rc < 0) {
+			efi_error("could not set disk and partition name");
 			goto err;
+		}
 
 		disk_fd = open_disk(&info,
-		    (options& EFIBOOT_OPTIONS_WRITE_SIGNATURE)?O_RDWR:O_RDONLY);
-		if (disk_fd < 0)
+				    (options & EFIBOOT_OPTIONS_WRITE_SIGNATURE)
+				     ? O_RDWR : O_RDONLY);
+		if (disk_fd < 0) {
+			efi_error("could not open disk");
 			goto err;
+		}
 
 		sz = make_hd_dn(buf, size, off, disk_fd, info.part, options);
 		saved_errno = errno;
 		close(disk_fd);
 		errno = saved_errno;
-		if (sz < 0)
+		if (sz < 0) {
+			efi_error("could not make HD() DP node");
 			goto err;
+		}
 		off += sz;
 	}
 
 	char *filepath = strdupa(relpath);
 	tilt_slashes(filepath);
 	sz = efidp_make_file(buf+off, size?size-off:0, filepath);
-	if (sz < 0)
+	if (sz < 0) {
+		efi_error("could not make File() DP node");
 		goto err;
+	}
 	off += sz;
 
 	sz = efidp_make_end_entire(buf+off, size?size-off:0);
-	if (sz < 0)
+	if (sz < 0) {
+		efi_error("could not make EndEntire DP node");
 		goto err;
+	}
 	off += sz;
 	ret = off;
 err:
@@ -278,6 +316,8 @@ efi_generate_file_device_path_from_esp(uint8_t *buf, ssize_t size,
 	saved_errno = errno;
 	va_end(ap);
 	errno = saved_errno;
+	if (ret < 0)
+		efi_error("could not generate File DP from ESP");
 	return ret;
 }
 
@@ -297,16 +337,22 @@ efi_generate_file_device_path(uint8_t *buf, ssize_t size,
 	int saved_errno;
 
 	rc = find_file(filepath, &child_devpath, &relpath);
-	if (rc < 0)
+	if (rc < 0) {
+		efi_error("could not canonicalize fs path");
 		return -1;
+	}
 
 	rc = find_parent_devpath(child_devpath, &parent_devpath);
-	if (rc < 0)
+	if (rc < 0) {
+		efi_error("could not find parent device for file");
 		return -1;
+	}
 
 	rc = get_partition_number(child_devpath);
-	if (rc < 0)
+	if (rc < 0) {
+		efi_error("could not get partition number for device");
 		goto err;
+	}
 
 	va_start(ap, options);
 
@@ -316,6 +362,8 @@ efi_generate_file_device_path(uint8_t *buf, ssize_t size,
 	saved_errno = errno;
 	va_end(ap);
 	errno = saved_errno;
+	if (ret < 0)
+		efi_error("could not generate File DP from ESP");
 err:
 	saved_errno = errno;
 	if (child_devpath)
@@ -340,6 +388,8 @@ make_ipv4_path(uint8_t *buf, ssize_t size,
 	       uint16_t protocol __attribute__((unused)),
 	       uint8_t addr_origin __attribute__((unused)))
 {
+	ssize_t ret;
+
 #if 0
 	if (local_addr == NULL || remote_addr == NULL ||
 	    gateway_addr == NULL || netmask == NULL) {
@@ -347,7 +397,10 @@ make_ipv4_path(uint8_t *buf, ssize_t size,
 		return -1;
 	}
 #endif
-	return efidp_make_ipv4(buf, size, 0, 0, 0, 0, 0, 0, 0, 0);
+	ret = efidp_make_ipv4(buf, size, 0, 0, 0, 0, 0, 0, 0, 0);
+	if (ret < 0)
+		efi_error("could not make ipv4 DP node");
+	return ret;
 }
 
 ssize_t
@@ -368,20 +421,26 @@ efi_generate_ipv4_device_path(uint8_t *buf, ssize_t size,
 	ssize_t sz;
 
 	sz = make_mac_path(buf, size, ifname);
-	if (sz < 0)
+	if (sz < 0) {
+		efi_error("could not make MAC DP node");
 		return -1;
+	}
 	off += sz;
 
 	sz = make_ipv4_path(buf+off, size?size-off:0, local_addr, remote_addr,
 			    gateway_addr, netmask, local_port, remote_port,
 			    protocol, addr_origin);
-	if (sz < 0)
+	if (sz < 0) {
+		efi_error("could not make IPV4 DP node");
 		return -1;
+	}
 	off += sz;
 
 	sz = efidp_make_end_entire(buf+off, size?size-off:0);
-	if (sz < 0)
+	if (sz < 0) {
+		efi_error("could not make EndEntire DP node");
 		return -1;
+	}
 	off += sz;
 
 	return off;

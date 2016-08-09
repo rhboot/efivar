@@ -480,8 +480,10 @@ _format_message_dn(char *buf, size_t size, const_efidp dp)
 	case EFIDP_MSG_ISCSI: {
 		ssize_t sz = efidp_node_size(dp)
 			- offsetof(efidp_iscsi, target_name);
-		if (sz < 0)
+		if (sz < 0) {
+			efi_error("bad DP node size");
 			return -1;
+		}
 
 		if (sz > EFIDP_ISCSI_MAX_TARGET_NAME_LEN)
 			sz = EFIDP_ISCSI_MAX_TARGET_NAME_LEN;
@@ -521,8 +523,10 @@ _format_message_dn(char *buf, size_t size, const_efidp dp)
 		break;
 	case EFIDP_MSG_URI: {
 		ssize_t sz = efidp_node_size(dp) - offsetof(efidp_uri, uri);
-		if (sz < 0)
+		if (sz < 0) {
+			efi_error("bad DP node size");
 			return -1;
+		}
 
 		char uri[sz + 1];
 		memcpy(uri, dp->uri.uri, sz);
@@ -562,6 +566,10 @@ efidp_make_mac_addr(uint8_t *buf, ssize_t size, uint8_t if_type,
 		memcpy(mac->mac_addr, mac_addr,
 		       mac_addr_size > 32 ? 32 : mac_addr_size);
 	}
+
+	if (sz < 0)
+		efi_error("efidp_make_generic failed");
+
 	return sz;
 }
 
@@ -588,6 +596,10 @@ efidp_make_ipv4(uint8_t *buf, ssize_t size, uint32_t local, uint32_t remote,
 		*((char *)ipv4->gateway) = htonl(gateway);
 		*((char *)ipv4->netmask) = htonl(netmask);
 	}
+
+	if (sz < 0)
+		efi_error("efidp_make_generic failed");
+
 	return sz;
 }
 
@@ -603,6 +615,10 @@ efidp_make_scsi(uint8_t *buf, ssize_t size, uint16_t target, uint16_t lun)
 		scsi->target = target;
 		scsi->lun = lun;
 	}
+
+	if (sz < 0)
+		efi_error("efidp_make_generic failed");
+
 	return sz;
 }
 
@@ -626,6 +642,10 @@ efidp_make_nvme(uint8_t *buf, ssize_t size, uint32_t namespace_id,
 			memset(nvme->ieee_eui_64, '\0',
 			       sizeof (nvme->ieee_eui_64));
 	}
+
+	if (sz < 0)
+		efi_error("efidp_make_generic failed");
+
 	return sz;
 }
 
@@ -645,6 +665,10 @@ efidp_make_sata(uint8_t *buf, ssize_t size, uint16_t hba_port,
 		sata->port_multiplier_port = port_multiplier_port;
 		sata->lun = lun;
 	}
+
+	if (sz < 0)
+		efi_error("efidp_make_generic failed");
+
 	return sz;
 }
 
@@ -664,6 +688,10 @@ efidp_make_atapi(uint8_t *buf, ssize_t size, uint16_t primary,
 		atapi->slave = slave;
 		atapi->lun = lun;
 	}
+
+	if (sz < 0)
+		efi_error("efidp_make_generic failed");
+
 	return sz;
 }
 
@@ -687,5 +715,9 @@ efidp_make_sas(uint8_t *buf, ssize_t size, uint64_t sas_address)
 		sas->drive_bay_id = 0;
 		sas->rtp = 0;
 	}
+
+	if (sz < 0)
+		efi_error("efidp_make_generic failed");
+
 	return sz;
 }

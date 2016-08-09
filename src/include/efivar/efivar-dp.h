@@ -939,35 +939,55 @@ efidp_is_valid(const_efidp dp, ssize_t limit)
 		switch (hdr->type) {
 		case EFIDP_HARDWARE_TYPE:
 			if (hdr->subtype != EFIDP_HW_VENDOR &&
-			    hdr->length > 1024)
+			    hdr->length > 1024) {
+				errno = EINVAL;
+				efi_error("invalid hardware node");
 				return 0;
+			}
 			break;
 		case EFIDP_ACPI_TYPE:
-			if (hdr->length > 1024)
+			if (hdr->length > 1024) {
+				errno = EINVAL;
+				efi_error("invalid ACPI node");
 				return 0;
+			}
 			break;
 		case EFIDP_MESSAGE_TYPE:
 			if (hdr->subtype != EFIDP_MSG_VENDOR &&
-			    hdr->length > 1024)
+			    hdr->length > 1024) {
+				errno = EINVAL;
+				efi_error("invalid message node");
 				return 0;
+			}
 			break;
 		case EFIDP_MEDIA_TYPE:
 			if (hdr->subtype != EFIDP_MEDIA_VENDOR &&
-			    hdr->length > 1024)
+			    hdr->length > 1024) {
+				errno = EINVAL;
+				efi_error("invalid media node");
 				return 0;
+			}
 			break;
 		case EFIDP_BIOS_BOOT_TYPE:
 			break;
 		case EFIDP_END_TYPE:
-			if (hdr->length > 4)
+			if (hdr->length > 4) {
+				errno = EINVAL;
+				efi_error("invalid end node");
 				return 0;
+			}
 			break;
 		default:
+			errno = EINVAL;
+			efi_error("invalid device path node type");
 			return 0;
 		}
 
-		if (limit < hdr->length)
+		if (limit < hdr->length) {
+			errno = EINVAL;
+			efi_error("device path node length overruns buffer");
 			return 0;
+		}
 		limit -= hdr->length;
 
 		if (hdr->type != EFIDP_END_TYPE &&
@@ -978,6 +998,7 @@ efidp_is_valid(const_efidp dp, ssize_t limit)
 	}
 	if (limit < 0) {
 		errno = EINVAL;
+		efi_error("device path node length overruns buffer");
 		return 0;
 	}
 	return 1;

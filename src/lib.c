@@ -47,7 +47,11 @@ __attribute__((__visibility__ ("default")))
 _efi_set_variable(efi_guid_t guid, const char *name, uint8_t *data,
 		  size_t data_size, uint32_t attributes)
 {
-	return ops->set_variable(guid, name, data, data_size, attributes, 0600);
+	int rc;
+	rc = ops->set_variable(guid, name, data, data_size, attributes, 0600);
+	if (rc < 0)
+		efi_error("ops->set_variable() failed");
+	return rc;
 }
 __asm__(".symver _efi_set_variable,_efi_set_variable@");
 
@@ -57,7 +61,11 @@ __attribute__((__visibility__ ("default")))
 _efi_set_variable_variadic(efi_guid_t guid, const char *name, uint8_t *data,
 			   size_t data_size, uint32_t attributes, ...)
 {
-	return ops->set_variable(guid, name, data, data_size, attributes, 0600);
+	int rc;
+	rc = ops->set_variable(guid, name, data, data_size, attributes, 0600);
+	if (rc < 0)
+		efi_error("ops->set_variable() failed");
+	return rc;
 }
 __asm__(".symver _efi_set_variable_variadic,efi_set_variable@");
 
@@ -67,7 +75,13 @@ __attribute__((__visibility__ ("default")))
 efi_set_variable(efi_guid_t guid, const char *name, uint8_t *data,
 		 size_t data_size, uint32_t attributes, mode_t mode)
 {
-	return ops->set_variable(guid, name, data, data_size, attributes, mode);
+	int rc;
+	rc = ops->set_variable(guid, name, data, data_size, attributes, mode);
+	if (rc < 0)
+		efi_error("ops->set_variable() failed");
+	else
+		efi_error_clear();
+	return rc;
 }
 __asm__(".symver efi_set_variable,efi_set_variable@@LIBEFIVAR_0.24");
 
@@ -77,10 +91,22 @@ __attribute__((__visibility__ ("default")))
 efi_append_variable(efi_guid_t guid, const char *name, uint8_t *data,
 			size_t data_size, uint32_t attributes)
 {
-	if (!ops->append_variable)
-		return generic_append_variable(guid, name, data, data_size,
-						attributes);
-	return ops->append_variable(guid, name, data, data_size, attributes);
+	int rc;
+	if (!ops->append_variable) {
+		rc = generic_append_variable(guid, name, data, data_size,
+					     attributes);
+		if (rc < 0)
+			efi_error("generic_append_variable() failed");
+		else
+			efi_error_clear();
+		return rc;
+	}
+	rc = ops->append_variable(guid, name, data, data_size, attributes);
+	if (rc < 0)
+		efi_error("ops->append_variable() failed");
+	else
+		efi_error_clear();
+	return rc;
 }
 
 int
@@ -88,11 +114,18 @@ __attribute__((__nonnull__ (2)))
 __attribute__((__visibility__ ("default")))
 efi_del_variable(efi_guid_t guid, const char *name)
 {
+	int rc;
 	if (!ops->del_variable) {
+		efi_error("del_variable() is not implemented");
 		errno = ENOSYS;
 		return -1;
 	}
-	return ops->del_variable(guid, name);
+	rc = ops->del_variable(guid, name);
+	if (rc < 0)
+		efi_error("ops->del_variable() failed");
+	else
+		efi_error_clear();
+	return rc;
 }
 
 int
@@ -101,11 +134,18 @@ __attribute__((__visibility__ ("default")))
 efi_get_variable(efi_guid_t guid, const char *name, uint8_t **data,
 		  size_t *data_size, uint32_t *attributes)
 {
+	int rc;
 	if (!ops->get_variable) {
+		efi_error("get_variable() is not implemented");
 		errno = ENOSYS;
 		return -1;
 	}
-	return ops->get_variable(guid, name, data, data_size, attributes);
+	rc = ops->get_variable(guid, name, data, data_size, attributes);
+	if (rc < 0)
+		efi_error("ops->get_variable failed");
+	else
+		efi_error_clear();
+	return rc;
 }
 
 int
@@ -114,11 +154,18 @@ __attribute__((__visibility__ ("default")))
 efi_get_variable_attributes(efi_guid_t guid, const char *name,
 			    uint32_t *attributes)
 {
+	int rc;
 	if (!ops->get_variable_attributes) {
+		efi_error("get_variable_attributes() is not implemented");
 		errno = ENOSYS;
 		return -1;
 	}
-	return ops->get_variable_attributes(guid, name, attributes);
+	rc = ops->get_variable_attributes(guid, name, attributes);
+	if (rc < 0)
+		efi_error("ops->get_variable_attributes() failed");
+	else
+		efi_error_clear();
+	return rc;
 }
 
 int
@@ -126,11 +173,18 @@ __attribute__((__nonnull__ (2, 3)))
 __attribute__((__visibility__ ("default")))
 efi_get_variable_size(efi_guid_t guid, const char *name, size_t *size)
 {
+	int rc;
 	if (!ops->get_variable_size) {
+		efi_error("get_variable_size() is not implemented");
 		errno = ENOSYS;
 		return -1;
 	}
-	return ops->get_variable_size(guid, name, size);
+	rc = ops->get_variable_size(guid, name, size);
+	if (rc < 0)
+		efi_error("ops->get_variable_size() failed");
+	else
+		efi_error_clear();
+	return rc;
 }
 
 int
@@ -138,11 +192,18 @@ __attribute__((__nonnull__ (1, 2)))
 __attribute__((__visibility__ ("default")))
 efi_get_next_variable_name(efi_guid_t **guid, char **name)
 {
+	int rc;
 	if (!ops->get_next_variable_name) {
+		efi_error("get_next_variable_name() is not implemented");
 		errno = ENOSYS;
 		return -1;
 	}
-	return ops->get_next_variable_name(guid, name);
+	rc = ops->get_next_variable_name(guid, name);
+	if (rc < 0)
+		efi_error("ops->get_next_variable_name() failed");
+	else
+		efi_error_clear();
+	return rc;
 }
 
 int
@@ -150,11 +211,18 @@ __attribute__((__nonnull__ (2)))
 __attribute__((__visibility__ ("default")))
 efi_chmod_variable(efi_guid_t guid, const char *name, mode_t mode)
 {
+	int rc;
 	if (!ops->chmod_variable) {
+		efi_error("chmod_variable() is not implemented");
 		errno = ENOSYS;
 		return -1;
 	}
-	return ops->chmod_variable(guid, name, mode);
+	rc = ops->chmod_variable(guid, name, mode);
+	if (rc < 0)
+		efi_error("ops->chmod_variable() failed");
+	else
+		efi_error_clear();
+	return rc;
 }
 
 int
@@ -186,7 +254,13 @@ libefivar_init(void)
 				ops = ops_list[i];
 				break;
 			}
-		} else if (ops_list[i]->probe()) {
+		} else {
+			int rc = ops_list[i]->probe();
+			if (rc <= 0)
+				efi_error("ops_list[%d]->probe() failed", i);
+			else
+				efi_error_clear();
+
 			ops = ops_list[i];
 			break;
 		}

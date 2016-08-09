@@ -94,6 +94,10 @@ efidp_make_pci(uint8_t *buf, ssize_t size, uint8_t device, uint8_t function)
 		pci->device = device;
 		pci->function = function;
 	}
+
+	if (sz < 0)
+		efi_error("efidp_make_generic failed");
+
 	return sz;
 }
 
@@ -111,5 +115,9 @@ efidp_make_edd10(uint8_t *buf, ssize_t size, uint32_t hardware_device)
 		memcpy(&edd_dp->vendor_guid, &edd10_guid, sizeof (edd10_guid));
 		edd_dp->hardware_device = hardware_device;
 	}
+
+	if (sz < 0)
+		efi_error("efidp_make_generic failed");
+
 	return sz;
 }

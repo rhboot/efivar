@@ -27,24 +27,30 @@
 
 #include "ucs2.h"
 
-#define format(buf, size, off, fmt, args...) ({			\
+#define format(buf, size, off, dp_type, fmt, args...) ({		\
 		ssize_t _x = 0;						\
 		if ((off) >= 0) {					\
 			_x = snprintf(((buf)+(off)),			\
 			       ((size)?((size)-(off)):0),		\
 			       fmt, ## args);				\
-			if (_x < 0)					\
+			if (_x < 0) {					\
+				efi_error(				\
+					"could not build %s DP string",	\
+					(dp_type));			\
 				return _x;				\
+			}						\
 			(off) += _x;					\
 		}							\
 		off;							\
 	})
 
-#define format_helper(fn, buf, size, off, args...) ({		\
+#define format_helper(fn, buf, size, off, dp_type, args...) ({		\
 		ssize_t _x;						\
 		_x = (fn)(((buf)+(off)),				\
-			  ((size)?((size)-(off)):0), ## args);		\
+			  ((size)?((size)-(off)):0), dp_type, ## args);	\
 		if (_x < 0)						\
+			efi_error("could not build %s DP string",	\
+				  dp_type);				\
 		(off) += _x;						\
 	})
 
@@ -55,29 +61,38 @@
 		(void *)__newbuf;					\
 	})
 
-#define format_guid(buf, size, off, guid) ({				\
+#define format_guid(buf, size, off, dp_type, guid) ({			\
 		int _rc;						\
 		char *_guidstr = NULL;					\
 									\
 		_rc = efi_guid_to_str(guid, &_guidstr);			\
-		format(buf, size, off, "%s", _guidstr);			\
+		if (_rc < 0) {						\
+			efi_error("could not build %s GUID DP string",	\
+				  dp_type);				\
+		} else {						\
+			_guidstr = onstack(_guidstr,			\
+					   strlen(_guidstr)+1);		\
+			_rc = format(buf, size, off, dp_type, "%s",	\
+				     _guidstr);	\
+		}							\
+		_rc;							\
 	})
 
 static inline ssize_t
 __attribute__((__unused__))
-format_hex_helper(char *buf, size_t size, const void * const addr,
-		  const size_t len)
+format_hex_helper(char *buf, size_t size, const char *dp_type,
+		  const void * const addr, const size_t len)
 {
 	ssize_t off = 0;
 	for (size_t i = 0; i < len; i++) {
-		format(buf, size, off, "%02x",
+		format(buf, size, off, dp_type, "%02x",
 		       *((const unsigned char * const )addr+i));
 	}
 	return off;
 }
 
-#define format_hex(buf, size, off, addr, len)				\
-	format_helper(format_hex_helper, buf, size, off, addr, len)
+#define format_hex(buf, size, off, dp_type, addr, len)			\
+	format_helper(format_hex_helper, buf, size, off, dp_type, addr, len)
 
 static inline ssize_t
 __attribute__((__unused__))
@@ -99,10 +114,10 @@ format_vendor_helper(char *buf, size_t size, char *label, const_efidp dp)
 	return off;
 }
 
-#define format_vendor(buf, size, off, label, dp)			\
+#define format_vendor(buf, size, off, label, dp)		\
 	format_helper(format_vendor_helper, buf, size, off, label, dp)
 
-#define format_ucs2(buf, size, off, str, len) ({			\
+#define format_ucs2(buf, size, off, dp_type, str, len) ({		\
 		uint16_t _ucs2buf[(len)];				\
 		memset(_ucs2buf, '\0', sizeof (_ucs2buf));		\
 		memcpy(_ucs2buf, str, sizeof (_ucs2buf)			\
@@ -112,17 +127,17 @@ format_vendor_helper(char *buf, size_t size, char *label, const_efidp dp)
 		if (_asciibuf == NULL)					\
 			return -1;					\
 		_asciibuf = onstack(_asciibuf, (len));			\
-		format(buf, size, off, "%s", _asciibuf);		\
+		format(buf, size, off, dp_type, "%s", _asciibuf);	\
        })
 
-#define format_array(buf, size, off, fmt, type, addr, len) ({		\
+#define format_array(buf, size, off, dp_type, fmt, type, addr, len) ({	\
 		for (size_t _i = 0; _i < len; _i++) {			\
 			if (_i != 0)					\
-				format(buf, size, off, ",");		\
-			format(buf, size, off, fmt,			\
+				format(buf, size, off, dp_type, ",");	\
+			format(buf, size, off, dp_type, fmt,		\
 			       ((type *)addr)[_i]);			\
 		}							\
-		(off);							\
+		off;							\
 	})
 
 extern ssize_t _format_hw_dn(char *buf, size_t size, const_efidp dp);

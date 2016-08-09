@@ -76,8 +76,10 @@ get_file_data_size(int dfd, char *name)
 	strcat(raw_var, "/raw_var");
 
 	int fd = openat(dfd, raw_var, O_RDONLY);
-	if (fd < 0)
+	if (fd < 0) {
+		efi_error("openat failed");
 		return -1;
+	}
 
 	char buf[4096];
 	ssize_t sz, total = 0;
@@ -182,12 +184,16 @@ get_size_from_file(const char *filename, size_t *retsize)
 	int errno_value;
 	int ret = -1;
 	int fd = open(filename, O_RDONLY);
-	if (fd < 0)
+	if (fd < 0) {
+		efi_error("open(%s, O_RDONLY) failed", filename);
 		goto err;
+	}
 
 	int rc = read_file(fd, &buf, &bufsize);
-	if (rc < 0)
+	if (rc < 0) {
+		efi_error("read_file(%s) failed", filename);
 		goto err;
+	}
 
 	long long size = strtoll((char *)buf, NULL, 0);
 	if ((size == LLONG_MIN || size == LLONG_MAX) && errno == ERANGE) {
@@ -218,12 +224,17 @@ vars_probe(void)
 	char *newvar;
 
 	/* If we can't tell if it's 64bit or not, this interface is no good. */
-	if (is_64bit() < 0)
+	if (is_64bit() < 0) {
+		efi_error("is_64bit() failed");
 		return 0;
-	if (asprintfa(&newvar, "%s%s", get_vars_path(), "new_var") < 0)
+	}
+	if (asprintfa(&newvar, "%s%s", get_vars_path(), "new_var") < 0) {
+		efi_error("asprintfa failed");
 		return 0;
+	}
 	if (!access(newvar, F_OK))
 		return 1;
+	efi_error("access(%s, F_OK) failed", newvar);
 	return 0;
 }
 
@@ -238,14 +249,18 @@ vars_get_variable_size(efi_guid_t guid, const char *name, size_t *size)
 			  name, guid.a, guid.b, guid.c, bswap_16(guid.d),
 			  guid.e[0], guid.e[1], guid.e[2], guid.e[3],
 			  guid.e[4], guid.e[5]);
-	if (rc < 0)
+	if (rc < 0) {
+		efi_error("asprintf failed");
 		goto err;
+	}
 
 	size_t retsize = 0;
 	rc = get_size_from_file(path, &retsize);
 	if (rc >= 0) {
 		ret = 0;
 		*size = retsize;
+	} else if (rc < 0) {
+		efi_error("get_size_from_file(%s) failed", path);
 	}
 err:
 	errno_value = errno;
@@ -268,8 +283,10 @@ vars_get_variable_attributes(efi_guid_t guid, const char *name,
 	uint32_t attribs;
 
 	ret = efi_get_variable(guid, name, &data, &data_size, &attribs);
-	if (ret < 0)
+	if (ret < 0) {
+		efi_error("efi_get_variable() failed");
 		return ret;
+	}
 
 	*attributes = attribs;
 	if (data)
@@ -291,16 +308,22 @@ vars_get_variable(efi_guid_t guid, const char *name, uint8_t **data,
 			  name, guid.a, guid.b, guid.c, bswap_16(guid.d),
 			  guid.e[0], guid.e[1], guid.e[2],
 			  guid.e[3], guid.e[4], guid.e[5]);
-	if (rc < 0)
+	if (rc < 0) {
+		efi_error("asprintf failed");
 		return -1;
+	}
 
 	int fd = open(path, O_RDONLY);
-	if (fd < 0)
+	if (fd < 0) {
+		efi_error("open(%s, O_RDONLY) failed", path);
 		goto err;
+	}
 
 	rc = read_file(fd, &buf, &bufsize);
-	if (rc < 0)
+	if (rc < 0) {
+		efi_error("read_file(%s) failed", path);
 		goto err;
+	}
 
 	bufsize -= 1; /* read_file pads out 1 extra byte to NUL it */
 
@@ -309,13 +332,17 @@ vars_get_variable(efi_guid_t guid, const char *name, uint8_t **data,
 
 		if (bufsize != sizeof(efi_kernel_variable_64_t)) {
 			errno = EFBIG;
+			efi_error("file size is wrong for 64-bit variable (%zd of %zd)",
+				  bufsize, sizeof(efi_kernel_variable_64_t));
 			goto err;
 		}
 
 		var64 = (void *)buf;
 		*data = malloc(var64->DataSize);
-		if (!*data)
+		if (!*data) {
+			efi_error("malloc failed");
 			goto err;
+		}
 		memcpy(*data, var64->Data, var64->DataSize);
 		*data_size = var64->DataSize;
 		*attributes = var64->Attributes;
@@ -323,14 +350,18 @@ vars_get_variable(efi_guid_t guid, const char *name, uint8_t **data,
 		efi_kernel_variable_32_t *var32;
 
 		if (bufsize != sizeof(efi_kernel_variable_32_t)) {
+			efi_error("file size is wrong for 32-bit variable (%zd of %zd)",
+				  bufsize, sizeof(efi_kernel_variable_32_t));
 			errno = EFBIG;
 			goto err;
 		}
 
 		var32 = (void *)buf;
 		*data = malloc(var32->DataSize);
-		if (!*data)
+		if (!*data) {
+			efi_error("malloc failed");
 			goto err;
+		}
 		memcpy(*data, var32->Data, var32->DataSize);
 		*data_size = var32->DataSize;
 		*attributes = var32->Attributes;
@@ -364,39 +395,55 @@ vars_del_variable(efi_guid_t guid, const char *name)
 			  name, guid.a, guid.b, guid.c, bswap_16(guid.d),
 			  guid.e[0], guid.e[1], guid.e[2],
 			  guid.e[3], guid.e[4], guid.e[5]);
-	if (rc < 0)
+	if (rc < 0) {
+		efi_error("asprintf failed");
 		return -1;
+	}
 
 	uint8_t *buf = NULL;
 	size_t buf_size = 0;
 	char *delvar;
 
 	int fd = open(path, O_RDONLY);
-	if (fd < 0)
+	if (fd < 0) {
+		efi_error("open(%s, O_RDONLY) failed", path);
 		goto err;
+	}
 
 	rc = read_file(fd, &buf, &buf_size);
 	buf_size -= 1; /* read_file pads out 1 extra byte to NUL it */
-	if (rc < 0)
+	if (rc < 0) {
+		efi_error("read_file(%s) failed", path);
 		goto err;
+	}
 
 	if (buf_size != sizeof(efi_kernel_variable_64_t) &&
 		       buf_size != sizeof(efi_kernel_variable_32_t)) {
+		efi_error("variable size %zd is not 32-bit (%zd) or 64-bit (%zd)",
+			  buf_size, sizeof(efi_kernel_variable_32_t),
+			  sizeof(efi_kernel_variable_64_t));
+
 		errno = EFBIG;
 		goto err;
 	}
 
-	if (asprintfa(&delvar, "%s%s", get_vars_path(), "del_var") < 0)
+	if (asprintfa(&delvar, "%s%s", get_vars_path(), "del_var") < 0) {
+		efi_error("asprintfa() failed");
 		goto err;
+	}
 
 	close(fd);
 	fd = open(delvar, O_WRONLY);
-	if (fd < 0)
+	if (fd < 0) {
+		efi_error("open(%s, O_WRONLY) failed", delvar);
 		goto err;
+	}
 
 	rc = write(fd, buf, buf_size);
 	if (rc >= 0)
 		ret = 0;
+	else
+		efi_error("write() failed");
 err:
 	errno_value = errno;
 
@@ -462,11 +509,14 @@ vars_chmod_variable(efi_guid_t guid, const char *name, mode_t mode)
 			  name, guid.a, guid.b, guid.c, bswap_16(guid.d),
 			  guid.e[0], guid.e[1], guid.e[2], guid.e[3],
 			  guid.e[4], guid.e[5]);
-	if (rc < 0)
+	if (rc < 0) {
+		efi_error("asprintf failed");
 		return -1;
+	}
 
 	rc = _vars_chmod_variable(path, mode);
 	int saved_errno = errno;
+	efi_error("_vars_chmod_variable() failed");
 	free(path);
 	errno = saved_errno;
 	return rc;
@@ -481,10 +531,14 @@ vars_set_variable(efi_guid_t guid, const char *name, uint8_t *data,
 	int ret = -1;
 
 	if (strlen(name) > 1024) {
+		efi_error("variable name size is too large (%zd of 1024)",
+			  strlen(name));
 		errno = EINVAL;
 		return -1;
 	}
 	if (data_size > 1024) {
+		efi_error("variable data size is too large (%zd of 1024)",
+			  data_size);
 		errno = ENOSPC;
 		return -1;
 	}
@@ -494,21 +548,26 @@ vars_set_variable(efi_guid_t guid, const char *name, uint8_t *data,
 			  name, guid.a, guid.b, guid.c, bswap_16(guid.d),
 			  guid.e[0], guid.e[1], guid.e[2], guid.e[3],
 			  guid.e[4], guid.e[5]);
-	if (rc < 0)
+	if (rc < 0) {
+		efi_error("asprintf failed");
 		return -1;
+	}
 
 	len = rc;
 	int fd = -1;
 
 	if (!access(path, F_OK)) {
 		rc = efi_del_variable(guid, name);
-		if (rc < 0)
+		if (rc < 0) {
+			efi_error("efi_del_variable failed");
 			goto err;
+		}
 	}
 	char *newvar;
-	if (asprintfa(&newvar, "%s%s", get_vars_path(), "new_var") < 0)
+	if (asprintfa(&newvar, "%s%s", get_vars_path(), "new_var") < 0) {
+		efi_error("asprintfa failed");
 		goto err;
-
+	}
 
 	if (is_64bit()) {
 		efi_kernel_variable_64_t var64 = {
@@ -523,8 +582,10 @@ vars_set_variable(efi_guid_t guid, const char *name, uint8_t *data,
 		memcpy(var64.Data, data, data_size);
 
 		fd = open(newvar, O_WRONLY);
-		if (fd < 0)
+		if (fd < 0) {
+			efi_error("open(%s, O_WRONLY) failed", newvar);
 			goto err;
+		}
 
 		rc = write(fd, &var64, sizeof(var64));
 	} else {
@@ -539,14 +600,18 @@ vars_set_variable(efi_guid_t guid, const char *name, uint8_t *data,
 		memcpy(var32.Data, data, data_size);
 
 		fd = open(newvar, O_WRONLY);
-		if (fd < 0)
+		if (fd < 0) {
+			efi_error("open(%s, O_WRONLY) failed", newvar);
 			goto err;
+		}
 
 		rc = write(fd, &var32, sizeof(var32));
 	}
 
 	if (rc >= 0)
 		ret = 0;
+	else
+		efi_error("write() failed");
 
 	/* this is inherently racy, but there's no way to do it correctly with
 	 * this kernel API.  Fortunately, all directory contents get created
@@ -569,7 +634,12 @@ err:
 static int
 vars_get_next_variable_name(efi_guid_t **guid, char **name)
 {
-	return generic_get_next_variable_name(get_vars_path(), guid, name);
+	int rc;
+	const char *vp = get_vars_path();
+	rc = generic_get_next_variable_name(vp, guid, name);
+	if (rc < 0)
+		efi_error("generic_get_next_variable_name(%s,...) failed", vp);
+	return rc;
 }
 
 struct efi_var_operations vars_ops = {

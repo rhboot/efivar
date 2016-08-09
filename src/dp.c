@@ -37,6 +37,7 @@ efidp_data_address(const_efidp dp)
 {
 	if (dp->length <= 4) {
 		errno = ENOSPC;
+		efi_error("DP was smaller than DP header");
 		return NULL;
 	}
 	return (void *)((uint8_t *)dp + sizeof (dp));
@@ -48,11 +49,14 @@ efidp_set_node_data(const_efidp dn, void *buf, size_t bufsize)
 {
 	if (dn->length < 4 || bufsize > (size_t)dn->length - 4) {
 		errno = ENOSPC;
+		efi_error("DP was smaller than DP header");
 		return -1;
 	}
 	void *data = efidp_data_address(dn);
-	if (!data)
+	if (!data) {
+		efi_error("efidp_data_address failed");
 		return -1;
+	}
 	memcpy(data, buf, bufsize);
 	return 0;
 }
@@ -66,17 +70,22 @@ efidp_duplicate_extra(const_efidp dp, efidp *out, size_t extra)
 	efidp new;
 
 	sz = efidp_size(dp);
-	if (sz < 0)
+	if (sz < 0) {
+		efi_error("efidp_size(dp) returned error");
 		return sz;
+	}
 
 	if (add(sz, extra, &plus)) {
 		errno = EOVERFLOW;
+		efi_error("arithmetic overflow computing allocation size");
 		return -1;
 	}
 
 	new = calloc(1, plus);
-	if (!new)
+	if (!new) {
+		efi_error("allocation failed");
 		return -1;
+	}
 
 	memcpy(new, dp, sz);
 	*out = new;
@@ -87,7 +96,11 @@ int
 __attribute__((__visibility__ ("default")))
 efidp_duplicate_path(const_efidp  dp, efidp *out)
 {
-	return efidp_duplicate_extra(dp, out, 0);
+	int rc;
+	rc = efidp_duplicate_extra(dp, out, 0);
+	if (rc < 0)
+		efi_error("efi_duplicate_extra(dp, out, 0) returned error");
+	return rc;
 }
 
 int
@@ -98,47 +111,66 @@ efidp_append_path(const_efidp dp0, const_efidp dp1, efidp *out)
 	const_efidp le;
 	int rc;
 
-	if (!dp0 && !dp1)
-		return efidp_duplicate_path((const_efidp)&end_entire, out);
+	if (!dp0 && !dp1) {
+		rc = efidp_duplicate_path((const_efidp)&end_entire, out);
+		if (rc < 0)
+			efi_error("efidp_duplicate_path failed");
+		return rc;
+	}
 
-	if (dp0 && !dp1)
-		return efidp_duplicate_path(dp0, out);
+	if (dp0 && !dp1) {
+		rc = efidp_duplicate_path(dp0, out);
+		if (rc < 0)
+			efi_error("efidp_duplicate_path failed");
+		return rc;
+	}
 
-	if (!dp0 && dp1)
-		return efidp_duplicate_path(dp1, out);
+	if (!dp0 && dp1) {
+		rc = efidp_duplicate_path(dp1, out);
+		if (rc < 0)
+			efi_error("efidp_duplicate_path failed");
+		return rc;
+	}
 
 	lsz = efidp_size(dp0);
-	if (lsz < 0)
+	if (lsz < 0) {
+		efi_error("efidp_size(dp0) returned error");
 		return -1;
+	}
 
 	rsz = efidp_size(dp1);
-	if (rsz < 0)
+	if (lsz < 0) {
+		efi_error("efidp_size(dp1) returned error");
 		return -1;
+	}
 
 	le = dp0;
 	while (1) {
 		if (efidp_type(le) == EFIDP_END_TYPE &&
 				efidp_subtype(le) == EFIDP_END_ENTIRE) {
 			ssize_t lesz = efidp_size(le);
-			if (lesz < 0)
-				return -1;
 			lsz -= lesz;
 			break;
 		}
 
 		rc = efidp_get_next_end(le, &le);
-		if (rc < 0)
+		if (rc < 0) {
+			efi_error("efidp_get_next_end() returned error");
 			return -1;
+		}
 	}
 
 	efidp new;
 	if (add(lsz, rsz, &newsz)) {
 		errno = EOVERFLOW;
+		efi_error("arithmetic overflow computing allocation size");
 		return -1;
 	}
 	new = malloc(newsz);
-	if (!new)
+	if (!new) {
+		efi_error("allocation failed");
 		return -1;
+	}
 	*out = new;
 
 	memcpy(new, dp0, lsz);
@@ -154,16 +186,32 @@ efidp_append_node(const_efidp dp, const_efidp dn, efidp *out)
 	ssize_t lsz, rsz, newsz;
 	int rc;
 
-	if (!dp && !dn)
-		return efidp_duplicate_path((const_efidp)(const efidp_header * const)&end_entire, out);
+	if (!dp && !dn) {
+		rc = efidp_duplicate_path(
+			(const_efidp)(const efidp_header * const)&end_entire,
+			out);
+		if (rc < 0)
+			efi_error("efidp_duplicate_path() failed");
+		return rc;
+	}
+
+	lsz = efidp_size(dp);
+	if (lsz < 0) {
+		efi_error("efidp_size(dp) returned error");
+		return -1;
+	}
+
+	if (dp && !dn) {
+		rc = efidp_duplicate_path(dp, out);
+		if (rc < 0)
+			efi_error("efidp_duplicate_path() failed");
+		return rc;
+	}
 
 	lsz = efidp_size(dp);
 	if (lsz < 0)
 		return -1;
 
-
-	if (dp && !dn)
-		return efidp_duplicate_path(dp, out);
 
 	rsz = efidp_node_size(dn);
 	if (rsz < 0)
@@ -172,11 +220,15 @@ efidp_append_node(const_efidp dp, const_efidp dn, efidp *out)
 	if (!dp && dn) {
 		if (add(rsz, sizeof(end_entire), &newsz)) {
 			errno = EOVERFLOW;
+			efi_error(
+			  "arithmetic overflow computing allocation size");
 			return -1;
 		}
 		efidp new = malloc(rsz + sizeof (end_entire));
-		if (!new)
+		if (!new) {
+			efi_error("allocation failed");
 			return -1;
+		}
 
 		memcpy(new, dn, dn->length);
 		memcpy((uint8_t *)new + dn->length, &end_entire,
@@ -184,14 +236,6 @@ efidp_append_node(const_efidp dp, const_efidp dn, efidp *out)
 		*out = new;
 		return 0;
 	}
-
-	lsz = efidp_size(dp);
-	if (lsz < 0)
-		return -1;
-
-	rsz = efidp_node_size(dn);
-	if (rsz < 0)
-		return -1;
 
 	const_efidp le;
 	le = dp;
@@ -204,18 +248,23 @@ efidp_append_node(const_efidp dp, const_efidp dn, efidp *out)
 		}
 
 		rc = efidp_get_next_end(le, &le);
-		if (rc < 0)
+		if (rc < 0) {
+			efi_error("efidp_get_next_end() returned error");
 			return -1;
+		}
 	}
 
 	if (add(lsz, rsz, &newsz) || add(newsz, sizeof(end_entire), &newsz)) {
 		errno = EOVERFLOW;
+		efi_error("arithmetic overflow computing allocation size");
 		return -1;
 	}
 
 	efidp new = malloc(newsz);
-	if (!new)
+	if (!new) {
+		efi_error("allocation failed");
 		return -1;
+	}
 
 	*out = new;
 	memcpy(new, dp, lsz);
@@ -370,8 +419,10 @@ efidp_format_device_path(char *buf, size_t size, const_efidp dp, ssize_t limit)
 			limit -= efidp_node_size(dp);
 
 		int rc = efidp_next_node(dp, &dp);
-		if (rc < 0)
+		if (rc < 0) {
+			efi_error("could not format DP");
 			return rc;
+		}
 	}
 	return off+1;
 }
@@ -382,6 +433,7 @@ efidp_parse_device_node(char *path __attribute__((unused)),
 			efidp out __attribute__((unused)),
 			size_t size __attribute__((unused)))
 {
+	efi_error("not implented");
 	errno = -ENOSYS;
 	return -1;
 }
@@ -392,6 +444,7 @@ efidp_parse_device_path(char *path __attribute__((unused)),
 			efidp out __attribute__((unused)),
 			size_t size __attribute__((unused)))
 {
+	efi_error("not implented");
 	errno = -ENOSYS;
 	return -1;
 }
@@ -423,6 +476,7 @@ efidp_make_generic(uint8_t *buf, ssize_t size, uint8_t type, uint8_t subtype,
 	if (!size)
 		return total_size;
 	if (size < total_size) {
+		efi_error("total size is bigger than size limit");
 		errno = ENOSPC;
 		return -1;
 	}

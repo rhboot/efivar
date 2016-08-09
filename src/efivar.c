@@ -19,6 +19,7 @@
  */
 
 #include <ctype.h>
+#include <err.h>
 #include <fcntl.h>
 #include <popt.h>
 #include <stdio.h>
@@ -55,6 +56,35 @@ static const char *attribute_names[] = {
 	""
 };
 
+static int verbose_errors = 0;
+
+static void
+show_errors(void)
+{
+	int rc = 0;
+
+	if (!verbose_errors)
+		return;
+
+	printf("Error trace:\n");
+	for (int i = 0; rc > 0; i++) {
+		char *filename = NULL;
+		char *function = NULL;
+		int line = 0;
+		char *message = NULL;
+		int error = 0;
+
+		rc = efi_error_get(i, &filename, &function, &line, &message,
+				   &error);
+		if (rc < 0)
+			err(1, "error fetching trace value");
+		if (rc == 0)
+			break;
+		printf(" %s:%d %s(): %s: %s", filename, line, function,
+		       strerror(error), message);
+	}
+}
+
 static void
 list_all_variables(void)
 {
@@ -69,6 +99,7 @@ list_all_variables(void)
 
 	if (rc < 0) {
 		fprintf(stderr, "efivar: error listing variables: %m\n");
+		show_errors();
 		exit(1);
 	}
 }
@@ -89,7 +120,9 @@ parse_name(const char *guid_name, char **name, efi_guid_t *guid)
 		if (right[1] != '-' || right[2] == '\0') {
 bad_name:
 			errno = -EINVAL;
-			fprintf(stderr, "efivar: invalid name \"%s\"\n", guid_name);
+			fprintf(stderr, "efivar: invalid name \"%s\"\n",
+				guid_name);
+			show_errors();
 			exit(1);
 		}
 		name_pos = right + 1 - guid_name;
@@ -148,6 +181,7 @@ show_variable(char *guid_name, int display_type)
 	rc = efi_get_variable(guid, name, &data, &data_size, &attributes);
 	if (rc < 0) {
 		fprintf(stderr, "efivar: show variable: %m\n");
+		show_errors();
 		exit(1);
 	}
 
@@ -229,6 +263,7 @@ edit_variable(const char *guid_name, void *data, size_t data_size, int attrib,
 				&old_attributes);
 	if (rc < 0) {
 		fprintf(stderr, "efivar: %m\n");
+		show_errors();
 		exit(1);
 	}
 
@@ -248,6 +283,7 @@ edit_variable(const char *guid_name, void *data, size_t data_size, int attrib,
 
 	if (rc < 0) {
 		fprintf(stderr, "efivar: %m\n");
+		show_errors();
 		exit(1);
 	}
 }
@@ -257,6 +293,7 @@ validate_name(const char *name)
 {
 	if (name == NULL) {
 		fprintf(stderr, "Invalid variable name\n");
+		show_errors();
 		exit(1);
 	}
 }

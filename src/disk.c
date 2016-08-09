@@ -53,9 +53,15 @@ static int report_errors;
 static inline int
 is_mbr_valid(legacy_mbr *mbr)
 {
+	int ret;
 	if (!mbr)
 		return 0;
-	return (mbr->signature == MSDOS_MBR_SIGNATURE);
+	ret = (mbr->signature == MSDOS_MBR_SIGNATURE);
+	if (!ret) {
+		errno = ENOTTY;
+		efi_error("mbr signature is not MSDOS_MBR_SIGNATURE");
+	}
+	return ret;
 }
 
 /************************************************************
@@ -78,6 +84,8 @@ msdos_disk_get_extended_partition_info (int fd __attribute__((unused)),
 {
         /* Until I can handle these... */
         //fprintf(stderr, "Extended partition info not supported.\n");
+	errno = ENOSYS;
+	efi_error("extended partition info is not supported");
         return -1;
 }
 
@@ -104,10 +112,16 @@ msdos_disk_get_partition_info (int fd, int write_signature,
 	struct stat stat;
 	struct timeval tv;
 
-	if (!mbr)
+	if (!mbr) {
+		errno = EINVAL;
+		efi_error("mbr argument must not be NULL");
 		return -1;
-	if (!is_mbr_valid(mbr))
+	}
+	if (!is_mbr_valid(mbr)) {
+		errno = ENOENT;
+		efi_error("mbr is not valid");
 		return -1;
+	}
 
 	*mbr_type = 0x01;
 	*signature_type = 0x01;
@@ -127,7 +141,8 @@ msdos_disk_get_partition_info (int fd, int write_signature,
 		rc = fstat(fd, &stat);
 		if (rc < 0) {
 			if (report_errors)
-				perror("stat disk");
+				perror("fstat disk");
+			efi_error("could not fstat disk");
 			return rc;
 		}
 
@@ -135,6 +150,7 @@ msdos_disk_get_partition_info (int fd, int write_signature,
 		if (rc < 0) {
 			if (report_errors)
 				perror("gettimeofday");
+			efi_error("gettimeofday failed");
 			return rc;
 		}
 
@@ -146,13 +162,21 @@ msdos_disk_get_partition_info (int fd, int write_signature,
 		/* Write it to the disk */
 		lseek(fd, 0, SEEK_SET);
 		rc = write(fd, mbr, sizeof(*mbr));
+		if (rc < 0) {
+			efi_error("could not write MBR signature");
+			return rc;
+		}
 	}
 	*(uint32_t *)signature = mbr->unique_mbr_signature;
 
         if (num > 4) {
 		/* Extended partition */
-                return msdos_disk_get_extended_partition_info(fd, mbr, num,
-                                                              start, size);
+                rc = msdos_disk_get_extended_partition_info(fd, mbr, num,
+							    start, size);
+		if (rc < 0) {
+			efi_error("could not get extended partition info");
+			return rc;
+		}
         } else if (num == 0) {
 		/* Whole disk */
                 *start = 0;
@@ -182,13 +206,16 @@ get_partition_info(int fd, uint32_t options,
 	int sector_size = get_sector_size(fd);
 
 	mbr_size = lcm(sizeof(*mbr), sector_size);
-	if ((rc = posix_memalign(&mbr_sector, sector_size, mbr_size)) != 0)
+	if ((rc = posix_memalign(&mbr_sector, sector_size, mbr_size)) != 0) {
+		efi_error("posix_memalign failed");
 		goto error;
+	}
 	memset(mbr_sector, '\0', mbr_size);
 
 	offset = lseek(fd, 0, SEEK_SET);
 	this_bytes_read = read(fd, mbr_sector, mbr_size);
 	if (this_bytes_read < (ssize_t)sizeof(*mbr)) {
+		efi_error("short read trying to read mbr data");
 		rc=1;
 		goto error_free_mbr;
 	}
@@ -208,9 +235,11 @@ get_partition_info(int fd, uint32_t options,
 							    mbr_type,
 							    signature_type);
 		if (mbr_invalid) {
+			efi_error("neither MBR nor GPT is valid");
 			rc=1;
 			goto error_free_mbr;
 		}
+		efi_error_clear();
 	}
  error_free_mbr:
 	free(mbr_sector);
@@ -233,12 +262,17 @@ _make_hd_dn(uint8_t *buf, ssize_t size, int fd, uint32_t partition,
 	errno = 0;
 
 	rc = get_partition_info(fd, options,
-				partition>0?partition:1, &part_start,
+				partition > 0 ? partition : 1, &part_start,
 				&part_size, signature, &format,
 				&signature_type);
-	if (rc < 0)
+	if (rc < 0) {
+		efi_error("could not get partition info");
 		return rc;
+	}
 
-	return efidp_make_hd(buf, size, partition>0?partition:1, part_start,
-			     part_size, signature, format, signature_type);
+	rc = efidp_make_hd(buf, size, partition>0?partition:1, part_start,
+			   part_size, signature, format, signature_type);
+	if (rc < 0)
+		efi_error("could not make HD DP node");
+	return rc;
 }

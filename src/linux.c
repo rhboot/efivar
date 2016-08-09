@@ -254,8 +254,10 @@ sysfs_sata_get_port_info(uint32_t print_id, struct disk_info *info)
 	int rc;
 
 	d = opendir("/sys/class/ata_device/");
-	if (!d)
+	if (!d) {
+		efi_error("opendir failed on /sys/class/ata_device/");
 		return -1;
+	}
 
 	while ((de = readdir(d)) != NULL) {
 		uint32_t found_print_id;

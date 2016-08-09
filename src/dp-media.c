@@ -163,6 +163,10 @@ efidp_make_file(uint8_t *buf, ssize_t size, char *filepath)
 		memset(buf+4, 0, req-4);
 		utf8_to_ucs2(file->name, req-4, 1, lf);
 	}
+
+	if (sz < 0)
+		efi_error("efidp_make_generic failed");
+
 	return sz;
 }
 
@@ -187,5 +191,9 @@ efidp_make_hd(uint8_t *buf, ssize_t size, uint32_t num, uint64_t part_start,
 		hd->format = format;
 		hd->signature_type = signature_type;
 	}
+
+	if (sz < 0)
+		efi_error("efidp_make_generic failed");
+
 	return sz;
 }

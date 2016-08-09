@@ -54,7 +54,11 @@ __attribute__((__nonnull__ (1, 2)))
 __attribute__((__visibility__ ("default")))
 efi_str_to_guid(const char *s, efi_guid_t *guid)
 {
-	return text_to_guid(s, guid);
+	int rc;
+	rc = text_to_guid(s, guid);
+	if (rc < 0)
+		efi_error("text_to_guid(\"%s\",...)", s);
+	return rc;
 }
 
 int
@@ -66,7 +70,7 @@ efi_guid_to_str(const efi_guid_t *guid, char **sp)
 	int rc = -1;
 
 	if (!sp) {
-		return snprintf(NULL, 0, GUID_FORMAT,
+		rc = snprintf(NULL, 0, GUID_FORMAT,
 				le32_to_cpu(guid->a),
 				le16_to_cpu(guid->b),
 				le16_to_cpu(guid->c),
@@ -74,7 +78,7 @@ efi_guid_to_str(const efi_guid_t *guid, char **sp)
 				guid->e[0], guid->e[1], guid->e[2], guid->e[3],
 				guid->e[4], guid->e[5]);
 	} else if (sp && *sp) {
-		return snprintf(*sp, GUID_LENGTH_WITH_NUL, GUID_FORMAT,
+		rc = snprintf(*sp, GUID_LENGTH_WITH_NUL, GUID_FORMAT,
 				le32_to_cpu(guid->a),
 				le16_to_cpu(guid->b),
 				le16_to_cpu(guid->c),
@@ -92,6 +96,8 @@ efi_guid_to_str(const efi_guid_t *guid, char **sp)
 		if (rc >= 0)
 			*sp = ret;
 	}
+	if (rc < 0)
+		efi_error("Could not format guid");
 	return rc;
 }
 
@@ -142,6 +148,7 @@ _get_common_guidname(const efi_guid_t *guid, struct guidname **result)
 	if (!tmp) {
 		*result = NULL;
 		errno = ENOENT;
+		efi_error("GUID is not in common GUID list");
 		return -1;
 	}
 
@@ -160,7 +167,10 @@ efi_guid_to_name(efi_guid_t *guid, char **name)
 		*name = strndup(result->name, sizeof (result->name) -1);
 		return *name ? (int)strlen(*name) : -1;
 	}
-	return efi_guid_to_str(guid, name);
+	rc = efi_guid_to_str(guid, name);
+	if (rc >= 0)
+		efi_error_clear();
+	return rc;
 }
 
 int
@@ -174,6 +184,7 @@ efi_guid_to_symbol(efi_guid_t *guid, char **symbol)
 		*symbol = strndup(result->symbol, sizeof (result->symbol) -1);
 		return *symbol ? (int)strlen(*symbol) : -1;
 	}
+	efi_error_clear();
 	errno = EINVAL;
 	return -1;
 }

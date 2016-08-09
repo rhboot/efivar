@@ -42,6 +42,7 @@ generic_get_next_variable_name(const char *path, efi_guid_t **guid, char **name)
 
 	if (!guid || !name) {
 		errno = EINVAL;
+		efi_error("invalid arguments");
 		return -1;
 	}
 
@@ -50,30 +51,33 @@ generic_get_next_variable_name(const char *path, efi_guid_t **guid, char **name)
 	if ((*guid == NULL && *name != NULL) ||
 			(*guid != NULL && *name == NULL)) {
 		errno = EINVAL;
+		efi_error("invalid arguments");
 		return -1;
 	}
 
 	/* if dir is NULL, we're also starting over */
 	if (!dir) {
 		dir = opendir(path);
-		if (!dir)
+		if (!dir) {
+			efi_error("opendir(%s) failed", path);
 			return -1;
+		}
 
 		int fd = dirfd(dir);
 		if (fd < 0) {
 			typeof(errno) errno_value = errno;
+			efi_error("dirfd failed");
 			closedir(dir);
 			errno = errno_value;
 			return -1;
 		}
 		int flags = fcntl(fd, F_GETFD);
 		if (flags < 0) {
-			warn("fcntl(fd, F_GETFD) failed");
+			efi_error("fcntl(fd, F_GETFD) failed");
 		} else {
 			flags |= FD_CLOEXEC;
 			if (fcntl(fd, F_SETFD, flags) < 0)
-				warn("fcntl(fd, F_SETFD, "
-					"flags | FD_CLOEXEC) failed");
+				efi_error("fcntl(fd, F_SETFD, flags | FD_CLOEXEC) failed");
 		}
 
 		*guid = NULL;
@@ -102,6 +106,7 @@ generic_get_next_variable_name(const char *path, efi_guid_t **guid, char **name)
 			closedir(dir);
 			dir = NULL;
 			errno = EINVAL;
+			efi_error("text_to_guid failed");
 			return -1;
 		}
 
@@ -155,6 +160,7 @@ generic_append_variable(efi_guid_t guid, const char *name,
 		attributes &= ~EFI_VARIABLE_APPEND_WRITE;
 		rc = efi_del_variable(guid, name);
 		if (rc < 0) {
+			efi_error("efi_del_variable failed");
 			free(data);
 			free(d);
 			return rc;
@@ -164,17 +170,19 @@ generic_append_variable(efi_guid_t guid, const char *name,
 		 * let our caller attempt to clean up :/
 		 */
 		rc = efi_set_variable(guid, name, d, ds, attributes, 0600);
+		if (rc < 0)
+			efi_error("efi_set_variable failed");
 		free(d);
 		free(data);
-		return rc;
 	} else if (errno == ENOENT) {
 		data = new_data;
 		data_size = new_data_size;
 		attributes = new_attributes & ~EFI_VARIABLE_APPEND_WRITE;
 		rc = efi_set_variable(guid, name, data, data_size,
 				      attributes, 0600);
-		return rc;
 	}
+	if (rc < 0)
+		efi_error("efi_set_variable failed");
 	return rc;
 }
 
