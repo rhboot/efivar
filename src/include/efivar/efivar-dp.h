@@ -735,8 +735,9 @@ efidp_next_node(const_efidp in, const_efidp *out)
 {
 	ssize_t sz;
 
-	if (efidp_type(in) == EFIDP_END_TYPE)
-		return -1;
+	if (efidp_type(in) == EFIDP_END_TYPE &&
+	    efidp_subtype(in) == EFIDP_END_ENTIRE)
+		return 0;
 
 	sz = efidp_node_size(in);
 	if (sz < 0)
@@ -744,7 +745,7 @@ efidp_next_node(const_efidp in, const_efidp *out)
 
 	/* I love you gcc. */
 	*out = (const_efidp)(const efidp_header *)((uint8_t *)in + sz);
-	return 0;
+	return 1;
 }
 
 static inline int
@@ -754,8 +755,10 @@ efidp_next_instance(const_efidp in, const_efidp *out)
 	ssize_t sz;
 
 	if (efidp_type(in) != EFIDP_END_TYPE ||
-			efidp_subtype(in) != EFIDP_END_INSTANCE)
+			efidp_subtype(in) != EFIDP_END_INSTANCE) {
+		errno = EINVAL;
 		return -1;
+	}
 
 	sz = efidp_node_size(in);
 	if (sz < 0)
@@ -763,7 +766,7 @@ efidp_next_instance(const_efidp in, const_efidp *out)
 
 	/* I love you gcc. */
 	*out = (const_efidp)(const efidp_header *)((uint8_t *)in + sz);
-	return 0;
+	return 1;
 }
 
 static inline int
@@ -775,14 +778,20 @@ efidp_is_multiinstance(const_efidp dn)
 		int rc;
 
 		rc = efidp_next_node(dn, &next);
-		if (rc < 0)
-			break;
+		if (rc < 0) {
+			errno = EINVAL;
+			return -1;
+		}
+
 		dn = next;
+		if (efidp_type(dn) == EFIDP_END_TYPE &&
+		    efidp_subtype(dn) == EFIDP_END_INSTANCE)
+			return 1;
+		if (efidp_type(dn) == EFIDP_END_TYPE &&
+		    efidp_subtype(dn) == EFIDP_END_ENTIRE)
+			return 0;
 	}
 
-	if (efidp_type(dn) == EFIDP_END_TYPE &&
-			efidp_subtype(dn) == EFIDP_END_INSTANCE)
-		return 1;
 	return 0;
 }
 
@@ -817,25 +826,33 @@ efidp_size(const_efidp dp)
 		return -1;
 	}
 
+	if (efidp_type(dp) == EFIDP_END_TYPE &&
+	    efidp_subtype(dp) == EFIDP_END_ENTIRE)
+		return efidp_node_size(dp);
+
 	while (1) {
-		ssize_t sz;
 		int rc;
-		const_efidp next;
+		ssize_t sz;
+		const_efidp next = NULL;
 
 		sz = efidp_node_size(dp);
 		if (sz < 0)
 			return sz;
 		ret += sz;
 
-		if (efidp_type(dp) == EFIDP_END_TYPE &&
-				efidp_subtype(dp) == EFIDP_END_ENTIRE)
-			break;
-
 		rc = efidp_next_instance(dp, &next);
-		if (rc < 0)
+		if (rc < 0) {
 			rc = efidp_next_node(dp, &next);
+			if (rc == 0) {
+				sz = efidp_node_size(dp);
+				if (sz < 0)
+					return sz;
+				ret += sz;
+				break;
+			}
+		}
 		if (rc < 0)
-			return -1;
+			return rc;
 
 		dp = next;
 	}
@@ -862,7 +879,7 @@ efidp_instance_size(const_efidp dpi)
 
 		rc = efidp_next_node(dpi, &next);
 		if (rc < 0)
-			return -1;
+			return rc;
 		dpi = next;
 	}
 	return ret;
@@ -923,7 +940,11 @@ efidp_is_valid(const_efidp dp, ssize_t limit)
 
 		hdr = (efidp_header *)((uint8_t *)hdr + hdr->length);
 	}
-	return (limit >= 0);
+	if (limit < 0) {
+		errno = EINVAL;
+		return 0;
+	}
+	return 1;
 }
 
 /* and now, printing and parsing */

@@ -368,7 +368,7 @@ efidp_format_device_path(char *buf, size_t size, const_efidp dp, ssize_t limit)
 				off += format(buf, size, off, ",");
 				break;
 			}
-			return off + 1;
+			break;
 		default:
 			off += format(buf, size, off, "Path(%d,%d,", dp->type,
 				      dp->subtype);
