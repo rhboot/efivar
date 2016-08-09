@@ -20,6 +20,7 @@
 
 #include <errno.h>
 #include <inttypes.h>
+#include <stdarg.h>
 #include <stddef.h>
 
 #include <efivar.h>
@@ -31,70 +32,72 @@ _format_media_dn(char *buf, size_t size, const_efidp dp)
 	ssize_t off = 0;
 	switch (dp->subtype) {
 	case EFIDP_MEDIA_HD:
-		off += format(buf, size, off, "HD(%d,",
-			      dp->hd.partition_number);
+		format(buf, size, off, "HD", "HD(%d,", dp->hd.partition_number);
 		switch (dp->hd.signature_type) {
 		case EFIDP_HD_SIGNATURE_MBR:
-			off += format(buf, size, off,
-				      "MBR,0x%"PRIu32",0x%"PRIx64",0x%"PRIx64")",
-				      *(char *)dp->hd.signature,
-				      dp->hd.start, dp->hd.size);
+			format(buf, size, off, "HD",
+			       "MBR,0x%"PRIu32",0x%"PRIx64",0x%"PRIx64")",
+			       *(char *)dp->hd.signature,
+			       dp->hd.start, dp->hd.size);
 			break;
 		case EFIDP_HD_SIGNATURE_GUID:
-			off += format(buf, size, off, "GPT,");
-			off += format_guid(buf, size, off,
-					   (efi_guid_t *)dp->hd.signature);
-			off += format(buf, size, off,
-				      ",0x%"PRIx64",0x%"PRIx64")",
-				      dp->hd.start, dp->hd.size);
+			format(buf, size, off, "HD", "GPT,");
+			format_guid(buf, size, off, "HD",
+				    (efi_guid_t *)dp->hd.signature);
+			format(buf, size, off, "HD",
+			       ",0x%"PRIx64",0x%"PRIx64")",
+			       dp->hd.start, dp->hd.size);
 			break;
 		default:
-			off += format(buf, size, off, "%d,",
-				      dp->hd.signature_type);
-			off += format_hex(buf, size, off,
-					  dp->hd.signature,
-					  sizeof(dp->hd.signature));
-			off += format(buf, size, off,
-				      ",0x%"PRIx64",0x%"PRIx64")",
-				      dp->hd.start, dp->hd.size);
+			format(buf, size, off, "HD", "%d,",
+			       dp->hd.signature_type);
+			format_hex(buf, size, off, "HD", dp->hd.signature,
+				   sizeof(dp->hd.signature));
+			format(buf, size, off, "HD",
+			       ",0x%"PRIx64",0x%"PRIx64")",
+			       dp->hd.start, dp->hd.size);
 			break;
 		}
 		break;
 	case EFIDP_MEDIA_CDROM:
-		off += format(buf, size, off,
-			      "CDROM(%d,0x%"PRIx64",0x%"PRIx64")",
-			      dp->cdrom.boot_catalog_entry,
-			      dp->cdrom.partition_rba, dp->cdrom.sectors);
+		format(buf, size, off, "CDROM",
+		       "CDROM(%d,0x%"PRIx64",0x%"PRIx64")",
+		       dp->cdrom.boot_catalog_entry,
+		       dp->cdrom.partition_rba, dp->cdrom.sectors);
 		break;
 	case EFIDP_MEDIA_VENDOR:
-		off += format_vendor(buf, size, off, "VenMedia", dp);
+		format_vendor(buf, size, off, "VenMedia", dp);
 		break;
 	case EFIDP_MEDIA_FILE:
-		off += format(buf, size, off, "File(");
-		off += format_ucs2(buf, size, off, dp->file.name,
-				   (efidp_node_size(dp)
-				   - offsetof(efidp_file, name)) / 2);
-		off += format(buf, size, off, ")");
+		format(buf, size, off, "File", "File(");
+		format_ucs2(buf, size, off, "File", dp->file.name,
+			    (efidp_node_size(dp)
+			     - offsetof(efidp_file, name)) / 2);
+		format(buf, size, off, "File", ")");
 		break;
 	case EFIDP_MEDIA_PROTOCOL:
-		off += format(buf, size, off, "Media(");
-		off += format_guid(buf, size, off, &dp->protocol.protocol_guid);
-		off += format(buf, size, off, ")");
+		format(buf, size, off, "Media", "Media(");
+		format_guid(buf, size, off, "Media",
+			    &dp->protocol.protocol_guid);
+		format(buf, size, off, "Media", ")");
 		break;
 	case EFIDP_MEDIA_FIRMWARE_FILE:
-		off += format(buf, size, off, "FvFile(");
-		off += format_guid(buf, size, off, &dp->protocol.protocol_guid);
-		off += format(buf, size, off, ")");
+		format(buf, size, off, "FvFile", "FvFile(");
+		format_guid(buf, size, off, "FvFile",
+			    &dp->protocol.protocol_guid);
+		format(buf, size, off, "FvFile", ")");
 		break;
 	case EFIDP_MEDIA_FIRMWARE_VOLUME:
-		off += format(buf, size, off, "FvVol(");
-		off += format_guid(buf, size, off, &dp->protocol.protocol_guid);
-		off += format(buf, size, off, ")");
+		format(buf, size, off, "FvVol", "FvVol(");
+		format_guid(buf, size, off, "FvVol",
+			    &dp->protocol.protocol_guid);
+		format(buf, size, off, "FvVol", ")");
 		break;
 	case EFIDP_MEDIA_RELATIVE_OFFSET:
-		off = format(buf, size, off, "Offset(0x%"PRIx64",0x%"PRIx64")",
-			     dp->relative_offset.first_byte,
-			     dp->relative_offset.last_byte);
+		format(buf, size, off, "Offset",
+		       "Offset(0x%"PRIx64",0x%"PRIx64")",
+		       dp->relative_offset.first_byte,
+		       dp->relative_offset.last_byte);
 		break;
 	case EFIDP_MEDIA_RAMDISK: {
 		struct {
@@ -119,27 +122,27 @@ _format_media_dn(char *buf, size_t size, const_efidp dp)
 		}
 
 		if (label) {
-			off += format(buf, size, off,
-				     "%s(0x%"PRIx64",0x%"PRIx64",%d)", label,
-				     dp->ramdisk.start_addr,
-				     dp->ramdisk.end_addr,
-				     dp->ramdisk.instance_number);
+			format(buf, size, off, label,
+			       "%s(0x%"PRIx64",0x%"PRIx64",%d)", label,
+			       dp->ramdisk.start_addr,
+			       dp->ramdisk.end_addr,
+			       dp->ramdisk.instance_number);
 			break;
 		}
-		off += format(buf, size, off,
-			     "Ramdisk(0x%"PRIx64",0x%"PRIx64",%d,",
-			     dp->ramdisk.start_addr, dp->ramdisk.end_addr,
-			     dp->ramdisk.instance_number);
-		off += format_guid(buf, size, off, &dp->ramdisk.disk_type_guid);
-		off += format(buf, size, off, ")");
+		format(buf, size, off, "Ramdisk",
+		       "Ramdisk(0x%"PRIx64",0x%"PRIx64",%d,",
+		       dp->ramdisk.start_addr, dp->ramdisk.end_addr,
+		       dp->ramdisk.instance_number);
+		format_guid(buf, size, off, "Ramdisk",
+			    &dp->ramdisk.disk_type_guid);
+		format(buf, size, off, "Ramdisk", ")");
 		break;
 					   }
 	default:
-		off += format(buf, size, off, "MediaPath(%d,", dp->subtype);
-		off += format_hex(buf, size, off,
-				  (uint8_t *)dp+4,
-				  (efidp_node_size(dp)-4) / 2);
-		off += format(buf,size,off,")");
+		format(buf, size, off, "Media", "MediaPath(%d,", dp->subtype);
+		format_hex(buf, size, off, "Media", (uint8_t *)dp+4,
+				(efidp_node_size(dp)-4) / 2);
+		format(buf,size,off, "Media",")");
 		break;
 	}
 	return off;

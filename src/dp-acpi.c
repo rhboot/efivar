@@ -20,6 +20,7 @@
 
 #include <errno.h>
 #include <inttypes.h>
+#include <stdarg.h>
 #include <stddef.h>
 
 #include <efivar.h>
@@ -28,18 +29,17 @@
 static ssize_t
 _format_acpi_adr(char *buf, size_t size, const_efidp dp)
 {
-	ssize_t o = 0;
-	o += format(buf, size, o, "AcpiAdr(");
-	o += format_array(buf, size, o, "0x%"PRIx32,
-			  typeof(dp->acpi_adr.adr[0]),
-			  dp->acpi_adr.adr,
-			  (efidp_node_size(dp)-4)/sizeof (dp->acpi_adr.adr[0]));
-	o += format(buf, size, o, ")");
-	return o;
+	ssize_t off = 0;
+	format(buf, size, off, "AcpiAdr", "AcpiAdr(");
+	format_array(buf, size, off, "AcpiAdr", "0x%"PRIx32,
+		     typeof(dp->acpi_adr.adr[0]), dp->acpi_adr.adr,
+		     (efidp_node_size(dp)-4) / sizeof (dp->acpi_adr.adr[0]));
+	format(buf, size, off, "AcpiAdr", ")");
+	return off;
 }
+
 #define format_acpi_adr(buf, size, off, dp) \
 	_format_acpi_adr(((buf)+(off)), ((size)?((size)-(off)):0), (dp))
-
 
 ssize_t
 _format_acpi_dn(char *buf, size_t size, const_efidp dp)
@@ -52,18 +52,17 @@ _format_acpi_dn(char *buf, size_t size, const_efidp dp)
 	const char *cidstr = NULL;
 	size_t cidlen = 0;
 
-	if (dp->subtype == EFIDP_ACPI_ADR)
-		return format_acpi_adr(buf, size, off, dp);
-
-	if (dp->subtype != EFIDP_ACPI_HID_EX && dp->subtype != EFIDP_ACPI_HID) {
-		off += format(buf, size, off, "AcpiPath(%d,", dp->subtype);
-		off += format_hex(buf, size, off, (uint8_t *)dp+4,
-				  (efidp_node_size(dp)-4) / 2);
-		off += format(buf, size, off, ")");
+	if (dp->subtype == EFIDP_ACPI_ADR) {
+		format_acpi_adr(buf, size, off, dp);
 		return off;
-	}
-
-	if (dp->subtype == EFIDP_ACPI_HID_EX) {
+	} else if (dp->subtype != EFIDP_ACPI_HID_EX &&
+		   dp->subtype != EFIDP_ACPI_HID) {
+		format(buf, size, off, "AcpiPath", "AcpiPath(%d,", dp->subtype);
+		format_hex(buf, size, off, "AcpiPath", (uint8_t *)dp+4,
+			   (efidp_node_size(dp)-4) / 2);
+		format(buf, size, off, "AcpiPath", ")");
+		return off;
+	} else if (dp->subtype == EFIDP_ACPI_HID_EX) {
 		ssize_t limit = efidp_node_size(dp)
 				- offsetof(efidp_acpi_hid_ex, hidstr);
 
@@ -82,12 +81,12 @@ _format_acpi_dn(char *buf, size_t size, const_efidp dp)
 		if (uidstr) {
 			switch (dp->acpi_hid.hid) {
 			case EFIDP_ACPI_PCI_ROOT_HID:
-				off += format(buf, size, off, "PciRoot(%s)",
-					      uidstr);
+				format(buf, size, off, "PciRoot",
+				       "PciRoot(%s)", uidstr);
 				return off;
 			case EFIDP_ACPI_PCIE_ROOT_HID:
-				off += format(buf, size, off, "PcieRoot(%s)",
-					      uidstr);
+				format(buf, size, off, "PcieRoot",
+				       "PcieRoot(%s)", uidstr);
 				return off;
 			}
 		}
@@ -95,66 +94,71 @@ _format_acpi_dn(char *buf, size_t size, const_efidp dp)
 
 	switch (dp->acpi_hid.hid) {
 	case EFIDP_ACPI_PCI_ROOT_HID:
-		off += format(buf, size, off, "PciRoot(0x%"PRIx32")",
-			      dp->acpi_hid.uid);
-		return off;
+		format(buf, size, off, "PciRoot", "PciRoot(0x%"PRIx32")",
+		       dp->acpi_hid.uid);
+		break;
 	case EFIDP_ACPI_PCIE_ROOT_HID:
-		off += format(buf, size, off, "PcieRoot(0x%"PRIx32")",
-			      dp->acpi_hid.uid);
-		return off;
+		format(buf, size, off, "PcieRoot", "PcieRoot(0x%"PRIx32")",
+		       dp->acpi_hid.uid);
+		break;
 	case EFIDP_ACPI_FLOPPY_HID:
-		off += format(buf, size, off, "Floppy(0x%"PRIx32")",
-			      dp->acpi_hid.uid);
-		return off;
+		format(buf, size, off, "Floppy", "Floppy(0x%"PRIx32")",
+		       dp->acpi_hid.uid);
+		break;
 	case EFIDP_ACPI_KEYBOARD_HID:
-		off += format(buf, size, off, "Keyboard(0x%"PRIx32")",
-			      dp->acpi_hid.uid);
-		return off;
+		format(buf, size, off, "Keyboard", "Keyboard(0x%"PRIx32")",
+		       dp->acpi_hid.uid);
+		break;
 	case EFIDP_ACPI_SERIAL_HID:
-		off += format(buf, size, off, "Serial(0x%"PRIx32")",
-			      dp->acpi_hid.uid);
-		return off;
+		format(buf, size, off, "Keyboard", "Serial(0x%"PRIx32")",
+		       dp->acpi_hid.uid);
+		break;
 	default:
 		switch (dp->subtype) {
 		case EFIDP_ACPI_HID_EX:
 			if (!hidstr && !cidstr &&
 					(uidstr || dp->acpi_hid_ex.uid)){
-				off += format(buf, size, off,
-					      "AcpiExp(0x%"PRIx32",0x%"PRIx32",",
-					      dp->acpi_hid_ex.hid,
-					      dp->acpi_hid_ex.cid);
-				if (uidstr)
-					off += format(buf, size, off, "%s)",
-						      uidstr);
-				else
-					off += format(buf, size, off,
-						      "0x%"PRIx32")",
-						      dp->acpi_hid.uid);
-				return off;
+				format(buf, size, off, "AcpiExp",
+				       "AcpiExp(0x%"PRIx32",0x%"PRIx32",",
+				       dp->acpi_hid_ex.hid,
+				       dp->acpi_hid_ex.cid);
+				if (uidstr) {
+					format(buf, size, off, "AcpiExp",
+					       "%s)", uidstr);
+				} else {
+					format(buf, size, off, "AcpiExp",
+					       "0x%"PRIx32")",
+					       dp->acpi_hid.uid);
+				}
+				break;
 			}
-			off += format(buf, size, off, "AcpiEx(");
-			if (hidstr)
-				off += format(buf, size, off, "%s,", hidstr);
-			else
-				off += format(buf, size, off, "0x%"PRIx32",",
+			format(buf, size, off, "AcpiEx", "AcpiEx(");
+			if (hidstr) {
+				format(buf, size, off, "AcpiEx", "%s,", hidstr);
+			} else {
+				format(buf, size, off, "AcpiEx", "0x%"PRIx32",",
 					      dp->acpi_hid.hid);
-			if (cidstr)
-				off += format(buf, size, off, "%s,", cidstr);
-			else
-				off += format(buf, size, off, "0x%"PRIx32",",
-					      dp->acpi_hid_ex.cid);
+			}
 
-			if (uidstr)
-				off += format(buf, size, off, "%s)", uidstr);
-			else
-				off += format(buf, size, off, "0x%"PRIx32")",
-					      dp->acpi_hid.uid);
-			return off;
+			if (cidstr) {
+				format(buf, size, off, "AcpiEx", "%s,", cidstr);
+			} else {
+				format(buf, size, off, "AcpiEx", "0x%"PRIx32",",
+				       dp->acpi_hid_ex.cid);
+			}
+
+			if (uidstr) {
+				format(buf, size, off, "AcpiEx", "%s)", uidstr);
+			} else {
+				format(buf, size, off, "AcpiEx", "0x%"PRIx32")",
+				       dp->acpi_hid.uid);
+			}
+			break;
 		case EFIDP_ACPI_HID:
-			off += format(buf, size, off,
-				      "Acpi(0x%"PRIx32",0x%"PRIx32")",
-				      dp->acpi_hid.hid, dp->acpi_hid.uid);
-			return off;
+			format(buf, size, off, "Acpi",
+			       "Acpi(0x%"PRIx32",0x%"PRIx32")",
+			       dp->acpi_hid.hid, dp->acpi_hid.uid);
+			break;
 		}
 	}
 

@@ -33,12 +33,8 @@ format_ipv6_port_helper(char *buf, size_t size,
 {
 	uint16_t *ip = (uint16_t *)ipaddr;
 	ssize_t off = 0;
-	ssize_t sz;
 
-	sz = format(buf, size, off, "[");
-	if (sz < 0)
-		return -1;
-	off += sz;
+	format(buf, size, off, "IPv6", "[");
 
 	// deciding how to print an ipv6 ip requires 2 passes, because
 	// RFC5952 says we have to use :: a) only once and b) to maximum effect.
@@ -82,29 +78,17 @@ format_ipv6_port_helper(char *buf, size_t size,
 
 	for (i = 0; i < 8; i++) {
 		if (largest_zero_block_offset == i) {
-			sz = format(buf, size, off, "::");
-			if (sz < 0)
-				return sz;
-			off += sz;
+			format(buf, size, off, "IPv6", "::");
 			i += largest_zero_block_size -1;
 			continue;
 		} else if (i > 0) {
-			sz = format(buf, size, off, ":");
-			if (sz < 0)
-				return -1;
-			off += sz;
+			format(buf, size, off, "IPv6", ":");
 		}
 
-		sz = format(buf, size, off, "%x", ip[i]);
-		if (sz < 0)
-			return -1;
-		off += sz;
+		format(buf, size, off, "IPv6", "%x", ip[i]);
 	}
 
-	sz = format(buf, size, off, "]:%d", port);
-	if (sz < 0)
-		return -1;
-	off += sz;
+	format(buf, size, off, "IPv6", "]:%d", port);
 
 	return off;
 }
@@ -113,7 +97,9 @@ format_ipv6_port_helper(char *buf, size_t size,
 	format_helper(format_ipv6_port_helper, buf, size, off, ipaddr, port)
 
 static ssize_t
-format_uart(char *buf, size_t size, const_efidp dp)
+format_uart(char *buf, size_t size,
+	    const char *dp_type __attribute__((__unused__)),
+	    const_efidp dp)
 {
 	uint32_t value;
 	ssize_t off = 0;
@@ -121,13 +107,19 @@ format_uart(char *buf, size_t size, const_efidp dp)
 
 	value = dp->uart_flow_control.flow_control_map;
 	if (value > 2) {
-		return format(buf, size, off, "UartFlowcontrol(%d)", value);
+		format(buf, size, off, "UartFlowControl",
+			    "UartFlowControl(%d)", value);
+		return off;
 	}
-	return format(buf, size, off, "UartFlowControl(%s)", labels[value]);
+	format(buf, size, off, "UartFlowControl", "UartFlowControl(%s)",
+	       labels[value]);
+	return off;
 }
 
 static ssize_t
-format_sas(char *buf, size_t size, const_efidp dp)
+format_sas(char *buf, size_t size,
+	   const char *dp_type __attribute__((__unused__)),
+	   const_efidp dp)
 {
 	ssize_t off = 0;
 	const efidp_sas * const s = &dp->sas;
@@ -163,110 +155,112 @@ format_sas(char *buf, size_t size, const_efidp dp)
 			drive_bay = s->drive_bay_id + 1;
 	}
 
-	off += format(buf, size, off, "SAS(%"PRIx64",%"PRIx64",%"PRIx16",%s",
-		      dp->subtype == EFIDP_MSG_SAS_EX ?
+	format(buf, size, off, "SAS", "SAS(%"PRIx64",%"PRIx64",%"PRIx16",%s",
+	       dp->subtype == EFIDP_MSG_SAS_EX ?
 			be64_to_cpu(s->sas_address) :
 			le64_to_cpu(s->sas_address),
-		      dp->subtype == EFIDP_MSG_SAS_EX ?
+		dp->subtype == EFIDP_MSG_SAS_EX ?
 			be64_to_cpu(s->lun) :
 			le64_to_cpu(s->lun),
-		      s->rtp, sassata_label[sassata]);
+		s->rtp, sassata_label[sassata]);
 
-	if (more_info)
-		off += format(buf, size, off, ",%s,%s",
-			      location_label[location], connect_label[connect]);
+	if (more_info) {
+		format(buf, size, off, "SAS", ",%s,%s",
+		       location_label[location], connect_label[connect]);
+	}
 
-	if (more_info == 2 && drive_bay >= 0)
-		off += format(buf, size, off, ",%d", drive_bay);
+	if (more_info == 2 && drive_bay >= 0) {
+		format(buf, size, off, "SAS", ",%d", drive_bay);
+	}
 
-	off += format(buf, size, off, ")");
+	format(buf, size, off, "SAS", ")");
 	return off;
 }
 
-#define class_helper(buf, size, off, label, dp) ({			\
-		off += format(buf, size, off,				\
-			      "%s(0x%"PRIx16",0x%"PRIx16",%d,%d)",	\
-			      label,					\
-			      dp->usb_class.vendor_id,			\
-			      dp->usb_class.product_id,			\
-			      dp->usb_class.device_subclass,		\
-			      dp->usb_class.device_protocol);		\
-		off;							\
-	})
+#define class_helper(buf, size, off, label, dp)			\
+	format(buf, size, off, label,				\
+	       "%s(0x%"PRIx16",0x%"PRIx16",%d,%d)",		\
+	       label,						\
+	       dp->usb_class.vendor_id,				\
+	       dp->usb_class.product_id,			\
+	       dp->usb_class.device_subclass,			\
+	       dp->usb_class.device_protocol)
 
 static ssize_t
-format_usb_class(char *buf, size_t size, const_efidp dp)
+format_usb_class(char *buf, size_t size,
+		 const char *dp_type __attribute__((__unused__)),
+		 const_efidp dp)
 {
 	ssize_t off = 0;
 	switch (dp->usb_class.device_class) {
 	case EFIDP_USB_CLASS_AUDIO:
-		off += class_helper(buf, size, off, "UsbAudio", dp);
+		class_helper(buf, size, off, "UsbAudio", dp);
 		break;
 	case EFIDP_USB_CLASS_CDC_CONTROL:
-		off += class_helper(buf, size, off, "UsbCDCControl", dp);
+		class_helper(buf, size, off, "UsbCDCControl", dp);
 		break;
 	case EFIDP_USB_CLASS_HID:
-		off += class_helper(buf, size, off, "UsbHID", dp);
+		class_helper(buf, size, off, "UsbHID", dp);
 		break;
 	case EFIDP_USB_CLASS_IMAGE:
-		off += class_helper(buf, size, off, "UsbImage", dp);
+		class_helper(buf, size, off, "UsbImage", dp);
 		break;
 	case EFIDP_USB_CLASS_PRINTER:
-		off += class_helper(buf, size, off, "UsbPrinter", dp);
+		class_helper(buf, size, off, "UsbPrinter", dp);
 		break;
 	case EFIDP_USB_CLASS_MASS_STORAGE:
-		off += class_helper(buf, size, off, "UsbMassStorage", dp);
+		class_helper(buf, size, off, "UsbMassStorage", dp);
 		break;
 	case EFIDP_USB_CLASS_HUB:
-		off += class_helper(buf, size, off, "UsbHub", dp);
+		class_helper(buf, size, off, "UsbHub", dp);
 		break;
 	case EFIDP_USB_CLASS_CDC_DATA:
-		off += class_helper(buf, size, off, "UsbCDCData", dp);
+		class_helper(buf, size, off, "UsbCDCData", dp);
 		break;
 	case EFIDP_USB_CLASS_SMARTCARD:
-		off += class_helper(buf, size, off, "UsbSmartCard", dp);
+		class_helper(buf, size, off, "UsbSmartCard", dp);
 		break;
 	case EFIDP_USB_CLASS_VIDEO:
-		off += class_helper(buf, size, off, "UsbVideo", dp);
+		class_helper(buf, size, off, "UsbVideo", dp);
 		break;
 	case EFIDP_USB_CLASS_DIAGNOSTIC:
-		off += class_helper(buf, size, off, "UsbDiagnostic", dp);
+		class_helper(buf, size, off, "UsbDiagnostic", dp);
 		break;
 	case EFIDP_USB_CLASS_WIRELESS:
-		off += class_helper(buf, size, off, "UsbWireless", dp);
+		class_helper(buf, size, off, "UsbWireless", dp);
 		break;
 	case EFIDP_USB_CLASS_254:
 		switch (dp->usb_class.device_subclass) {
 		case EFIDP_USB_SUBCLASS_FW_UPDATE:
-			off += format(buf, size, off,
-				      "UsbDeviceFirmwareUpdate(0x%"PRIx16",0x%"PRIx16",%d)",
-				      dp->usb_class.vendor_id,
-				      dp->usb_class.product_id,
-				      dp->usb_class.device_protocol);
+			format(buf, size, off, "UsbDeviceFirmwareUpdate",
+			  "UsbDeviceFirmwareUpdate(0x%"PRIx16",0x%"PRIx16",%d)",
+			  dp->usb_class.vendor_id,
+			  dp->usb_class.product_id,
+			  dp->usb_class.device_protocol);
 			break;
 		case EFIDP_USB_SUBCLASS_IRDA_BRIDGE:
-			off += format(buf, size, off,
-				      "UsbIrdaBridge(0x%"PRIx16",0x%"PRIx16",%d)",
-				      dp->usb_class.vendor_id,
-				      dp->usb_class.product_id,
-				      dp->usb_class.device_protocol);
+			format(buf, size, off, "UsbIrdaBridge",
+			       "UsbIrdaBridge(0x%"PRIx16",0x%"PRIx16",%d)",
+			       dp->usb_class.vendor_id,
+			       dp->usb_class.product_id,
+			       dp->usb_class.device_protocol);
 			break;
 		case EFIDP_USB_SUBCLASS_TEST_AND_MEASURE:
-			off += format(buf, size, off,
-				      "UsbTestAndMeasurement(0x%"PRIx16",0x%"PRIx16",%d)",
-				      dp->usb_class.vendor_id,
-				      dp->usb_class.product_id,
-				      dp->usb_class.device_protocol);
+			format(buf, size, off, "UsbTestAndMeasurement",
+			  "UsbTestAndMeasurement(0x%"PRIx16",0x%"PRIx16",%d)",
+			  dp->usb_class.vendor_id,
+			  dp->usb_class.product_id,
+			  dp->usb_class.device_protocol);
 			break;
 		}
 		break;
 	default:
-		off += format(buf, size, off,
-			     "UsbClass(%"PRIx16",%"PRIx16",%d,%d)",
-			     dp->usb_class.vendor_id,
-			     dp->usb_class.product_id,
-			     dp->usb_class.device_subclass,
-			     dp->usb_class.device_protocol);
+		format(buf, size, off, "UsbClass",
+		       "UsbClass(%"PRIx16",%"PRIx16",%d,%d)",
+		       dp->usb_class.vendor_id,
+		       dp->usb_class.product_id,
+		       dp->usb_class.device_subclass,
+		       dp->usb_class.device_protocol);
 		break;
 	}
 	return off;
@@ -276,79 +270,79 @@ ssize_t
 _format_message_dn(char *buf, size_t size, const_efidp dp)
 {
 	ssize_t off = 0;
-	ssize_t sz;
 	switch (dp->subtype) {
 	case EFIDP_MSG_ATAPI:
-		off += format(buf, size, off, "Ata(%d,%d,%d)",
+		format(buf, size, off, "Ata", "Ata(%d,%d,%d)",
 			      dp->atapi.primary, dp->atapi.slave,
 			      dp->atapi.lun);
 		break;
 	case EFIDP_MSG_SCSI:
-		off += format(buf, size, off, "SCSI(%d,%d)",
+		format(buf, size, off, "SCSI", "SCSI(%d,%d)",
 			      dp->scsi.target, dp->scsi.lun);
 		break;
 	case EFIDP_MSG_FIBRECHANNEL:
-		off += format(buf, size, off, "Fibre(%"PRIx64",%"PRIx64")",
+		format(buf, size, off, "Fibre", "Fibre(%"PRIx64",%"PRIx64")",
 			      le64_to_cpu(dp->fc.wwn),
 			      le64_to_cpu(dp->fc.lun));
 		break;
 	case EFIDP_MSG_FIBRECHANNELEX:
-		off += format(buf, size, off, "Fibre(%"PRIx64",%"PRIx64")",
+		format(buf, size, off, "Fibre", "Fibre(%"PRIx64",%"PRIx64")",
 			      be64_to_cpu(dp->fc.wwn),
 			      be64_to_cpu(dp->fc.lun));
 		break;
 	case EFIDP_MSG_1394:
-		off += format(buf, size, off, "I1394(0x%"PRIx64")",
+		format(buf, size, off, "I1394", "I1394(0x%"PRIx64")",
 			      dp->firewire.guid);
 		break;
 	case EFIDP_MSG_USB:
-		off += format(buf, size, off, "USB(%d,%d)",
+		format(buf, size, off, "USB", "USB(%d,%d)",
 			      dp->usb.parent_port, dp->usb.interface);
 		break;
 	case EFIDP_MSG_I2O:
-		off += format(buf, size, off, "I2O(%d)", dp->i2o.target);
+		format(buf, size, off, "I2O", "I2O(%d)", dp->i2o.target);
 		break;
 	case EFIDP_MSG_INFINIBAND:
 		if (dp->infiniband.resource_flags &
 				EFIDP_INFINIBAND_RESOURCE_IOC_SERVICE) {
-			off += format(buf, size, off,
-				      "Infiniband(%08x,%"PRIx64"%"PRIx64",%"PRIx64",%"PRIu64",%"PRIu64")",
-				      dp->infiniband.resource_flags,
-				      dp->infiniband.port_gid[1],
-				      dp->infiniband.port_gid[0],
-				      dp->infiniband.service_id,
-				      dp->infiniband.target_port_id,
-				      dp->infiniband.device_id);
+			format(buf, size, off, "Infiniband",
+	"Infiniband(%08x,%"PRIx64"%"PRIx64",%"PRIx64",%"PRIu64",%"PRIu64")",
+				    dp->infiniband.resource_flags,
+				    dp->infiniband.port_gid[1],
+				    dp->infiniband.port_gid[0],
+				    dp->infiniband.service_id,
+				    dp->infiniband.target_port_id,
+				    dp->infiniband.device_id);
 		} else {
-			off += format(buf, size, off,
-				      "Infiniband(%08x,%"PRIx64"%"PRIx64",",
-				      dp->infiniband.resource_flags,
-				      dp->infiniband.port_gid[1],
-				      dp->infiniband.port_gid[0]);
-			off += format_guid(buf, size, off, (efi_guid_t *)
-					   &dp->infiniband.ioc_guid);
-			off += format(buf, size, off, ",%"PRIu64",%"PRIu64")",
-				      dp->infiniband.target_port_id,
-				      dp->infiniband.device_id);
+			format(buf, size, off, "Infiniband",
+			       "Infiniband(%08x,%"PRIx64"%"PRIx64",",
+			       dp->infiniband.resource_flags,
+			       dp->infiniband.port_gid[1],
+			       dp->infiniband.port_gid[0]);
+			format_guid(buf, size, off, "Infiniband",
+				    (efi_guid_t *)&dp->infiniband.ioc_guid);
+			format(buf, size, off, "Infiniband",
+			       ",%"PRIu64",%"PRIu64")",
+			       dp->infiniband.target_port_id,
+			       dp->infiniband.device_id);
 		}
 		break;
 	case EFIDP_MSG_MAC_ADDR:
-		off += format(buf, size, off, "MAC(");
-		off += format_hex(buf, size, off, dp->mac_addr.mac_addr,
+		format(buf, size, off, "MAC", "MAC(");
+		format_hex(buf, size, off, "MAC", dp->mac_addr.mac_addr,
 				  dp->mac_addr.if_type < 2 ? 6
 					: sizeof(dp->mac_addr.mac_addr));
-		off += format(buf, size, off, ",%d)", dp->mac_addr.if_type);
+		format(buf, size, off, "MAC", ",%d)", dp->mac_addr.if_type);
 		break;
 	case EFIDP_MSG_IPv4: {
 		efidp_ipv4_addr const *a = &dp->ipv4_addr;
-		off += format(buf, size, off,
-			      "IPv4(%hhu.%hhu.%hhu.%hhu:%hu<->%hhu.%hhu.%hhu.%hhu:%hu,%hx,%hhx)",
-			      a->local_ipv4_addr[0], a->local_ipv4_addr[1],
-			      a->local_ipv4_addr[2], a->local_ipv4_addr[3],
-			      a->local_port, a->remote_ipv4_addr[0],
-			      a->remote_ipv4_addr[1], a->remote_ipv4_addr[2],
-			      a->remote_ipv4_addr[3], a->remote_port,
-			      a->protocol, a->static_ip_addr);
+		format(buf, size, off, "IPv4",
+	"IPv4(%hhu.%hhu.%hhu.%hhu:%hu<->%hhu.%hhu.%hhu.%hhu:%hu,%hx,%hhx)",
+			    a->local_ipv4_addr[0], a->local_ipv4_addr[1],
+			    a->local_ipv4_addr[2], a->local_ipv4_addr[3],
+			    a->local_port, a->remote_ipv4_addr[0],
+			    a->remote_ipv4_addr[1], a->remote_ipv4_addr[2],
+			    a->remote_ipv4_addr[3], a->remote_port,
+			    a->protocol, a->static_ip_addr);
 		break;
 			     }
 	case EFIDP_MSG_VENDOR: {
@@ -356,7 +350,8 @@ _format_message_dn(char *buf, size_t size, const_efidp dp)
 			efi_guid_t guid;
 			char label[40];
 			ssize_t (*formatter)(char *buf, size_t size,
-					     const_efidp dp);
+				const char *dp_type __attribute__((__unused__)),
+				const_efidp dp);
 		} subtypes[] = {
 			{ .guid = EFIDP_PC_ANSI_GUID,
 			  .label = "VenPcAnsi" },
@@ -379,7 +374,8 @@ _format_message_dn(char *buf, size_t size, const_efidp dp)
 		};
 		char *label = NULL;
 		ssize_t (*formatter)(char *buf, size_t size,
-				     const_efidp dp) = NULL;
+			const char *dp_type __attribute__((__unused__)),
+			const_efidp dp) = NULL;
 
 		for (int i = 0; !efi_guid_is_zero(&subtypes[i].guid); i++) {
 			if (efi_guid_cmp(&subtypes[i].guid,
@@ -392,53 +388,50 @@ _format_message_dn(char *buf, size_t size, const_efidp dp)
 		}
 
 		if (!label && !formatter) {
-			off += format_vendor(buf, size, off, "VenMsg", dp);
+			format_vendor(buf, size, off, "VenMsg", dp);
 			break;
-		} else if (formatter) {
-			off += format_helper(formatter, buf, size, off, dp);
+		} else if (!label && formatter) {
+			format_helper(formatter, buf, size, off, "VenMsg", dp);
 			break;
 		}
 
-		off += format(buf, size, off, "%s(", label);
+		format(buf, size, off, label, "%s(", label);
 		if (efidp_node_size(dp) >
 				(ssize_t)(sizeof (efidp_header)
 					  + sizeof (efi_guid_t))) {
-			off += format_hex(buf, size, off,
+			format_hex(buf, size, off, label,
 					  dp->msg_vendor.vendor_data,
 					  efidp_node_size(dp)
 						- sizeof (efidp_header)
 						- sizeof (efi_guid_t));
 		}
-		off += format(buf, size, off, ")");
+		format(buf, size, off, label, ")");
 		break;
 			       }
 	case EFIDP_MSG_IPv6: {
 		efidp_ipv6_addr const *a = &dp->ipv6_addr;
 		char *addr0 = NULL;
 		char *addr1 = NULL;
+		ssize_t tmpoff = 0;
+		ssize_t sz;
 
-		sz = format_ipv6_port(addr0, 0, 0, a->local_ipv6_addr,
+		sz = format_ipv6_port(addr0, 0, tmpoff, a->local_ipv6_addr,
 				      a->local_port);
-		if (sz < 0)
-			return sz;
 
 		addr0 = alloca(sz+1);
-		sz = format_ipv6_port(addr0, sz, 0, a->local_ipv6_addr,
+		tmpoff = 0;
+		format_ipv6_port(addr0, sz, tmpoff, a->local_ipv6_addr,
 				      a->local_port);
-		if (sz < 0)
-			return sz;
 
-		sz = format_ipv6_port(addr1, 0, 0, a->remote_ipv6_addr,
+		tmpoff = 0;
+		sz = format_ipv6_port(addr1, 0, tmpoff, a->remote_ipv6_addr,
 				      a->remote_port);
-		if (sz < 0)
-			return sz;
 		addr1 = alloca(sz+1);
-		sz = format_ipv6_port(addr1, sz, 0, a->remote_ipv6_addr,
+		tmpoff = 0;
+		format_ipv6_port(addr1, sz, tmpoff, a->remote_ipv6_addr,
 				      a->remote_port);
-		if (sz < 0)
-			return sz;
 
-		off += format(buf, size, off, "IPv6(%s<->%s,%hx,%hhx)",
+		format(buf, size, off, "IPv6", "IPv6(%s<->%s,%hx,%hhx)",
 			     addr0, addr1, a->protocol, a->ip_addr_origin);
 		break;
 			     }
@@ -448,40 +441,41 @@ _format_message_dn(char *buf, size_t size, const_efidp dp)
 		int stop_bits = dp->uart.stop_bits;
 		char *sb_label[] = {"D", "1", "1.5", "2"};
 
-		off += format(buf, size, off, "Uart(%"PRIu64",%d,",
-			     dp->uart.baud_rate ? dp->uart.baud_rate : 115200,
-			     dp->uart.data_bits ? dp->uart.data_bits : 8);
-		off += format(buf, size, off,
-			     parity > 5 ? "%d," : "%c,",
-			     parity > 5 ? parity : parity_label[parity]);
+		format(buf, size, off, "Uart", "Uart(%"PRIu64",%d,",
+			    dp->uart.baud_rate ? dp->uart.baud_rate : 115200,
+			    dp->uart.data_bits ? dp->uart.data_bits : 8);
+		format(buf, size, off, "Uart",
+			    parity > 5 ? "%d," : "%c,",
+			    parity > 5 ? parity : parity_label[parity]);
 		if (stop_bits > 3)
-			off += format(buf, size, off, "%d)", stop_bits);
+			format(buf, size, off, "Uart", "%d)", stop_bits);
 		else
-			off += format(buf, size, off, "%s)",
-				     sb_label[stop_bits]);
+			format(buf, size, off, "Uart", "%s)",
+			       sb_label[stop_bits]);
 		break;
 			     }
 	case EFIDP_MSG_USB_CLASS:
-		off += format_helper(format_usb_class, buf, size, off, dp);
+		format_helper(format_usb_class, buf, size, off, "UsbClass", dp);
 		break;
 	case EFIDP_MSG_USB_WWID:
-		off += format(buf, size, off,
-			      "UsbWwid(%"PRIx16",%"PRIx16",%d,",
-			      dp->usb_wwid.vendor_id, dp->usb_wwid.product_id,
-			      dp->usb_wwid.interface);
-		off += format_ucs2(buf, size, off, dp->usb_wwid.serial_number,
-				   (efidp_node_size(dp)
-				    - offsetof(efidp_usb_wwid, serial_number))
-				   / 2 + 1);
-		off += format(buf, size, off, ")");
+		format(buf, size, off, "UsbWwid",
+			    "UsbWwid(%"PRIx16",%"PRIx16",%d,",
+			    dp->usb_wwid.vendor_id, dp->usb_wwid.product_id,
+			    dp->usb_wwid.interface);
+		format_ucs2(buf, size, off, "UsbWwid",
+			    dp->usb_wwid.serial_number,
+			    (efidp_node_size(dp)
+			     - offsetof(efidp_usb_wwid, serial_number)
+			     ) / 2 + 1);
+		format(buf, size, off, "UsbWwid", ")");
 		break;
 	case EFIDP_MSG_LUN:
-		off += format(buf, size, off, "Unit(%d)", dp->lun.lun);
+		format(buf, size, off, "Unit", "Unit(%d)", dp->lun.lun);
 		break;
 	case EFIDP_MSG_SATA:
-		off += format(buf, size, off, "Sata(%d,%d,%d)",
-			     dp->sata.hba_port, dp->sata.port_multiplier_port,
-			     dp->sata.lun);
+		format(buf, size, off, "Sata", "Sata(%d,%d,%d)",
+			    dp->sata.hba_port, dp->sata.port_multiplier_port,
+			    dp->sata.lun);
 		break;
 	case EFIDP_MSG_ISCSI: {
 		ssize_t sz = efidp_node_size(dp)
@@ -499,7 +493,7 @@ _format_message_dn(char *buf, size_t size, const_efidp dp)
 
 		memcpy(&lun, dp->iscsi.lun, sizeof (lun));
 
-		off += format(buf, size, off,
+		format(buf, size, off, "iSCSI",
 			      "iSCSI(%s,%d,0x%"PRIx64",%s,%s,%s,%s)",
 			      target_name, dp->iscsi.tpgt,
 			      be64_to_cpu(lun),
@@ -511,19 +505,19 @@ _format_message_dn(char *buf, size_t size, const_efidp dp)
 		break;
 			      }
 	case EFIDP_MSG_VLAN:
-		off += format(buf, size, off, "Vlan(%d)", dp->vlan.vlan_id);
+		format(buf, size, off, "Vlan", "Vlan(%d)", dp->vlan.vlan_id);
 		break;
 	case EFIDP_MSG_SAS_EX:
-		off += format_sas(buf, size, dp);
+		format_sas(buf, size, NULL, dp);
 		break;
 	case EFIDP_MSG_NVME:
-		off += format(buf, size, off, "NVMe(0x%"PRIx32","
-			      "%02X-%02X-%02X-%02X-%02X-%02X-%02X-%02X)",
-			      dp->nvme.namespace_id, dp->nvme.ieee_eui_64[0],
-			      dp->nvme.ieee_eui_64[1], dp->nvme.ieee_eui_64[2],
-			      dp->nvme.ieee_eui_64[3], dp->nvme.ieee_eui_64[4],
-			      dp->nvme.ieee_eui_64[5], dp->nvme.ieee_eui_64[6],
-			      dp->nvme.ieee_eui_64[7]);
+		format(buf, size, off, "NVMe", "NVMe(0x%"PRIx32","
+			   "%02X-%02X-%02X-%02X-%02X-%02X-%02X-%02X)",
+			   dp->nvme.namespace_id, dp->nvme.ieee_eui_64[0],
+			   dp->nvme.ieee_eui_64[1], dp->nvme.ieee_eui_64[2],
+			   dp->nvme.ieee_eui_64[3], dp->nvme.ieee_eui_64[4],
+			   dp->nvme.ieee_eui_64[5], dp->nvme.ieee_eui_64[6],
+			   dp->nvme.ieee_eui_64[7]);
 		break;
 	case EFIDP_MSG_URI: {
 		ssize_t sz = efidp_node_size(dp) - offsetof(efidp_uri, uri);
@@ -533,21 +527,21 @@ _format_message_dn(char *buf, size_t size, const_efidp dp)
 		char uri[sz + 1];
 		memcpy(uri, dp->uri.uri, sz);
 		uri[sz] = '\0';
-		off += format(buf, size, off, "Uri(%s)", uri);
+		format(buf, size, off, "Uri", "Uri(%s)", uri);
 		break;
 			    }
 	case EFIDP_MSG_UFS:
-		off += format(buf, size, off, "UFS(%d,0x%02x)",
-			      dp->ufs.target_id, dp->ufs.lun);
+		format(buf, size, off, "UFS", "UFS(%d,0x%02x)",
+			    dp->ufs.target_id, dp->ufs.lun);
 		break;
 	case EFIDP_MSG_SD:
-		off += format(buf, size, off, "SD(%d)", dp->sd.slot_number);
+		format(buf, size, off, "SD", "SD(%d)", dp->sd.slot_number);
 		break;
 	default:
-		off += format(buf, size, off, "Msg(%d,", dp->subtype);
-		off += format_hex(buf, size, off, (uint8_t *)dp+4,
-				  efidp_node_size(dp)-4);
-		off += format(buf,size,off,")");
+		format(buf, size, off, "Msg", "Msg(%d,", dp->subtype);
+		format_hex(buf, size, off, "Msg", (uint8_t *)dp+4,
+				efidp_node_size(dp)-4);
+		format(buf, size, off, "Msg", ")");
 		break;
 	}
 	return off;

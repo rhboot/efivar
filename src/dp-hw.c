@@ -25,12 +25,12 @@
 #include "dp.h"
 
 ssize_t
-format_edd10_guid(char *buf, size_t size, const_efidp dp)
+format_edd10_guid(char *buf, size_t size, const char *dp_type, const_efidp dp)
 {
 	ssize_t off = 0;
 	efidp_edd10 const *edd_dp = (efidp_edd10 *)dp;
-	off = format(buf, size, off, "EDD10(0x%"PRIx32")",
-		     edd_dp->hardware_device);
+	format(buf, size, off, dp_type, "EDD10(0x%"PRIx32")",
+		    edd_dp->hardware_device);
 	return off;
 }
 
@@ -41,40 +41,41 @@ _format_hw_dn(char *buf, size_t size, const_efidp dp)
 	ssize_t off = 0;
 	switch (dp->subtype) {
 	case EFIDP_HW_PCI:
-		off += format(buf, size, off, "Pci(0x%"PRIx32",0x%"PRIx32")",
-			      dp->pci.device, dp->pci.function);
+		format(buf, size, off, "Pci", "Pci(0x%"PRIx32",0x%"PRIx32")",
+		       dp->pci.device, dp->pci.function);
 		break;
 	case EFIDP_HW_PCCARD:
-		off += format(buf, size, off, "PcCard(0x%"PRIx32")",
-			      dp->pccard.function);
+		format(buf, size, off, "PcCard", "PcCard(0x%"PRIx32")",
+		       dp->pccard.function);
 		break;
 	case EFIDP_HW_MMIO:
-		off += format(buf, size, off,
-			      "MemoryMapped(%"PRIu32",0x%"PRIx64",0x%"PRIx64")",
-			      dp->mmio.memory_type, dp->mmio.starting_address,
-			      dp->mmio.ending_address);
+		format(buf, size, off, "MemoryMapped",
+		       "MemoryMapped(%"PRIu32",0x%"PRIx64",0x%"PRIx64")",
+		       dp->mmio.memory_type, dp->mmio.starting_address,
+		       dp->mmio.ending_address);
 		break;
 	case EFIDP_HW_VENDOR:
 		if (!efi_guid_cmp(&dp->hw_vendor.vendor_guid, &edd10_guid)) {
-			off += format_helper(format_edd10_guid, buf, size,
-					     off, dp);
+			format_helper(format_edd10_guid, buf, size, off,
+				      "EDD 1.0", dp);
 		} else {
-			off += format_vendor(buf, size, off, "VenHw", dp);
+			format_vendor(buf, size, off, "VenHw", dp);
 		}
 		break;
 	case EFIDP_HW_CONTROLLER:
-		off += format(buf, size, off, "Ctrl(0x%"PRIx32")",
-			      dp->controller.controller);
+		format(buf, size, off, "Ctrl", "Ctrl(0x%"PRIx32")",
+		       dp->controller.controller);
 		break;
 	case EFIDP_HW_BMC:
-		off += format(buf, size, off, "BMC(%d,0x%"PRIx64")",
-			      dp->bmc.interface_type, dp->bmc.base_addr);
+		format(buf, size, off, "BMC", "BMC(%d,0x%"PRIx64")",
+		       dp->bmc.interface_type, dp->bmc.base_addr);
 		break;
 	default:
-		off += format(buf, size, off, "HardwarePath(%d,", dp->subtype);
-		off += format_hex(buf, size, off, (uint8_t *)dp+4,
-				  efidp_node_size(dp)-4);
-		off += format(buf,size,off,")");
+		format(buf, size, off, "Hardware",
+		       "HardwarePath(%d,", dp->subtype);
+		format_hex(buf, size, off, "Hardware", (uint8_t *)dp+4,
+			   efidp_node_size(dp)-4);
+		format(buf, size, off, "Hardware", ")");
 		break;
 	}
 	return off;

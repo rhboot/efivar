@@ -277,7 +277,6 @@ ssize_t
 __attribute__((__visibility__ ("default")))
 efidp_format_device_path(char *buf, size_t size, const_efidp dp, ssize_t limit)
 {
-	ssize_t sz;
 	ssize_t off = 0;
 	int first = 1;
 
@@ -299,83 +298,71 @@ efidp_format_device_path(char *buf, size_t size, const_efidp dp, ssize_t limit)
 			first = 0;
 		} else {
 			if (dp->type == EFIDP_END_TYPE) {
-				if (dp->type == EFIDP_END_INSTANCE)
-					off += format(buf, size, off, ",");
-				else
+				if (dp->type == EFIDP_END_INSTANCE) {
+					format(buf, size, off, "\b", ",");
+				} else {
 					return off+1;
+				}
 			} else {
-				off += format(buf, size, off, "/");
+				format(buf, size, off, "\b", "/");
 			}
 		}
 
 		switch (dp->type) {
 		case EFIDP_HARDWARE_TYPE:
-			sz = format_hw_dn(buf, size, off, dp);
-			if (sz < 0)
-				return -1;
-			off += sz;
+			format_hw_dn(buf, size, off, dp);
 			break;
 		case EFIDP_ACPI_TYPE:
-			sz = format_acpi_dn(buf, size, off, dp);
-			if (sz < 0)
-				return -1;
-			off += sz;
+			format_acpi_dn(buf, size, off, dp);
 			break;
 		case EFIDP_MESSAGE_TYPE:
-			sz = format_message_dn(buf, size, off, dp);
-			if (sz < 0)
-				return -1;
-			off += sz;
+			format_message_dn(buf, size, off, dp);
 			break;
 		case EFIDP_MEDIA_TYPE:
-			sz = format_media_dn(buf, size, off, dp);
-			if (sz < 0)
-				return -1;
-			off += sz;
+			format_media_dn(buf, size, off, dp);
 			break;
 		case EFIDP_BIOS_BOOT_TYPE: {
 			char *types[] = {"", "Floppy", "HD", "CDROM", "PCMCIA",
 					 "USB", "Network", "" };
 
 			if (dp->subtype != EFIDP_BIOS_BOOT) {
-				off += format(buf, size, off, "BbsPath(%d,",
-					      dp->subtype);
-				off += format_hex(buf, size, off,
-						  (uint8_t *)dp+4,
-						  efidp_node_size(dp)-4);
-				off += format(buf,size,off,")");
+				format(buf, size, off, "BbsPath",
+				       "BbsPath(%d,", dp->subtype);
+				format_hex(buf, size, off, "BbsPath",
+					   (uint8_t *)dp+4,
+					   efidp_node_size(dp)-4);
+				format(buf, size, off, "BbsPath", ")");
 				break;
 			}
 
 			if (dp->bios_boot.device_type > 0 &&
 					dp->bios_boot.device_type < 7) {
-				off += format(buf, size, off,
-					      "BBS(%s,%s,0x%"PRIx32")",
-					      types[dp->bios_boot.device_type],
-					      dp->bios_boot.description,
-					      dp->bios_boot.status);
+				format(buf, size, off, "BBS",
+				       "BBS(%s,%s,0x%"PRIx32")",
+				       types[dp->bios_boot.device_type],
+				       dp->bios_boot.description,
+				       dp->bios_boot.status);
 			} else {
-				off += format(buf, size, off,
-					      "BBS(%d,%s,0x%"PRIx32")",
-					      dp->bios_boot.device_type,
-					      dp->bios_boot.description,
-					      dp->bios_boot.status);
+				format(buf, size, off, "BBS",
+				       "BBS(%d,%s,0x%"PRIx32")",
+				       dp->bios_boot.device_type,
+				       dp->bios_boot.description,
+				       dp->bios_boot.status);
 			}
 			break;
 					   }
 		case EFIDP_END_TYPE:
 			if (dp->subtype == EFIDP_END_INSTANCE) {
-				off += format(buf, size, off, ",");
+				format(buf, size, off, "End", ",");
 				break;
 			}
 			break;
 		default:
-			off += format(buf, size, off, "Path(%d,%d,", dp->type,
-				      dp->subtype);
-			off += format_hex(buf, size, off,
-					  (uint8_t *)dp + 4,
-					  efidp_node_size(dp) - 4);
-			off += format(buf, size, off, ")");
+			format(buf, size, off, "Path",
+				    "Path(%d,%d,", dp->type, dp->subtype);
+			format_hex(buf, size, off, "Path", (uint8_t *)dp + 4,
+				   efidp_node_size(dp) - 4);
+			format(buf, size, off, "Path", ")");
 			break;
 		}
 
