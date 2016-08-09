@@ -697,6 +697,9 @@ extern int efidp_append_node(const_efidp dp, const_efidp dn, efidp *out);
 extern int efidp_append_instance(const_efidp dp, const_efidp dpi, efidp *out);
 
 static inline int16_t
+__attribute__((__artificial__))
+__attribute__((__nonnull__(1)))
+__attribute__((__pure__))
 __attribute__((__unused__))
 efidp_type(const_efidp dp)
 {
@@ -708,6 +711,9 @@ efidp_type(const_efidp dp)
 }
 
 static inline int16_t
+__attribute__((__artificial__))
+__attribute__((__nonnull__(1)))
+__attribute__((__pure__))
 __attribute__((__unused__))
 efidp_subtype(const_efidp dp)
 {
@@ -719,7 +725,11 @@ efidp_subtype(const_efidp dp)
 }
 
 static inline ssize_t
+__attribute__((__artificial__))
+__attribute__((__nonnull__(1)))
+__attribute__((__pure__))
 __attribute__((__unused__))
+__attribute__((__warn_unused_result__))
 efidp_node_size(const_efidp dn)
 {
 	if (!dn || dn->length < 4) {
@@ -730,7 +740,11 @@ efidp_node_size(const_efidp dn)
 }
 
 static inline int
+__attribute__((__artificial__))
+__attribute__((__nonnull__(1, 2)))
+__attribute__((__pure__))
 __attribute__((__unused__))
+__attribute__((__warn_unused_result__))
 efidp_next_node(const_efidp in, const_efidp *out)
 {
 	ssize_t sz;
@@ -749,7 +763,11 @@ efidp_next_node(const_efidp in, const_efidp *out)
 }
 
 static inline int
+__attribute__((__artificial__))
+__attribute__((__nonnull__(1, 2)))
+__attribute__((__pure__))
 __attribute__((__unused__))
+__attribute__((__warn_unused_result__))
 efidp_next_instance(const_efidp in, const_efidp *out)
 {
 	ssize_t sz;
@@ -770,7 +788,11 @@ efidp_next_instance(const_efidp in, const_efidp *out)
 }
 
 static inline int
+__attribute__((__artificial__))
+__attribute__((__nonnull__(1)))
+__attribute__((__pure__))
 __attribute__((__unused__))
+__attribute__((__warn_unused_result__))
 efidp_is_multiinstance(const_efidp dn)
 {
 	while (1) {
@@ -796,7 +818,11 @@ efidp_is_multiinstance(const_efidp dn)
 }
 
 static inline int
+__attribute__((__artificial__))
+__attribute__((__nonnull__(1, 2)))
+__attribute__((__pure__))
 __attribute__((__unused__))
+__attribute__((__warn_unused_result__))
 efidp_get_next_end(const_efidp in, const_efidp *out)
 {
 	while (1) {
@@ -817,7 +843,11 @@ efidp_get_next_end(const_efidp in, const_efidp *out)
 }
 
 static inline ssize_t
+__attribute__((__artificial__))
+__attribute__((__nonnull__(1)))
+__attribute__((__pure__))
 __attribute__((__unused__))
+__attribute__((__warn_unused_result__))
 efidp_size(const_efidp dp)
 {
 	ssize_t ret = 0;
@@ -860,7 +890,11 @@ efidp_size(const_efidp dp)
 }
 
 static inline ssize_t
+__attribute__((__artificial__))
+__attribute__((__nonnull__(1)))
+__attribute__((__pure__))
 __attribute__((__unused__))
+__attribute__((__warn_unused_result__))
 efidp_instance_size(const_efidp dpi)
 {
 	ssize_t ret = 0;
@@ -886,6 +920,8 @@ efidp_instance_size(const_efidp dpi)
 }
 
 static inline int
+__attribute__((__artificial__))
+__attribute__((__nonnull__(1)))
 __attribute__((__unused__))
 __attribute__((__nonnull__ (1)))
 efidp_is_valid(const_efidp dp, ssize_t limit)
