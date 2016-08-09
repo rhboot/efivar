@@ -28,17 +28,17 @@
 #include "dp.h"
 
 static ssize_t
-format_ipv6_port_helper(char *buffer, size_t buffer_size,
+format_ipv6_port_helper(char *buf, size_t size,
 			uint8_t const *ipaddr, uint16_t port)
 {
 	uint16_t *ip = (uint16_t *)ipaddr;
-	off_t offset = 0;
-	ssize_t needed;
+	ssize_t off = 0;
+	ssize_t sz;
 
-	needed = snprintf(buffer, buffer_size, "[");
-	if (needed < 0)
+	sz = format(buf, size, off, "[");
+	if (sz < 0)
 		return -1;
-	offset += needed;
+	off += sz;
 
 	// deciding how to print an ipv6 ip requires 2 passes, because
 	// RFC5952 says we have to use :: a) only once and b) to maximum effect.
@@ -82,41 +82,31 @@ format_ipv6_port_helper(char *buffer, size_t buffer_size,
 
 	for (i = 0; i < 8; i++) {
 		if (largest_zero_block_offset == i) {
-			needed = snprintf(buffer + offset,
-					  buffer_size == 0 ? 0
-						: buffer_size - offset,
-					  "::");
-			if (needed < 0)
-				return -1;
-			offset += needed;
+			sz = format(buf, size, off, "::");
+			if (sz < 0)
+				return sz;
+			off += sz;
 			i += largest_zero_block_size -1;
 			continue;
 		} else if (i > 0) {
-			needed = snprintf(buffer + offset,
-					  buffer_size == 0 ? 0
-						: buffer_size - offset,
-					  ":");
-			if (needed < 0)
+			sz = format(buf, size, off, ":");
+			if (sz < 0)
 				return -1;
-			offset += needed;
+			off += sz;
 		}
 
-		needed = snprintf(buffer + offset,
-				  buffer_size == 0 ? 0 : buffer_size - offset,
-				  "%x", ip[i]);
-		if (needed < 0)
+		sz = format(buf, size, off, "%x", ip[i]);
+		if (sz < 0)
 			return -1;
-		offset += needed;
+		off += sz;
 	}
 
-	needed = snprintf(buffer + offset,
-			  buffer_size == 0 ? 0 : buffer_size - offset,
-			  "]:%d", port);
-	if (needed < 0)
+	sz = format(buf, size, off, "]:%d", port);
+	if (sz < 0)
 		return -1;
-	offset += needed;
+	off += sz;
 
-	return offset;
+	return off;
 }
 
 #define format_ipv6_port(buf, size, off, ipaddr, port)			\
