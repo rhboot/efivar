@@ -139,7 +139,7 @@ format_uart(char *buf, size_t size, const_efidp dp)
 static ssize_t
 format_sas(char *buf, size_t size, const_efidp dp)
 {
-	size_t off = 0;
+	ssize_t off = 0;
 	const efidp_sas * const s = &dp->sas;
 
 	int more_info = 0;
@@ -494,10 +494,14 @@ _format_message_dn(char *buf, size_t size, const_efidp dp)
 			     dp->sata.lun);
 		break;
 	case EFIDP_MSG_ISCSI: {
-		size_t sz = efidp_node_size(dp)
-			    - offsetof(efidp_iscsi, target_name);
+		ssize_t sz = efidp_node_size(dp)
+			- offsetof(efidp_iscsi, target_name);
+		if (sz < 0)
+			return -1;
+
 		if (sz > EFIDP_ISCSI_MAX_TARGET_NAME_LEN)
 			sz = EFIDP_ISCSI_MAX_TARGET_NAME_LEN;
+
 		char target_name[sz + 1];
 		memcpy(target_name, dp->iscsi.target_name, sz);
 		target_name[sz] = '\0';
@@ -532,7 +536,10 @@ _format_message_dn(char *buf, size_t size, const_efidp dp)
 			      dp->nvme.ieee_eui_64[7]);
 		break;
 	case EFIDP_MSG_URI: {
-		size_t sz = efidp_node_size(dp) - offsetof(efidp_uri, uri);
+		ssize_t sz = efidp_node_size(dp) - offsetof(efidp_uri, uri);
+		if (sz < 0)
+			return -1;
+
 		char uri[sz + 1];
 		memcpy(uri, dp->uri.uri, sz);
 		uri[sz] = '\0';

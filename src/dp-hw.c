@@ -27,7 +27,7 @@
 ssize_t
 format_edd10_guid(char *buf, size_t size, const_efidp dp)
 {
-	size_t off = 0;
+	ssize_t off = 0;
 	efidp_edd10 const *edd_dp = (efidp_edd10 *)dp;
 	off = format(buf, size, off, "EDD10(0x%"PRIx32")",
 		     edd_dp->hardware_device);
@@ -38,7 +38,7 @@ ssize_t
 _format_hw_dn(char *buf, size_t size, const_efidp dp)
 {
 	efi_guid_t edd10_guid = EDD10_HARDWARE_VENDOR_PATH_GUID;
-	off_t off = 0;
+	ssize_t off = 0;
 	switch (dp->subtype) {
 	case EFIDP_HW_PCI:
 		off += format(buf, size, off, "Pci(0x%"PRIx32",0x%"PRIx32")",
