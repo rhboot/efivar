@@ -88,28 +88,49 @@ __attribute__((__nonnull__ (1)))
 __attribute__((__visibility__ ("default")))
 efi_loadopt_optional_data_size(efi_load_option *opt, size_t size)
 {
-	size_t sz;
+	ssize_t sz;
+	ssize_t ret;
 	uint8_t *p;
 
-	if (size < sizeof(*opt))
+	ret = size;
+	if (ret < (ssize_t)sizeof(*opt)) {
+		efi_error("load option size is too small for header (%zd/%zd)",
+			  ret, sizeof(*opt));
 		return -1;
-	size -= sizeof(*opt);
-	if (size < opt->file_path_list_length)
+	}
+	ret -= sizeof(*opt);
+	if (ret < opt->file_path_list_length) {
+		efi_error("load option size is too small for path (%zd/%d)",
+			  size, opt->file_path_list_length);
 		return -1;
-	size -= opt->file_path_list_length;
+	}
+	ret -= opt->file_path_list_length;
+	if (ret < 0) {
+		efi_error("leftover size is negative (%zd)", ret);
+		return -1;
+	}
 	/* "size" as the limit means sz will be size or less in all cases; no
 	 * need to test it.  if it /is/ size, there's no optional data. */
-	sz = ucs2size(opt->description, size);
+	sz = ucs2size(opt->description, ret);
 	p = (uint8_t *)(opt->description) + sz;
-	size -= sz;
-
-	if (!efidp_is_valid((const_efidp)p, opt->file_path_list_length))
+	ret -= sz;
+	if (ret < 0) {
+		efi_error("leftover size is negative (%zd)", ret);
 		return -1;
+	}
+
+	if (!efidp_is_valid((const_efidp)p, opt->file_path_list_length)) {
+		efi_error("efi device path is not valid");
+		return -1;
+	}
 	sz = efidp_size((const_efidp)p);
-	if (sz != opt->file_path_list_length)
+	if (sz != opt->file_path_list_length) {
+		efi_error("size does not match file path size (%zd/%d)",
+			  sz, opt->file_path_list_length);
 		return -1;
+	}
 
-	return size;
+	return ret;
 }
 
 int
