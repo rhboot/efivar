@@ -696,6 +696,15 @@ extern int efidp_append_path(const_efidp dp0, const_efidp dp1, efidp *out);
 extern int efidp_append_node(const_efidp dp, const_efidp dn, efidp *out);
 extern int efidp_append_instance(const_efidp dp, const_efidp dpi, efidp *out);
 
+/*
+ * GCC complains that we check for null if we have a nonnull attribute, even
+ * though older or other compilers might just ignore that attribute if they
+ * don't support it.  Ugh.
+ */
+#if defined(__GNUC__) && __GNUC__ >= 6
+#pragma GCC diagnostic ignored "-Wnonnull-compare"
+#endif
+
 static inline int16_t
 __attribute__((__artificial__))
 __attribute__((__nonnull__(1)))
@@ -998,6 +1007,10 @@ efidp_is_valid(const_efidp dp, ssize_t limit)
 	}
 	return 1;
 }
+
+#if defined(__GNUC__) && __GNUC__ >= 6
+#pragma GCC diagnostic pop
+#endif
 
 /* and now, printing and parsing */
 extern ssize_t efidp_parse_device_node(char *path, efidp out, size_t size);

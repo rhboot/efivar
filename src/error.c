@@ -25,6 +25,14 @@
 #include <string.h>
 #include <unistd.h>
 
+/*
+ * GCC complains that we check for null if we have a nonnull attribute, even
+ * though older or other compilers might just ignore that attribute if they
+ * don't support it.  Ugh.
+ */
+#if defined(__GNUC__) && __GNUC__ >= 6
+#pragma GCC diagnostic ignored "-Wnonnull-compare"
+#endif
 
 typedef struct {
 	int error;
