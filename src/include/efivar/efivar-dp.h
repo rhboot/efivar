@@ -873,13 +873,8 @@ efidp_size(const_efidp dp)
 		rc = efidp_next_instance(dp, &next);
 		if (rc < 0) {
 			rc = efidp_next_node(dp, &next);
-			if (rc == 0) {
-				sz = efidp_node_size(dp);
-				if (sz < 0)
-					return sz;
-				ret += sz;
+			if (rc == 0)
 				break;
-			}
 		}
 		if (rc < 0)
 			return rc;
