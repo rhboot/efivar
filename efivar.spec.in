@@ -7,8 +7,8 @@ URL:            https://github.com/rhinstaller/efivar
 Requires:       %{name}-libs = %{version}-%{release}
 ExclusiveArch:	%{ix86} x86_64 aarch64
 
-BuildRequires:  popt-devel git
-Source0:        https://github.com/rhinstaller/efivar/releases/download/%{version}/efivar-%{version}.tar.bz2
+BuildRequires:  popt-devel popt-static git glibc-static
+Source0:        https://github.com/rhinstaller/efivar/releases/download/efivar-%{version}/efivar-%{version}.tar.bz2
 
 %description
 efivar provides a simple command line interface to the UEFI variable facility.
@@ -69,6 +69,17 @@ rm -rf $RPM_BUILD_ROOT
 %{_libdir}/*.so.*
 
 %changelog
+* Thu Aug 11 2016 Peter Jones <pjones@redhat.com> - 26-1
+- Use symmacros.h to make newer compilers happy
+- Fix a bug in efidp_size() double-counting End nodes sometimes.
+- Handle nonnull comparisons in the headers more gracefully.
+
+* Wed Aug 10 2016 Peter Jones <pjones@redhat.com> - 25-1
+- Rework version numbers.
+- Add error tracking API.
+- Remove use of deprecated readdir_r
+- SATA device path fixes.
+
 * Mon Jul 13 2015 Peter Jones <pjones@redhat.com> - 0.21-1
 - Rename "make test" so packagers don't think it's a good idea to run it
   during builds.
