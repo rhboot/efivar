@@ -38,11 +38,22 @@
  */
 #if defined(__GNUC__) && defined(__GNUC_MINOR__)
 #if __GNUC__ >= 5 && __GNUC_MINOR__ >= 1
+#define int_add(a, b, c) __builtin_add_overflow(a, b, c)
 #define long_add(a, b, c) __builtin_add_overflow(a, b, c)
 #define long_mult(a, b, c) __builtin_mul_overflow(a, b, c)
 #define ulong_add(a, b, c) __builtin_add_overflow(a, b, c)
 #define ulong_mult(a, b, c) __builtin_mul_overflow(a, b, c)
 #endif
+#endif
+#ifndef int_add
+#define int_add(a, b, c) ({					\
+		const int _limit = INT_MAX;			\
+		int _ret;					\
+		_ret = _limit - (a) > (b);			\
+		if (!_ret)					\
+			*(c) = ((a) + (b));			\
+		_ret;						\
+	})
 #endif
 #ifndef long_add
 #define long_add(a, b, c) ({					\
@@ -92,6 +103,7 @@
 #endif
 
 #define add(a, b, c) _Generic((c),					\
+			      int *: int_add(a,b,c),			\
 			      long *: long_add(a,b,c),			\
 			      unsigned long *: ulong_add(a,b,c))
 
