@@ -69,6 +69,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_libdir}/*.so.*
 
 %changelog
+* Tue Aug 16 2016 Peter Jones <pjones@redhat.com> - 27-1
+- Bug fix for 086eeb17 in efivar 26.
+
 * Thu Aug 11 2016 Peter Jones <pjones@redhat.com> - 26-1
 - Use symmacros.h to make newer compilers happy
 - Fix a bug in efidp_size() double-counting End nodes sometimes.
