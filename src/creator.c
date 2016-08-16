@@ -116,7 +116,7 @@ find_file(const char * const filepath, char **devicep, char **relpathp)
 
 		if (dsb.st_rdev == fsb.st_dev) {
 			ssize_t mntlen = strlen(me->mnt_dir);
-			if (mntlen != linklen)
+			if (mntlen >= linklen)
 				continue;
 			if (strncmp(linkbuf, me->mnt_dir, mntlen))
 				continue;
