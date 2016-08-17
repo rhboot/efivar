@@ -80,8 +80,10 @@ clean :
 install : all
 	$(INSTALL) -d -m 755 $(DESTDIR)$(libdir)
 	$(foreach x,$(LIBTARGETS), \
-		$(INSTALL) -m 755 $(x) $(DESTDIR)$(libdir)/$(x).$(VERSION) ;\
-		ln -fs $(x).$(VERSION) $(DESTDIR)$(libdir)/$(x); )
+		$(INSTALL) -m 755 $(x) $(DESTDIR)$(libdir)/$(x).1.$(VERSION) ;\
+		ln -fs $(x).1.$(VERSION) $(DESTDIR)$(libdir)/$(x).1 ;\
+		ln -fs $(x).1.$(VERSION) $(DESTDIR)$(libdir)/$(x) ;\
+		)
 	$(INSTALL) -d -m 755 $(DESTDIR)$(PCDIR)
 	$(foreach x, $(PCTARGETS), $(INSTALL) -m 644 $(x) $(DESTDIR)$(PCDIR) ;)
 	$(INSTALL) -d -m 755 $(DESTDIR)$(includedir)/efivar
@@ -93,8 +95,8 @@ test : all
 	$(MAKE) -C test $@
 
 .PHONY: test deps
-.SECONDARY : libefivar.so.$(VERSION)
-.SECONDARY : libefiboot.so.$(VERSION)
+.SECONDARY : libefivar.so.1.$(VERSION) libefivar.so.1
+.SECONDARY : libefiboot.so.1.$(VERSION) libefivar.so.1
 .SECONDARY : include/efivar/efivar-guids.h guid-symbols.c
 .INTERMEDIATE : guids.bin names.bin
 .PRECIOUS : guid-symbols.o makeguids

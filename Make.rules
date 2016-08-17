@@ -18,7 +18,7 @@ include $(TOPDIR)/Make.version
 
 %.so :
 	$(CCLD) $(ccldflags) $(CPPFLAGS) $(SOFLAGS) \
-	  -Wl,-soname,$@.$(VERSION) \
+	  -Wl,-soname,$@.1 \
 	  -Wl,--version-script=$(MAP) \
 	  -o $@ $^ $(LDLIBS)
 

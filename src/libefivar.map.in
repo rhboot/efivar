@@ -99,7 +99,7 @@ LIBEFIVAR_0.24 {
 		efi_guid_cmp;
 } LIBEFIVAR_0.0;
 
-LIBEFIVAR_@@VERSION@@ {
+LIBEFIVAR_1.@@VERSION@@ {
 	global: efi_error_set;
 		efi_error_get;
 		efi_error_clear;
