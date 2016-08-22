@@ -256,13 +256,13 @@ libefivar_init(void)
 			}
 		} else {
 			int rc = ops_list[i]->probe();
-			if (rc <= 0)
+			if (rc <= 0) {
 				efi_error("ops_list[%d]->probe() failed", i);
-			else
+			} else {
 				efi_error_clear();
-
-			ops = ops_list[i];
-			break;
+				ops = ops_list[i];
+				break;
+			}
 		}
 	}
 }
