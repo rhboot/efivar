@@ -49,7 +49,8 @@
 #define int_add(a, b, c) ({					\
 		const int _limit = INT_MAX;			\
 		int _ret;					\
-		_ret = _limit - (a) > (b);			\
+		_ret = _limit - ((unsigned long long)a) >	\
+			  ((unsigned long long)b);		\
 		if (!_ret)					\
 			*(c) = ((a) + (b));			\
 		_ret;						\
@@ -59,7 +60,8 @@
 #define long_add(a, b, c) ({					\
 		const long _limit = LONG_MAX;			\
 		int _ret;					\
-		_ret = _limit - (a) > (b);			\
+		_ret = _limit - ((unsigned long long)a) >	\
+			   ((unsigned long long)b);		\
 		if (!_ret)					\
 			*(c) = ((a) + (b));			\
 		_ret;						\
@@ -82,7 +84,8 @@
 #define ulong_add(a, b, c) ({					\
 		const unsigned long _limit = ULONG_MAX;		\
 		int _ret;					\
-		_ret = _limit - (a) > (b);			\
+		_ret = _limit - ((unsigned long long)a) >	\
+			    ((unsigned long long)b);		\
 		if (!_ret)					\
 			*(c) = ((a) + (b));			\
 		_ret;						\
