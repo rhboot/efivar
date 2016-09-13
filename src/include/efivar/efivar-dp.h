@@ -26,7 +26,7 @@ typedef struct {
 	uint8_t type;
 	uint8_t subtype;
 	uint16_t length;
-} efidp_header;
+} __attribute__((__packed__)) efidp_header;
 
 /* A little bit of housekeeping... */
 typedef uint8_t efidp_boolean;
