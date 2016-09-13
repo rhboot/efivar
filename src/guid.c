@@ -27,6 +27,8 @@
 
 #define GUID_LENGTH_WITH_NUL 37
 
+extern const efi_guid_t efi_guid_zero;
+
 int
 __attribute__((__nonnull__ (1, 2)))
 __attribute__((__visibility__ ("default")))

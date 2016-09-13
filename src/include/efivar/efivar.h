@@ -105,8 +105,6 @@ extern int efi_id_guid_to_guid(const char *name, efi_guid_t *guid)
 extern int efi_symbol_to_guid(const char *symbol, efi_guid_t *guid)
 			     __attribute__((__nonnull__ (1, 2)));
 
-extern const efi_guid_t efi_guid_zero;
-
 extern int efi_guid_is_zero(const efi_guid_t *guid);
 extern int efi_guid_is_empty(const efi_guid_t *guid);
 extern int efi_guid_cmp(const efi_guid_t *a, const efi_guid_t *b);
