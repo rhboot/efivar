@@ -372,8 +372,8 @@ sysfs_parse_nvme(uint8_t *buf, ssize_t size, ssize_t *off,
 			return -1;
 		}
 		rc = sscanf((char *)filebuf,
-			    "%02hhx-%02hhx-%02hhx-%02hhx-"
-			    "%02hhx-%02hhx-%02hhx-%02hhx",
+			    "%02hhx %02hhx %02hhx %02hhx "
+			    "%02hhx %02hhx %02hhx %02hhx",
 			    &eui[0], &eui[1], &eui[2], &eui[3],
 			    &eui[4], &eui[5], &eui[6], &eui[7]);
 		if (rc < 8) {
