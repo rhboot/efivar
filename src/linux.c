@@ -363,8 +363,13 @@ sysfs_parse_nvme(uint8_t *buf, ssize_t size, ssize_t *off,
 	 * now fish the eui out of sysfs is there is one...
 	 */
 	rc = read_sysfs_file(&filebuf,
+			     "/sys/class/block/nvme%dn%d/eui",
+			     ctrl_id, ns_id);
+	if (rc < 0 && errno == ENOENT) {
+		rc = read_sysfs_file(&filebuf,
 			     "/sys/class/block/nvme%dn%d/device/eui",
 			     ctrl_id, ns_id);
+	}
 	if (rc >= 0) {
 		uint8_t eui[8];
 		if (rc < 23) {
