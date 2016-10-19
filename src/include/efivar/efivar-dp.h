@@ -764,6 +764,10 @@ efidp_next_node(const_efidp in, const_efidp *out)
 
 	/* I love you gcc. */
 	*out = (const_efidp)(const efidp_header *)((uint8_t *)in + sz);
+	if (*out < in) {
+		errno = EINVAL;
+		return -1;
+	}
 	return 1;
 }
 
@@ -788,6 +792,10 @@ efidp_next_instance(const_efidp in, const_efidp *out)
 
 	/* I love you gcc. */
 	*out = (const_efidp)(const efidp_header *)((uint8_t *)in + sz);
+	if (*out < in) {
+		errno = EINVAL;
+		return -1;
+	}
 	return 1;
 }
 
@@ -828,6 +836,7 @@ __attribute__((__warn_unused_result__))
 efidp_get_next_end(const_efidp in, const_efidp *out)
 {
 	while (1) {
+		const_efidp next;
 		ssize_t sz;
 
 		if (efidp_type(in) == EFIDP_END_TYPE) {
@@ -839,7 +848,12 @@ efidp_get_next_end(const_efidp in, const_efidp *out)
 		if (sz < 0)
 			break;
 
-		in = (const_efidp)(const efidp_header *)((uint8_t *)in + sz);
+		next = (const_efidp)(const efidp_header *)((uint8_t *)in + sz);
+		if (next < in) {
+			errno = EINVAL;
+			return -1;
+		}
+		in = next;
 	}
 	return -1;
 }
@@ -895,7 +909,7 @@ efidp_instance_size(const_efidp dpi)
 	ssize_t ret = 0;
 	while (1) {
 		ssize_t sz;
-		const_efidp next;
+		const_efidp next = NULL;
 		int rc;
 
 		sz = efidp_node_size(dpi);
@@ -927,6 +941,7 @@ efidp_is_valid(const_efidp dp, ssize_t limit)
 		limit = INT_MAX;
 
 	while (limit > 0 && hdr) {
+		efidp_header *next;
 		if (limit < (int64_t)(sizeof (efidp_header)))
 			return 0;
 
@@ -988,7 +1003,12 @@ efidp_is_valid(const_efidp dp, ssize_t limit)
 		    hdr->type != EFIDP_END_ENTIRE)
 			break;
 
-		hdr = (efidp_header *)((uint8_t *)hdr + hdr->length);
+		next = (efidp_header *)((uint8_t *)hdr + hdr->length);
+		if (next < hdr) {
+			errno = EINVAL;
+			return -1;
+		}
+		hdr = next;
 	}
 	if (limit < 0) {
 		errno = EINVAL;
