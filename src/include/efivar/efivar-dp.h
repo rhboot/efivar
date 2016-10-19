@@ -807,13 +807,15 @@ __attribute__((__warn_unused_result__))
 efidp_is_multiinstance(const_efidp dn)
 {
 	while (1) {
-		const_efidp next;
+		const_efidp next = NULL;
 		int rc;
 
 		rc = efidp_next_node(dn, &next);
 		if (rc < 0) {
 			errno = EINVAL;
 			return -1;
+		} else if (rc == 0) {
+			return 0;
 		}
 
 		dn = next;
