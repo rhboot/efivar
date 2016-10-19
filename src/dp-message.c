@@ -382,7 +382,8 @@ _format_message_dn(char *buf, size_t size, const_efidp dp)
 					  &dp->msg_vendor.vendor_guid))
 				continue;
 
-			label = subtypes[i].label;
+			if (subtypes[i].label[0])
+				label = subtypes[i].label;
 			formatter = subtypes[i].formatter;
 			break;
 		}
