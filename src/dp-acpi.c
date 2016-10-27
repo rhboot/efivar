@@ -27,7 +27,9 @@
 #include "dp.h"
 
 static ssize_t
-_format_acpi_adr(char *buf, size_t size, const_efidp dp)
+_format_acpi_adr(char *buf, size_t size,
+		 const char *dp_type __attribute__((__unused__)),
+		 const_efidp dp)
 {
 	ssize_t off = 0;
 	format(buf, size, off, "AcpiAdr", "AcpiAdr(");
@@ -38,8 +40,8 @@ _format_acpi_adr(char *buf, size_t size, const_efidp dp)
 	return off;
 }
 
-#define format_acpi_adr(buf, size, off, dp) \
-	_format_acpi_adr(((buf)+(off)), ((size)?((size)-(off)):0), (dp))
+#define format_acpi_adr(buf, size, off, dp)				\
+	format_helper(_format_acpi_adr, buf, size, off, "AcpiAdr", dp)
 
 ssize_t
 _format_acpi_dn(char *buf, size_t size, const_efidp dp)
