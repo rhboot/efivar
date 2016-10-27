@@ -32,6 +32,7 @@ cflags	= $(CFLAGS) -I${TOPDIR}/src/include/efivar/ \
 clang_ccldflags =
 gcc_ccldflags =
 ccldflags = $(cflags) -L. $(CCLDFLAGS) $(LDFLAGS) \
+	-Wl,-z,muldefs \
 	$(if $(findstring clang,$(CCLD)),$(clang_ccldflags),) \
 	$(if $(findstring gcc,$(CCLD)),$(gcc_ccldflags),) \
 	$(call pkg-config-ccldflags)
