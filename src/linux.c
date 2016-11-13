@@ -55,7 +55,7 @@ set_disk_and_part_name(struct disk_info *info)
 	char *linkbuf;
 	ssize_t rc;
 
-	rc = sysfs_readlink(&linkbuf, "/sys/dev/block/%"PRIu64":%hhu",
+	rc = sysfs_readlink(&linkbuf, "/sys/dev/block/%"PRIu64":%"PRIu32,
 		      info->major, info->minor);
 	if (rc < 0)
 		return -1;
@@ -918,11 +918,11 @@ eb_disk_info_from_fd(int fd, struct disk_info *info)
 		return 1;
 	}
 	if (S_ISBLK(buf.st_mode)) {
-		info->major = buf.st_rdev >> 8;
-		info->minor = buf.st_rdev & 0xFF;
+		info->major = major(buf.st_rdev);
+		info->minor = minor(buf.st_rdev);
 	} else if (S_ISREG(buf.st_mode)) {
-		info->major = buf.st_dev >> 8;
-		info->minor = buf.st_dev & 0xFF;
+		info->major = major(buf.st_dev);
+		info->minor = minor(buf.st_dev);
 	} else {
 		printf("Cannot stat non-block or non-regular file\n");
 		return 1;
