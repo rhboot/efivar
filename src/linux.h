@@ -75,7 +75,7 @@ struct disk_info {
 	unsigned int disknum;
 	unsigned char part;
 	uint64_t major;
-	unsigned char minor;
+	uint32_t minor;
 	uint32_t edd10_devicenum;
 
 	struct pci_root_info pci_root;
