@@ -21,6 +21,11 @@
 
 #include <limits.h>
 
+#define efidp_encode_bitfield_(name, shift, mask)			\
+	(((name) << (shift)) & (mask))
+#define efidp_decode_bitfield_(value, name, shift, mask)		\
+	({ (name) = ((value) & (mask)) >> (shift); })
+
 /* Generic device path header */
 typedef struct {
 	uint8_t type;
@@ -150,23 +155,100 @@ typedef struct {
 	uint32_t	adr[];
 } __attribute__((__packed__)) efidp_acpi_adr;
 
+#define EFIDP_ACPI_ADR_DEVICE_ID_SCHEME_MASK		0x80000000
+#define EFIDP_ACPI_ADR_DEVICE_ID_SCHEME_SHIFT		31
+#define EFIDP_ACPI_ADR_DEVICE_ID_SCHEME_ACPI		0x1
+#define EFIDP_ACPI_ADR_DEVICE_ID_SCHEME_OTHER		0x0
+
+#define EFIDP_ACPI_ADR_VGA_PIPE_ID_MASK			0x001C0000
+#define EFIDP_ACPI_ADR_VGA_PIPE_ID_SHIFT		18
+
+#define EFIDP_ACPI_ADR_NONVGA_OUTPUT_ID_MASK		0x00020000
+#define EFIDP_ACPI_ADR_NONVGA_OUTPUT_ID_SHIFT		17
+
+#define EFIDP_ACPI_ADR_FIRMWARE_DETECT_MASK		0x00010000
+#define EFIDP_ACPI_ADR_FIRMWARE_DETECT_SHIFT		16
+
+#define EFIDP_ACPI_ADR_VENDOR_INFO_MASK			0x0000f000
+#define EFIDP_ACPI_ADR_VENDOR_INFO_SHIFT		12
+
+#define EFIDP_ACPI_ADR_DISPLAY_TYPE_MASK		0x00000f00
+#define EFIDP_ACPI_ADR_DISPLAY_TYPE_SHIFT		8
 #define EFIDP_ACPI_ADR_DISPLAY_TYPE_OTHER		0
 #define EFIDP_ACPI_ADR_DISPLAY_TYPE_VGA			1
 #define EFIDP_ACPI_ADR_DISPLAY_TYPE_TV			2
 #define EFIDP_ACPI_ADR_DISPLAY_TYPE_EXTERNAL_DIGITAL	3
 #define EFIDP_ACPI_ADR_DISPLAY_TYPE_INTERNAL_DIGITAL	4
 
-#define EFIDP_ACPI_DISPLAY_ADR(_DeviceIdScheme, _HeadId, _NonVgaOutput,\
-			       _BiosCanDetect, _VendorInfo, _Type, _Port,\
-			       _Index) \
-	((UINT32)((((_DeviceIdScheme) & 0x1) << 31) | \
-		  (((_HeadId)         & 0x7) << 18) | \
-		  (((_NonVgaOutput)   & 0x1) << 17) | \
-		  (((_BiosCanDetect)  & 0x1) << 16) | \
-		  (((_VendorInfo)     & 0xf) << 12) | \
-		  (((_Type)           & 0xf) << 8)  | \
-		  (((_Port)           & 0xf) << 4)  | \
-		  (((_Index)          & 0xf) << 0)))
+#define EFIDP_ACPI_ADR_DISPLAY_PORT_MASK		0x000000f0
+#define EFIDP_ACPI_ADR_DISPLAY_PORT_SHIFT		4
+
+#define EFIDP_ACPI_ADR_DISPLAY_INDEX_MASK		0x0000000f
+#define EFIDP_ACPI_ADR_DISPLAY_INDEX_SHIFT		0
+
+#define efidp_encode_acpi_display_adr(device_id_scheme, pipe_id,	\
+				      nonvga_output,			\
+				      firmware_can_detect, vendor_info,	\
+				      type, port, index, adr)		\
+	({								\
+	((uint32_t)(adr)) = ((uint32_t)(				\
+	 efidp_encode_bitfield_(deviceidscheme,				\
+				EFIDP_ACPI_ADR_DEVICE_ID_SCHEME_SHIFT,	\
+				EFIDP_ACPI_ADR_DEVICE_ID_SCHEME_MASK) |	\
+	 efidp_encode_bitfield_(pipeid,					\
+				EFIDP_ACPI_ADR_VGA_PIPE_ID_SHIFT,	\
+				EFIDP_ACPI_ADR_VGA_PIPE_ID_MASK) |	\
+	 efidp_encode_bitfield_(nonvgaoutput,				\
+				EFIDP_ACPI_ADR_NONVGA_OUTPUT_ID_SHIFT,	\
+				EFIDP_ACPI_ADR_NONVGA_OUTPUT_ID_MASK) |	\
+	 efidp_encode_bitfield_(firmwarecandetect,			\
+				EFIDP_ACPI_ADR_FIRMWARE_DETECT_SHIFT,	\
+				EFIDP_ACPI_ADR_FIRMWARE_DETECT_MASK) |	\
+	 efidp_encode_bitfield_(vendorinfo,				\
+				EFIDP_ACPI_ADR_VENDOR_INFO_SHIFT,	\
+				EFIDP_ACPI_ADR_VENDOR_INFO_MASK) |	\
+	 efidp_encode_bitfield_(type,					\
+				EFIDP_ACPI_ADR_DISPLAY_TYPE_SHIFT,	\
+				EFIDP_ACPI_ADR_DISPLAY_TYPE_MASK) |	\
+	 efidp_encode_bitfield_(port,					\
+				EFIDP_ACPI_ADR_DISPLAY_PORT_SHIFT,	\
+				EFIDP_ACPI_ADR_DISPLAY_PORT_MASK) |	\
+	 efidp_encode_bitfield_(index,					\
+				EFIDP_ACPI_ADR_DISPLAY_INDEX_SHIFT,	\
+				EFIDP_ACPI_ADR_DISPLAY_INDEX_MASK)));	\
+	(deviceidscheme == EFIDP_ACPI_ADR_DEVICE_ID_SCHEME_ACPI);	\
+	})
+
+#define efidp_decode_acpi_display_adr(adr, device_id_scheme, pipe_id,	\
+				      nonvga_output,			\
+				      firmware_can_detect, vendor_info,	\
+				      type, port, index) ({		\
+	 efidp_decode_bitfield_(adr, *(device_id_scheme),		\
+				EFIDP_ACPI_ADR_DEVICE_ID_SCHEME_SHIFT,	\
+				EFIDP_ACPI_ADR_DEVICE_ID_SCHEME_MASK);	\
+	 efidp_decode_bitfield_(adr, *(pipe_id),			\
+				EFIDP_ACPI_ADR_VGA_PIPE_ID_SHIFT,	\
+				EFIDP_ACPI_ADR_VGA_PIPE_ID_MASK);	\
+	 efidp_decode_bitfield_(adr, *(nonvga_output),			\
+				EFIDP_ACPI_ADR_NONVGA_OUTPUT_ID_SHIFT,	\
+				EFIDP_ACPI_ADR_NONVGA_OUTPUT_ID_MASK);	\
+	 efidp_decode_bitfield_(adr, *(firmware_can_detect),		\
+				EFIDP_ACPI_ADR_FIRMWARE_DETECT_SHIFT,	\
+				EFIDP_ACPI_ADR_FIRMWARE_DETECT_MASK);	\
+	 efidp_decode_bitfield_(adr, *(vendor_info),			\
+				EFIDP_ACPI_ADR_VENDOR_INFO_SHIFT,	\
+				EFIDP_ACPI_ADR_VENDOR_INFO_MASK);	\
+	 efidp_decode_bitfield_(adr, *(type),				\
+				EFIDP_ACPI_ADR_DISPLAY_TYPE_SHIFT,	\
+				EFIDP_ACPI_ADR_DISPLAY_TYPE_MASK);	\
+	 efidp_decode_bitfield_(adr, *(port),				\
+				EFIDP_ACPI_ADR_DISPLAY_PORT_SHIFT,	\
+				EFIDP_ACPI_ADR_DISPLAY_PORT_MASK);	\
+	 efidp_decode_bitfield_(adr, *(index),				\
+				EFIDP_ACPI_ADR_DISPLAY_INDEX_SHIFT,	\
+				EFIDP_ACPI_ADR_DISPLAY_INDEX_MASK);	\
+	(*(device_id_scheme)) == EFIDP_ACPI_ADR_DEVICE_ID_SCHEME_ACPI;	\
+	})
 
 /* Each messaging subtype */
 #define EFIDP_MSG_ATAPI		0x01
