@@ -53,7 +53,7 @@ _efi_set_variable(efi_guid_t guid, const char *name, uint8_t *data,
 		efi_error("ops->set_variable() failed");
 	return rc;
 }
-__asm__(".symver _efi_set_variable,_efi_set_variable@");
+__asm__(".symver _efi_set_variable,_efi_set_variable@libefivar.so.0");
 
 int
 __attribute__((__nonnull__ (2, 3)))
@@ -67,13 +67,13 @@ _efi_set_variable_variadic(efi_guid_t guid, const char *name, uint8_t *data,
 		efi_error("ops->set_variable() failed");
 	return rc;
 }
-__asm__(".symver _efi_set_variable_variadic,efi_set_variable@");
+__asm__(".symver _efi_set_variable_variadic,efi_set_variable@libefivar.so.0");
 
 int
 __attribute__((__nonnull__ (2, 3)))
 __attribute__((__visibility__ ("default")))
-efi_set_variable(efi_guid_t guid, const char *name, uint8_t *data,
-		 size_t data_size, uint32_t attributes, mode_t mode)
+_efi_set_variable_mode(efi_guid_t guid, const char *name, uint8_t *data,
+		       size_t data_size, uint32_t attributes, mode_t mode)
 {
 	int rc;
 	rc = ops->set_variable(guid, name, data, data_size, attributes, mode);
@@ -83,7 +83,14 @@ efi_set_variable(efi_guid_t guid, const char *name, uint8_t *data,
 		efi_error_clear();
 	return rc;
 }
-__asm__(".symver efi_set_variable,efi_set_variable@@LIBEFIVAR_0.24");
+__asm__(".symver _efi_set_variable_mode,efi_set_variable@@LIBEFIVAR_0.24");
+
+int
+__attribute__((__nonnull__ (2, 3)))
+__attribute__((__visibility__ ("default")))
+efi_set_variable(efi_guid_t guid, const char *name, uint8_t *data,
+		 size_t data_size, uint32_t attributes, mode_t mode)
+	__attribute((weak, alias ("_efi_set_variable_mode")));
 
 int
 __attribute__((__nonnull__ (2, 3)))
