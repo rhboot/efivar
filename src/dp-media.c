@@ -71,13 +71,14 @@ _format_media_dn(char *buf, size_t size, const_efidp dp)
 	case EFIDP_MEDIA_VENDOR:
 		format_vendor(buf, size, off, "VenMedia", dp);
 		break;
-	case EFIDP_MEDIA_FILE:
+	case EFIDP_MEDIA_FILE: {
+		size_t limit = (efidp_node_size(dp)
+				- offsetof(efidp_file, name)) / 2;
 		format(buf, size, off, "File", "File(");
-		format_ucs2(buf, size, off, "File", dp->file.name,
-			    (efidp_node_size(dp)
-			     - offsetof(efidp_file, name)) / 2);
+		format_ucs2(buf, size, off, "File", dp->file.name, limit);
 		format(buf, size, off, "File", ")");
 		break;
+			       }
 	case EFIDP_MEDIA_PROTOCOL:
 		format(buf, size, off, "Media", "Media(");
 		format_guid(buf, size, off, "Media",

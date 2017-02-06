@@ -418,16 +418,20 @@ _format_message_dn(char *buf, size_t size, const_efidp dp)
 
 		sz = format_ipv6_port(addr0, 0, tmpoff, a->local_ipv6_addr,
 				      a->local_port);
-
+		if (sz < 0)
+			return -1;
 		addr0 = alloca(sz+1);
+		tmpoff = 0;
+		sz = format_ipv6_port(addr1, 0, tmpoff, a->remote_ipv6_addr,
+				      a->remote_port);
+		if (sz < 0)
+			return -1;
+		addr1 = alloca(sz+1);
+
 		tmpoff = 0;
 		format_ipv6_port(addr0, sz, tmpoff, a->local_ipv6_addr,
 				      a->local_port);
 
-		tmpoff = 0;
-		sz = format_ipv6_port(addr1, 0, tmpoff, a->remote_ipv6_addr,
-				      a->remote_port);
-		addr1 = alloca(sz+1);
 		tmpoff = 0;
 		format_ipv6_port(addr1, sz, tmpoff, a->remote_ipv6_addr,
 				      a->remote_port);
@@ -458,18 +462,19 @@ _format_message_dn(char *buf, size_t size, const_efidp dp)
 	case EFIDP_MSG_USB_CLASS:
 		format_helper(format_usb_class, buf, size, off, "UsbClass", dp);
 		break;
-	case EFIDP_MSG_USB_WWID:
+	case EFIDP_MSG_USB_WWID: {
+		size_t limit = (efidp_node_size(dp)
+				- offsetof(efidp_usb_wwid, serial_number))
+				/ 2;
 		format(buf, size, off, "UsbWwid",
 			    "UsbWwid(%"PRIx16",%"PRIx16",%d,",
 			    dp->usb_wwid.vendor_id, dp->usb_wwid.product_id,
 			    dp->usb_wwid.interface);
 		format_ucs2(buf, size, off, "UsbWwid",
-			    dp->usb_wwid.serial_number,
-			    (efidp_node_size(dp)
-			     - offsetof(efidp_usb_wwid, serial_number)
-			     ) / 2 + 1);
+			    dp->usb_wwid.serial_number, limit);
 		format(buf, size, off, "UsbWwid", ")");
 		break;
+				 }
 	case EFIDP_MSG_LUN:
 		format(buf, size, off, "Unit", "Unit(%d)", dp->lun.lun);
 		break;
