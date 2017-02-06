@@ -17,7 +17,7 @@ install :
 		$(MAKE) -C $$x $@ ; \
 	done
 
-efivar efivar-static :
+efivar efivar-static static:
 	$(MAKE) -C src $@
 
 $(SUBDIRS) :

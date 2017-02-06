@@ -7,9 +7,11 @@ include $(TOPDIR)/Make.defaults
 
 LIBTARGETS=libefivar.so libefiboot.so
 STATICLIBTARGETS=libefivar.a libefiboot.a
-BINTARGETS=efivar efivar-static
+BINTARGETS=efivar
+STATICBINTARGETS=efivar-static
 PCTARGETS=efivar.pc efiboot.pc
-TARGETS=$(LIBTARGETS) $(STATICLIBTARGETS) $(BINTARGETS) $(PCTARGETS)
+TARGETS=$(LIBTARGETS) $(BINTARGETS) $(PCTARGETS)
+STATICTARGETS=$(STATICLIBTARGETS) $(STATICBINTARGETS)
 
 LIBEFIBOOT_SOURCES = crc32.c creator.c disk.c gpt.c linux.c loadopt.c
 LIBEFIBOOT_OBJECTS = $(patsubst %.c,%.o,$(LIBEFIBOOT_SOURCES))
@@ -27,6 +29,8 @@ $(call deps-of,$(ALL_SOURCES)) : | deps
 -include $(call deps-of,$(ALL_SOURCES))
 
 all : $(TARGETS)
+
+static : $(STATICTARGETS)
 
 ./guid-symbols.c : include/efivar/efivar-guids.h
 ./guids.bin : include/efivar/efivar-guids.h
