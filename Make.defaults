@@ -21,6 +21,7 @@ AR	:= $(CROSS_COMPILE)gcc-ar
 NM	:= $(CROSS_COMPILE)gcc-nm
 RANLIB	:= $(CROSS_COMPILE)gcc-ranlib
 ABIDW	:= abidw
+ABIDIFF := abidiff
 
 PKGS	=
 

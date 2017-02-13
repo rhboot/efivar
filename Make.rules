@@ -25,6 +25,12 @@ include $(TOPDIR)/Make.version
 %.abixml : %.so
 	$(ABIDW) --headers-dir $(TOPDIR)/src/include/efivar/ --out-file $@ $^
 
+%.abicheck : %.so
+	$(ABIDIFF) --suppr \
+		$(patsubst %.so,%.abignore,$<) \
+		$(patsubst %.so,%.abixml,$<) \
+		$<
+
 %.o : %.c
 	$(CC) $(cflags) -fPIC $(CPPFLAGS) -c -o $@ $(filter %.c %.o %.S,$^)
 
