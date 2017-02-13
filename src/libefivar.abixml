@@ -1,0 +1,103 @@
+<abi-corpus path='usr/lib64/libefivar.so.1.30' architecture='elf-amd-x86_64' soname='libefivar.so.1'>
+  <elf-needed>
+    <dependency name='libdl.so.2'/>
+    <dependency name='libc.so.6'/>
+  </elf-needed>
+  <elf-function-symbols>
+    <elf-symbol name='_efi_set_variable' version='libefivar.so.0' is-default-version='yes' type='func-type' binding='global-binding' is-defined='yes'/>
+    <elf-symbol name='_efi_set_variable_variadic' version='libefivar.so.0' is-default-version='yes' type='func-type' binding='global-binding' is-defined='yes'/>
+    <elf-symbol name='efi_append_variable' version='libefivar.so.0' is-default-version='yes' type='func-type' binding='global-binding' is-defined='yes'/>
+    <elf-symbol name='efi_chmod_variable' version='libefivar.so.0' is-default-version='yes' type='func-type' binding='global-binding' is-defined='yes'/>
+    <elf-symbol name='efi_del_variable' version='libefivar.so.0' is-default-version='yes' type='func-type' binding='global-binding' is-defined='yes'/>
+    <elf-symbol name='efi_error_clear' version='LIBEFIVAR_1.30' is-default-version='yes' type='func-type' binding='global-binding' is-defined='yes'/>
+    <elf-symbol name='efi_error_get' version='LIBEFIVAR_1.30' is-default-version='yes' type='func-type' binding='global-binding' is-defined='yes'/>
+    <elf-symbol name='efi_error_set' version='LIBEFIVAR_1.30' is-default-version='yes' type='func-type' binding='global-binding' is-defined='yes'/>
+    <elf-symbol name='efi_get_next_variable_name' version='libefivar.so.0' is-default-version='yes' type='func-type' binding='global-binding' is-defined='yes'/>
+    <elf-symbol name='efi_get_variable' version='libefivar.so.0' is-default-version='yes' type='func-type' binding='global-binding' is-defined='yes'/>
+    <elf-symbol name='efi_get_variable_attributes' version='libefivar.so.0' is-default-version='yes' type='func-type' binding='global-binding' is-defined='yes'/>
+    <elf-symbol name='efi_get_variable_size' version='libefivar.so.0' is-default-version='yes' type='func-type' binding='global-binding' is-defined='yes'/>
+    <elf-symbol name='efi_guid_cmp' version='LIBEFIVAR_0.24' is-default-version='yes' type='func-type' binding='global-binding' is-defined='yes'/>
+    <elf-symbol name='efi_guid_is_empty' version='libefivar.so.0' is-default-version='yes' type='func-type' binding='global-binding' is-defined='yes'/>
+    <elf-symbol name='efi_guid_to_id_guid' version='libefivar.so.0' is-default-version='yes' type='func-type' binding='global-binding' is-defined='yes'/>
+    <elf-symbol name='efi_guid_to_name' version='libefivar.so.0' is-default-version='yes' type='func-type' binding='global-binding' is-defined='yes'/>
+    <elf-symbol name='efi_guid_to_str' version='libefivar.so.0' is-default-version='yes' type='func-type' binding='global-binding' is-defined='yes'/>
+    <elf-symbol name='efi_guid_to_symbol' version='libefivar.so.0' is-default-version='yes' type='func-type' binding='global-binding' is-defined='yes'/>
+    <elf-symbol name='efi_id_guid_to_guid' version='libefivar.so.0' is-default-version='yes' type='func-type' binding='global-binding' is-defined='yes'/>
+    <elf-symbol name='efi_name_to_guid' version='libefivar.so.0' is-default-version='yes' type='func-type' binding='global-binding' alias='efi_id_guid_to_guid@@libefivar.so.0' is-defined='yes'/>
+    <elf-symbol name='efi_set_variable' version='LIBEFIVAR_0.24' is-default-version='yes' type='func-type' binding='global-binding' is-defined='yes'/>
+    <elf-symbol name='efi_str_to_guid' version='libefivar.so.0' is-default-version='yes' type='func-type' binding='global-binding' is-defined='yes'/>
+    <elf-symbol name='efi_variable_export' version='libefivar.so.0' is-default-version='yes' type='func-type' binding='global-binding' is-defined='yes'/>
+    <elf-symbol name='efi_variable_free' version='libefivar.so.0' is-default-version='yes' type='func-type' binding='global-binding' is-defined='yes'/>
+    <elf-symbol name='efi_variable_get_attributes' version='libefivar.so.0' is-default-version='yes' type='func-type' binding='global-binding' is-defined='yes'/>
+    <elf-symbol name='efi_variable_get_data' version='libefivar.so.0' is-default-version='yes' type='func-type' binding='global-binding' is-defined='yes'/>
+    <elf-symbol name='efi_variable_get_guid' version='libefivar.so.0' is-default-version='yes' type='func-type' binding='global-binding' is-defined='yes'/>
+    <elf-symbol name='efi_variable_get_name' version='libefivar.so.0' is-default-version='yes' type='func-type' binding='global-binding' is-defined='yes'/>
+    <elf-symbol name='efi_variable_import' version='libefivar.so.0' is-default-version='yes' type='func-type' binding='global-binding' is-defined='yes'/>
+    <elf-symbol name='efi_variable_realize' version='libefivar.so.0' is-default-version='yes' type='func-type' binding='global-binding' is-defined='yes'/>
+    <elf-symbol name='efi_variable_set_attributes' version='libefivar.so.0' is-default-version='yes' type='func-type' binding='global-binding' is-defined='yes'/>
+    <elf-symbol name='efi_variable_set_data' version='libefivar.so.0' is-default-version='yes' type='func-type' binding='global-binding' is-defined='yes'/>
+    <elf-symbol name='efi_variable_set_guid' version='libefivar.so.0' is-default-version='yes' type='func-type' binding='global-binding' is-defined='yes'/>
+    <elf-symbol name='efi_variable_set_name' version='libefivar.so.0' is-default-version='yes' type='func-type' binding='global-binding' is-defined='yes'/>
+    <elf-symbol name='efi_variables_supported' version='libefivar.so.0' is-default-version='yes' type='func-type' binding='global-binding' is-defined='yes'/>
+    <elf-symbol name='efidp_append_instance' version='libefivar.so.0' is-default-version='yes' type='func-type' binding='global-binding' is-defined='yes'/>
+    <elf-symbol name='efidp_append_node' version='libefivar.so.0' is-default-version='yes' type='func-type' binding='global-binding' is-defined='yes'/>
+    <elf-symbol name='efidp_append_path' version='libefivar.so.0' is-default-version='yes' type='func-type' binding='global-binding' is-defined='yes'/>
+    <elf-symbol name='efidp_duplicate_path' version='libefivar.so.0' is-default-version='yes' type='func-type' binding='global-binding' is-defined='yes'/>
+    <elf-symbol name='efidp_format_device_path' version='libefivar.so.0' is-default-version='yes' type='func-type' binding='global-binding' is-defined='yes'/>
+    <elf-symbol name='efidp_make_acpi_hid' version='libefivar.so.0' is-default-version='yes' type='func-type' binding='global-binding' is-defined='yes'/>
+    <elf-symbol name='efidp_make_acpi_hid_ex' version='libefivar.so.0' is-default-version='yes' type='func-type' binding='global-binding' is-defined='yes'/>
+    <elf-symbol name='efidp_make_atapi' version='libefivar.so.0' is-default-version='yes' type='func-type' binding='global-binding' is-defined='yes'/>
+    <elf-symbol name='efidp_make_edd10' version='libefivar.so.0' is-default-version='yes' type='func-type' binding='global-binding' is-defined='yes'/>
+    <elf-symbol name='efidp_make_file' version='libefivar.so.0' is-default-version='yes' type='func-type' binding='global-binding' is-defined='yes'/>
+    <elf-symbol name='efidp_make_generic' version='libefivar.so.0' is-default-version='yes' type='func-type' binding='global-binding' is-defined='yes'/>
+    <elf-symbol name='efidp_make_hd' version='libefivar.so.0' is-default-version='yes' type='func-type' binding='global-binding' is-defined='yes'/>
+    <elf-symbol name='efidp_make_ipv4' version='libefivar.so.0' is-default-version='yes' type='func-type' binding='global-binding' is-defined='yes'/>
+    <elf-symbol name='efidp_make_mac_addr' version='libefivar.so.0' is-default-version='yes' type='func-type' binding='global-binding' is-defined='yes'/>
+    <elf-symbol name='efidp_make_nvme' version='libefivar.so.0' is-default-version='yes' type='func-type' binding='global-binding' is-defined='yes'/>
+    <elf-symbol name='efidp_make_pci' version='libefivar.so.0' is-default-version='yes' type='func-type' binding='global-binding' is-defined='yes'/>
+    <elf-symbol name='efidp_make_sas' version='libefivar.so.0' is-default-version='yes' type='func-type' binding='global-binding' is-defined='yes'/>
+    <elf-symbol name='efidp_make_sata' version='libefivar.so.0' is-default-version='yes' type='func-type' binding='global-binding' is-defined='yes'/>
+    <elf-symbol name='efidp_make_scsi' version='libefivar.so.0' is-default-version='yes' type='func-type' binding='global-binding' is-defined='yes'/>
+    <elf-symbol name='efidp_make_vendor' version='libefivar.so.0' is-default-version='yes' type='func-type' binding='global-binding' is-defined='yes'/>
+    <elf-symbol name='efidp_parse_device_node' version='libefivar.so.0' is-default-version='yes' type='func-type' binding='global-binding' is-defined='yes'/>
+    <elf-symbol name='efidp_parse_device_path' version='libefivar.so.0' is-default-version='yes' type='func-type' binding='global-binding' is-defined='yes'/>
+    <elf-symbol name='efidp_set_node_data' version='libefivar.so.0' is-default-version='yes' type='func-type' binding='global-binding' is-defined='yes'/>
+  </elf-function-symbols>
+  <elf-variable-symbols>
+    <elf-symbol name='efi_guid_empty' size='16' version='libefivar.so.0' is-default-version='yes' type='object-type' binding='global-binding' is-defined='yes'/>
+    <elf-symbol name='efi_guid_global' size='16' version='libefivar.so.0' is-default-version='yes' type='object-type' binding='global-binding' is-defined='yes'/>
+    <elf-symbol name='efi_guid_lenovo' size='16' version='libefivar.so.0' is-default-version='yes' type='object-type' binding='global-binding' is-defined='yes'/>
+    <elf-symbol name='efi_guid_lenovo_2' size='16' version='libefivar.so.0' is-default-version='yes' type='object-type' binding='global-binding' is-defined='yes'/>
+    <elf-symbol name='efi_guid_lenovo_boot_menu' size='16' version='libefivar.so.0' is-default-version='yes' type='object-type' binding='global-binding' is-defined='yes'/>
+    <elf-symbol name='efi_guid_lenovo_diag' size='16' version='libefivar.so.0' is-default-version='yes' type='object-type' binding='global-binding' is-defined='yes'/>
+    <elf-symbol name='efi_guid_lenovo_diag_splash' size='16' version='libefivar.so.0' is-default-version='yes' type='object-type' binding='global-binding' is-defined='yes'/>
+    <elf-symbol name='efi_guid_lenovo_me_config' size='16' version='libefivar.so.0' is-default-version='yes' type='object-type' binding='global-binding' is-defined='yes'/>
+    <elf-symbol name='efi_guid_lenovo_msg' size='16' version='libefivar.so.0' is-default-version='yes' type='object-type' binding='global-binding' is-defined='yes'/>
+    <elf-symbol name='efi_guid_lenovo_rescue' size='16' version='libefivar.so.0' is-default-version='yes' type='object-type' binding='global-binding' is-defined='yes'/>
+    <elf-symbol name='efi_guid_lenovo_setup' size='16' version='libefivar.so.0' is-default-version='yes' type='object-type' binding='global-binding' is-defined='yes'/>
+    <elf-symbol name='efi_guid_lenovo_startup_interrupt' size='16' version='libefivar.so.0' is-default-version='yes' type='object-type' binding='global-binding' is-defined='yes'/>
+    <elf-symbol name='efi_guid_microsoft' size='16' version='libefivar.so.0' is-default-version='yes' type='object-type' binding='global-binding' is-defined='yes'/>
+    <elf-symbol name='efi_guid_pkcs7_cert' size='16' version='libefivar.so.0' is-default-version='yes' type='object-type' binding='global-binding' is-defined='yes'/>
+    <elf-symbol name='efi_guid_redhat' size='16' version='libefivar.so.0' is-default-version='yes' type='object-type' binding='global-binding' is-defined='yes'/>
+    <elf-symbol name='efi_guid_redhat_2' size='16' version='libefivar.so.0' is-default-version='yes' type='object-type' binding='global-binding' is-defined='yes'/>
+    <elf-symbol name='efi_guid_rsa2048' size='16' version='libefivar.so.0' is-default-version='yes' type='object-type' binding='global-binding' is-defined='yes'/>
+    <elf-symbol name='efi_guid_rsa2048_sha1' size='16' version='libefivar.so.0' is-default-version='yes' type='object-type' binding='global-binding' is-defined='yes'/>
+    <elf-symbol name='efi_guid_rsa2048_sha256' size='16' version='libefivar.so.0' is-default-version='yes' type='object-type' binding='global-binding' is-defined='yes'/>
+    <elf-symbol name='efi_guid_rsa2048_sha256_cert' size='16' version='libefivar.so.0' is-default-version='yes' type='object-type' binding='global-binding' is-defined='yes'/>
+    <elf-symbol name='efi_guid_security' size='16' version='libefivar.so.0' is-default-version='yes' type='object-type' binding='global-binding' is-defined='yes'/>
+    <elf-symbol name='efi_guid_sha1' size='16' version='libefivar.so.0' is-default-version='yes' type='object-type' binding='global-binding' is-defined='yes'/>
+    <elf-symbol name='efi_guid_sha224' size='16' version='libefivar.so.0' is-default-version='yes' type='object-type' binding='global-binding' is-defined='yes'/>
+    <elf-symbol name='efi_guid_sha256' size='16' version='libefivar.so.0' is-default-version='yes' type='object-type' binding='global-binding' is-defined='yes'/>
+    <elf-symbol name='efi_guid_sha384' size='16' version='libefivar.so.0' is-default-version='yes' type='object-type' binding='global-binding' is-defined='yes'/>
+    <elf-symbol name='efi_guid_sha512' size='16' version='libefivar.so.0' is-default-version='yes' type='object-type' binding='global-binding' is-defined='yes'/>
+    <elf-symbol name='efi_guid_shell' size='16' version='libefivar.so.0' is-default-version='yes' type='object-type' binding='global-binding' is-defined='yes'/>
+    <elf-symbol name='efi_guid_shim' size='16' version='libefivar.so.0' is-default-version='yes' type='object-type' binding='global-binding' is-defined='yes'/>
+    <elf-symbol name='efi_guid_x509_cert' size='16' version='libefivar.so.0' is-default-version='yes' type='object-type' binding='global-binding' is-defined='yes'/>
+    <elf-symbol name='efi_guid_x509_sha256' size='16' version='libefivar.so.0' is-default-version='yes' type='object-type' binding='global-binding' is-defined='yes'/>
+    <elf-symbol name='efi_guid_x509_sha384' size='16' version='libefivar.so.0' is-default-version='yes' type='object-type' binding='global-binding' is-defined='yes'/>
+    <elf-symbol name='efi_guid_x509_sha512' size='16' version='libefivar.so.0' is-default-version='yes' type='object-type' binding='global-binding' is-defined='yes'/>
+    <elf-symbol name='efi_guid_zero' size='16' version='libefivar.so.0' is-default-version='yes' type='object-type' binding='global-binding' is-defined='yes'/>
+    <elf-symbol name='efi_well_known_guids' size='17424' version='libefivar.so.0' is-default-version='yes' type='object-type' binding='global-binding' is-defined='yes'/>
+    <elf-symbol name='efi_well_known_guids_end' size='1' version='libefivar.so.0' is-default-version='yes' type='object-type' binding='global-binding' is-defined='yes'/>
+  </elf-variable-symbols>
+</abi-corpus>

@@ -1,0 +1,24 @@
+<abi-corpus path='usr/lib64/libefiboot.so.1.30' architecture='elf-amd-x86_64' soname='libefiboot.so.1'>
+  <elf-needed>
+    <dependency name='libefivar.so.1'/>
+    <dependency name='libc.so.6'/>
+  </elf-needed>
+  <elf-function-symbols>
+    <elf-symbol name='efi_generate_file_device_path' version='libefiboot.so.0' is-default-version='yes' type='func-type' binding='global-binding' is-defined='yes'/>
+    <elf-symbol name='efi_generate_file_device_path_from_esp' version='libefiboot.so.0' is-default-version='yes' type='func-type' binding='global-binding' is-defined='yes'/>
+    <elf-symbol name='efi_generate_ipv4_device_path' version='libefiboot.so.0' is-default-version='yes' type='func-type' binding='global-binding' is-defined='yes'/>
+    <elf-symbol name='efi_loadopt_args_as_ucs2' version='libefiboot.so.0' is-default-version='yes' type='func-type' binding='global-binding' is-defined='yes'/>
+    <elf-symbol name='efi_loadopt_args_as_utf8' version='libefiboot.so.0' is-default-version='yes' type='func-type' binding='global-binding' is-defined='yes'/>
+    <elf-symbol name='efi_loadopt_args_from_file' version='libefiboot.so.0' is-default-version='yes' type='func-type' binding='global-binding' is-defined='yes'/>
+    <elf-symbol name='efi_loadopt_attr_clear' version='libefiboot.so.0' is-default-version='yes' type='func-type' binding='global-binding' is-defined='yes'/>
+    <elf-symbol name='efi_loadopt_attr_set' version='libefiboot.so.0' is-default-version='yes' type='func-type' binding='global-binding' is-defined='yes'/>
+    <elf-symbol name='efi_loadopt_attrs' version='libefiboot.so.0' is-default-version='yes' type='func-type' binding='global-binding' is-defined='yes'/>
+    <elf-symbol name='efi_loadopt_create' version='libefiboot.so.0' is-default-version='yes' type='func-type' binding='global-binding' is-defined='yes'/>
+    <elf-symbol name='efi_loadopt_desc' version='libefiboot.so.0' is-default-version='yes' type='func-type' binding='global-binding' is-defined='yes'/>
+    <elf-symbol name='efi_loadopt_is_valid' version='libefiboot.so.0' is-default-version='yes' type='func-type' binding='global-binding' is-defined='yes'/>
+    <elf-symbol name='efi_loadopt_optional_data' version='libefiboot.so.0' is-default-version='yes' type='func-type' binding='global-binding' is-defined='yes'/>
+    <elf-symbol name='efi_loadopt_optional_data_size' version='libefiboot.so.0' is-default-version='yes' type='func-type' binding='global-binding' is-defined='yes'/>
+    <elf-symbol name='efi_loadopt_path' version='libefiboot.so.0' is-default-version='yes' type='func-type' binding='global-binding' is-defined='yes'/>
+    <elf-symbol name='efi_loadopt_pathlen' version='libefiboot.so.0' is-default-version='yes' type='func-type' binding='global-binding' is-defined='yes'/>
+  </elf-function-symbols>
+</abi-corpus>
