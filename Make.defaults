@@ -9,17 +9,18 @@ DESTDIR	?=
 
 INSTALL ?= install
 CROSS_COMPILE	?=
+COMPILER ?= gcc
 PKG_CONFIG = $(CROSS_COMPILE)pkg-config
-CC	:= $(if $(filter default,$(origin CC)),$(CROSS_COMPILE)gcc,$(CC))
+CC	:= $(if $(filter default,$(origin CC)),$(CROSS_COMPILE)$(COMPILER),$(CC))
 CCLD	:= $(if $(filter undefined,$(origin CCLD)),$(CC),$(CCLD))
 OPTIMIZE ?= -O2 -flto
 CFLAGS	?= $(OPTIMIZE) -g3
 CFLAGS	:= $(CFLAGS)
 LDFLAGS ?=
 LDFLAGS := $(LDFLAGS)
-AR	:= $(CROSS_COMPILE)gcc-ar
-NM	:= $(CROSS_COMPILE)gcc-nm
-RANLIB	:= $(CROSS_COMPILE)gcc-ranlib
+AR	:= $(CROSS_COMPILE)$(COMPILER)-ar
+NM	:= $(CROSS_COMPILE)$(COMPILER)-nm
+RANLIB	:= $(CROSS_COMPILE)$(COMPILER)-ranlib
 ABIDW	:= abidw
 ABIDIFF := abidiff
 
