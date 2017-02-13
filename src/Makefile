@@ -32,6 +32,9 @@ all : $(TARGETS)
 
 static : $(STATICTARGETS)
 
+abidw : $(patsubst %.so,%.abixml,$(LIBTARGETS))
+	git commit -m "Update .abixml files" -s $^
+
 ./guid-symbols.c : include/efivar/efivar-guids.h
 ./guids.bin : include/efivar/efivar-guids.h
 ./names.bin : include/efivar/efivar-guids.h

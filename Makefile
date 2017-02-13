@@ -17,7 +17,7 @@ install :
 		$(MAKE) -C $$x $@ ; \
 	done
 
-efivar efivar-static static:
+abidw efivar efivar-static static:
 	$(MAKE) -C src $@
 
 $(SUBDIRS) :
@@ -58,7 +58,7 @@ test-archive: efivar.spec
 tag:
 	git tag -s $(GITTAG) refs/heads/master
 
-archive: tag efivar.spec
+archive: abidw tag efivar.spec
 	@rm -rf /tmp/efivar-$(VERSION) /tmp/efivar-$(VERSION)-tmp
 	@mkdir -p /tmp/efivar-$(VERSION)-tmp
 	@git archive --format=tar $(GITTAG) | ( cd /tmp/efivar-$(VERSION)-tmp/ ; tar x )

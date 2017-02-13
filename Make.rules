@@ -22,6 +22,9 @@ include $(TOPDIR)/Make.version
 	  -Wl,--version-script=$(MAP) \
 	  -o $@ $^ $(LDLIBS)
 
+%.abixml : %.so
+	$(ABIDW) --headers-dir $(TOPDIR)/src/include/efivar/ --out-file $@ $^
+
 %.o : %.c
 	$(CC) $(cflags) -fPIC $(CPPFLAGS) -c -o $@ $(filter %.c %.o %.S,$^)
 
