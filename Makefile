@@ -44,7 +44,7 @@ clean :
 
 GITTAG = $(VERSION)
 
-test-archive: efivar.spec
+test-archive: abicheck efivar.spec
 	@rm -rf /tmp/efivar-$(VERSION) /tmp/efivar-$(VERSION)-tmp
 	@mkdir -p /tmp/efivar-$(VERSION)-tmp
 	@git archive --format=tar $(shell git branch | awk '/^*/ { print $$2 }') | ( cd /tmp/efivar-$(VERSION)-tmp/ ; tar x )
