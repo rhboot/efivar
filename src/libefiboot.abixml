@@ -1,4 +1,4 @@
-<abi-corpus path='usr/lib64/libefiboot.so.1.30' architecture='elf-amd-x86_64' soname='libefiboot.so.1'>
+<abi-corpus path='libefiboot.so' architecture='elf-amd-x86_64' soname='libefiboot.so.1'>
   <elf-needed>
     <dependency name='libefivar.so.1'/>
     <dependency name='libc.so.6'/>
@@ -21,4 +21,934 @@
     <elf-symbol name='efi_loadopt_path' version='libefiboot.so.0' is-default-version='yes' type='func-type' binding='global-binding' is-defined='yes'/>
     <elf-symbol name='efi_loadopt_pathlen' version='libefiboot.so.0' is-default-version='yes' type='func-type' binding='global-binding' is-defined='yes'/>
   </elf-function-symbols>
+  <abi-instr version='1.0' address-size='64' path='&lt;artificial&gt;' language='LANG_C99'>
+    <type-decl name='int' size-in-bits='32' id='type-id-1'/>
+    <function-decl name='stat' filepath='/usr/include/sys/stat.h' line='452' column='1' declared-inline='yes' visibility='default' binding='global' size-in-bits='64'>
+      <return type-id='type-id-1'/>
+    </function-decl>
+    <type-decl name='unsigned int' size-in-bits='32' id='type-id-2'/>
+    <function-decl name='gnu_dev_minor' filepath='/usr/include/sys/sysmacros.h' line='45' column='1' declared-inline='yes' visibility='default' binding='global' size-in-bits='64'>
+      <return type-id='type-id-2'/>
+    </function-decl>
+    <function-decl name='gnu_dev_major' filepath='/usr/include/sys/sysmacros.h' line='39' column='1' declared-inline='yes' visibility='default' binding='global' size-in-bits='64'>
+      <return type-id='type-id-2'/>
+    </function-decl>
+    <function-decl name='fstat' filepath='/usr/include/sys/stat.h' line='466' column='1' declared-inline='yes' visibility='default' binding='global' size-in-bits='64'>
+      <return type-id='type-id-1'/>
+    </function-decl>
+    <type-decl name='unsigned char' size-in-bits='8' id='type-id-3'/>
+    <qualified-type-def type-id='type-id-3' const='yes' id='type-id-4'/>
+    <pointer-type-def type-id='type-id-4' size-in-bits='64' id='type-id-5'/>
+    <type-decl name='long int' size-in-bits='64' id='type-id-6'/>
+    <typedef-decl name='__ssize_t' type-id='type-id-6' filepath='/usr/include/bits/types.h' line='172' column='1' id='type-id-7'/>
+    <typedef-decl name='ssize_t' type-id='type-id-7' filepath='/usr/include/sys/types.h' line='109' column='1' id='type-id-8'/>
+    <function-decl name='efi_loadopt_desc' mangled-name='efi_loadopt_desc' filepath='/home/pjones/devel/github.com/efivar/src/loadopt.c' line='361' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='efi_loadopt_desc@@libefiboot.so.0'>
+      <parameter type-id='type-id-8' name='limit' filepath='/home/pjones/devel/github.com/efivar/src/loadopt.c' line='361' column='1'/>
+      <return type-id='type-id-5'/>
+    </function-decl>
+    <type-decl name='unsigned short int' size-in-bits='16' id='type-id-9'/>
+    <typedef-decl name='uint16_t' type-id='type-id-9' filepath='/usr/include/stdint.h' line='49' column='1' id='type-id-10'/>
+    <pointer-type-def type-id='type-id-10' size-in-bits='64' id='type-id-11'/>
+    <typedef-decl name='uint8_t' type-id='type-id-3' filepath='/usr/include/stdint.h' line='48' column='1' id='type-id-12'/>
+    <pointer-type-def type-id='type-id-12' size-in-bits='64' id='type-id-13'/>
+    <function-decl name='efi_loadopt_args_as_ucs2' mangled-name='efi_loadopt_args_as_ucs2' filepath='/home/pjones/devel/github.com/efivar/src/loadopt.c' line='327' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='efi_loadopt_args_as_ucs2@@libefiboot.so.0'>
+      <parameter type-id='type-id-11' name='buf' filepath='/home/pjones/devel/github.com/efivar/src/loadopt.c' line='327' column='1'/>
+      <parameter type-id='type-id-8' name='size' filepath='/home/pjones/devel/github.com/efivar/src/loadopt.c' line='327' column='1'/>
+      <parameter type-id='type-id-13' name='utf8' filepath='/home/pjones/devel/github.com/efivar/src/loadopt.c' line='327' column='1'/>
+      <return type-id='type-id-8'/>
+    </function-decl>
+    <function-decl name='efi_loadopt_args_as_utf8' mangled-name='efi_loadopt_args_as_utf8' filepath='/home/pjones/devel/github.com/efivar/src/loadopt.c' line='300' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='efi_loadopt_args_as_utf8@@libefiboot.so.0'>
+      <parameter type-id='type-id-13' name='buf' filepath='/home/pjones/devel/github.com/efivar/src/loadopt.c' line='300' column='1'/>
+      <parameter type-id='type-id-8' name='size' filepath='/home/pjones/devel/github.com/efivar/src/loadopt.c' line='300' column='1'/>
+      <parameter type-id='type-id-13' name='utf8' filepath='/home/pjones/devel/github.com/efivar/src/loadopt.c' line='300' column='1'/>
+      <return type-id='type-id-8'/>
+    </function-decl>
+    <type-decl name='char' size-in-bits='8' id='type-id-14'/>
+    <pointer-type-def type-id='type-id-14' size-in-bits='64' id='type-id-15'/>
+    <function-decl name='efi_loadopt_args_from_file' mangled-name='efi_loadopt_args_from_file' filepath='/home/pjones/devel/github.com/efivar/src/loadopt.c' line='257' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='efi_loadopt_args_from_file@@libefiboot.so.0'>
+      <parameter type-id='type-id-13' name='buf' filepath='/home/pjones/devel/github.com/efivar/src/loadopt.c' line='257' column='1'/>
+      <parameter type-id='type-id-8' name='size' filepath='/home/pjones/devel/github.com/efivar/src/loadopt.c' line='257' column='1'/>
+      <parameter type-id='type-id-15' name='filename' filepath='/home/pjones/devel/github.com/efivar/src/loadopt.c' line='257' column='1'/>
+      <return type-id='type-id-8'/>
+    </function-decl>
+    <type-decl name='unsigned long int' size-in-bits='64' id='type-id-16'/>
+    <typedef-decl name='size_t' type-id='type-id-16' filepath='/usr/lib/gcc/x86_64-redhat-linux/7/include/stddef.h' line='216' column='1' id='type-id-17'/>
+    <pointer-type-def type-id='type-id-3' size-in-bits='64' id='type-id-18'/>
+    <pointer-type-def type-id='type-id-18' size-in-bits='64' id='type-id-19'/>
+    <pointer-type-def type-id='type-id-17' size-in-bits='64' id='type-id-20'/>
+    <function-decl name='efi_loadopt_optional_data' mangled-name='efi_loadopt_optional_data' filepath='/home/pjones/devel/github.com/efivar/src/loadopt.c' line='222' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='efi_loadopt_optional_data@@libefiboot.so.0'>
+      <parameter type-id='type-id-17' name='opt_size' filepath='/home/pjones/devel/github.com/efivar/src/loadopt.c' line='222' column='1'/>
+      <parameter type-id='type-id-19' name='datap' filepath='/home/pjones/devel/github.com/efivar/src/loadopt.c' line='223' column='1'/>
+      <parameter type-id='type-id-20' name='len' filepath='/home/pjones/devel/github.com/efivar/src/loadopt.c' line='223' column='1'/>
+      <return type-id='type-id-1'/>
+    </function-decl>
+    <union-decl name='__anonymous_union__' size-in-bits='384' is-anonymous='yes' visibility='default' filepath='/home/pjones/devel/github.com/efivar/src/include/efivar/efivar-dp.h' line='719' column='1' id='type-id-21'>
+      <data-member access='private'>
+        <var-decl name='' type-id='type-id-22' visibility='default'/>
+      </data-member>
+      <data-member access='private'>
+        <var-decl name='header' type-id='type-id-23' visibility='default' filepath='/home/pjones/devel/github.com/efivar/src/include/efivar/efivar-dp.h' line='725' column='1'/>
+      </data-member>
+      <data-member access='private'>
+        <var-decl name='pci' type-id='type-id-24' visibility='default' filepath='/home/pjones/devel/github.com/efivar/src/include/efivar/efivar-dp.h' line='726' column='1'/>
+      </data-member>
+      <data-member access='private'>
+        <var-decl name='pccard' type-id='type-id-25' visibility='default' filepath='/home/pjones/devel/github.com/efivar/src/include/efivar/efivar-dp.h' line='727' column='1'/>
+      </data-member>
+      <data-member access='private'>
+        <var-decl name='mmio' type-id='type-id-26' visibility='default' filepath='/home/pjones/devel/github.com/efivar/src/include/efivar/efivar-dp.h' line='728' column='1'/>
+      </data-member>
+      <data-member access='private'>
+        <var-decl name='hw_vendor' type-id='type-id-27' visibility='default' filepath='/home/pjones/devel/github.com/efivar/src/include/efivar/efivar-dp.h' line='729' column='1'/>
+      </data-member>
+      <data-member access='private'>
+        <var-decl name='controller' type-id='type-id-28' visibility='default' filepath='/home/pjones/devel/github.com/efivar/src/include/efivar/efivar-dp.h' line='730' column='1'/>
+      </data-member>
+      <data-member access='private'>
+        <var-decl name='bmc' type-id='type-id-29' visibility='default' filepath='/home/pjones/devel/github.com/efivar/src/include/efivar/efivar-dp.h' line='731' column='1'/>
+      </data-member>
+      <data-member access='private'>
+        <var-decl name='acpi_hid' type-id='type-id-30' visibility='default' filepath='/home/pjones/devel/github.com/efivar/src/include/efivar/efivar-dp.h' line='732' column='1'/>
+      </data-member>
+      <data-member access='private'>
+        <var-decl name='acpi_hid_ex' type-id='type-id-31' visibility='default' filepath='/home/pjones/devel/github.com/efivar/src/include/efivar/efivar-dp.h' line='733' column='1'/>
+      </data-member>
+      <data-member access='private'>
+        <var-decl name='acpi_adr' type-id='type-id-32' visibility='default' filepath='/home/pjones/devel/github.com/efivar/src/include/efivar/efivar-dp.h' line='734' column='1'/>
+      </data-member>
+      <data-member access='private'>
+        <var-decl name='atapi' type-id='type-id-33' visibility='default' filepath='/home/pjones/devel/github.com/efivar/src/include/efivar/efivar-dp.h' line='735' column='1'/>
+      </data-member>
+      <data-member access='private'>
+        <var-decl name='scsi' type-id='type-id-34' visibility='default' filepath='/home/pjones/devel/github.com/efivar/src/include/efivar/efivar-dp.h' line='736' column='1'/>
+      </data-member>
+      <data-member access='private'>
+        <var-decl name='fc' type-id='type-id-35' visibility='default' filepath='/home/pjones/devel/github.com/efivar/src/include/efivar/efivar-dp.h' line='737' column='1'/>
+      </data-member>
+      <data-member access='private'>
+        <var-decl name='fcex' type-id='type-id-36' visibility='default' filepath='/home/pjones/devel/github.com/efivar/src/include/efivar/efivar-dp.h' line='738' column='1'/>
+      </data-member>
+      <data-member access='private'>
+        <var-decl name='firewire' type-id='type-id-37' visibility='default' filepath='/home/pjones/devel/github.com/efivar/src/include/efivar/efivar-dp.h' line='739' column='1'/>
+      </data-member>
+      <data-member access='private'>
+        <var-decl name='usb' type-id='type-id-38' visibility='default' filepath='/home/pjones/devel/github.com/efivar/src/include/efivar/efivar-dp.h' line='740' column='1'/>
+      </data-member>
+      <data-member access='private'>
+        <var-decl name='usb_class' type-id='type-id-39' visibility='default' filepath='/home/pjones/devel/github.com/efivar/src/include/efivar/efivar-dp.h' line='741' column='1'/>
+      </data-member>
+      <data-member access='private'>
+        <var-decl name='usb_wwid' type-id='type-id-40' visibility='default' filepath='/home/pjones/devel/github.com/efivar/src/include/efivar/efivar-dp.h' line='742' column='1'/>
+      </data-member>
+      <data-member access='private'>
+        <var-decl name='lun' type-id='type-id-41' visibility='default' filepath='/home/pjones/devel/github.com/efivar/src/include/efivar/efivar-dp.h' line='743' column='1'/>
+      </data-member>
+      <data-member access='private'>
+        <var-decl name='sata' type-id='type-id-42' visibility='default' filepath='/home/pjones/devel/github.com/efivar/src/include/efivar/efivar-dp.h' line='744' column='1'/>
+      </data-member>
+      <data-member access='private'>
+        <var-decl name='i2o' type-id='type-id-43' visibility='default' filepath='/home/pjones/devel/github.com/efivar/src/include/efivar/efivar-dp.h' line='745' column='1'/>
+      </data-member>
+      <data-member access='private'>
+        <var-decl name='mac_addr' type-id='type-id-44' visibility='default' filepath='/home/pjones/devel/github.com/efivar/src/include/efivar/efivar-dp.h' line='746' column='1'/>
+      </data-member>
+      <data-member access='private'>
+        <var-decl name='ipv4_addr' type-id='type-id-45' visibility='default' filepath='/home/pjones/devel/github.com/efivar/src/include/efivar/efivar-dp.h' line='747' column='1'/>
+      </data-member>
+      <data-member access='private'>
+        <var-decl name='ipv6_addr' type-id='type-id-46' visibility='default' filepath='/home/pjones/devel/github.com/efivar/src/include/efivar/efivar-dp.h' line='748' column='1'/>
+      </data-member>
+      <data-member access='private'>
+        <var-decl name='vlan' type-id='type-id-47' visibility='default' filepath='/home/pjones/devel/github.com/efivar/src/include/efivar/efivar-dp.h' line='749' column='1'/>
+      </data-member>
+      <data-member access='private'>
+        <var-decl name='infiniband' type-id='type-id-48' visibility='default' filepath='/home/pjones/devel/github.com/efivar/src/include/efivar/efivar-dp.h' line='750' column='1'/>
+      </data-member>
+      <data-member access='private'>
+        <var-decl name='uart' type-id='type-id-49' visibility='default' filepath='/home/pjones/devel/github.com/efivar/src/include/efivar/efivar-dp.h' line='751' column='1'/>
+      </data-member>
+      <data-member access='private'>
+        <var-decl name='msg_vendor' type-id='type-id-50' visibility='default' filepath='/home/pjones/devel/github.com/efivar/src/include/efivar/efivar-dp.h' line='752' column='1'/>
+      </data-member>
+      <data-member access='private'>
+        <var-decl name='uart_flow_control' type-id='type-id-51' visibility='default' filepath='/home/pjones/devel/github.com/efivar/src/include/efivar/efivar-dp.h' line='753' column='1'/>
+      </data-member>
+      <data-member access='private'>
+        <var-decl name='sas' type-id='type-id-52' visibility='default' filepath='/home/pjones/devel/github.com/efivar/src/include/efivar/efivar-dp.h' line='754' column='1'/>
+      </data-member>
+      <data-member access='private'>
+        <var-decl name='sas_ex' type-id='type-id-53' visibility='default' filepath='/home/pjones/devel/github.com/efivar/src/include/efivar/efivar-dp.h' line='755' column='1'/>
+      </data-member>
+      <data-member access='private'>
+        <var-decl name='iscsi' type-id='type-id-54' visibility='default' filepath='/home/pjones/devel/github.com/efivar/src/include/efivar/efivar-dp.h' line='756' column='1'/>
+      </data-member>
+      <data-member access='private'>
+        <var-decl name='nvme' type-id='type-id-55' visibility='default' filepath='/home/pjones/devel/github.com/efivar/src/include/efivar/efivar-dp.h' line='757' column='1'/>
+      </data-member>
+      <data-member access='private'>
+        <var-decl name='uri' type-id='type-id-56' visibility='default' filepath='/home/pjones/devel/github.com/efivar/src/include/efivar/efivar-dp.h' line='758' column='1'/>
+      </data-member>
+      <data-member access='private'>
+        <var-decl name='ufs' type-id='type-id-57' visibility='default' filepath='/home/pjones/devel/github.com/efivar/src/include/efivar/efivar-dp.h' line='759' column='1'/>
+      </data-member>
+      <data-member access='private'>
+        <var-decl name='sd' type-id='type-id-58' visibility='default' filepath='/home/pjones/devel/github.com/efivar/src/include/efivar/efivar-dp.h' line='760' column='1'/>
+      </data-member>
+      <data-member access='private'>
+        <var-decl name='hd' type-id='type-id-59' visibility='default' filepath='/home/pjones/devel/github.com/efivar/src/include/efivar/efivar-dp.h' line='761' column='1'/>
+      </data-member>
+      <data-member access='private'>
+        <var-decl name='cdrom' type-id='type-id-60' visibility='default' filepath='/home/pjones/devel/github.com/efivar/src/include/efivar/efivar-dp.h' line='762' column='1'/>
+      </data-member>
+      <data-member access='private'>
+        <var-decl name='media_vendor' type-id='type-id-61' visibility='default' filepath='/home/pjones/devel/github.com/efivar/src/include/efivar/efivar-dp.h' line='763' column='1'/>
+      </data-member>
+      <data-member access='private'>
+        <var-decl name='file' type-id='type-id-62' visibility='default' filepath='/home/pjones/devel/github.com/efivar/src/include/efivar/efivar-dp.h' line='764' column='1'/>
+      </data-member>
+      <data-member access='private'>
+        <var-decl name='protocol' type-id='type-id-63' visibility='default' filepath='/home/pjones/devel/github.com/efivar/src/include/efivar/efivar-dp.h' line='765' column='1'/>
+      </data-member>
+      <data-member access='private'>
+        <var-decl name='firmware_file' type-id='type-id-64' visibility='default' filepath='/home/pjones/devel/github.com/efivar/src/include/efivar/efivar-dp.h' line='766' column='1'/>
+      </data-member>
+      <data-member access='private'>
+        <var-decl name='firmware_volume' type-id='type-id-65' visibility='default' filepath='/home/pjones/devel/github.com/efivar/src/include/efivar/efivar-dp.h' line='767' column='1'/>
+      </data-member>
+      <data-member access='private'>
+        <var-decl name='relative_offset' type-id='type-id-66' visibility='default' filepath='/home/pjones/devel/github.com/efivar/src/include/efivar/efivar-dp.h' line='768' column='1'/>
+      </data-member>
+      <data-member access='private'>
+        <var-decl name='ramdisk' type-id='type-id-67' visibility='default' filepath='/home/pjones/devel/github.com/efivar/src/include/efivar/efivar-dp.h' line='769' column='1'/>
+      </data-member>
+      <data-member access='private'>
+        <var-decl name='bios_boot' type-id='type-id-68' visibility='default' filepath='/home/pjones/devel/github.com/efivar/src/include/efivar/efivar-dp.h' line='770' column='1'/>
+      </data-member>
+    </union-decl>
+    <class-decl name='__anonymous_struct__' size-in-bits='32' is-struct='yes' is-anonymous='yes' visibility='default' filepath='/home/pjones/devel/github.com/efivar/src/include/efivar/efivar-dp.h' line='720' column='1' id='type-id-22'>
+      <data-member access='public' layout-offset-in-bits='0'>
+        <var-decl name='type' type-id='type-id-12' visibility='default' filepath='/home/pjones/devel/github.com/efivar/src/include/efivar/efivar-dp.h' line='721' column='1'/>
+      </data-member>
+      <data-member access='public' layout-offset-in-bits='8'>
+        <var-decl name='subtype' type-id='type-id-12' visibility='default' filepath='/home/pjones/devel/github.com/efivar/src/include/efivar/efivar-dp.h' line='722' column='1'/>
+      </data-member>
+      <data-member access='public' layout-offset-in-bits='16'>
+        <var-decl name='length' type-id='type-id-10' visibility='default' filepath='/home/pjones/devel/github.com/efivar/src/include/efivar/efivar-dp.h' line='723' column='1'/>
+      </data-member>
+    </class-decl>
+    <typedef-decl name='efidp_header' type-id='type-id-22' filepath='/home/pjones/devel/github.com/efivar/src/include/efivar/efivar-dp.h' line='34' column='1' id='type-id-23'/>
+    <class-decl name='__anonymous_struct__' size-in-bits='48' is-struct='yes' is-anonymous='yes' visibility='default' filepath='/home/pjones/devel/github.com/efivar/src/include/efivar/efivar-dp.h' line='49' column='1' id='type-id-69'>
+      <data-member access='public' layout-offset-in-bits='0'>
+        <var-decl name='header' type-id='type-id-23' visibility='default' filepath='/home/pjones/devel/github.com/efivar/src/include/efivar/efivar-dp.h' line='50' column='1'/>
+      </data-member>
+      <data-member access='public' layout-offset-in-bits='32'>
+        <var-decl name='function' type-id='type-id-12' visibility='default' filepath='/home/pjones/devel/github.com/efivar/src/include/efivar/efivar-dp.h' line='51' column='1'/>
+      </data-member>
+      <data-member access='public' layout-offset-in-bits='40'>
+        <var-decl name='device' type-id='type-id-12' visibility='default' filepath='/home/pjones/devel/github.com/efivar/src/include/efivar/efivar-dp.h' line='52' column='1'/>
+      </data-member>
+    </class-decl>
+    <typedef-decl name='efidp_pci' type-id='type-id-69' filepath='/home/pjones/devel/github.com/efivar/src/include/efivar/efivar-dp.h' line='53' column='1' id='type-id-24'/>
+    <class-decl name='__anonymous_struct__' size-in-bits='40' is-struct='yes' is-anonymous='yes' visibility='default' filepath='/home/pjones/devel/github.com/efivar/src/include/efivar/efivar-dp.h' line='58' column='1' id='type-id-70'>
+      <data-member access='public' layout-offset-in-bits='0'>
+        <var-decl name='header' type-id='type-id-23' visibility='default' filepath='/home/pjones/devel/github.com/efivar/src/include/efivar/efivar-dp.h' line='59' column='1'/>
+      </data-member>
+      <data-member access='public' layout-offset-in-bits='32'>
+        <var-decl name='function' type-id='type-id-12' visibility='default' filepath='/home/pjones/devel/github.com/efivar/src/include/efivar/efivar-dp.h' line='60' column='1'/>
+      </data-member>
+    </class-decl>
+    <typedef-decl name='efidp_pccard' type-id='type-id-70' filepath='/home/pjones/devel/github.com/efivar/src/include/efivar/efivar-dp.h' line='61' column='1' id='type-id-25'/>
+    <class-decl name='__anonymous_struct__' size-in-bits='192' is-struct='yes' is-anonymous='yes' visibility='default' filepath='/home/pjones/devel/github.com/efivar/src/include/efivar/efivar-dp.h' line='64' column='1' id='type-id-71'>
+      <data-member access='public' layout-offset-in-bits='0'>
+        <var-decl name='header' type-id='type-id-23' visibility='default' filepath='/home/pjones/devel/github.com/efivar/src/include/efivar/efivar-dp.h' line='65' column='1'/>
+      </data-member>
+      <data-member access='public' layout-offset-in-bits='32'>
+        <var-decl name='memory_type' type-id='type-id-72' visibility='default' filepath='/home/pjones/devel/github.com/efivar/src/include/efivar/efivar-dp.h' line='66' column='1'/>
+      </data-member>
+      <data-member access='public' layout-offset-in-bits='64'>
+        <var-decl name='starting_address' type-id='type-id-73' visibility='default' filepath='/home/pjones/devel/github.com/efivar/src/include/efivar/efivar-dp.h' line='67' column='1'/>
+      </data-member>
+      <data-member access='public' layout-offset-in-bits='128'>
+        <var-decl name='ending_address' type-id='type-id-73' visibility='default' filepath='/home/pjones/devel/github.com/efivar/src/include/efivar/efivar-dp.h' line='68' column='1'/>
+      </data-member>
+    </class-decl>
+    <typedef-decl name='uint32_t' type-id='type-id-2' filepath='/usr/include/stdint.h' line='51' column='1' id='type-id-72'/>
+    <typedef-decl name='uint64_t' type-id='type-id-16' filepath='/usr/include/stdint.h' line='55' column='1' id='type-id-73'/>
+    <typedef-decl name='efidp_mmio' type-id='type-id-71' filepath='/home/pjones/devel/github.com/efivar/src/include/efivar/efivar-dp.h' line='69' column='1' id='type-id-26'/>
+    <class-decl name='__anonymous_struct__' size-in-bits='160' is-struct='yes' is-anonymous='yes' visibility='default' filepath='/home/pjones/devel/github.com/efivar/src/include/efivar/efivar-dp.h' line='637' column='1' id='type-id-74'>
+      <data-member access='public' layout-offset-in-bits='0'>
+        <var-decl name='header' type-id='type-id-23' visibility='default' filepath='/home/pjones/devel/github.com/efivar/src/include/efivar/efivar-dp.h' line='638' column='1'/>
+      </data-member>
+      <data-member access='public' layout-offset-in-bits='32'>
+        <var-decl name='vendor_guid' type-id='type-id-75' visibility='default' filepath='/home/pjones/devel/github.com/efivar/src/include/efivar/efivar-dp.h' line='639' column='1'/>
+      </data-member>
+    </class-decl>
+    <class-decl name='__anonymous_struct__' size-in-bits='128' is-struct='yes' is-anonymous='yes' visibility='default' filepath='/home/pjones/devel/github.com/efivar/src/include/efivar/efivar.h' line='33' column='1' id='type-id-76'>
+      <data-member access='public' layout-offset-in-bits='0'>
+        <var-decl name='a' type-id='type-id-72' visibility='default' filepath='/home/pjones/devel/github.com/efivar/src/include/efivar/efivar.h' line='34' column='1'/>
+      </data-member>
+      <data-member access='public' layout-offset-in-bits='32'>
+        <var-decl name='b' type-id='type-id-10' visibility='default' filepath='/home/pjones/devel/github.com/efivar/src/include/efivar/efivar.h' line='35' column='1'/>
+      </data-member>
+      <data-member access='public' layout-offset-in-bits='48'>
+        <var-decl name='c' type-id='type-id-10' visibility='default' filepath='/home/pjones/devel/github.com/efivar/src/include/efivar/efivar.h' line='36' column='1'/>
+      </data-member>
+      <data-member access='public' layout-offset-in-bits='64'>
+        <var-decl name='d' type-id='type-id-10' visibility='default' filepath='/home/pjones/devel/github.com/efivar/src/include/efivar/efivar.h' line='37' column='1'/>
+      </data-member>
+      <data-member access='public' layout-offset-in-bits='80'>
+        <var-decl name='e' type-id='type-id-77' visibility='default' filepath='/home/pjones/devel/github.com/efivar/src/include/efivar/efivar.h' line='38' column='1'/>
+      </data-member>
+    </class-decl>
+    <array-type-def dimensions='1' type-id='type-id-12' size-in-bits='48' id='type-id-77'>
+      <subrange length='6'/>
+    </array-type-def>
+    <typedef-decl name='efi_guid_t' type-id='type-id-76' filepath='/home/pjones/devel/github.com/efivar/src/include/efivar/efivar.h' line='39' column='1' id='type-id-75'/>
+    <typedef-decl name='efidp_hw_vendor' type-id='type-id-74' filepath='/home/pjones/devel/github.com/efivar/src/include/efivar/efivar-dp.h' line='76' column='1' id='type-id-27'/>
+    <class-decl name='__anonymous_struct__' size-in-bits='64' is-struct='yes' is-anonymous='yes' visibility='default' filepath='/home/pjones/devel/github.com/efivar/src/include/efivar/efivar-dp.h' line='93' column='1' id='type-id-78'>
+      <data-member access='public' layout-offset-in-bits='0'>
+        <var-decl name='header' type-id='type-id-23' visibility='default' filepath='/home/pjones/devel/github.com/efivar/src/include/efivar/efivar-dp.h' line='94' column='1'/>
+      </data-member>
+      <data-member access='public' layout-offset-in-bits='32'>
+        <var-decl name='controller' type-id='type-id-72' visibility='default' filepath='/home/pjones/devel/github.com/efivar/src/include/efivar/efivar-dp.h' line='95' column='1'/>
+      </data-member>
+    </class-decl>
+    <typedef-decl name='efidp_controller' type-id='type-id-78' filepath='/home/pjones/devel/github.com/efivar/src/include/efivar/efivar-dp.h' line='96' column='1' id='type-id-28'/>
+    <class-decl name='__anonymous_struct__' size-in-bits='104' is-struct='yes' is-anonymous='yes' visibility='default' filepath='/home/pjones/devel/github.com/efivar/src/include/efivar/efivar-dp.h' line='99' column='1' id='type-id-79'>
+      <data-member access='public' layout-offset-in-bits='0'>
+        <var-decl name='header' type-id='type-id-23' visibility='default' filepath='/home/pjones/devel/github.com/efivar/src/include/efivar/efivar-dp.h' line='100' column='1'/>
+      </data-member>
+      <data-member access='public' layout-offset-in-bits='32'>
+        <var-decl name='interface_type' type-id='type-id-12' visibility='default' filepath='/home/pjones/devel/github.com/efivar/src/include/efivar/efivar-dp.h' line='101' column='1'/>
+      </data-member>
+      <data-member access='public' layout-offset-in-bits='40'>
+        <var-decl name='base_addr' type-id='type-id-73' visibility='default' filepath='/home/pjones/devel/github.com/efivar/src/include/efivar/efivar-dp.h' line='102' column='1'/>
+      </data-member>
+    </class-decl>
+    <typedef-decl name='efidp_bmc' type-id='type-id-79' filepath='/home/pjones/devel/github.com/efivar/src/include/efivar/efivar-dp.h' line='103' column='1' id='type-id-29'/>
+    <class-decl name='__anonymous_struct__' size-in-bits='96' is-struct='yes' is-anonymous='yes' visibility='default' filepath='/home/pjones/devel/github.com/efivar/src/include/efivar/efivar-dp.h' line='113' column='1' id='type-id-80'>
+      <data-member access='public' layout-offset-in-bits='0'>
+        <var-decl name='header' type-id='type-id-23' visibility='default' filepath='/home/pjones/devel/github.com/efivar/src/include/efivar/efivar-dp.h' line='114' column='1'/>
+      </data-member>
+      <data-member access='public' layout-offset-in-bits='32'>
+        <var-decl name='hid' type-id='type-id-72' visibility='default' filepath='/home/pjones/devel/github.com/efivar/src/include/efivar/efivar-dp.h' line='115' column='1'/>
+      </data-member>
+      <data-member access='public' layout-offset-in-bits='64'>
+        <var-decl name='uid' type-id='type-id-72' visibility='default' filepath='/home/pjones/devel/github.com/efivar/src/include/efivar/efivar-dp.h' line='116' column='1'/>
+      </data-member>
+    </class-decl>
+    <typedef-decl name='efidp_acpi_hid' type-id='type-id-80' filepath='/home/pjones/devel/github.com/efivar/src/include/efivar/efivar-dp.h' line='117' column='1' id='type-id-30'/>
+    <class-decl name='__anonymous_struct__' size-in-bits='128' is-struct='yes' is-anonymous='yes' visibility='default' filepath='/home/pjones/devel/github.com/efivar/src/include/efivar/efivar-dp.h' line='122' column='1' id='type-id-81'>
+      <data-member access='public' layout-offset-in-bits='0'>
+        <var-decl name='header' type-id='type-id-23' visibility='default' filepath='/home/pjones/devel/github.com/efivar/src/include/efivar/efivar-dp.h' line='123' column='1'/>
+      </data-member>
+      <data-member access='public' layout-offset-in-bits='32'>
+        <var-decl name='hid' type-id='type-id-72' visibility='default' filepath='/home/pjones/devel/github.com/efivar/src/include/efivar/efivar-dp.h' line='124' column='1'/>
+      </data-member>
+      <data-member access='public' layout-offset-in-bits='64'>
+        <var-decl name='uid' type-id='type-id-72' visibility='default' filepath='/home/pjones/devel/github.com/efivar/src/include/efivar/efivar-dp.h' line='125' column='1'/>
+      </data-member>
+      <data-member access='public' layout-offset-in-bits='96'>
+        <var-decl name='cid' type-id='type-id-72' visibility='default' filepath='/home/pjones/devel/github.com/efivar/src/include/efivar/efivar-dp.h' line='126' column='1'/>
+      </data-member>
+    </class-decl>
+    <typedef-decl name='efidp_acpi_hid_ex' type-id='type-id-81' filepath='/home/pjones/devel/github.com/efivar/src/include/efivar/efivar-dp.h' line='129' column='1' id='type-id-31'/>
+    <class-decl name='__anonymous_struct__' size-in-bits='32' is-struct='yes' is-anonymous='yes' visibility='default' filepath='/home/pjones/devel/github.com/efivar/src/include/efivar/efivar-dp.h' line='153' column='1' id='type-id-82'>
+      <data-member access='public' layout-offset-in-bits='0'>
+        <var-decl name='header' type-id='type-id-23' visibility='default' filepath='/home/pjones/devel/github.com/efivar/src/include/efivar/efivar-dp.h' line='154' column='1'/>
+      </data-member>
+    </class-decl>
+    <typedef-decl name='efidp_acpi_adr' type-id='type-id-82' filepath='/home/pjones/devel/github.com/efivar/src/include/efivar/efivar-dp.h' line='156' column='1' id='type-id-32'/>
+    <class-decl name='__anonymous_struct__' size-in-bits='64' is-struct='yes' is-anonymous='yes' visibility='default' filepath='/home/pjones/devel/github.com/efivar/src/include/efivar/efivar-dp.h' line='255' column='1' id='type-id-83'>
+      <data-member access='public' layout-offset-in-bits='0'>
+        <var-decl name='header' type-id='type-id-23' visibility='default' filepath='/home/pjones/devel/github.com/efivar/src/include/efivar/efivar-dp.h' line='256' column='1'/>
+      </data-member>
+      <data-member access='public' layout-offset-in-bits='32'>
+        <var-decl name='primary' type-id='type-id-12' visibility='default' filepath='/home/pjones/devel/github.com/efivar/src/include/efivar/efivar-dp.h' line='257' column='1'/>
+      </data-member>
+      <data-member access='public' layout-offset-in-bits='40'>
+        <var-decl name='slave' type-id='type-id-12' visibility='default' filepath='/home/pjones/devel/github.com/efivar/src/include/efivar/efivar-dp.h' line='258' column='1'/>
+      </data-member>
+      <data-member access='public' layout-offset-in-bits='48'>
+        <var-decl name='lun' type-id='type-id-10' visibility='default' filepath='/home/pjones/devel/github.com/efivar/src/include/efivar/efivar-dp.h' line='259' column='1'/>
+      </data-member>
+    </class-decl>
+    <typedef-decl name='efidp_atapi' type-id='type-id-83' filepath='/home/pjones/devel/github.com/efivar/src/include/efivar/efivar-dp.h' line='260' column='1' id='type-id-33'/>
+    <class-decl name='__anonymous_struct__' size-in-bits='64' is-struct='yes' is-anonymous='yes' visibility='default' filepath='/home/pjones/devel/github.com/efivar/src/include/efivar/efivar-dp.h' line='265' column='1' id='type-id-84'>
+      <data-member access='public' layout-offset-in-bits='0'>
+        <var-decl name='header' type-id='type-id-23' visibility='default' filepath='/home/pjones/devel/github.com/efivar/src/include/efivar/efivar-dp.h' line='266' column='1'/>
+      </data-member>
+      <data-member access='public' layout-offset-in-bits='32'>
+        <var-decl name='target' type-id='type-id-10' visibility='default' filepath='/home/pjones/devel/github.com/efivar/src/include/efivar/efivar-dp.h' line='267' column='1'/>
+      </data-member>
+      <data-member access='public' layout-offset-in-bits='48'>
+        <var-decl name='lun' type-id='type-id-10' visibility='default' filepath='/home/pjones/devel/github.com/efivar/src/include/efivar/efivar-dp.h' line='268' column='1'/>
+      </data-member>
+    </class-decl>
+    <typedef-decl name='efidp_scsi' type-id='type-id-84' filepath='/home/pjones/devel/github.com/efivar/src/include/efivar/efivar-dp.h' line='269' column='1' id='type-id-34'/>
+    <class-decl name='__anonymous_struct__' size-in-bits='192' is-struct='yes' is-anonymous='yes' visibility='default' filepath='/home/pjones/devel/github.com/efivar/src/include/efivar/efivar-dp.h' line='274' column='1' id='type-id-85'>
+      <data-member access='public' layout-offset-in-bits='0'>
+        <var-decl name='header' type-id='type-id-23' visibility='default' filepath='/home/pjones/devel/github.com/efivar/src/include/efivar/efivar-dp.h' line='275' column='1'/>
+      </data-member>
+      <data-member access='public' layout-offset-in-bits='32'>
+        <var-decl name='reserved' type-id='type-id-72' visibility='default' filepath='/home/pjones/devel/github.com/efivar/src/include/efivar/efivar-dp.h' line='276' column='1'/>
+      </data-member>
+      <data-member access='public' layout-offset-in-bits='64'>
+        <var-decl name='wwn' type-id='type-id-73' visibility='default' filepath='/home/pjones/devel/github.com/efivar/src/include/efivar/efivar-dp.h' line='277' column='1'/>
+      </data-member>
+      <data-member access='public' layout-offset-in-bits='128'>
+        <var-decl name='lun' type-id='type-id-73' visibility='default' filepath='/home/pjones/devel/github.com/efivar/src/include/efivar/efivar-dp.h' line='278' column='1'/>
+      </data-member>
+    </class-decl>
+    <typedef-decl name='efidp_fc' type-id='type-id-85' filepath='/home/pjones/devel/github.com/efivar/src/include/efivar/efivar-dp.h' line='279' column='1' id='type-id-35'/>
+    <class-decl name='__anonymous_struct__' size-in-bits='192' is-struct='yes' is-anonymous='yes' visibility='default' filepath='/home/pjones/devel/github.com/efivar/src/include/efivar/efivar-dp.h' line='282' column='1' id='type-id-86'>
+      <data-member access='public' layout-offset-in-bits='0'>
+        <var-decl name='header' type-id='type-id-23' visibility='default' filepath='/home/pjones/devel/github.com/efivar/src/include/efivar/efivar-dp.h' line='283' column='1'/>
+      </data-member>
+      <data-member access='public' layout-offset-in-bits='32'>
+        <var-decl name='reserved' type-id='type-id-72' visibility='default' filepath='/home/pjones/devel/github.com/efivar/src/include/efivar/efivar-dp.h' line='284' column='1'/>
+      </data-member>
+      <data-member access='public' layout-offset-in-bits='64'>
+        <var-decl name='wwn' type-id='type-id-87' visibility='default' filepath='/home/pjones/devel/github.com/efivar/src/include/efivar/efivar-dp.h' line='285' column='1'/>
+      </data-member>
+      <data-member access='public' layout-offset-in-bits='128'>
+        <var-decl name='lun' type-id='type-id-87' visibility='default' filepath='/home/pjones/devel/github.com/efivar/src/include/efivar/efivar-dp.h' line='286' column='1'/>
+      </data-member>
+    </class-decl>
+    <array-type-def dimensions='1' type-id='type-id-12' size-in-bits='64' id='type-id-87'>
+      <subrange length='8'/>
+    </array-type-def>
+    <typedef-decl name='efidp_fcex' type-id='type-id-86' filepath='/home/pjones/devel/github.com/efivar/src/include/efivar/efivar-dp.h' line='287' column='1' id='type-id-36'/>
+    <class-decl name='__anonymous_struct__' size-in-bits='128' is-struct='yes' is-anonymous='yes' visibility='default' filepath='/home/pjones/devel/github.com/efivar/src/include/efivar/efivar-dp.h' line='290' column='1' id='type-id-88'>
+      <data-member access='public' layout-offset-in-bits='0'>
+        <var-decl name='header' type-id='type-id-23' visibility='default' filepath='/home/pjones/devel/github.com/efivar/src/include/efivar/efivar-dp.h' line='291' column='1'/>
+      </data-member>
+      <data-member access='public' layout-offset-in-bits='32'>
+        <var-decl name='reserved' type-id='type-id-72' visibility='default' filepath='/home/pjones/devel/github.com/efivar/src/include/efivar/efivar-dp.h' line='292' column='1'/>
+      </data-member>
+      <data-member access='public' layout-offset-in-bits='64'>
+        <var-decl name='guid' type-id='type-id-73' visibility='default' filepath='/home/pjones/devel/github.com/efivar/src/include/efivar/efivar-dp.h' line='293' column='1'/>
+      </data-member>
+    </class-decl>
+    <typedef-decl name='efidp_1394' type-id='type-id-88' filepath='/home/pjones/devel/github.com/efivar/src/include/efivar/efivar-dp.h' line='294' column='1' id='type-id-37'/>
+    <class-decl name='__anonymous_struct__' size-in-bits='48' is-struct='yes' is-anonymous='yes' visibility='default' filepath='/home/pjones/devel/github.com/efivar/src/include/efivar/efivar-dp.h' line='297' column='1' id='type-id-89'>
+      <data-member access='public' layout-offset-in-bits='0'>
+        <var-decl name='header' type-id='type-id-23' visibility='default' filepath='/home/pjones/devel/github.com/efivar/src/include/efivar/efivar-dp.h' line='298' column='1'/>
+      </data-member>
+      <data-member access='public' layout-offset-in-bits='32'>
+        <var-decl name='parent_port' type-id='type-id-12' visibility='default' filepath='/home/pjones/devel/github.com/efivar/src/include/efivar/efivar-dp.h' line='299' column='1'/>
+      </data-member>
+      <data-member access='public' layout-offset-in-bits='40'>
+        <var-decl name='interface' type-id='type-id-12' visibility='default' filepath='/home/pjones/devel/github.com/efivar/src/include/efivar/efivar-dp.h' line='300' column='1'/>
+      </data-member>
+    </class-decl>
+    <typedef-decl name='efidp_usb' type-id='type-id-89' filepath='/home/pjones/devel/github.com/efivar/src/include/efivar/efivar-dp.h' line='301' column='1' id='type-id-38'/>
+    <class-decl name='__anonymous_struct__' size-in-bits='88' is-struct='yes' is-anonymous='yes' visibility='default' filepath='/home/pjones/devel/github.com/efivar/src/include/efivar/efivar-dp.h' line='304' column='1' id='type-id-90'>
+      <data-member access='public' layout-offset-in-bits='0'>
+        <var-decl name='header' type-id='type-id-23' visibility='default' filepath='/home/pjones/devel/github.com/efivar/src/include/efivar/efivar-dp.h' line='305' column='1'/>
+      </data-member>
+      <data-member access='public' layout-offset-in-bits='32'>
+        <var-decl name='vendor_id' type-id='type-id-10' visibility='default' filepath='/home/pjones/devel/github.com/efivar/src/include/efivar/efivar-dp.h' line='306' column='1'/>
+      </data-member>
+      <data-member access='public' layout-offset-in-bits='48'>
+        <var-decl name='product_id' type-id='type-id-10' visibility='default' filepath='/home/pjones/devel/github.com/efivar/src/include/efivar/efivar-dp.h' line='307' column='1'/>
+      </data-member>
+      <data-member access='public' layout-offset-in-bits='64'>
+        <var-decl name='device_class' type-id='type-id-12' visibility='default' filepath='/home/pjones/devel/github.com/efivar/src/include/efivar/efivar-dp.h' line='308' column='1'/>
+      </data-member>
+      <data-member access='public' layout-offset-in-bits='72'>
+        <var-decl name='device_subclass' type-id='type-id-12' visibility='default' filepath='/home/pjones/devel/github.com/efivar/src/include/efivar/efivar-dp.h' line='309' column='1'/>
+      </data-member>
+      <data-member access='public' layout-offset-in-bits='80'>
+        <var-decl name='device_protocol' type-id='type-id-12' visibility='default' filepath='/home/pjones/devel/github.com/efivar/src/include/efivar/efivar-dp.h' line='310' column='1'/>
+      </data-member>
+    </class-decl>
+    <typedef-decl name='efidp_usb_class' type-id='type-id-90' filepath='/home/pjones/devel/github.com/efivar/src/include/efivar/efivar-dp.h' line='311' column='1' id='type-id-39'/>
+    <class-decl name='__anonymous_struct__' size-in-bits='80' is-struct='yes' is-anonymous='yes' visibility='default' filepath='/home/pjones/devel/github.com/efivar/src/include/efivar/efivar-dp.h' line='331' column='1' id='type-id-91'>
+      <data-member access='public' layout-offset-in-bits='0'>
+        <var-decl name='header' type-id='type-id-23' visibility='default' filepath='/home/pjones/devel/github.com/efivar/src/include/efivar/efivar-dp.h' line='332' column='1'/>
+      </data-member>
+      <data-member access='public' layout-offset-in-bits='32'>
+        <var-decl name='interface' type-id='type-id-10' visibility='default' filepath='/home/pjones/devel/github.com/efivar/src/include/efivar/efivar-dp.h' line='333' column='1'/>
+      </data-member>
+      <data-member access='public' layout-offset-in-bits='48'>
+        <var-decl name='vendor_id' type-id='type-id-10' visibility='default' filepath='/home/pjones/devel/github.com/efivar/src/include/efivar/efivar-dp.h' line='334' column='1'/>
+      </data-member>
+      <data-member access='public' layout-offset-in-bits='64'>
+        <var-decl name='product_id' type-id='type-id-10' visibility='default' filepath='/home/pjones/devel/github.com/efivar/src/include/efivar/efivar-dp.h' line='335' column='1'/>
+      </data-member>
+    </class-decl>
+    <typedef-decl name='efidp_usb_wwid' type-id='type-id-91' filepath='/home/pjones/devel/github.com/efivar/src/include/efivar/efivar-dp.h' line='337' column='1' id='type-id-40'/>
+    <class-decl name='__anonymous_struct__' size-in-bits='40' is-struct='yes' is-anonymous='yes' visibility='default' filepath='/home/pjones/devel/github.com/efivar/src/include/efivar/efivar-dp.h' line='340' column='1' id='type-id-92'>
+      <data-member access='public' layout-offset-in-bits='0'>
+        <var-decl name='header' type-id='type-id-23' visibility='default' filepath='/home/pjones/devel/github.com/efivar/src/include/efivar/efivar-dp.h' line='341' column='1'/>
+      </data-member>
+      <data-member access='public' layout-offset-in-bits='32'>
+        <var-decl name='lun' type-id='type-id-12' visibility='default' filepath='/home/pjones/devel/github.com/efivar/src/include/efivar/efivar-dp.h' line='342' column='1'/>
+      </data-member>
+    </class-decl>
+    <typedef-decl name='efidp_lun' type-id='type-id-92' filepath='/home/pjones/devel/github.com/efivar/src/include/efivar/efivar-dp.h' line='343' column='1' id='type-id-41'/>
+    <class-decl name='__anonymous_struct__' size-in-bits='80' is-struct='yes' is-anonymous='yes' visibility='default' filepath='/home/pjones/devel/github.com/efivar/src/include/efivar/efivar-dp.h' line='346' column='1' id='type-id-93'>
+      <data-member access='public' layout-offset-in-bits='0'>
+        <var-decl name='header' type-id='type-id-23' visibility='default' filepath='/home/pjones/devel/github.com/efivar/src/include/efivar/efivar-dp.h' line='347' column='1'/>
+      </data-member>
+      <data-member access='public' layout-offset-in-bits='32'>
+        <var-decl name='hba_port' type-id='type-id-10' visibility='default' filepath='/home/pjones/devel/github.com/efivar/src/include/efivar/efivar-dp.h' line='348' column='1'/>
+      </data-member>
+      <data-member access='public' layout-offset-in-bits='48'>
+        <var-decl name='port_multiplier_port' type-id='type-id-10' visibility='default' filepath='/home/pjones/devel/github.com/efivar/src/include/efivar/efivar-dp.h' line='349' column='1'/>
+      </data-member>
+      <data-member access='public' layout-offset-in-bits='64'>
+        <var-decl name='lun' type-id='type-id-10' visibility='default' filepath='/home/pjones/devel/github.com/efivar/src/include/efivar/efivar-dp.h' line='350' column='1'/>
+      </data-member>
+    </class-decl>
+    <typedef-decl name='efidp_sata' type-id='type-id-93' filepath='/home/pjones/devel/github.com/efivar/src/include/efivar/efivar-dp.h' line='351' column='1' id='type-id-42'/>
+    <class-decl name='__anonymous_struct__' size-in-bits='64' is-struct='yes' is-anonymous='yes' visibility='default' filepath='/home/pjones/devel/github.com/efivar/src/include/efivar/efivar-dp.h' line='357' column='1' id='type-id-94'>
+      <data-member access='public' layout-offset-in-bits='0'>
+        <var-decl name='header' type-id='type-id-23' visibility='default' filepath='/home/pjones/devel/github.com/efivar/src/include/efivar/efivar-dp.h' line='358' column='1'/>
+      </data-member>
+      <data-member access='public' layout-offset-in-bits='32'>
+        <var-decl name='target' type-id='type-id-72' visibility='default' filepath='/home/pjones/devel/github.com/efivar/src/include/efivar/efivar-dp.h' line='359' column='1'/>
+      </data-member>
+    </class-decl>
+    <typedef-decl name='efidp_i2o' type-id='type-id-94' filepath='/home/pjones/devel/github.com/efivar/src/include/efivar/efivar-dp.h' line='360' column='1' id='type-id-43'/>
+    <class-decl name='__anonymous_struct__' size-in-bits='296' is-struct='yes' is-anonymous='yes' visibility='default' filepath='/home/pjones/devel/github.com/efivar/src/include/efivar/efivar-dp.h' line='363' column='1' id='type-id-95'>
+      <data-member access='public' layout-offset-in-bits='0'>
+        <var-decl name='header' type-id='type-id-23' visibility='default' filepath='/home/pjones/devel/github.com/efivar/src/include/efivar/efivar-dp.h' line='364' column='1'/>
+      </data-member>
+      <data-member access='public' layout-offset-in-bits='32'>
+        <var-decl name='mac_addr' type-id='type-id-96' visibility='default' filepath='/home/pjones/devel/github.com/efivar/src/include/efivar/efivar-dp.h' line='365' column='1'/>
+      </data-member>
+      <data-member access='public' layout-offset-in-bits='288'>
+        <var-decl name='if_type' type-id='type-id-12' visibility='default' filepath='/home/pjones/devel/github.com/efivar/src/include/efivar/efivar-dp.h' line='366' column='1'/>
+      </data-member>
+    </class-decl>
+    <array-type-def dimensions='1' type-id='type-id-12' size-in-bits='256' id='type-id-96'>
+      <subrange length='32'/>
+    </array-type-def>
+    <typedef-decl name='efidp_mac_addr' type-id='type-id-95' filepath='/home/pjones/devel/github.com/efivar/src/include/efivar/efivar-dp.h' line='367' column='1' id='type-id-44'/>
+    <class-decl name='__anonymous_struct__' size-in-bits='216' is-struct='yes' is-anonymous='yes' visibility='default' filepath='/home/pjones/devel/github.com/efivar/src/include/efivar/efivar-dp.h' line='375' column='1' id='type-id-97'>
+      <data-member access='public' layout-offset-in-bits='0'>
+        <var-decl name='header' type-id='type-id-23' visibility='default' filepath='/home/pjones/devel/github.com/efivar/src/include/efivar/efivar-dp.h' line='376' column='1'/>
+      </data-member>
+      <data-member access='public' layout-offset-in-bits='32'>
+        <var-decl name='local_ipv4_addr' type-id='type-id-98' visibility='default' filepath='/home/pjones/devel/github.com/efivar/src/include/efivar/efivar-dp.h' line='377' column='1'/>
+      </data-member>
+      <data-member access='public' layout-offset-in-bits='64'>
+        <var-decl name='remote_ipv4_addr' type-id='type-id-98' visibility='default' filepath='/home/pjones/devel/github.com/efivar/src/include/efivar/efivar-dp.h' line='378' column='1'/>
+      </data-member>
+      <data-member access='public' layout-offset-in-bits='96'>
+        <var-decl name='local_port' type-id='type-id-10' visibility='default' filepath='/home/pjones/devel/github.com/efivar/src/include/efivar/efivar-dp.h' line='379' column='1'/>
+      </data-member>
+      <data-member access='public' layout-offset-in-bits='112'>
+        <var-decl name='remote_port' type-id='type-id-10' visibility='default' filepath='/home/pjones/devel/github.com/efivar/src/include/efivar/efivar-dp.h' line='380' column='1'/>
+      </data-member>
+      <data-member access='public' layout-offset-in-bits='128'>
+        <var-decl name='protocol' type-id='type-id-10' visibility='default' filepath='/home/pjones/devel/github.com/efivar/src/include/efivar/efivar-dp.h' line='381' column='1'/>
+      </data-member>
+      <data-member access='public' layout-offset-in-bits='144'>
+        <var-decl name='static_ip_addr' type-id='type-id-99' visibility='default' filepath='/home/pjones/devel/github.com/efivar/src/include/efivar/efivar-dp.h' line='382' column='1'/>
+      </data-member>
+      <data-member access='public' layout-offset-in-bits='152'>
+        <var-decl name='gateway' type-id='type-id-98' visibility='default' filepath='/home/pjones/devel/github.com/efivar/src/include/efivar/efivar-dp.h' line='383' column='1'/>
+      </data-member>
+      <data-member access='public' layout-offset-in-bits='184'>
+        <var-decl name='netmask' type-id='type-id-98' visibility='default' filepath='/home/pjones/devel/github.com/efivar/src/include/efivar/efivar-dp.h' line='384' column='1'/>
+      </data-member>
+    </class-decl>
+    <array-type-def dimensions='1' type-id='type-id-12' size-in-bits='32' id='type-id-98'>
+      <subrange length='4'/>
+    </array-type-def>
+    <typedef-decl name='efidp_boolean' type-id='type-id-12' filepath='/home/pjones/devel/github.com/efivar/src/include/efivar/efivar-dp.h' line='37' column='1' id='type-id-99'/>
+    <typedef-decl name='efidp_ipv4_addr' type-id='type-id-97' filepath='/home/pjones/devel/github.com/efivar/src/include/efivar/efivar-dp.h' line='385' column='1' id='type-id-45'/>
+    <class-decl name='__anonymous_struct__' size-in-bits='360' is-struct='yes' is-anonymous='yes' visibility='default' filepath='/home/pjones/devel/github.com/efivar/src/include/efivar/efivar-dp.h' line='397' column='1' id='type-id-100'>
+      <data-member access='public' layout-offset-in-bits='0'>
+        <var-decl name='header' type-id='type-id-23' visibility='default' filepath='/home/pjones/devel/github.com/efivar/src/include/efivar/efivar-dp.h' line='398' column='1'/>
+      </data-member>
+      <data-member access='public' layout-offset-in-bits='32'>
+        <var-decl name='local_ipv6_addr' type-id='type-id-101' visibility='default' filepath='/home/pjones/devel/github.com/efivar/src/include/efivar/efivar-dp.h' line='399' column='1'/>
+      </data-member>
+      <data-member access='public' layout-offset-in-bits='160'>
+        <var-decl name='remote_ipv6_addr' type-id='type-id-101' visibility='default' filepath='/home/pjones/devel/github.com/efivar/src/include/efivar/efivar-dp.h' line='400' column='1'/>
+      </data-member>
+      <data-member access='public' layout-offset-in-bits='288'>
+        <var-decl name='local_port' type-id='type-id-10' visibility='default' filepath='/home/pjones/devel/github.com/efivar/src/include/efivar/efivar-dp.h' line='401' column='1'/>
+      </data-member>
+      <data-member access='public' layout-offset-in-bits='304'>
+        <var-decl name='remote_port' type-id='type-id-10' visibility='default' filepath='/home/pjones/devel/github.com/efivar/src/include/efivar/efivar-dp.h' line='402' column='1'/>
+      </data-member>
+      <data-member access='public' layout-offset-in-bits='320'>
+        <var-decl name='protocol' type-id='type-id-10' visibility='default' filepath='/home/pjones/devel/github.com/efivar/src/include/efivar/efivar-dp.h' line='403' column='1'/>
+      </data-member>
+      <data-member access='public' layout-offset-in-bits='336'>
+        <var-decl name='ip_addr_origin' type-id='type-id-12' visibility='default' filepath='/home/pjones/devel/github.com/efivar/src/include/efivar/efivar-dp.h' line='404' column='1'/>
+      </data-member>
+      <data-member access='public' layout-offset-in-bits='344'>
+        <var-decl name='prefix_length' type-id='type-id-12' visibility='default' filepath='/home/pjones/devel/github.com/efivar/src/include/efivar/efivar-dp.h' line='405' column='1'/>
+      </data-member>
+      <data-member access='public' layout-offset-in-bits='352'>
+        <var-decl name='gateway_ipv6_addr' type-id='type-id-12' visibility='default' filepath='/home/pjones/devel/github.com/efivar/src/include/efivar/efivar-dp.h' line='406' column='1'/>
+      </data-member>
+    </class-decl>
+    <array-type-def dimensions='1' type-id='type-id-12' size-in-bits='128' id='type-id-101'>
+      <subrange length='16'/>
+    </array-type-def>
+    <typedef-decl name='efidp_ipv6_addr' type-id='type-id-100' filepath='/home/pjones/devel/github.com/efivar/src/include/efivar/efivar-dp.h' line='407' column='1' id='type-id-46'/>
+    <class-decl name='__anonymous_struct__' size-in-bits='48' is-struct='yes' is-anonymous='yes' visibility='default' filepath='/home/pjones/devel/github.com/efivar/src/include/efivar/efivar-dp.h' line='414' column='1' id='type-id-102'>
+      <data-member access='public' layout-offset-in-bits='0'>
+        <var-decl name='header' type-id='type-id-23' visibility='default' filepath='/home/pjones/devel/github.com/efivar/src/include/efivar/efivar-dp.h' line='415' column='1'/>
+      </data-member>
+      <data-member access='public' layout-offset-in-bits='32'>
+        <var-decl name='vlan_id' type-id='type-id-10' visibility='default' filepath='/home/pjones/devel/github.com/efivar/src/include/efivar/efivar-dp.h' line='416' column='1'/>
+      </data-member>
+    </class-decl>
+    <typedef-decl name='efidp_vlan' type-id='type-id-102' filepath='/home/pjones/devel/github.com/efivar/src/include/efivar/efivar-dp.h' line='417' column='1' id='type-id-47'/>
+    <class-decl name='__anonymous_struct__' size-in-bits='384' is-struct='yes' is-anonymous='yes' visibility='default' filepath='/home/pjones/devel/github.com/efivar/src/include/efivar/efivar-dp.h' line='420' column='1' id='type-id-103'>
+      <data-member access='public' layout-offset-in-bits='0'>
+        <var-decl name='header' type-id='type-id-23' visibility='default' filepath='/home/pjones/devel/github.com/efivar/src/include/efivar/efivar-dp.h' line='421' column='1'/>
+      </data-member>
+      <data-member access='public' layout-offset-in-bits='32'>
+        <var-decl name='resource_flags' type-id='type-id-72' visibility='default' filepath='/home/pjones/devel/github.com/efivar/src/include/efivar/efivar-dp.h' line='422' column='1'/>
+      </data-member>
+      <data-member access='public' layout-offset-in-bits='64'>
+        <var-decl name='port_gid' type-id='type-id-104' visibility='default' filepath='/home/pjones/devel/github.com/efivar/src/include/efivar/efivar-dp.h' line='423' column='1'/>
+      </data-member>
+      <data-member access='public' layout-offset-in-bits='192'>
+        <var-decl name='' type-id='type-id-105' visibility='default'/>
+      </data-member>
+      <data-member access='public' layout-offset-in-bits='256'>
+        <var-decl name='target_port_id' type-id='type-id-73' visibility='default' filepath='/home/pjones/devel/github.com/efivar/src/include/efivar/efivar-dp.h' line='428' column='1'/>
+      </data-member>
+      <data-member access='public' layout-offset-in-bits='320'>
+        <var-decl name='device_id' type-id='type-id-73' visibility='default' filepath='/home/pjones/devel/github.com/efivar/src/include/efivar/efivar-dp.h' line='429' column='1'/>
+      </data-member>
+    </class-decl>
+    <array-type-def dimensions='1' type-id='type-id-73' size-in-bits='128' id='type-id-104'>
+      <subrange length='2'/>
+    </array-type-def>
+    <union-decl name='__anonymous_union__' size-in-bits='64' is-anonymous='yes' visibility='default' filepath='/home/pjones/devel/github.com/efivar/src/include/efivar/efivar-dp.h' line='424' column='1' id='type-id-105'>
+      <data-member access='private'>
+        <var-decl name='ioc_guid' type-id='type-id-73' visibility='default' filepath='/home/pjones/devel/github.com/efivar/src/include/efivar/efivar-dp.h' line='425' column='1'/>
+      </data-member>
+      <data-member access='private'>
+        <var-decl name='service_id' type-id='type-id-73' visibility='default' filepath='/home/pjones/devel/github.com/efivar/src/include/efivar/efivar-dp.h' line='426' column='1'/>
+      </data-member>
+    </union-decl>
+    <typedef-decl name='efidp_infiniband' type-id='type-id-103' filepath='/home/pjones/devel/github.com/efivar/src/include/efivar/efivar-dp.h' line='430' column='1' id='type-id-48'/>
+    <class-decl name='__anonymous_struct__' size-in-bits='152' is-struct='yes' is-anonymous='yes' visibility='default' filepath='/home/pjones/devel/github.com/efivar/src/include/efivar/efivar-dp.h' line='439' column='1' id='type-id-106'>
+      <data-member access='public' layout-offset-in-bits='0'>
+        <var-decl name='header' type-id='type-id-23' visibility='default' filepath='/home/pjones/devel/github.com/efivar/src/include/efivar/efivar-dp.h' line='440' column='1'/>
+      </data-member>
+      <data-member access='public' layout-offset-in-bits='32'>
+        <var-decl name='reserved' type-id='type-id-72' visibility='default' filepath='/home/pjones/devel/github.com/efivar/src/include/efivar/efivar-dp.h' line='441' column='1'/>
+      </data-member>
+      <data-member access='public' layout-offset-in-bits='64'>
+        <var-decl name='baud_rate' type-id='type-id-73' visibility='default' filepath='/home/pjones/devel/github.com/efivar/src/include/efivar/efivar-dp.h' line='442' column='1'/>
+      </data-member>
+      <data-member access='public' layout-offset-in-bits='128'>
+        <var-decl name='data_bits' type-id='type-id-12' visibility='default' filepath='/home/pjones/devel/github.com/efivar/src/include/efivar/efivar-dp.h' line='443' column='1'/>
+      </data-member>
+      <data-member access='public' layout-offset-in-bits='136'>
+        <var-decl name='parity' type-id='type-id-12' visibility='default' filepath='/home/pjones/devel/github.com/efivar/src/include/efivar/efivar-dp.h' line='444' column='1'/>
+      </data-member>
+      <data-member access='public' layout-offset-in-bits='144'>
+        <var-decl name='stop_bits' type-id='type-id-12' visibility='default' filepath='/home/pjones/devel/github.com/efivar/src/include/efivar/efivar-dp.h' line='445' column='1'/>
+      </data-member>
+    </class-decl>
+    <typedef-decl name='efidp_uart' type-id='type-id-106' filepath='/home/pjones/devel/github.com/efivar/src/include/efivar/efivar-dp.h' line='446' column='1' id='type-id-49'/>
+    <typedef-decl name='efidp_msg_vendor' type-id='type-id-74' filepath='/home/pjones/devel/github.com/efivar/src/include/efivar/efivar-dp.h' line='474' column='1' id='type-id-50'/>
+    <class-decl name='__anonymous_struct__' size-in-bits='192' is-struct='yes' is-anonymous='yes' visibility='default' filepath='/home/pjones/devel/github.com/efivar/src/include/efivar/efivar-dp.h' line='483' column='1' id='type-id-107'>
+      <data-member access='public' layout-offset-in-bits='0'>
+        <var-decl name='header' type-id='type-id-23' visibility='default' filepath='/home/pjones/devel/github.com/efivar/src/include/efivar/efivar-dp.h' line='484' column='1'/>
+      </data-member>
+      <data-member access='public' layout-offset-in-bits='32'>
+        <var-decl name='vendor_guid' type-id='type-id-75' visibility='default' filepath='/home/pjones/devel/github.com/efivar/src/include/efivar/efivar-dp.h' line='485' column='1'/>
+      </data-member>
+      <data-member access='public' layout-offset-in-bits='160'>
+        <var-decl name='flow_control_map' type-id='type-id-72' visibility='default' filepath='/home/pjones/devel/github.com/efivar/src/include/efivar/efivar-dp.h' line='486' column='1'/>
+      </data-member>
+    </class-decl>
+    <typedef-decl name='efidp_uart_flow_control' type-id='type-id-107' filepath='/home/pjones/devel/github.com/efivar/src/include/efivar/efivar-dp.h' line='487' column='1' id='type-id-51'/>
+    <class-decl name='__anonymous_struct__' size-in-bits='352' is-struct='yes' is-anonymous='yes' visibility='default' filepath='/home/pjones/devel/github.com/efivar/src/include/efivar/efivar-dp.h' line='494' column='1' id='type-id-108'>
+      <data-member access='public' layout-offset-in-bits='0'>
+        <var-decl name='header' type-id='type-id-23' visibility='default' filepath='/home/pjones/devel/github.com/efivar/src/include/efivar/efivar-dp.h' line='495' column='1'/>
+      </data-member>
+      <data-member access='public' layout-offset-in-bits='32'>
+        <var-decl name='vendor_guid' type-id='type-id-75' visibility='default' filepath='/home/pjones/devel/github.com/efivar/src/include/efivar/efivar-dp.h' line='496' column='1'/>
+      </data-member>
+      <data-member access='public' layout-offset-in-bits='160'>
+        <var-decl name='reserved' type-id='type-id-72' visibility='default' filepath='/home/pjones/devel/github.com/efivar/src/include/efivar/efivar-dp.h' line='497' column='1'/>
+      </data-member>
+      <data-member access='public' layout-offset-in-bits='192'>
+        <var-decl name='sas_address' type-id='type-id-73' visibility='default' filepath='/home/pjones/devel/github.com/efivar/src/include/efivar/efivar-dp.h' line='498' column='1'/>
+      </data-member>
+      <data-member access='public' layout-offset-in-bits='256'>
+        <var-decl name='lun' type-id='type-id-73' visibility='default' filepath='/home/pjones/devel/github.com/efivar/src/include/efivar/efivar-dp.h' line='499' column='1'/>
+      </data-member>
+      <data-member access='public' layout-offset-in-bits='320'>
+        <var-decl name='device_topology_info' type-id='type-id-12' visibility='default' filepath='/home/pjones/devel/github.com/efivar/src/include/efivar/efivar-dp.h' line='500' column='1'/>
+      </data-member>
+      <data-member access='public' layout-offset-in-bits='328'>
+        <var-decl name='drive_bay_id' type-id='type-id-12' visibility='default' filepath='/home/pjones/devel/github.com/efivar/src/include/efivar/efivar-dp.h' line='501' column='1'/>
+      </data-member>
+      <data-member access='public' layout-offset-in-bits='336'>
+        <var-decl name='rtp' type-id='type-id-10' visibility='default' filepath='/home/pjones/devel/github.com/efivar/src/include/efivar/efivar-dp.h' line='502' column='1'/>
+      </data-member>
+    </class-decl>
+    <typedef-decl name='efidp_sas' type-id='type-id-108' filepath='/home/pjones/devel/github.com/efivar/src/include/efivar/efivar-dp.h' line='503' column='1' id='type-id-52'/>
+    <class-decl name='__anonymous_struct__' size-in-bits='192' is-struct='yes' is-anonymous='yes' visibility='default' filepath='/home/pjones/devel/github.com/efivar/src/include/efivar/efivar-dp.h' line='527' column='1' id='type-id-109'>
+      <data-member access='public' layout-offset-in-bits='0'>
+        <var-decl name='header' type-id='type-id-23' visibility='default' filepath='/home/pjones/devel/github.com/efivar/src/include/efivar/efivar-dp.h' line='528' column='1'/>
+      </data-member>
+      <data-member access='public' layout-offset-in-bits='32'>
+        <var-decl name='sas_address' type-id='type-id-87' visibility='default' filepath='/home/pjones/devel/github.com/efivar/src/include/efivar/efivar-dp.h' line='529' column='1'/>
+      </data-member>
+      <data-member access='public' layout-offset-in-bits='96'>
+        <var-decl name='lun' type-id='type-id-87' visibility='default' filepath='/home/pjones/devel/github.com/efivar/src/include/efivar/efivar-dp.h' line='530' column='1'/>
+      </data-member>
+      <data-member access='public' layout-offset-in-bits='160'>
+        <var-decl name='device_topology_info' type-id='type-id-12' visibility='default' filepath='/home/pjones/devel/github.com/efivar/src/include/efivar/efivar-dp.h' line='531' column='1'/>
+      </data-member>
+      <data-member access='public' layout-offset-in-bits='168'>
+        <var-decl name='drive_bay_id' type-id='type-id-12' visibility='default' filepath='/home/pjones/devel/github.com/efivar/src/include/efivar/efivar-dp.h' line='532' column='1'/>
+      </data-member>
+      <data-member access='public' layout-offset-in-bits='176'>
+        <var-decl name='rtp' type-id='type-id-10' visibility='default' filepath='/home/pjones/devel/github.com/efivar/src/include/efivar/efivar-dp.h' line='533' column='1'/>
+      </data-member>
+    </class-decl>
+    <typedef-decl name='efidp_sas_ex' type-id='type-id-109' filepath='/home/pjones/devel/github.com/efivar/src/include/efivar/efivar-dp.h' line='534' column='1' id='type-id-53'/>
+    <class-decl name='__anonymous_struct__' size-in-bits='144' is-struct='yes' is-anonymous='yes' visibility='default' filepath='/home/pjones/devel/github.com/efivar/src/include/efivar/efivar-dp.h' line='540' column='1' id='type-id-110'>
+      <data-member access='public' layout-offset-in-bits='0'>
+        <var-decl name='header' type-id='type-id-23' visibility='default' filepath='/home/pjones/devel/github.com/efivar/src/include/efivar/efivar-dp.h' line='541' column='1'/>
+      </data-member>
+      <data-member access='public' layout-offset-in-bits='32'>
+        <var-decl name='protocol' type-id='type-id-10' visibility='default' filepath='/home/pjones/devel/github.com/efivar/src/include/efivar/efivar-dp.h' line='542' column='1'/>
+      </data-member>
+      <data-member access='public' layout-offset-in-bits='48'>
+        <var-decl name='options' type-id='type-id-10' visibility='default' filepath='/home/pjones/devel/github.com/efivar/src/include/efivar/efivar-dp.h' line='543' column='1'/>
+      </data-member>
+      <data-member access='public' layout-offset-in-bits='64'>
+        <var-decl name='lun' type-id='type-id-87' visibility='default' filepath='/home/pjones/devel/github.com/efivar/src/include/efivar/efivar-dp.h' line='544' column='1'/>
+      </data-member>
+      <data-member access='public' layout-offset-in-bits='128'>
+        <var-decl name='tpgt' type-id='type-id-10' visibility='default' filepath='/home/pjones/devel/github.com/efivar/src/include/efivar/efivar-dp.h' line='545' column='1'/>
+      </data-member>
+    </class-decl>
+    <typedef-decl name='efidp_iscsi' type-id='type-id-110' filepath='/home/pjones/devel/github.com/efivar/src/include/efivar/efivar-dp.h' line='547' column='1' id='type-id-54'/>
+    <class-decl name='__anonymous_struct__' size-in-bits='128' is-struct='yes' is-anonymous='yes' visibility='default' filepath='/home/pjones/devel/github.com/efivar/src/include/efivar/efivar-dp.h' line='575' column='1' id='type-id-111'>
+      <data-member access='public' layout-offset-in-bits='0'>
+        <var-decl name='header' type-id='type-id-23' visibility='default' filepath='/home/pjones/devel/github.com/efivar/src/include/efivar/efivar-dp.h' line='576' column='1'/>
+      </data-member>
+      <data-member access='public' layout-offset-in-bits='32'>
+        <var-decl name='namespace_id' type-id='type-id-72' visibility='default' filepath='/home/pjones/devel/github.com/efivar/src/include/efivar/efivar-dp.h' line='577' column='1'/>
+      </data-member>
+      <data-member access='public' layout-offset-in-bits='64'>
+        <var-decl name='ieee_eui_64' type-id='type-id-87' visibility='default' filepath='/home/pjones/devel/github.com/efivar/src/include/efivar/efivar-dp.h' line='578' column='1'/>
+      </data-member>
+    </class-decl>
+    <typedef-decl name='efidp_nvme' type-id='type-id-111' filepath='/home/pjones/devel/github.com/efivar/src/include/efivar/efivar-dp.h' line='579' column='1' id='type-id-55'/>
+    <typedef-decl name='efidp_uri' type-id='type-id-82' filepath='/home/pjones/devel/github.com/efivar/src/include/efivar/efivar-dp.h' line='587' column='1' id='type-id-56'/>
+    <class-decl name='__anonymous_struct__' size-in-bits='48' is-struct='yes' is-anonymous='yes' visibility='default' filepath='/home/pjones/devel/github.com/efivar/src/include/efivar/efivar-dp.h' line='590' column='1' id='type-id-112'>
+      <data-member access='public' layout-offset-in-bits='0'>
+        <var-decl name='header' type-id='type-id-23' visibility='default' filepath='/home/pjones/devel/github.com/efivar/src/include/efivar/efivar-dp.h' line='591' column='1'/>
+      </data-member>
+      <data-member access='public' layout-offset-in-bits='32'>
+        <var-decl name='target_id' type-id='type-id-12' visibility='default' filepath='/home/pjones/devel/github.com/efivar/src/include/efivar/efivar-dp.h' line='592' column='1'/>
+      </data-member>
+      <data-member access='public' layout-offset-in-bits='40'>
+        <var-decl name='lun' type-id='type-id-12' visibility='default' filepath='/home/pjones/devel/github.com/efivar/src/include/efivar/efivar-dp.h' line='593' column='1'/>
+      </data-member>
+    </class-decl>
+    <typedef-decl name='efidp_ufs' type-id='type-id-112' filepath='/home/pjones/devel/github.com/efivar/src/include/efivar/efivar-dp.h' line='594' column='1' id='type-id-57'/>
+    <class-decl name='__anonymous_struct__' size-in-bits='40' is-struct='yes' is-anonymous='yes' visibility='default' filepath='/home/pjones/devel/github.com/efivar/src/include/efivar/efivar-dp.h' line='597' column='1' id='type-id-113'>
+      <data-member access='public' layout-offset-in-bits='0'>
+        <var-decl name='header' type-id='type-id-23' visibility='default' filepath='/home/pjones/devel/github.com/efivar/src/include/efivar/efivar-dp.h' line='598' column='1'/>
+      </data-member>
+      <data-member access='public' layout-offset-in-bits='32'>
+        <var-decl name='slot_number' type-id='type-id-12' visibility='default' filepath='/home/pjones/devel/github.com/efivar/src/include/efivar/efivar-dp.h' line='599' column='1'/>
+      </data-member>
+    </class-decl>
+    <typedef-decl name='efidp_sd' type-id='type-id-113' filepath='/home/pjones/devel/github.com/efivar/src/include/efivar/efivar-dp.h' line='600' column='1' id='type-id-58'/>
+    <class-decl name='__anonymous_struct__' size-in-bits='336' is-struct='yes' is-anonymous='yes' visibility='default' filepath='/home/pjones/devel/github.com/efivar/src/include/efivar/efivar-dp.h' line='604' column='1' id='type-id-114'>
+      <data-member access='public' layout-offset-in-bits='0'>
+        <var-decl name='header' type-id='type-id-23' visibility='default' filepath='/home/pjones/devel/github.com/efivar/src/include/efivar/efivar-dp.h' line='605' column='1'/>
+      </data-member>
+      <data-member access='public' layout-offset-in-bits='32'>
+        <var-decl name='partition_number' type-id='type-id-72' visibility='default' filepath='/home/pjones/devel/github.com/efivar/src/include/efivar/efivar-dp.h' line='606' column='1'/>
+      </data-member>
+      <data-member access='public' layout-offset-in-bits='64'>
+        <var-decl name='start' type-id='type-id-73' visibility='default' filepath='/home/pjones/devel/github.com/efivar/src/include/efivar/efivar-dp.h' line='607' column='1'/>
+      </data-member>
+      <data-member access='public' layout-offset-in-bits='128'>
+        <var-decl name='size' type-id='type-id-73' visibility='default' filepath='/home/pjones/devel/github.com/efivar/src/include/efivar/efivar-dp.h' line='608' column='1'/>
+      </data-member>
+      <data-member access='public' layout-offset-in-bits='192'>
+        <var-decl name='signature' type-id='type-id-101' visibility='default' filepath='/home/pjones/devel/github.com/efivar/src/include/efivar/efivar-dp.h' line='609' column='1'/>
+      </data-member>
+      <data-member access='public' layout-offset-in-bits='320'>
+        <var-decl name='format' type-id='type-id-12' visibility='default' filepath='/home/pjones/devel/github.com/efivar/src/include/efivar/efivar-dp.h' line='610' column='1'/>
+      </data-member>
+      <data-member access='public' layout-offset-in-bits='328'>
+        <var-decl name='signature_type' type-id='type-id-12' visibility='default' filepath='/home/pjones/devel/github.com/efivar/src/include/efivar/efivar-dp.h' line='611' column='1'/>
+      </data-member>
+    </class-decl>
+    <typedef-decl name='efidp_hd' type-id='type-id-114' filepath='/home/pjones/devel/github.com/efivar/src/include/efivar/efivar-dp.h' line='615' column='1' id='type-id-59'/>
+    <class-decl name='__anonymous_struct__' size-in-bits='192' is-struct='yes' is-anonymous='yes' visibility='default' filepath='/home/pjones/devel/github.com/efivar/src/include/efivar/efivar-dp.h' line='629' column='1' id='type-id-115'>
+      <data-member access='public' layout-offset-in-bits='0'>
+        <var-decl name='header' type-id='type-id-23' visibility='default' filepath='/home/pjones/devel/github.com/efivar/src/include/efivar/efivar-dp.h' line='630' column='1'/>
+      </data-member>
+      <data-member access='public' layout-offset-in-bits='32'>
+        <var-decl name='boot_catalog_entry' type-id='type-id-72' visibility='default' filepath='/home/pjones/devel/github.com/efivar/src/include/efivar/efivar-dp.h' line='631' column='1'/>
+      </data-member>
+      <data-member access='public' layout-offset-in-bits='64'>
+        <var-decl name='partition_rba' type-id='type-id-73' visibility='default' filepath='/home/pjones/devel/github.com/efivar/src/include/efivar/efivar-dp.h' line='632' column='1'/>
+      </data-member>
+      <data-member access='public' layout-offset-in-bits='128'>
+        <var-decl name='sectors' type-id='type-id-73' visibility='default' filepath='/home/pjones/devel/github.com/efivar/src/include/efivar/efivar-dp.h' line='633' column='1'/>
+      </data-member>
+    </class-decl>
+    <typedef-decl name='efidp_cdrom' type-id='type-id-115' filepath='/home/pjones/devel/github.com/efivar/src/include/efivar/efivar-dp.h' line='634' column='1' id='type-id-60'/>
+    <typedef-decl name='efidp_media_vendor' type-id='type-id-74' filepath='/home/pjones/devel/github.com/efivar/src/include/efivar/efivar-dp.h' line='641' column='1' id='type-id-61'/>
+    <typedef-decl name='efidp_file' type-id='type-id-82' filepath='/home/pjones/devel/github.com/efivar/src/include/efivar/efivar-dp.h' line='651' column='1' id='type-id-62'/>
+    <class-decl name='__anonymous_struct__' size-in-bits='160' is-struct='yes' is-anonymous='yes' visibility='default' filepath='/home/pjones/devel/github.com/efivar/src/include/efivar/efivar-dp.h' line='655' column='1' id='type-id-116'>
+      <data-member access='public' layout-offset-in-bits='0'>
+        <var-decl name='header' type-id='type-id-23' visibility='default' filepath='/home/pjones/devel/github.com/efivar/src/include/efivar/efivar-dp.h' line='656' column='1'/>
+      </data-member>
+      <data-member access='public' layout-offset-in-bits='32'>
+        <var-decl name='protocol_guid' type-id='type-id-75' visibility='default' filepath='/home/pjones/devel/github.com/efivar/src/include/efivar/efivar-dp.h' line='657' column='1'/>
+      </data-member>
+    </class-decl>
+    <typedef-decl name='efidp_protocol' type-id='type-id-116' filepath='/home/pjones/devel/github.com/efivar/src/include/efivar/efivar-dp.h' line='658' column='1' id='type-id-63'/>
+    <typedef-decl name='efidp_firmware_file' type-id='type-id-82' filepath='/home/pjones/devel/github.com/efivar/src/include/efivar/efivar-dp.h' line='664' column='1' id='type-id-64'/>
+    <typedef-decl name='efidp_firmware_volume' type-id='type-id-82' filepath='/home/pjones/devel/github.com/efivar/src/include/efivar/efivar-dp.h' line='670' column='1' id='type-id-65'/>
+    <class-decl name='__anonymous_struct__' size-in-bits='192' is-struct='yes' is-anonymous='yes' visibility='default' filepath='/home/pjones/devel/github.com/efivar/src/include/efivar/efivar-dp.h' line='673' column='1' id='type-id-117'>
+      <data-member access='public' layout-offset-in-bits='0'>
+        <var-decl name='header' type-id='type-id-23' visibility='default' filepath='/home/pjones/devel/github.com/efivar/src/include/efivar/efivar-dp.h' line='674' column='1'/>
+      </data-member>
+      <data-member access='public' layout-offset-in-bits='32'>
+        <var-decl name='reserved' type-id='type-id-72' visibility='default' filepath='/home/pjones/devel/github.com/efivar/src/include/efivar/efivar-dp.h' line='675' column='1'/>
+      </data-member>
+      <data-member access='public' layout-offset-in-bits='64'>
+        <var-decl name='first_byte' type-id='type-id-73' visibility='default' filepath='/home/pjones/devel/github.com/efivar/src/include/efivar/efivar-dp.h' line='676' column='1'/>
+      </data-member>
+      <data-member access='public' layout-offset-in-bits='128'>
+        <var-decl name='last_byte' type-id='type-id-73' visibility='default' filepath='/home/pjones/devel/github.com/efivar/src/include/efivar/efivar-dp.h' line='677' column='1'/>
+      </data-member>
+    </class-decl>
+    <typedef-decl name='efidp_relative_offset' type-id='type-id-117' filepath='/home/pjones/devel/github.com/efivar/src/include/efivar/efivar-dp.h' line='678' column='1' id='type-id-66'/>
+    <class-decl name='__anonymous_struct__' size-in-bits='304' is-struct='yes' is-anonymous='yes' visibility='default' filepath='/home/pjones/devel/github.com/efivar/src/include/efivar/efivar-dp.h' line='681' column='1' id='type-id-118'>
+      <data-member access='public' layout-offset-in-bits='0'>
+        <var-decl name='header' type-id='type-id-23' visibility='default' filepath='/home/pjones/devel/github.com/efivar/src/include/efivar/efivar-dp.h' line='682' column='1'/>
+      </data-member>
+      <data-member access='public' layout-offset-in-bits='32'>
+        <var-decl name='start_addr' type-id='type-id-73' visibility='default' filepath='/home/pjones/devel/github.com/efivar/src/include/efivar/efivar-dp.h' line='683' column='1'/>
+      </data-member>
+      <data-member access='public' layout-offset-in-bits='96'>
+        <var-decl name='end_addr' type-id='type-id-73' visibility='default' filepath='/home/pjones/devel/github.com/efivar/src/include/efivar/efivar-dp.h' line='684' column='1'/>
+      </data-member>
+      <data-member access='public' layout-offset-in-bits='160'>
+        <var-decl name='disk_type_guid' type-id='type-id-75' visibility='default' filepath='/home/pjones/devel/github.com/efivar/src/include/efivar/efivar-dp.h' line='685' column='1'/>
+      </data-member>
+      <data-member access='public' layout-offset-in-bits='288'>
+        <var-decl name='instance_number' type-id='type-id-10' visibility='default' filepath='/home/pjones/devel/github.com/efivar/src/include/efivar/efivar-dp.h' line='686' column='1'/>
+      </data-member>
+    </class-decl>
+    <typedef-decl name='efidp_ramdisk' type-id='type-id-118' filepath='/home/pjones/devel/github.com/efivar/src/include/efivar/efivar-dp.h' line='687' column='1' id='type-id-67'/>
+    <class-decl name='__anonymous_struct__' size-in-bits='64' is-struct='yes' is-anonymous='yes' visibility='default' filepath='/home/pjones/devel/github.com/efivar/src/include/efivar/efivar-dp.h' line='700' column='1' id='type-id-119'>
+      <data-member access='public' layout-offset-in-bits='0'>
+        <var-decl name='header' type-id='type-id-23' visibility='default' filepath='/home/pjones/devel/github.com/efivar/src/include/efivar/efivar-dp.h' line='701' column='1'/>
+      </data-member>
+      <data-member access='public' layout-offset-in-bits='32'>
+        <var-decl name='device_type' type-id='type-id-10' visibility='default' filepath='/home/pjones/devel/github.com/efivar/src/include/efivar/efivar-dp.h' line='702' column='1'/>
+      </data-member>
+      <data-member access='public' layout-offset-in-bits='48'>
+        <var-decl name='status' type-id='type-id-10' visibility='default' filepath='/home/pjones/devel/github.com/efivar/src/include/efivar/efivar-dp.h' line='703' column='1'/>
+      </data-member>
+    </class-decl>
+    <typedef-decl name='efidp_bios_boot' type-id='type-id-119' filepath='/home/pjones/devel/github.com/efivar/src/include/efivar/efivar-dp.h' line='705' column='1' id='type-id-68'/>
+    <typedef-decl name='efidp_data' type-id='type-id-21' filepath='/home/pjones/devel/github.com/efivar/src/include/efivar/efivar-dp.h' line='771' column='1' id='type-id-120'/>
+    <pointer-type-def type-id='type-id-120' size-in-bits='64' id='type-id-121'/>
+    <typedef-decl name='efidp' type-id='type-id-121' filepath='/home/pjones/devel/github.com/efivar/src/include/efivar/efivar-dp.h' line='772' column='1' id='type-id-122'/>
+    <function-decl name='efi_loadopt_path' mangled-name='efi_loadopt_path' filepath='/home/pjones/devel/github.com/efivar/src/loadopt.c' line='191' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='efi_loadopt_path@@libefiboot.so.0'>
+      <parameter type-id='type-id-8' name='limit' filepath='/home/pjones/devel/github.com/efivar/src/loadopt.c' line='191' column='1'/>
+      <return type-id='type-id-122'/>
+    </function-decl>
+    <function-decl name='efi_loadopt_pathlen' mangled-name='efi_loadopt_pathlen' filepath='/home/pjones/devel/github.com/efivar/src/loadopt.c' line='175' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='efi_loadopt_pathlen@@libefiboot.so.0'>
+      <parameter type-id='type-id-8' name='limit' filepath='/home/pjones/devel/github.com/efivar/src/loadopt.c' line='175' column='1'/>
+      <return type-id='type-id-10'/>
+    </function-decl>
+    <type-decl name='void' id='type-id-123'/>
+    <function-decl name='efi_loadopt_attr_clear' mangled-name='efi_loadopt_attr_clear' filepath='/home/pjones/devel/github.com/efivar/src/loadopt.c' line='166' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='efi_loadopt_attr_clear@@libefiboot.so.0'>
+      <parameter type-id='type-id-10' name='attr' filepath='/home/pjones/devel/github.com/efivar/src/loadopt.c' line='166' column='1'/>
+      <return type-id='type-id-123'/>
+    </function-decl>
+    <function-decl name='efi_loadopt_attr_set' mangled-name='efi_loadopt_attr_set' filepath='/home/pjones/devel/github.com/efivar/src/loadopt.c' line='158' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='efi_loadopt_attr_set@@libefiboot.so.0'>
+      <parameter type-id='type-id-10' name='attr' filepath='/home/pjones/devel/github.com/efivar/src/loadopt.c' line='158' column='1'/>
+      <return type-id='type-id-123'/>
+    </function-decl>
+    <function-decl name='efi_loadopt_attrs' mangled-name='efi_loadopt_attrs' filepath='/home/pjones/devel/github.com/efivar/src/loadopt.c' line='150' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='efi_loadopt_attrs@@libefiboot.so.0'>
+      <return type-id='type-id-72'/>
+    </function-decl>
+    <function-decl name='efi_loadopt_optional_data_size' mangled-name='efi_loadopt_optional_data_size' filepath='/home/pjones/devel/github.com/efivar/src/loadopt.c' line='89' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='efi_loadopt_optional_data_size@@libefiboot.so.0'>
+      <parameter type-id='type-id-17' name='size' filepath='/home/pjones/devel/github.com/efivar/src/loadopt.c' line='89' column='1'/>
+      <return type-id='type-id-8'/>
+    </function-decl>
+    <function-decl name='efi_loadopt_is_valid' mangled-name='efi_loadopt_is_valid' filepath='/home/pjones/devel/github.com/efivar/src/loadopt.c' line='139' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='efi_loadopt_is_valid@@libefiboot.so.0'>
+      <parameter type-id='type-id-17' name='size' filepath='/home/pjones/devel/github.com/efivar/src/loadopt.c' line='139' column='1'/>
+      <return type-id='type-id-1'/>
+    </function-decl>
+    <function-decl name='efi_loadopt_create' mangled-name='efi_loadopt_create' filepath='/home/pjones/devel/github.com/efivar/src/loadopt.c' line='41' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='efi_loadopt_create@@libefiboot.so.0'>
+      <parameter type-id='type-id-13' name='buf' filepath='/home/pjones/devel/github.com/efivar/src/loadopt.c' line='41' column='1'/>
+      <parameter type-id='type-id-8' name='size' filepath='/home/pjones/devel/github.com/efivar/src/loadopt.c' line='41' column='1'/>
+      <parameter type-id='type-id-72' name='attributes' filepath='/home/pjones/devel/github.com/efivar/src/loadopt.c' line='41' column='1'/>
+      <parameter type-id='type-id-122' name='dp' filepath='/home/pjones/devel/github.com/efivar/src/loadopt.c' line='42' column='1'/>
+      <parameter type-id='type-id-8' name='dp_size' filepath='/home/pjones/devel/github.com/efivar/src/loadopt.c' line='42' column='1'/>
+      <parameter type-id='type-id-18' name='description' filepath='/home/pjones/devel/github.com/efivar/src/loadopt.c' line='42' column='1'/>
+      <parameter type-id='type-id-13' name='optional_data' filepath='/home/pjones/devel/github.com/efivar/src/loadopt.c' line='43' column='1'/>
+      <parameter type-id='type-id-17' name='optional_data_size' filepath='/home/pjones/devel/github.com/efivar/src/loadopt.c' line='43' column='1'/>
+      <return type-id='type-id-8'/>
+    </function-decl>
+    <qualified-type-def type-id='type-id-14' const='yes' id='type-id-124'/>
+    <pointer-type-def type-id='type-id-124' size-in-bits='64' id='type-id-125'/>
+    <qualified-type-def type-id='type-id-125' const='yes' id='type-id-126'/>
+    <function-decl name='efi_generate_ipv4_device_path' mangled-name='efi_generate_ipv4_device_path' filepath='/home/pjones/devel/github.com/efivar/src/creator.c' line='409' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='efi_generate_ipv4_device_path@@libefiboot.so.0'>
+      <parameter type-id='type-id-13' name='buf' filepath='/home/pjones/devel/github.com/efivar/src/creator.c' line='409' column='1'/>
+      <parameter type-id='type-id-8' name='size' filepath='/home/pjones/devel/github.com/efivar/src/creator.c' line='409' column='1'/>
+      <parameter type-id='type-id-126' name='ifname' filepath='/home/pjones/devel/github.com/efivar/src/creator.c' line='410' column='1'/>
+      <parameter type-id='type-id-126' name='local_addr' filepath='/home/pjones/devel/github.com/efivar/src/creator.c' line='411' column='1'/>
+      <parameter type-id='type-id-126' name='remote_addr' filepath='/home/pjones/devel/github.com/efivar/src/creator.c' line='412' column='1'/>
+      <parameter type-id='type-id-126' name='gateway_addr' filepath='/home/pjones/devel/github.com/efivar/src/creator.c' line='413' column='1'/>
+      <parameter type-id='type-id-126' name='netmask' filepath='/home/pjones/devel/github.com/efivar/src/creator.c' line='414' column='1'/>
+      <parameter type-id='type-id-10' name='local_port' filepath='/home/pjones/devel/github.com/efivar/src/creator.c' line='415' column='1'/>
+      <parameter type-id='type-id-10' name='remote_port' filepath='/home/pjones/devel/github.com/efivar/src/creator.c' line='416' column='1'/>
+      <parameter type-id='type-id-10' name='protocol' filepath='/home/pjones/devel/github.com/efivar/src/creator.c' line='417' column='1'/>
+      <parameter type-id='type-id-12' name='addr_origin' filepath='/home/pjones/devel/github.com/efivar/src/creator.c' line='418' column='1'/>
+      <return type-id='type-id-8'/>
+    </function-decl>
+    <function-decl name='efi_generate_file_device_path' mangled-name='efi_generate_file_device_path' filepath='/home/pjones/devel/github.com/efivar/src/creator.c' line='327' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='efi_generate_file_device_path@@libefiboot.so.0'>
+      <parameter type-id='type-id-13' name='buf' filepath='/home/pjones/devel/github.com/efivar/src/creator.c' line='327' column='1'/>
+      <parameter type-id='type-id-8' name='size' filepath='/home/pjones/devel/github.com/efivar/src/creator.c' line='327' column='1'/>
+      <parameter type-id='type-id-126' name='filepath' filepath='/home/pjones/devel/github.com/efivar/src/creator.c' line='328' column='1'/>
+      <parameter type-id='type-id-72' name='options' filepath='/home/pjones/devel/github.com/efivar/src/creator.c' line='329' column='1'/>
+      <return type-id='type-id-8'/>
+    </function-decl>
+    <function-decl name='efi_generate_file_device_path_from_esp' mangled-name='efi_generate_file_device_path_from_esp' filepath='/home/pjones/devel/github.com/efivar/src/creator.c' line='303' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='efi_generate_file_device_path_from_esp@@libefiboot.so.0'>
+      <parameter type-id='type-id-13' name='buf' filepath='/home/pjones/devel/github.com/efivar/src/creator.c' line='303' column='1'/>
+      <parameter type-id='type-id-8' name='size' filepath='/home/pjones/devel/github.com/efivar/src/creator.c' line='303' column='1'/>
+      <parameter type-id='type-id-125' name='devpath' filepath='/home/pjones/devel/github.com/efivar/src/creator.c' line='304' column='1'/>
+      <parameter type-id='type-id-1' name='partition' filepath='/home/pjones/devel/github.com/efivar/src/creator.c' line='304' column='1'/>
+      <parameter type-id='type-id-125' name='relpath' filepath='/home/pjones/devel/github.com/efivar/src/creator.c' line='305' column='1'/>
+      <parameter type-id='type-id-72' name='options' filepath='/home/pjones/devel/github.com/efivar/src/creator.c' line='306' column='1'/>
+      <return type-id='type-id-8'/>
+    </function-decl>
+    <function-decl name='__builtin_memcpy' mangled-name='memcpy' visibility='default' binding='global' size-in-bits='64'>
+      <return type-id='type-id-123'/>
+    </function-decl>
+    <function-decl name='__builtin_memset' mangled-name='memset' visibility='default' binding='global' size-in-bits='64'>
+      <return type-id='type-id-123'/>
+    </function-decl>
+    <function-decl name='__builtin_calloc' mangled-name='calloc' visibility='default' binding='global' size-in-bits='64'>
+      <return type-id='type-id-123'/>
+    </function-decl>
+  </abi-instr>
 </abi-corpus>
