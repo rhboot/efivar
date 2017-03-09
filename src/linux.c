@@ -37,6 +37,10 @@
 #include <sys/stat.h>
 #include <unistd.h>
 
+#ifndef major
+#include <sys/sysmacros.h>
+#endif
+
 #include <efivar.h>
 #include <efiboot.h>
 
