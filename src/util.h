@@ -108,14 +108,29 @@
 	})
 #endif
 
+#if defined(__GNUC__) && defined(__GNUC_MINOR__)
+#if __GNUC__ >= 5 && __GNUC_MINOR__ >= 1
 #define add(a, b, c) _Generic((c),					\
 			      int *: int_add(a,b,c),			\
 			      long *: long_add(a,b,c),			\
 			      unsigned long *: ulong_add(a,b,c))
-
 #define mult(a, b, c) _Generic((c),					\
 			      long *: long_mult(a,b,c),			\
 			      unsigned long *: ulong_mult(a,b,c))
+#endif
+#endif
+
+#ifndef add
+#define add(a, b, c) ({						\
+		(*(c)) = ((a) + (b));				\
+		})
+#endif
+#ifndef mult
+#define mult(a, b, c) ({					\
+		(*(c)) = ((a) * (b));				\
+		})
+#endif
+
 
 static inline int
 __attribute__((unused))
