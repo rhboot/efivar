@@ -640,7 +640,7 @@ gpt_disk_get_partition_info(int fd, uint32_t num, uint64_t * start,
 	gpt_entry *ptes = NULL, *p;
 	int rc = 0;
 
-	char *report=getenv("LIBEFIBOOT_REPORT_GPT_ERRORS");
+	char *report = getenv("LIBEFIBOOT_REPORT_GPT_ERRORS");
 	if (report)
 		report_errors = 1;
 
@@ -662,12 +662,10 @@ gpt_disk_get_partition_info(int fd, uint32_t num, uint64_t * start,
 		if (report_errors)
 			fprintf(stderr, "partition %d is not valid\n", num);
 		errno = EINVAL;
-		return -1;
+		rc = -1;
 	}
-	if (ptes)
-		free(ptes);
-	if (gpt)
-		free(gpt);
+	free(ptes);
+	free(gpt);
 
 	return rc;
 }
