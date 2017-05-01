@@ -53,7 +53,7 @@ set_disk_and_part_name(struct disk_info *info)
 
 	rc = sysfs_readlink(&linkbuf, "/sys/dev/block/%"PRIu64":%"PRIu32,
 		      info->major, info->minor);
-	if (rc < 0)
+	if (rc < 0 || !linkbuf)
 		return -1;
 
 	char *ultimate;
@@ -141,7 +141,7 @@ get_partition_number(const char *devpath)
 	min = minor(statbuf.st_rdev);
 
 	rc = sysfs_readlink(&linkbuf, "/sys/dev/block/%u:%u", maj, min);
-	if (rc < 0)
+	if (rc < 0 || !linkbuf)
 		return -1;
 
 	rc = read_sysfs_file(&partbuf, "/sys/dev/block/%s/partition", linkbuf);
@@ -170,7 +170,7 @@ find_parent_devpath(const char * const child, char **parent)
 
 	/* look up full path symlink */
 	ret = sysfs_readlink(&linkbuf, "/sys/class/block/%s", node);
-	if (ret < 0)
+	if (ret < 0 || !linkbuf)
 		return ret;
 
 	/* strip child */
@@ -747,7 +747,7 @@ make_blockdev_path(uint8_t *buf, ssize_t size, struct disk_info *info)
 
 	rc = sysfs_readlink(&linkbuf, "/sys/dev/block/%"PRIu64":%u",
 			    info->major, info->minor);
-	if (rc < 0)
+	if (rc < 0 || !linkbuf)
 		return -1;
 
 	/*
@@ -771,7 +771,7 @@ make_blockdev_path(uint8_t *buf, ssize_t size, struct disk_info *info)
 		return -1;
 	tmppath[loff] = '\0';
 	rc = sysfs_readlink(&driverbuf, "/sys/dev/block/%s/driver", tmppath);
-	if (rc < 0)
+	if (rc < 0 || !driverbuf)
 		return -1;
 
 	char *driver = strrchr(driverbuf, '/');
@@ -867,7 +867,7 @@ make_blockdev_path(uint8_t *buf, ssize_t size, struct disk_info *info)
 
 		rc = sysfs_readlink(&linkbuf, "/sys/class/block/%s/device",
 			      info->disk_name);
-		if (rc < 0)
+		if (rc < 0 || !linkbuf)
 			return 0;
 
 		rc = sscanf(linkbuf, "../../../%d:%d:%d:%"PRIu64,
@@ -1001,14 +1001,14 @@ make_net_pci_path(uint8_t *buf, ssize_t size, const char * const ifname)
 	int rc;
 
 	rc = sysfs_readlink(&linkbuf, "/sys/class/net/%s", ifname);
-	if (rc < 0)
+	if (rc < 0 || !linkbuf)
 		return -1;
 
 	/*
 	 * the sysfs path basically looks like:
 	 * ../../devices/$PCI_STUFF/net/$IFACE
 	 */
-	rc = sscanf(linkbuf+loff, "../../devices/%n", &lsz);
+	rc = sscanf(linkbuf, "../../devices/%n", &lsz);
 	if (rc != 0)
 		return -1;
 	loff += lsz;
