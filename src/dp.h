@@ -28,11 +28,17 @@
 #include "ucs2.h"
 
 #define format(buf, size, off, dp_type, fmt, args...) ({		\
-		ssize_t _x = 0;						\
-		if ((off) >= 0) {					\
-			_x = snprintf(((buf)+(off)),			\
-			       ((size)?((size)-(off)):0),		\
-			       fmt, ## args);				\
+		ssize_t _insize = 0;					\
+		void *_inbuf = NULL;					\
+		if ((buf) != NULL && (size) > 0) {			\
+			_inbuf = (buf) + (off);				\
+			_insize = (size) - (off);			\
+		}							\
+		if ((off) >= 0 &&					\
+		    ((buf == NULL && _insize == 0) ||			\
+		     (buf != NULL && _insize >= 0))) {			\
+			ssize_t _x = 0;					\
+			_x = snprintf(_inbuf, _insize, fmt, ## args);	\
 			if (_x < 0) {					\
 				efi_error(				\
 					"could not build %s DP string",	\
