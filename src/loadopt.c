@@ -302,7 +302,7 @@ __attribute__((__visibility__ ("default")))
 efi_loadopt_args_as_utf8(uint8_t *buf, ssize_t size, uint8_t *utf8)
 {
 	ssize_t req;
-	if (!buf && size > 0) {
+	if (!buf && size != 0) {
 		errno = EINVAL;
 		return -1;
 	}
