@@ -139,7 +139,7 @@ efidp_append_path(const_efidp dp0, const_efidp dp1, efidp *out)
 	}
 
 	rsz = efidp_size(dp1);
-	if (lsz < 0) {
+	if (rsz < 0) {
 		efi_error("efidp_size(dp1) returned error");
 		return -1;
 	}
@@ -166,6 +166,13 @@ efidp_append_path(const_efidp dp0, const_efidp dp1, efidp *out)
 		efi_error("arithmetic overflow computing allocation size");
 		return -1;
 	}
+
+	if (newsz < (ssize_t)sizeof(efidp_header)) {
+		errno = EINVAL;
+		efi_error("allocation for new device path is smaller than device path header.");
+		return -1;
+	}
+
 	new = malloc(newsz);
 	if (!new) {
 		efi_error("allocation failed");
@@ -195,10 +202,11 @@ efidp_append_node(const_efidp dp, const_efidp dn, efidp *out)
 		return rc;
 	}
 
-	lsz = efidp_size(dp);
-	if (lsz < 0) {
-		efi_error("efidp_size(dp) returned error");
-		return -1;
+	if (!dp && dn) {
+		rc = efidp_duplicate_path(dn, out);
+		if (rc < 0)
+			efi_error("efidp_duplicate_path() failed");
+		return rc;
 	}
 
 	if (dp && !dn) {
@@ -209,13 +217,17 @@ efidp_append_node(const_efidp dp, const_efidp dn, efidp *out)
 	}
 
 	lsz = efidp_size(dp);
-	if (lsz < 0)
+	if (lsz < 0) {
+		efi_error("efidp_size(dp) returned error");
 		return -1;
+	}
 
 
 	rsz = efidp_node_size(dn);
-	if (rsz < 0)
+	if (rsz < 0) {
+		efi_error("efidp_size(dn) returned error");
 		return -1;
+	}
 
 	if (!dp && dn) {
 		if (add(rsz, sizeof(end_entire), &newsz)) {
