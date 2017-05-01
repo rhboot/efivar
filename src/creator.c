@@ -180,7 +180,7 @@ efi_va_generate_file_device_path_from_esp(uint8_t *buf, ssize_t size,
 				       uint32_t options, va_list ap)
 {
 	int rc;
-	ssize_t ret = -1, off=0, sz;
+	ssize_t ret = -1, off = 0, sz;
 	struct disk_info info = { 0, };
 	int fd = -1;
 	int saved_errno;
@@ -215,7 +215,7 @@ efi_va_generate_file_device_path_from_esp(uint8_t *buf, ssize_t size,
 		sz = efidp_make_edd10(buf, size, info.edd10_devicenum);
 		if (sz < 0) {
 			efi_error("could not make EDD 1.0 device path");
-			return -1;
+			goto err;
 		}
 		off = sz;
 	} else if (!(options & EFIBOOT_ABBREV_FILE)
@@ -228,7 +228,7 @@ efi_va_generate_file_device_path_from_esp(uint8_t *buf, ssize_t size,
 		sz = make_blockdev_path(buf, size, &info);
 		if (sz < 0) {
 			efi_error("could not create device path");
-			return -1;
+			goto err;
 		}
 		off += sz;
 	}
