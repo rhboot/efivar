@@ -81,6 +81,12 @@ efidp_duplicate_extra(const_efidp dp, efidp *out, size_t extra)
 		return -1;
 	}
 
+	if (plus < (ssize_t)sizeof(efidp_header)) {
+		errno = EINVAL;
+		efi_error("allocation for new device path is smaller than device path header.");
+		return -1;
+	}
+
 	new = calloc(1, plus);
 	if (!new) {
 		efi_error("allocation failed");
