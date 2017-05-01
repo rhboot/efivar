@@ -46,10 +46,17 @@ efi_loadopt_create(uint8_t *buf, ssize_t size, uint32_t attributes,
 	ssize_t sz = sizeof (attributes)
 		     + sizeof (uint16_t) + desc_len
 		     + dp_size + optional_data_size;
+
 	if (size == 0)
 		return sz;
+
 	if (size < sz) {
 		errno = ENOSPC;
+		return -1;
+	}
+
+	if (!buf) {
+		errno = EINVAL;
 		return -1;
 	}
 
