@@ -212,6 +212,7 @@ main(int argc, char *argv[])
 	close(in);
 	close(guidout);
 	close(nameout);
+	free(inbuf);
 
 	return 0;
 }
