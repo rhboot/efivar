@@ -345,7 +345,7 @@ efi_generate_file_device_path(uint8_t *buf, ssize_t size,
 	rc = find_parent_devpath(child_devpath, &parent_devpath);
 	if (rc < 0) {
 		efi_error("could not find parent device for file");
-		return -1;
+		goto err;
 	}
 
 	rc = get_partition_number(child_devpath);
@@ -369,7 +369,7 @@ err:
 	if (child_devpath)
 		free(child_devpath);
 	if (parent_devpath)
-			free(parent_devpath);
+		free(parent_devpath);
 	if (relpath)
 		free(relpath);
 	errno = saved_errno;
