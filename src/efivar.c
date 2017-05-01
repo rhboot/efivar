@@ -61,7 +61,7 @@ static int verbose_errors = 0;
 static void
 show_errors(void)
 {
-	int rc = 0;
+	int rc = 1;
 
 	if (!verbose_errors)
 		return;
