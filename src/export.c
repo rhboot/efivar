@@ -96,11 +96,14 @@ efi_variable_import(uint8_t *data, size_t size, efi_variable_t **var_out)
 		ptr += sizeof (uint32_t);
 
 		if (name_len < 1 ||
-				name_len != ((data + size) - ptr - data_len))
+		    name_len != ((data + size) - ptr - data_len) ||
+		    data_len < 1 ||
+		    data_len != ((data + size) - ptr - name_len)) {
+			int saved_errno = errno;
+			free(var.guid);
+			errno = saved_errno;
 			return -1;
-		if (data_len < 1 ||
-				data_len != ((data + size) - ptr - name_len))
-			return -1;
+		}
 
 		var.name = calloc(1, name_len + 1);
 		if (!var.name) {
