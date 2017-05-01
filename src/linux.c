@@ -1035,6 +1035,7 @@ make_mac_path(uint8_t *buf, ssize_t size, const char * const ifname)
 
 	memset(&ifr, 0, sizeof (ifr));
 	strncpy(ifr.ifr_name, ifname, IF_NAMESIZE);
+	ifr.ifr_name[IF_NAMESIZE-1] = '\0';
 	drvinfo.cmd = ETHTOOL_GDRVINFO;
 	ifr.ifr_data = (caddr_t)&drvinfo;
 
@@ -1062,7 +1063,8 @@ make_mac_path(uint8_t *buf, ssize_t size, const char * const ifname)
 				 (uint8_t *)ifr.ifr_ifru.ifru_hwaddr.sa_data,
 				 sizeof(ifr.ifr_ifru.ifru_hwaddr.sa_data));
 	if (sz < 0)
-		return -1;
+		goto err;
+
 	off += sz;
 	ret = off;
 err:
