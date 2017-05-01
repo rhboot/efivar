@@ -275,8 +275,10 @@ efi_loadopt_args_from_file(uint8_t *buf, ssize_t size, char *filename)
 	if (rc < 0)
 		goto err;
 
-	if (size == 0)
+	if (size == 0) {
+		fclose(f);
 		return statbuf.st_size;
+	}
 
 	if (size < statbuf.st_size) {
 		errno = ENOSPC;
