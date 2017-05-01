@@ -269,7 +269,7 @@ efi_loadopt_args_from_file(uint8_t *buf, ssize_t size, char *filename)
 	int saved_errno;
 	FILE *f;
 
-	if (!buf && size > 0) {
+	if (!buf && size != 0) {
 		errno = -EINVAL;
 		return -1;
 	}
