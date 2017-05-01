@@ -118,6 +118,7 @@ efi_variable_import(uint8_t *data, size_t size, efi_variable_t **var_out)
 			var.name[i] = wname[i] & 0xff;
 		ptr += name_len * 2;
 
+		var.data_size = data_len;
 		var.data = malloc(data_len);
 		if (!var.data) {
 			int saved_errno = errno;
