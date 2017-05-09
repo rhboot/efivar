@@ -339,7 +339,7 @@ efi_generate_file_device_path(uint8_t *buf, ssize_t size,
 	rc = find_file(filepath, &child_devpath, &relpath);
 	if (rc < 0) {
 		efi_error("could not canonicalize fs path");
-		return -1;
+		goto err;
 	}
 
 	rc = find_parent_devpath(child_devpath, &parent_devpath);
