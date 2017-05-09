@@ -196,78 +196,38 @@ int
 __attribute__((__visibility__ ("default")))
 efidp_append_node(const_efidp dp, const_efidp dn, efidp *out)
 {
-	ssize_t lsz, rsz, newsz;
+	ssize_t lsz = 0, rsz = 0, newsz;
 	int rc;
 
-	if (!dp && !dn) {
-		rc = efidp_duplicate_path(
-			(const_efidp)(const efidp_header * const)&end_entire,
-			out);
-		if (rc < 0)
-			efi_error("efidp_duplicate_path() failed");
-		return rc;
-	}
-
-	if (!dp && dn) {
-		rc = efidp_duplicate_path(dn, out);
-		if (rc < 0)
-			efi_error("efidp_duplicate_path() failed");
-		return rc;
-	}
-
-	if (dp && !dn) {
-		rc = efidp_duplicate_path(dp, out);
-		if (rc < 0)
-			efi_error("efidp_duplicate_path() failed");
-		return rc;
-	}
-
-	lsz = efidp_size(dp);
-	if (lsz < 0) {
-		efi_error("efidp_size(dp) returned error");
-		return -1;
-	}
-
-
-	rsz = efidp_node_size(dn);
-	if (rsz < 0) {
-		efi_error("efidp_size(dn) returned error");
-		return -1;
-	}
-
-	if (!dp && dn) {
-		if (add(rsz, sizeof(end_entire), &newsz)) {
-			errno = EOVERFLOW;
-			efi_error(
-			  "arithmetic overflow computing allocation size");
-			return -1;
-		}
-		efidp new = malloc(rsz + sizeof (end_entire));
-		if (!new) {
-			efi_error("allocation failed");
+	if (dp) {
+		lsz = efidp_size(dp);
+		if (lsz < 0) {
+			efi_error("efidp_size(dp) returned error");
 			return -1;
 		}
 
-		memcpy(new, dn, dn->length);
-		memcpy((uint8_t *)new + dn->length, &end_entire,
-		       sizeof (end_entire));
-		*out = new;
-		return 0;
+		const_efidp le;
+		le = dp;
+		while (1) {
+			if (efidp_type(le) == EFIDP_END_TYPE &&
+			    efidp_subtype(le) == EFIDP_END_ENTIRE) {
+				ssize_t lesz = efidp_size(le);
+				lsz -= lesz;
+				break;
+			}
+
+			rc = efidp_get_next_end(le, &le);
+			if (rc < 0) {
+				efi_error("efidp_get_next_end() returned error");
+				return -1;
+			}
+		}
 	}
 
-	const_efidp le;
-	le = dp;
-	while (1) {
-		if (efidp_type(le) == EFIDP_END_TYPE &&
-				efidp_subtype(le) == EFIDP_END_ENTIRE) {
-			ssize_t lesz = efidp_size(le);
-			lsz -= lesz;
-			break;
-		}
-
-		rc = efidp_get_next_end(le, &le);
-		if (rc < 0) {
-			efi_error("efidp_get_next_end() returned error");
+	if (dn) {
+		rsz = efidp_node_size(dn);
+		if (rsz < 0) {
+			efi_error("efidp_size(dn) returned error");
 			return -1;
 		}
 	}
@@ -285,8 +245,10 @@ efidp_append_node(const_efidp dp, const_efidp dn, efidp *out)
 	}
 
 	*out = new;
-	memcpy(new, dp, lsz);
-	memcpy((uint8_t *)new + lsz, dn, rsz);
+	if (dp)
+		memcpy(new, dp, lsz);
+	if (dn)
+		memcpy((uint8_t *)new + lsz, dn, rsz);
 	memcpy((uint8_t *)new + lsz + rsz, &end_entire, sizeof (end_entire));
 
 	return 0;
