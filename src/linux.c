@@ -297,7 +297,7 @@ sysfs_sata_get_port_info(uint32_t print_id, struct disk_info *info)
 
 	rc = read_sysfs_file(&buf, "/sys/class/ata_port/ata%d/port_no",
 			     print_id);
-	if (rc <= 0)
+	if (rc <= 0 || buf == NULL)
 		return -1;
 
 	rc = sscanf((char *)buf, "%d", &info->sata_info.ata_port);
@@ -361,12 +361,12 @@ sysfs_parse_nvme(uint8_t *buf, ssize_t size, ssize_t *off,
 	rc = read_sysfs_file(&filebuf,
 			     "/sys/class/block/nvme%dn%d/eui",
 			     ctrl_id, ns_id);
-	if (rc < 0 && errno == ENOENT) {
+	if ((rc < 0 && errno == ENOENT) || filebuf == NULL) {
 		rc = read_sysfs_file(&filebuf,
 			     "/sys/class/block/nvme%dn%d/device/eui",
 			     ctrl_id, ns_id);
 	}
-	if (rc >= 0) {
+	if (rc >= 0 && filebuf != NULL) {
 		uint8_t eui[8];
 		if (rc < 23) {
 			errno = EINVAL;
@@ -606,7 +606,7 @@ sysfs_parse_sas(uint8_t *buf, ssize_t size, ssize_t *off,
 	rc = read_sysfs_file(&filebuf,
 			     "/sys/class/block/%s/device/sas_address",
 			     disk_name);
-	if (rc < 0)
+	if (rc < 0 || filebuf == NULL)
 		return -1;
 
 	rc = sscanf((char *)filebuf, "%"PRIx64, &sas_address);
@@ -656,7 +656,7 @@ make_pci_path(uint8_t *buf, ssize_t size, char *pathstr, ssize_t *pathoff)
 	rc = read_sysfs_file(&fbuf,
 			     "/sys/devices/pci%04x:%02x/firmware_node/hid",
 			     root_domain, root_bus);
-	if (rc < 0)
+	if (rc < 0 || fbuf == NULL)
 		return -1;
 
 	uint16_t tmp16 = 0;
@@ -679,7 +679,7 @@ make_pci_path(uint8_t *buf, ssize_t size, char *pathstr, ssize_t *pathoff)
 	rc = read_sysfs_file(&fbuf,
 			     "/sys/devices/pci%4x:%02x/firmware_node/uid",
 			     root_domain, root_bus);
-	if (rc <= 0 && errno != ENOENT)
+	if ((rc <= 0 && errno != ENOENT) || fbuf == NULL)
 		return -1;
 	if (rc > 0) {
 		rc = sscanf((char *)fbuf, "%"PRIu64"\n", &acpi_uid_int);
