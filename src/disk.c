@@ -225,7 +225,8 @@ get_partition_info(int fd, uint32_t options,
 						  signature,
 						  mbr_type,
 						  signature_type,
-			(options & EFIBOOT_OPTIONS_IGNORE_PMBR_ERR)?1:0);
+			(options & EFIBOOT_OPTIONS_IGNORE_PMBR_ERR)?1:0,
+			sector_size);
 	if (gpt_invalid) {
 		mbr_invalid = msdos_disk_get_partition_info(fd,
 			(options & EFIBOOT_OPTIONS_WRITE_SIGNATURE)?1:0,

@@ -29,6 +29,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <sys/param.h>
 #include <sys/stat.h>
 #include <sys/utsname.h>
 #include <unistd.h>
@@ -266,11 +267,10 @@ read_lba(int fd, uint64_t lba, void *buffer, size_t bytes)
  * Notes: remember to free pte when you're done!
  */
 static gpt_entry *
-alloc_read_gpt_entries(int fd, gpt_header * gpt)
+alloc_read_gpt_entries(int fd, uint32_t nptes, uint32_t ptesz, uint64_t ptelba)
 {
 	gpt_entry *pte;
-	size_t count = __le32_to_cpu(gpt->num_partition_entries) *
-		__le32_to_cpu(gpt->sizeof_partition_entry);
+	size_t count = nptes * ptesz;
 
 	if (!count)
 		return NULL;
@@ -280,8 +280,7 @@ alloc_read_gpt_entries(int fd, gpt_header * gpt)
 		return NULL;
 
 	memset(pte, 0, count);
-	if (!read_lba(fd, __le64_to_cpu(gpt->partition_entry_lba), pte,
-		      count)) {
+	if (!read_lba(fd, ptelba, pte, count)) {
 		free(pte);
 		return NULL;
 	}
@@ -317,6 +316,65 @@ alloc_read_gpt_header(int fd, uint64_t lba)
 }
 
 /**
+ * validate_nptes(): Tries to ensure that nptes is a reasonable value
+ * @first_block is the beginning LBA to bound the table
+ * @pte_start is the starting LBA of the partition table
+ * @last_block is the end LBA of to bound the table
+ * @ptesz is the size of a partition table entry
+ * @nptes is the number of entries we have.
+ * @blksz is the block size of the device.
+ *
+ * Description: returns 0 if the partition table doesn't fit, 1 if it does
+ */
+static int
+validate_nptes(uint64_t first_block, uint64_t pte_start, uint64_t last_block,
+	       uint32_t ptesz, uint32_t nptes, uint32_t blksz)
+{
+	uint32_t min_entry_size = sizeof(gpt_entry);
+	uint32_t min_entry_size_mod = 128 - sizeof(gpt_entry) % 128;
+	uint64_t max_blocks, max_bytes;
+
+	if (min_entry_size_mod == 128)
+		min_entry_size_mod = 0;
+	min_entry_size += min_entry_size_mod;
+
+	if (ptesz < min_entry_size)
+		return 0;
+
+	if (pte_start < first_block || pte_start > last_block)
+		return 0;
+
+	max_blocks = last_block - pte_start;
+	if (UINT64_MAX / blksz < max_blocks)
+		return 0;
+
+	max_bytes = max_blocks * blksz;
+	if (UINT64_MAX / ptesz < max_bytes)
+		return 0;
+
+	if (ptesz > max_bytes / nptes)
+		return 0;
+
+	if (max_bytes / ptesz < nptes)
+		return 0;
+
+	return 1;
+}
+
+static int
+check_lba(uint64_t lba, uint64_t lastlba, char *name)
+{
+	if (lba > lastlba) {
+		if (report_errors)
+			fprintf(stderr,
+				"Invalid %s LBA %"PRIx64" max:%"PRIx64"\n",
+				name, lba, lastlba);
+		return 0;
+	}
+	return 1;
+}
+
+/**
  * is_gpt_valid() - tests one GPT header and PTEs for validity
  * @fd  is an open file descriptor to the whole disk
  * @lba is the logical block address of the GPT header to test
@@ -328,10 +386,12 @@ alloc_read_gpt_header(int fd, uint64_t lba)
  */
 static int
 is_gpt_valid(int fd, uint64_t lba,
-	     gpt_header ** gpt, gpt_entry ** ptes)
+	     gpt_header ** gpt, gpt_entry ** ptes,
+	     uint32_t logical_block_size)
 {
 	int rc = 0;		/* default to not valid */
 	uint32_t crc, origcrc;
+	uint64_t max_device_lba = last_lba(fd);
 
 	if (!gpt || !ptes)
 		return 0;
@@ -343,10 +403,24 @@ is_gpt_valid(int fd, uint64_t lba,
 		if (report_errors)
 			fprintf(stderr,
 				"GUID Partition Table Header signature is wrong"
-			       ": %" PRIx64" != %" PRIx64 "\n",
+			       ": %"PRIx64" != %"PRIx64"\n",
 			       (uint64_t)__le64_to_cpu((*gpt)->signature),
 			       GPT_HEADER_SIGNATURE);
 		free(*gpt);
+		*gpt = NULL;
+		return rc;
+	}
+
+	uint32_t hdrsz = __le32_to_cpu((*gpt)->header_size);
+	uint32_t hdrmin = MAX(92,
+			      sizeof(gpt_header) - sizeof((*gpt)->reserved2));
+	if (hdrsz < hdrmin || hdrsz > logical_block_size) {
+		if (report_errors)
+			fprintf(stderr,
+				"GUID Partition Table Header size is invalid (%d < %d < %d)\n",
+				hdrmin, hdrsz,
+				logical_block_size);
+		free (*gpt);
 		*gpt = NULL;
 		return rc;
 	}
@@ -369,26 +443,97 @@ is_gpt_valid(int fd, uint64_t lba,
 
 	/* Check that the my_lba entry points to the LBA
 	 * that contains the GPT we read */
-	if (__le64_to_cpu((*gpt)->my_lba) != lba) {
+	uint64_t mylba = __le64_to_cpu((*gpt)->my_lba);
+	uint64_t altlba = __le64_to_cpu((*gpt)->alternate_lba);
+	if (mylba != lba && altlba != lba) {
 		if (report_errors)
 			fprintf(stderr,
-				"my_lba %"PRIx64 "x != lba %"PRIx64 "x.\n",
-				(uint64_t)__le64_to_cpu((*gpt)->my_lba), lba);
+				"lba %"PRIx64" != lba %"PRIx64".\n",
+				mylba, lba);
+err:
 		free(*gpt);
 		*gpt = NULL;
 		return 0;
 	}
 
-	if (!(*ptes = alloc_read_gpt_entries(fd, *gpt))) {
+	if (!check_lba(mylba, max_device_lba, "GPT"))
+		goto err;
+
+	if (!check_lba(altlba, max_device_lba, "GPT Alt"))
+		goto err;
+
+	uint64_t ptelba = __le64_to_cpu((*gpt)->partition_entry_lba);
+	uint64_t fulba = __le64_to_cpu((*gpt)->first_usable_lba);
+	uint64_t lulba = __le64_to_cpu((*gpt)->last_usable_lba);
+	uint32_t nptes = __le32_to_cpu((*gpt)->num_partition_entries);
+	uint32_t ptesz = __le32_to_cpu((*gpt)->sizeof_partition_entry);
+
+	if (!check_lba(ptelba, max_device_lba, "PTE"))
+		goto err;
+	if (!check_lba(fulba, max_device_lba, "First Usable"))
+		goto err;
+	if (!check_lba(lulba, max_device_lba, "Last Usable"))
+		goto err;
+
+	if (ptesz < sizeof(gpt_entry) || ptesz % 128 != 0) {
+		if (report_errors)
+			fprintf(stderr,
+				"Invalid GPT entry size is %d.\n",
+				ptesz);
+		goto err;
+	}
+
+	/* There's really no good answer to maximum bounds, but this large
+	 * would be completely absurd, so... */
+	if (nptes > 1024) {
+		if (report_errors)
+			fprintf(stderr,
+				"Not honoring insane number of Partition Table Entries 0x%"PRIx32".\n",
+				nptes);
+
+		goto err;
+	}
+
+	if (ptesz > 4096) {
+		if (report_errors)
+			fprintf(stderr,
+				"Not honoring insane Partition Table Entry size 0x%"PRIx32".\n",
+				ptesz);
+		goto err;
+	}
+
+	uint64_t pte_blocks;
+	uint64_t firstlba, lastlba;
+
+	if (altlba > mylba) {
+		firstlba = mylba + 1;
+		lastlba = fulba;
+		pte_blocks = fulba - ptelba;
+		rc = validate_nptes(firstlba, ptelba, fulba,
+				    ptesz, nptes, logical_block_size);
+	} else {
+		firstlba = lulba;
+		lastlba = mylba;
+		pte_blocks = mylba - ptelba;
+		rc = validate_nptes(lulba, ptelba, mylba,
+				    ptesz, nptes, logical_block_size);
+	}
+	if (!rc) {
+		if (report_errors)
+			fprintf(stderr,
+				"%"PRIu32" partition table entries with size 0x%"PRIx32" doesn't fit in 0x%"PRIx64" blocks between 0x%"PRIx64" and 0x%"PRIx64".\n",
+				nptes, ptesz, pte_blocks, firstlba, lastlba);
+		goto err;
+	}
+
+	if (!(*ptes = alloc_read_gpt_entries(fd, nptes, ptesz, ptelba))) {
 		free(*gpt);
 		*gpt = NULL;
 		return 0;
 	}
 
 	/* Check the GUID Partition Entry Array CRC */
-	crc = efi_crc32(*ptes,
-			__le32_to_cpu((*gpt)->num_partition_entries) *
-			__le32_to_cpu((*gpt)->sizeof_partition_entry));
+	crc = efi_crc32(*ptes, nptes * ptesz);
 	if (crc != __le32_to_cpu((*gpt)->partition_entry_array_crc32)) {
 		if (report_errors)
 		     fprintf(stderr,
@@ -519,7 +664,7 @@ compare_gpts(gpt_header *pgpt, gpt_header *agpt, uint64_t lastlba)
  */
 static int
 find_valid_gpt(int fd, gpt_header ** gpt, gpt_entry ** ptes,
-	       int ignore_pmbr_err)
+	       int ignore_pmbr_err, int logical_block_size)
 {
 	int good_pgpt = 0, good_agpt = 0, good_pmbr = 0;
 	gpt_header *pgpt = NULL, *agpt = NULL;
@@ -535,16 +680,18 @@ find_valid_gpt(int fd, gpt_header ** gpt, gpt_entry ** ptes,
 
 	lastlba = last_lba(fd);
 	good_pgpt = is_gpt_valid(fd, GPT_PRIMARY_PARTITION_TABLE_LBA,
-				 &pgpt, &pptes);
+				 &pgpt, &pptes, logical_block_size);
 	if (good_pgpt) {
 		good_agpt = is_gpt_valid(fd,
 					 __le64_to_cpu(pgpt->alternate_lba),
-					 &agpt, &aptes);
+					 &agpt, &aptes, logical_block_size);
 		if (!good_agpt) {
-			good_agpt = is_gpt_valid(fd, lastlba, &agpt, &aptes);
+			good_agpt = is_gpt_valid(fd, lastlba, &agpt, &aptes,
+						 logical_block_size);
 		}
 	} else {
-		good_agpt = is_gpt_valid(fd, lastlba, &agpt, &aptes);
+		good_agpt = is_gpt_valid(fd, lastlba, &agpt, &aptes,
+					 logical_block_size);
 	}
 
 	/* The obviously unsuccessful case */
@@ -634,7 +781,7 @@ __attribute__((__visibility__ ("hidden")))
 gpt_disk_get_partition_info(int fd, uint32_t num, uint64_t * start,
 			    uint64_t * size, uint8_t *signature,
 			    uint8_t * mbr_type, uint8_t * signature_type,
-			    int ignore_pmbr_error)
+			    int ignore_pmbr_error, int logical_block_size)
 {
 	gpt_header *gpt = NULL;
 	gpt_entry *ptes = NULL, *p;
@@ -644,7 +791,8 @@ gpt_disk_get_partition_info(int fd, uint32_t num, uint64_t * start,
 	if (report)
 		report_errors = 1;
 
-	rc = find_valid_gpt(fd, &gpt, &ptes, ignore_pmbr_error);
+	rc = find_valid_gpt(fd, &gpt, &ptes, ignore_pmbr_error,
+			    logical_block_size);
 	if (rc < 0)
 		return rc;
 
