@@ -56,36 +56,44 @@ efi_loadopt_create(uint8_t *buf, ssize_t size, uint32_t attributes,
 	}
 
 	if (!buf) {
+invalid:
 		errno = EINVAL;
 		return -1;
 	}
 
-	if (!optional_data && optional_data_size != 0) {
-		errno = EINVAL;
-		return -1;
+	if (!optional_data && optional_data_size != 0)
+		goto invalid;
+
+	if ((!dp && dp_size == 0) || dp_size < 0)
+		goto invalid;
+
+	if (dp) {
+		if (!efidp_is_valid(dp, dp_size))
+			goto invalid;
+
+		if (efidp_size(dp) != dp_size)
+			goto invalid;
 	}
 
-	if (!dp && dp_size == 0) {
-		errno = EINVAL;
-		return -1;
+	if (buf) {
+		uint8_t *pos = buf;
+		*(uint32_t *)pos = attributes;
+		pos += sizeof (attributes);
+
+		*(uint16_t *)pos = dp_size;
+		pos += sizeof (uint16_t);
+
+		utf8_to_ucs2((uint16_t *)pos, desc_len, 1,
+			     (uint8_t *)description);
+		pos += desc_len;
+
+		if (dp)
+			memcpy(pos, dp, dp_size);
+		pos += dp_size;
+
+		if (optional_data && optional_data_size > 0)
+			memcpy(pos, optional_data, optional_data_size);
 	}
-
-	uint8_t *pos = buf;
-
-	*(uint32_t *)pos = attributes;
-	pos += sizeof (attributes);
-
-	*(uint16_t *)pos = dp_size;
-	pos += sizeof (uint16_t);
-
-	utf8_to_ucs2((uint16_t *)pos, desc_len, 1, (uint8_t *)description);
-	pos += desc_len;
-
-	memcpy(pos, dp, dp_size);
-	pos += dp_size;
-
-	if (optional_data && optional_data_size > 0)
-		memcpy(pos, optional_data, optional_data_size);
 
 	return sz;
 }
