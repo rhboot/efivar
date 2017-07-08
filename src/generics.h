@@ -174,7 +174,7 @@ generic_append_variable(efi_guid_t guid, const char *name,
 			efi_error("efi_set_variable failed");
 		free(d);
 		free(data);
-	} else if (errno == ENOENT) {
+	} else if (rc < 0 && errno == ENOENT) {
 		data = new_data;
 		data_size = new_data_size;
 		attributes = new_attributes & ~EFI_VARIABLE_APPEND_WRITE;
