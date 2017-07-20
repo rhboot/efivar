@@ -86,11 +86,13 @@
 
 static inline ssize_t
 __attribute__((__unused__))
-format_hex_helper(char *buf, size_t size, const char *dp_type,
-		  const void * const addr, const size_t len)
+format_hex_helper(char *buf, size_t size, const char *dp_type, char *separator,
+		  int stride, const void * const addr, const size_t len)
 {
 	ssize_t off = 0;
 	for (size_t i = 0; i < len; i++) {
+		if (i && separator && stride > 0 && i % stride == 0)
+			format(buf, size, off, dp_type, "%s", separator);
 		format(buf, size, off, dp_type, "%02x",
 		       *((const unsigned char * const )addr+i));
 	}
@@ -98,7 +100,12 @@ format_hex_helper(char *buf, size_t size, const char *dp_type,
 }
 
 #define format_hex(buf, size, off, dp_type, addr, len)			\
-	format_helper(format_hex_helper, buf, size, off, dp_type, addr, len)
+	format_helper(format_hex_helper, buf, size, off, dp_type, "", 0, \
+		      addr, len)
+
+#define format_hex_separated(buf, size, off, dp_type, sep, stride, addr, len) \
+	format_helper(format_hex_helper, buf, size, off, dp_type, sep, stride, \
+		      addr, len)
 
 static inline ssize_t
 __attribute__((__unused__))
