@@ -194,19 +194,19 @@ typedef struct {
 				      type, port, index, adr)		\
 	({								\
 	((uint32_t)(adr)) = ((uint32_t)(				\
-	 efidp_encode_bitfield_(deviceidscheme,				\
+	 efidp_encode_bitfield_(device_id_scheme,			\
 				EFIDP_ACPI_ADR_DEVICE_ID_SCHEME_SHIFT,	\
 				EFIDP_ACPI_ADR_DEVICE_ID_SCHEME_MASK) |	\
-	 efidp_encode_bitfield_(pipeid,					\
+	 efidp_encode_bitfield_(pipe_id,				\
 				EFIDP_ACPI_ADR_VGA_PIPE_ID_SHIFT,	\
 				EFIDP_ACPI_ADR_VGA_PIPE_ID_MASK) |	\
-	 efidp_encode_bitfield_(nonvgaoutput,				\
+	 efidp_encode_bitfield_(nonvga_output,				\
 				EFIDP_ACPI_ADR_NONVGA_OUTPUT_ID_SHIFT,	\
 				EFIDP_ACPI_ADR_NONVGA_OUTPUT_ID_MASK) |	\
-	 efidp_encode_bitfield_(firmwarecandetect,			\
+	 efidp_encode_bitfield_(firmware_can_detect,			\
 				EFIDP_ACPI_ADR_FIRMWARE_DETECT_SHIFT,	\
 				EFIDP_ACPI_ADR_FIRMWARE_DETECT_MASK) |	\
-	 efidp_encode_bitfield_(vendorinfo,				\
+	 efidp_encode_bitfield_(vendor_info,				\
 				EFIDP_ACPI_ADR_VENDOR_INFO_SHIFT,	\
 				EFIDP_ACPI_ADR_VENDOR_INFO_MASK) |	\
 	 efidp_encode_bitfield_(type,					\
@@ -218,7 +218,7 @@ typedef struct {
 	 efidp_encode_bitfield_(index,					\
 				EFIDP_ACPI_ADR_DISPLAY_INDEX_SHIFT,	\
 				EFIDP_ACPI_ADR_DISPLAY_INDEX_MASK)));	\
-	(deviceidscheme == EFIDP_ACPI_ADR_DEVICE_ID_SCHEME_ACPI);	\
+	(device_id_scheme == EFIDP_ACPI_ADR_DEVICE_ID_SCHEME_ACPI);	\
 	})
 
 #define efidp_decode_acpi_display_adr(adr, device_id_scheme, pipe_id,	\
