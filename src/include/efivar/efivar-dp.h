@@ -601,6 +601,41 @@ typedef struct {
 	uint8_t		slot_number;
 } EFIVAR_PACKED efidp_sd;
 
+#define EFIDP_MSG_BT		0x1b
+typedef struct {
+	efidp_header	header;
+	uint8_t		addr[6];
+} EFIVAR_PACKED efidp_bt;
+
+#define EFIDP_MSG_WIFI		0x1c
+typedef struct {
+	efidp_header	header;
+	uint8_t		ssid[32];
+} EFIVAR_PACKED efidp_wifi;
+
+#define EFIDP_MSG_EMMC		0x1d
+typedef struct {
+	efidp_header	header;
+	uint8_t		slot;
+} EFIVAR_PACKED efidp_emmc;
+
+#define EFIDP_MSG_BTLE		0x1e
+typedef struct {
+	efidp_header	header;
+	uint8_t		addr[6];
+	uint8_t		addr_type;
+} EFIVAR_PACKED efidp_btle;
+
+#define EFIDP_MSG_BTLE_ADDR_TYPE_PUBLIC	0
+#define EFIDP_MSG_BTLE_ADDR_TYPE_RANDOM	1
+
+#define EFIDP_MSG_DNS		0x1f
+typedef struct {
+	efidp_header	header;
+	uint8_t		is_ipv6;
+	efi_ip_addr_t	addrs[];
+} EFIVAR_PACKED efidp_dns;
+
 /* Each media subtype */
 #define EFIDP_MEDIA_HD		0x1
 typedef struct {
@@ -760,6 +795,11 @@ typedef union {
 	efidp_uri uri;
 	efidp_ufs ufs;
 	efidp_sd sd;
+	efidp_bt bt;
+	efidp_wifi wifi;
+	efidp_emmc emmc;
+	efidp_btle btle;
+	efidp_dns dns;
 	efidp_hd hd;
 	efidp_cdrom cdrom;
 	efidp_media_vendor media_vendor;

@@ -38,6 +38,24 @@ typedef struct {
 	uint8_t		e[6];
 } efi_guid_t;
 
+typedef struct {
+	uint8_t		addr[4];
+} efi_ipv4_addr_t;
+
+typedef struct {
+	uint8_t		addr[16];
+} efi_ipv6_addr_t;
+
+typedef union {
+	uint32_t	addr[4];
+	efi_ipv4_addr_t	v4;
+	efi_ipv6_addr_t	v6;
+} efi_ip_addr_t;
+
+typedef struct {
+	uint8_t		addr[32];
+} efi_mac_addr_t;
+
 #ifndef EFIVAR_BUILD_ENVIRONMENT
 #include <efivar/efivar-guids.h>
 #endif
