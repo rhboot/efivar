@@ -26,12 +26,14 @@
 #define efidp_decode_bitfield_(value, name, shift, mask)		\
 	({ (name) = ((value) & (mask)) >> (shift); })
 
+#define EFIVAR_PACKED __attribute__((__packed__))
+
 /* Generic device path header */
 typedef struct {
 	uint8_t type;
 	uint8_t subtype;
 	uint16_t length;
-} __attribute__((__packed__)) efidp_header;
+} EFIVAR_PACKED efidp_header;
 
 /* A little bit of housekeeping... */
 typedef uint8_t efidp_boolean;
@@ -50,7 +52,7 @@ typedef struct {
 	efidp_header	header;
 	uint8_t		function;
 	uint8_t		device;
-} __attribute__((__packed__)) efidp_pci;
+} EFIVAR_PACKED efidp_pci;
 extern ssize_t efidp_make_pci(uint8_t *buf, ssize_t size, uint8_t device,
 			      uint8_t function);
 
@@ -58,7 +60,7 @@ extern ssize_t efidp_make_pci(uint8_t *buf, ssize_t size, uint8_t device,
 typedef struct {
 	efidp_header	header;
 	uint8_t		function;
-} __attribute__((__packed__)) efidp_pccard;
+} EFIVAR_PACKED efidp_pccard;
 
 #define EFIDP_HW_MMIO		0x03
 typedef struct {
@@ -66,14 +68,14 @@ typedef struct {
 	uint32_t	memory_type;
 	uint64_t	starting_address;
 	uint64_t	ending_address;
-} __attribute__((__packed__)) efidp_mmio;
+} EFIVAR_PACKED efidp_mmio;
 
 #define EFIDP_HW_VENDOR		0x04
 typedef struct {
 	efidp_header	header;
 	efi_guid_t	vendor_guid;
 	uint8_t		vendor_data[0];
-} __attribute__((__packed__)) efidp_hw_vendor;
+} EFIVAR_PACKED efidp_hw_vendor;
 typedef efidp_hw_vendor efidp_vendor_hw;
 #define efidp_make_hw_vendor(buf, size, guid, data, data_size)		\
 	efidp_make_vendor(buf, size, EFIDP_HARDWARE_TYPE,		\
@@ -85,7 +87,7 @@ typedef struct {
 	efidp_header	header;
 	efi_guid_t	vendor_guid;
 	uint32_t	hardware_device;
-} __attribute__((__packed__)) efidp_edd10;
+} EFIVAR_PACKED efidp_edd10;
 extern ssize_t efidp_make_edd10(uint8_t *buf, ssize_t size,
 				uint32_t hardware_device);
 
@@ -93,14 +95,14 @@ extern ssize_t efidp_make_edd10(uint8_t *buf, ssize_t size,
 typedef struct {
 	efidp_header	header;
 	uint32_t	controller;
-} __attribute__((__packed__)) efidp_controller;
+} EFIVAR_PACKED efidp_controller;
 
 #define EFIDP_HW_BMC		0x06
 typedef struct {
 	efidp_header	header;
 	uint8_t		interface_type;
 	uint64_t	base_addr;
-} __attribute__((__packed__)) efidp_bmc;
+} EFIVAR_PACKED efidp_bmc;
 
 #define EFIDP_BMC_UNKNOWN	0x00
 #define EFIDP_BMC_KEYBOARD	0x01
@@ -114,7 +116,7 @@ typedef struct {
 	efidp_header	header;
 	uint32_t	hid;
 	uint32_t	uid;
-} __attribute__((__packed__)) efidp_acpi_hid;
+} EFIVAR_PACKED efidp_acpi_hid;
 extern ssize_t efidp_make_acpi_hid(uint8_t *buf, ssize_t size, uint32_t hid,
 				   uint32_t uid);
 
@@ -126,7 +128,7 @@ typedef struct {
 	uint32_t	cid;
 	/* three ascii string fields follow */
 	char		hidstr[];
-} __attribute__((__packed__)) efidp_acpi_hid_ex;
+} EFIVAR_PACKED efidp_acpi_hid_ex;
 extern ssize_t efidp_make_acpi_hid_ex(uint8_t *buf, ssize_t size, uint32_t hid,
 				      uint32_t uid, uint32_t cid, char *hidstr,
 				      char *uidstr, char *cidstr)
@@ -153,7 +155,7 @@ extern ssize_t efidp_make_acpi_hid_ex(uint8_t *buf, ssize_t size, uint32_t hid,
 typedef struct {
 	efidp_header	header;
 	uint32_t	adr[];
-} __attribute__((__packed__)) efidp_acpi_adr;
+} EFIVAR_PACKED efidp_acpi_adr;
 
 #define EFIDP_ACPI_ADR_DEVICE_ID_SCHEME_MASK		0x80000000
 #define EFIDP_ACPI_ADR_DEVICE_ID_SCHEME_SHIFT		31
@@ -257,7 +259,7 @@ typedef struct {
 	uint8_t		primary;
 	uint8_t		slave;
 	uint16_t	lun;
-} __attribute__((__packed__)) efidp_atapi;
+} EFIVAR_PACKED efidp_atapi;
 extern ssize_t efidp_make_atapi(uint8_t *buf, ssize_t size, uint16_t primary,
 		uint16_t slave, uint16_t lun);
 
@@ -266,7 +268,7 @@ typedef struct {
 	efidp_header	header;
 	uint16_t	target;
 	uint16_t	lun;
-} __attribute__((__packed__)) efidp_scsi;
+} EFIVAR_PACKED efidp_scsi;
 extern ssize_t efidp_make_scsi(uint8_t *buf, ssize_t size, uint16_t target,
 			       uint16_t lun);
 
@@ -276,7 +278,7 @@ typedef struct {
 	uint32_t	reserved;
 	uint64_t	wwn;
 	uint64_t	lun;
-} __attribute__((__packed__)) efidp_fc;
+} EFIVAR_PACKED efidp_fc;
 
 #define EFIDP_MSG_FIBRECHANNELEX 0x15
 typedef struct {
@@ -284,21 +286,21 @@ typedef struct {
 	uint32_t	reserved;
 	uint8_t		wwn[8];
 	uint8_t		lun[8];
-} __attribute__((__packed__)) efidp_fcex;
+} EFIVAR_PACKED efidp_fcex;
 
 #define EFIDP_MSG_1394		0x04
 typedef struct {
 	efidp_header	header;
 	uint32_t	reserved;
 	uint64_t	guid;
-} __attribute__((__packed__)) efidp_1394;
+} EFIVAR_PACKED efidp_1394;
 
 #define EFIDP_MSG_USB		0x05
 typedef struct {
 	efidp_header	header;
 	uint8_t		parent_port;
 	uint8_t		interface;
-} __attribute__((__packed__)) efidp_usb;
+} EFIVAR_PACKED efidp_usb;
 
 #define EFIDP_MSG_USB_CLASS	0x0f
 typedef struct {
@@ -308,7 +310,7 @@ typedef struct {
 	uint8_t		device_class;
 	uint8_t		device_subclass;
 	uint8_t		device_protocol;
-} __attribute__((__packed__)) efidp_usb_class;
+} EFIVAR_PACKED efidp_usb_class;
 
 #define EFIDP_USB_CLASS_AUDIO		0x01
 #define EFIDP_USB_CLASS_CDC_CONTROL	0x02
@@ -334,13 +336,13 @@ typedef struct {
 	uint16_t	vendor_id;
 	uint16_t	product_id;
 	uint16_t	serial_number[];
-} __attribute__((__packed__)) efidp_usb_wwid;
+} EFIVAR_PACKED efidp_usb_wwid;
 
 #define EFIDP_MSG_LUN		0x11
 typedef struct {
 	efidp_header	header;
 	uint8_t		lun;
-} __attribute__((__packed__)) efidp_lun;
+} EFIVAR_PACKED efidp_lun;
 
 #define EFIDP_MSG_SATA		0x12
 typedef struct {
@@ -348,7 +350,7 @@ typedef struct {
 	uint16_t	hba_port;
 	uint16_t	port_multiplier_port;
 	uint16_t	lun;
-} __attribute__((__packed__)) efidp_sata;
+} EFIVAR_PACKED efidp_sata;
 #define SATA_HBA_DIRECT_CONNECT_FLAG	0x8000
 extern ssize_t efidp_make_sata(uint8_t *buf, ssize_t size, uint16_t hba_port,
 			       int16_t port_multiplier_port, uint16_t lun);
@@ -357,14 +359,14 @@ extern ssize_t efidp_make_sata(uint8_t *buf, ssize_t size, uint16_t hba_port,
 typedef struct {
 	efidp_header	header;
 	uint32_t	target;
-} __attribute__((__packed__)) efidp_i2o;
+} EFIVAR_PACKED efidp_i2o;
 
 #define EFIDP_MSG_MAC_ADDR	0x0b
 typedef struct {
 	efidp_header	header;
 	uint8_t		mac_addr[32];
 	uint8_t		if_type;
-} __attribute__((__packed__)) efidp_mac_addr;
+} EFIVAR_PACKED efidp_mac_addr;
 extern ssize_t efidp_make_mac_addr(uint8_t *buf, ssize_t size,
 				   uint8_t if_type,
 				   const uint8_t * const mac_addr,
@@ -382,7 +384,7 @@ typedef struct {
 	efidp_boolean	static_ip_addr;
 	uint8_t		gateway[4];
 	uint8_t		netmask[4];
-} __attribute__((__packed__)) efidp_ipv4_addr;
+} EFIVAR_PACKED efidp_ipv4_addr;
 /* everything here is in host byte order */
 extern ssize_t efidp_make_ipv4(uint8_t *buf, ssize_t size,
 			       uint32_t local, uint32_t remote,
@@ -404,7 +406,7 @@ typedef struct {
 	uint8_t		ip_addr_origin;
 	uint8_t		prefix_length;
 	uint8_t		gateway_ipv6_addr;
-} __attribute__((__packed__)) efidp_ipv6_addr;
+} EFIVAR_PACKED efidp_ipv6_addr;
 
 #define EFIDP_IPv6_ORIGIN_MANUAL	0x00
 #define EFIDP_IPv6_ORIGIN_AUTOCONF	0x01
@@ -414,7 +416,7 @@ typedef struct {
 typedef struct {
 	efidp_header	header;
 	uint16_t	vlan_id;
-} __attribute__((__packed__)) efidp_vlan;
+} EFIVAR_PACKED efidp_vlan;
 
 #define EFIDP_MSG_INFINIBAND	0x09
 typedef struct {
@@ -427,7 +429,7 @@ typedef struct {
 	};
 	uint64_t	target_port_id;
 	uint64_t	device_id;
-} __attribute__((__packed__)) efidp_infiniband;
+} EFIVAR_PACKED efidp_infiniband;
 
 #define EFIDP_INFINIBAND_RESOURCE_IOC_SERVICE	0x01
 #define EFIDP_INFINIBAND_RESOURCE_EXTENDED_BOOT	0x02
@@ -443,7 +445,7 @@ typedef struct {
 	uint8_t		data_bits;
 	uint8_t		parity;
 	uint8_t		stop_bits;
-} __attribute__((__packed__)) efidp_uart;
+} EFIVAR_PACKED efidp_uart;
 
 #define EFIDP_UART_PARITY_DEFAULT	0x00
 #define EFIDP_UART_PARITY_NONE		0x01
@@ -471,7 +473,7 @@ typedef struct {
 	efidp_header	header;
 	efi_guid_t	vendor_guid;
 	uint8_t		vendor_data[0];
-} __attribute__((__packed__)) efidp_msg_vendor;
+} EFIVAR_PACKED efidp_msg_vendor;
 typedef efidp_msg_vendor efidp_vendor_msg;
 #define efidp_make_msg_vendor(buf, size, guid, data, data_size)		\
 	efidp_make_vendor(buf, size, EFIDP_MESSAGE_TYPE,		\
@@ -484,7 +486,7 @@ typedef struct {
 	efidp_header	header;
 	efi_guid_t	vendor_guid;
 	uint32_t	flow_control_map;
-} __attribute__((__packed__)) efidp_uart_flow_control;
+} EFIVAR_PACKED efidp_uart_flow_control;
 
 #define EFIDP_UART_FLOW_CONTROL_HARDWARE	0x1
 #define EFIDP_UART_FLOW_CONTROL_XONXOFF		0x2
@@ -500,7 +502,7 @@ typedef struct {
 	uint8_t		device_topology_info;
 	uint8_t		drive_bay_id; /* If EFIDP_SAS_TOPOLOGY_NEXTBYTE set */
 	uint16_t	rtp;
-} __attribute__((__packed__)) efidp_sas;
+} EFIVAR_PACKED efidp_sas;
 extern ssize_t efidp_make_sas(uint8_t *buf, ssize_t size, uint64_t sas_address);
 
 /* device_topology_info Bits 0:3 (enum) */
@@ -531,7 +533,7 @@ typedef struct {
 	uint8_t		device_topology_info;
 	uint8_t		drive_bay_id; /* If EFIDP_SAS_TOPOLOGY_NEXTBYTE set */
 	uint16_t	rtp;
-} __attribute__((__packed__)) efidp_sas_ex;
+} EFIVAR_PACKED efidp_sas_ex;
 
 #define EFIDP_MSG_DEBUGPORT_GUID \
 	EFI_GUID(0xEBA4E8D2,0x3858,0x41EC,0xA281,0x26,0x47,0xBA,0x96,0x60,0xD0)
@@ -544,7 +546,7 @@ typedef struct {
 	uint8_t		lun[8];
 	uint16_t	tpgt;
 	uint8_t		target_name[0];
-} __attribute__((__packed__)) efidp_iscsi;
+} EFIVAR_PACKED efidp_iscsi;
 
 /* options bits 0:1 */
 #define EFIDP_ISCSI_HEADER_DIGEST_SHIFT	0
@@ -576,7 +578,7 @@ typedef struct {
 	efidp_header	header;
 	uint32_t	namespace_id;
 	uint8_t		ieee_eui_64[8];
-} __attribute__((__packed__)) efidp_nvme;
+} EFIVAR_PACKED efidp_nvme;
 extern ssize_t efidp_make_nvme(uint8_t *buf, ssize_t size,
 			       uint32_t namespace_id, uint8_t *ieee_eui_64);
 
@@ -584,20 +586,20 @@ extern ssize_t efidp_make_nvme(uint8_t *buf, ssize_t size,
 typedef struct {
 	efidp_header	header;
 	uint8_t		uri[0];
-} __attribute__((__packed__)) efidp_uri;
+} EFIVAR_PACKED efidp_uri;
 
 #define EFIDP_MSG_UFS		0x19
 typedef struct {
 	efidp_header	header;
 	uint8_t		target_id;
 	uint8_t		lun;
-} __attribute__((__packed__)) efidp_ufs;
+} EFIVAR_PACKED efidp_ufs;
 
 #define EFIDP_MSG_SD		0x1a
 typedef struct {
 	efidp_header	header;
 	uint8_t		slot_number;
-} __attribute__((__packed__)) efidp_sd;
+} EFIVAR_PACKED efidp_sd;
 
 /* Each media subtype */
 #define EFIDP_MEDIA_HD		0x1
@@ -612,7 +614,7 @@ typedef struct {
 #ifdef __ia64
 	uint8_t		padding[6]; /* Emperically needed */
 #endif
-} __attribute__((__packed__)) __attribute__((__packed__)) efidp_hd;
+} EFIVAR_PACKED EFIVAR_PACKED efidp_hd;
 extern ssize_t efidp_make_hd(uint8_t *buf, ssize_t size, uint32_t num,
 			     uint64_t part_start, uint64_t part_size,
 			     uint8_t *signature, uint8_t format,
@@ -631,14 +633,14 @@ typedef struct {
 	uint32_t	boot_catalog_entry;
 	uint64_t	partition_rba;
 	uint64_t	sectors;
-} __attribute__((__packed__)) efidp_cdrom;
+} EFIVAR_PACKED efidp_cdrom;
 
 #define EFIDP_MEDIA_VENDOR	0x3
 typedef struct {
 	efidp_header	header;
 	efi_guid_t	vendor_guid;
 	uint8_t		vendor_data[0];
-} __attribute__((__packed__)) efidp_media_vendor;
+} EFIVAR_PACKED efidp_media_vendor;
 typedef efidp_media_vendor efidp_vendor_media;
 #define efidp_make_media_vendor(buf, size, guid, data, data_size)	\
 	efidp_make_vendor(buf, size, EFIDP_MEDIA_TYPE,			\
@@ -648,26 +650,26 @@ typedef efidp_media_vendor efidp_vendor_media;
 typedef struct {
 	efidp_header	header;
 	uint16_t	name[];
-} __attribute__((__packed__)) efidp_file;
+} EFIVAR_PACKED efidp_file;
 extern ssize_t efidp_make_file(uint8_t *buf, ssize_t size, char *filename);
 
 #define EFIDP_MEDIA_PROTOCOL	0x5
 typedef struct {
 	efidp_header	header;
 	efi_guid_t	protocol_guid;
-} __attribute__((__packed__)) efidp_protocol;
+} EFIVAR_PACKED efidp_protocol;
 
 #define EFIDP_MEDIA_FIRMWARE_FILE	0x6
 typedef struct {
 	efidp_header	header;
 	uint8_t		pi_info[0];
-} __attribute__((__packed__)) efidp_firmware_file;
+} EFIVAR_PACKED efidp_firmware_file;
 
 #define EFIDP_MEDIA_FIRMWARE_VOLUME	0x7
 typedef struct {
 	efidp_header	header;
 	uint8_t		pi_info[0];
-} __attribute__((__packed__)) efidp_firmware_volume;
+} EFIVAR_PACKED efidp_firmware_volume;
 
 #define EFIDP_MEDIA_RELATIVE_OFFSET	0x8
 typedef struct {
@@ -675,7 +677,7 @@ typedef struct {
 	uint32_t	reserved;
 	uint64_t	first_byte;
 	uint64_t	last_byte;
-} __attribute__((__packed__)) efidp_relative_offset;
+} EFIVAR_PACKED efidp_relative_offset;
 
 #define EFIDP_MEDIA_RAMDISK	0x9
 typedef struct {
@@ -684,7 +686,7 @@ typedef struct {
 	uint64_t	end_addr;
 	efi_guid_t	disk_type_guid;
 	uint16_t	instance_number;
-} __attribute__((__packed__)) efidp_ramdisk;
+} EFIVAR_PACKED efidp_ramdisk;
 
 #define EFIDP_VIRTUAL_DISK_GUID \
 	EFI_GUID(0x77AB535A,0x45FC,0x624B,0x5560,0xF7,0xB2,0x81,0xD1,0xF9,0x6E)
@@ -702,7 +704,7 @@ typedef struct {
 	uint16_t	device_type;
 	uint16_t	status;
 	uint8_t		description[0];
-} __attribute__((__packed__)) efidp_bios_boot;
+} EFIVAR_PACKED efidp_bios_boot;
 
 #define EFIDP_BIOS_BOOT_DEVICE_TYPE_FLOPPY	1
 #define EFIDP_BIOS_BOOT_DEVICE_TYPE_HD		2
@@ -768,7 +770,7 @@ typedef union {
 	efidp_relative_offset relative_offset;
 	efidp_ramdisk ramdisk;
 	efidp_bios_boot bios_boot;
-} __attribute__((__packed__)) efidp_data;
+} EFIVAR_PACKED efidp_data;
 typedef efidp_data *efidp;
 typedef const efidp_data *const_efidp;
 
