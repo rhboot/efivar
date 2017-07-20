@@ -261,7 +261,7 @@ edit_variable(const char *guid_name, void *data, size_t data_size, int attrib,
 
 	rc = efi_get_variable(guid, name, &old_data, &old_data_size,
 				&old_attributes);
-	if (rc < 0) {
+	if (rc < 0 && edit_type != EDIT_WRITE) {
 		fprintf(stderr, "efivar: %m\n");
 		show_errors();
 		exit(1);
