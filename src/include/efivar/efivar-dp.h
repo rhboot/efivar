@@ -135,14 +135,19 @@ extern ssize_t efidp_make_acpi_hid_ex(uint8_t *buf, ssize_t size, uint32_t hid,
 	__attribute__((__nonnull__ (6,7,8)));
 
 #define EFIDP_PNP_EISA_ID_CONST		0x41d0
+#define EFIDP_PNP_ACPI_ID_CONST		0x8e09
 #define EFIDP_EISA_ID(_Name, _Num)	((uint32_t)((_Name) | (_Num) << 16))
 #define EFIDP_EISA_PNP_ID(_PNPId)	EFIDP_EISA_ID(EFIDP_PNP_EISA_ID_CONST,\
 							(_PNPId))
 #define EFIDP_EFI_PNP_ID(_PNPId)	EFIDP_EISA_ID(EFIDP_PNP_EISA_ID_CONST,\
 							(_PNPId))
+#define EFIDP_EFI_ACPI_ID(_HID)		EFIDP_EISA_ID(EFIDP_PNP_ACPI_ID_CONST,\
+						      (_HID))
 
 #define EFIDP_PNP_EISA_ID_MASK		0xffff
 #define EFIDP_EISA_ID_TO_NUM(_Id)	((_Id) >> 16)
+#define EFIDP_ACPI_ID_MASK		0xffff
+#define EFIDP_ACPI_ID_TO_NUM(_HID)	((_HID) >> 16)
 
 #define EFIDP_ACPI_PCI_ROOT_HID		EFIDP_EFI_PNP_ID(0x0a03)
 #define EFIDP_ACPI_PCIE_ROOT_HID	EFIDP_EFI_PNP_ID(0x0a08)
