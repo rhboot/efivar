@@ -115,6 +115,51 @@ _format_acpi_dn(char *buf, size_t size, const_efidp dp)
 		format(buf, size, off, "Keyboard", "Serial(0x%"PRIx32")",
 		       dp->acpi_hid.uid);
 		break;
+	case EFIDP_ACPI_NVDIMM_HID: {
+		int rc;
+		const_efidp next = NULL;
+		efidp_acpi_adr *adrdp;
+		int end;
+
+		format(buf, size, off, "NvRoot()", "NvRoot()");
+
+		rc = efidp_next_node(dp, &next);
+		if (rc < 0 || !next) {
+			efi_error("could not format DP");
+			return rc;
+		}
+
+		if (efidp_type(next) != EFIDP_ACPI_TYPE ||
+		    efidp_subtype(next) != EFIDP_ACPI_ADR) {
+			efi_error("Invalid child node type (0x%02x,0x%02x)",
+				  efidp_type(next), efidp_subtype(next));
+			return -EINVAL;
+		}
+		adrdp = (efidp_acpi_adr *)next;
+
+		end = efidp_size_after(adrdp, header)
+			/ sizeof(adrdp->adr[0]);
+
+		for (int i = 0; i < end; i++) {
+			uint32_t node_controller, socket, memory_controller;
+			uint32_t memory_channel, dimm;
+			uint32_t adr = adrdp->adr[i];
+
+			efidp_decode_acpi_nvdimm_adr(adr, &node_controller,
+						     &socket,
+						     &memory_controller,
+						     &memory_channel, &dimm);
+
+			if (i != 0)
+				format(buf, size, off, "NvDimm", ",");
+
+			format(buf, size, off, "NvDimm",
+			       "NvDimm(0x%03x,0x%01x,0x%01x,0x%01x,0x%01x)",
+			       node_controller, socket, memory_controller,
+			       memory_channel, dimm);
+		}
+		break;
+				    }
 	default:
 		switch (dp->subtype) {
 		case EFIDP_ACPI_HID_EX:

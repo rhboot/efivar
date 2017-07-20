@@ -26,6 +26,10 @@
 #define efidp_decode_bitfield_(value, name, shift, mask)		\
 	({ (name) = ((value) & (mask)) >> (shift); })
 
+#define efidp_size_after(dp, field)					\
+	(efidp_size((const_efidp)dp) -					\
+	 (offsetof(__typeof__ (*(dp)), field) + sizeof((dp)->field)))
+
 #define EFIVAR_PACKED __attribute__((__packed__))
 
 /* Generic device path header */
@@ -155,6 +159,7 @@ extern ssize_t efidp_make_acpi_hid_ex(uint8_t *buf, ssize_t size, uint32_t hid,
 #define EFIDP_ACPI_KEYBOARD_HID		EFIDP_EFI_PNP_ID(0x0301)
 #define EFIDP_ACPI_SERIAL_HID		EFIDP_EFI_PNP_ID(0x0501)
 #define EFIDP_ACPI_PARALLEL_HID		EFIDP_EFI_PNP_ID(0x0401)
+#define EFIDP_ACPI_NVDIMM_HID		EFIDP_EFI_ACPI_ID(0x0012)
 
 #define EFIDP_ACPI_ADR		0x03
 typedef struct {
@@ -255,6 +260,65 @@ typedef struct {
 				EFIDP_ACPI_ADR_DISPLAY_INDEX_SHIFT,	\
 				EFIDP_ACPI_ADR_DISPLAY_INDEX_MASK);	\
 	(*(device_id_scheme)) == EFIDP_ACPI_ADR_DEVICE_ID_SCHEME_ACPI;	\
+	})
+
+#define EFIDP_ACPI_ADR_NVDIMM_NODE_CONTROLLER_MASK	0x0fff0000
+#define EFIDP_ACPI_ADR_NVDIMM_NODE_CONTROLLER_SHIFT	16
+
+#define EFIDP_ACPI_ADR_NVDIMM_SOCKET_ID_MASK		0x0000f000
+#define EFIDP_ACPI_ADR_NVDIMM_SOCKET_ID_SHIFT		12
+
+#define EFIDP_ACPI_ADR_NVDIMM_MEMORY_CONTROLLER_MASK	0x00000f00
+#define EFIDP_ACPI_ADR_NVDIMM_MEMORY_CONTROLLER_SHIFT	8
+
+#define EFIDP_ACPI_ADR_NVDIMM_MEMORY_CHANNEL_MASK	0x000000f0
+#define EFIDP_ACPI_ADR_NVDIMM_MEMORY_CHANNEL_SHIFT	4
+
+#define EFIDP_ACPI_ADR_NVDIMM_DIMM_MASK			0x0f00000f
+#define EFIDP_ACPI_ADR_NVDIMM_DIMM_SHIFT		0
+
+#define efidp_encode_acpi_nvdimm_adr(node_controller,			\
+				     socket, memory_controller,		\
+				     memory_channel, dimm, adr)		\
+	({								\
+	((uint32_t)(adr)) = ((uint32_t)(				\
+	 efidp_encode_bitfield_(node_controller,			\
+				EFIDP_ACPI_ADR_NVDIMM_NODE_CONTROLLER_SHIFT,\
+				EFIDP_ACPI_ADR_NVDIMM_NODE_CONTROLLER_MASK) | \
+	 efidp_encode_bitfield_(socket,					\
+				EFIDP_ACPI_ADR_NVDIMM_SOCKET_ID_SHIFT,	\
+				EFIDP_ACPI_ADR_NVDIMM_SOCKET_ID_MASK) |	\
+	 efidp_encode_bitfield_(memory_controller,			\
+				EFIDP_ACPI_ADR_NVDIMM_MEMORY_CONTROLLER_SHIFT,\
+				EFIDP_ACPI_ADR_NVDIMM_MEMORY_CONTROLLER_MASK)|\
+	 efidp_encode_bitfield_(memory_channel,				\
+				EFIDP_ACPI_ADR_NVDIMM_MEMORY_CHANNEL_SHIFT,\
+				EFIDP_ACPI_ADR_NVDIMM_MEMORY_CHANNEL_MASK) | \
+	 efidp_encode_bitfield_(dimm,					\
+				EFIDP_ACPI_ADR_NVDIMM_DIMM_SHIFT,	\
+				EFIDP_ACPI_ADR_NVDIMM_DIMM_MASK));	\
+	})
+
+#define efidp_decode_acpi_nvdimm_adr(adr, node_controller, socket,	\
+				     memory_controller, memory_channel,	\
+				     dimm)				\
+	({								\
+	 efidp_decode_bitfield_(adr, *(node_controller),		\
+				EFIDP_ACPI_ADR_NVDIMM_NODE_CONTROLLER_SHIFT,\
+				EFIDP_ACPI_ADR_NVDIMM_NODE_CONTROLLER_MASK);\
+	 efidp_decode_bitfield_(adr, *(socket),				\
+				EFIDP_ACPI_ADR_NVDIMM_SOCKET_ID_SHIFT,	\
+				EFIDP_ACPI_ADR_NVDIMM_SOCKET_ID_MASK);	\
+	 efidp_decode_bitfield_(adr, *(memory_controller),		\
+				EFIDP_ACPI_ADR_NVDIMM_MEMORY_CONTROLLER_SHIFT,\
+				EFIDP_ACPI_ADR_NVDIMM_MEMORY_CONTROLLER_MASK);\
+	 efidp_decode_bitfield_(adr, *(memory_channel),			\
+				EFIDP_ACPI_ADR_NVDIMM_MEMORY_CHANNEL_SHIFT,\
+				EFIDP_ACPI_ADR_NVDIMM_MEMORY_CHANNEL_MASK);\
+	 efidp_decode_bitfield_(adr, *(dimm),				\
+				EFIDP_ACPI_ADR_NVDIMM_DIMM_SHIFT,	\
+				EFIDP_ACPI_ADR_NVDIMM_DIMM_MASK);	\
+	 0;								\
 	})
 
 /* Each messaging subtype */
