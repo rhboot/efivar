@@ -654,7 +654,7 @@ make_pci_path(uint8_t *buf, ssize_t size, char *pathstr, ssize_t *pathoff)
 
 	uint8_t *fbuf = NULL;
 	rc = read_sysfs_file(&fbuf,
-			     "/sys/devices/pci%04x:%02x/firmware_node/hid",
+			     "/sys/devices/pci%04hx:%02hhx/firmware_node/hid",
 			     root_domain, root_bus);
 	if (rc < 0 || fbuf == NULL)
 		return -1;
@@ -677,7 +677,7 @@ make_pci_path(uint8_t *buf, ssize_t size, char *pathstr, ssize_t *pathoff)
 	fbuf = NULL;
 	int use_uid_str = 0;
 	rc = read_sysfs_file(&fbuf,
-			     "/sys/devices/pci%4x:%02x/firmware_node/uid",
+			     "/sys/devices/pci%04hx:%02hhx/firmware_node/uid",
 			     root_domain, root_bus);
 	if ((rc <= 0 && errno != ENOENT) || fbuf == NULL)
 		return -1;
