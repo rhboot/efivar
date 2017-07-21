@@ -28,9 +28,8 @@
 #include "dp.h"
 
 static ssize_t
-format_ipv4_addr_helper(char *buf, size_t size,
-			const char *dp_type __attribute__((__unused__)),
-			uint8_t const *ipaddr, int32_t port)
+format_ipv4_addr_helper(char *buf, size_t size, const char *dp_type,
+			const uint8_t *ipaddr, int32_t port)
 {
 	ssize_t off = 0;
 	format(buf, size, off, dp_type, "%hhu.%hhu.%hhu.%hhu",
@@ -41,9 +40,8 @@ format_ipv4_addr_helper(char *buf, size_t size,
 }
 
 static ssize_t
-format_ipv6_addr_helper(char *buf, size_t size,
-			const char *dp_type __attribute__((__unused__)),
-			uint8_t const *ipaddr, int32_t port)
+format_ipv6_addr_helper(char *buf, size_t size, const char *dp_type,
+			const uint8_t *ipaddr, int32_t port)
 {
 	uint16_t *ip = (uint16_t *)ipaddr;
 	ssize_t off = 0;
@@ -92,17 +90,17 @@ format_ipv6_addr_helper(char *buf, size_t size,
 
 	for (i = 0; i < 8; i++) {
 		if (largest_zero_block_offset == i) {
-			format(buf, size, off, "IPv6", "::");
+			format(buf, size, off, "dp_type", "::");
 			i += largest_zero_block_size -1;
 			continue;
 		} else if (i > 0) {
-			format(buf, size, off, "IPv6", ":");
+			format(buf, size, off, "dp_type", ":");
 		}
 
-		format(buf, size, off, "IPv6", "%x", ip[i]);
+		format(buf, size, off, "dp_type", "%x", ip[i]);
 	}
 
-	format(buf, size, off, "IPv6", "]");
+	format(buf, size, off, "dp_type", "]");
 	if (port >= 0)
 		format(buf, size, off, "Ipv6", ":%hu", port);
 
@@ -621,6 +619,7 @@ _format_message_dn(char *buf, size_t size, const_efidp dp)
 			format_ip_addr(buf, size, off, "Dns",
 				       dp->dns.is_ipv6, addr);
 		}
+		format(buf, size, off, "Dns", ")");
 		break;
 	}
 	default:
