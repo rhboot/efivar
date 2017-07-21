@@ -28,13 +28,27 @@
 #include "dp.h"
 
 static ssize_t
-format_ipv6_port_helper(char *buf, size_t size,
-			uint8_t const *ipaddr, uint16_t port)
+format_ipv4_addr_helper(char *buf, size_t size,
+			const char *dp_type __attribute__((__unused__)),
+			uint8_t const *ipaddr, int32_t port)
+{
+	ssize_t off = 0;
+	format(buf, size, off, dp_type, "%hhu.%hhu.%hhu.%hhu",
+	       ipaddr[0], ipaddr[1], ipaddr[2], ipaddr[3]);
+	if (port > 0)
+		format(buf, size, off, dp_type, ":%hu", port);
+	return off;
+}
+
+static ssize_t
+format_ipv6_addr_helper(char *buf, size_t size,
+			const char *dp_type __attribute__((__unused__)),
+			uint8_t const *ipaddr, int32_t port)
 {
 	uint16_t *ip = (uint16_t *)ipaddr;
 	ssize_t off = 0;
 
-	format(buf, size, off, "IPv6", "[");
+	format(buf, size, off, dp_type, "[");
 
 	// deciding how to print an ipv6 ip requires 2 passes, because
 	// RFC5952 says we have to use :: a) only once and b) to maximum effect.
@@ -88,13 +102,39 @@ format_ipv6_port_helper(char *buf, size_t size,
 		format(buf, size, off, "IPv6", "%x", ip[i]);
 	}
 
-	format(buf, size, off, "IPv6", "]:%d", port);
+	format(buf, size, off, "IPv6", "]");
+	if (port >= 0)
+		format(buf, size, off, "Ipv6", ":%hu", port);
 
 	return off;
 }
 
-#define format_ipv6_port(buf, size, off, ipaddr, port)			\
-	format_helper(format_ipv6_port_helper, buf, size, off, ipaddr, port)
+#define format_ipv4_addr(buf, size, off, addr, port)		\
+	format_helper(format_ipv4_addr_helper, buf, size, off,	\
+		      "IPv4", addr, port)
+
+#define format_ipv6_addr(buf, size, off, addr, port)		\
+	format_helper(format_ipv6_addr_helper, buf, size, off,	\
+		      "IPv6", addr, port)
+
+static ssize_t
+format_ip_addr_helper(char *buf, size_t size,
+		      const char *dp_type __attribute__((__unused__)),
+		      int is_ipv6, const efi_ip_addr_t *addr)
+{
+	ssize_t off = 0;
+	if (is_ipv6)
+		format_helper(format_ipv6_addr_helper, buf, size, off, "IPv6",
+			      (const uint8_t *)&addr->v6, -1);
+	else
+		format_helper(format_ipv4_addr_helper, buf, size, off, "IPv4",
+			      (const uint8_t *)&addr->v4, -1);
+	return off;
+}
+
+#define format_ip_addr(buf, size, off, dp_type, is_ipv6, addr)		\
+	format_helper(format_ip_addr_helper, buf, size, off,		\
+		      dp_type, is_ipv6, addr)
 
 static ssize_t
 format_uart(char *buf, size_t size,
@@ -335,14 +375,13 @@ _format_message_dn(char *buf, size_t size, const_efidp dp)
 		break;
 	case EFIDP_MSG_IPv4: {
 		efidp_ipv4_addr const *a = &dp->ipv4_addr;
-		format(buf, size, off, "IPv4",
-	"IPv4(%hhu.%hhu.%hhu.%hhu:%hu<->%hhu.%hhu.%hhu.%hhu:%hu,%hx,%hhx)",
-			    a->local_ipv4_addr[0], a->local_ipv4_addr[1],
-			    a->local_ipv4_addr[2], a->local_ipv4_addr[3],
-			    a->local_port, a->remote_ipv4_addr[0],
-			    a->remote_ipv4_addr[1], a->remote_ipv4_addr[2],
-			    a->remote_ipv4_addr[3], a->remote_port,
-			    a->protocol, a->static_ip_addr);
+		format(buf, size, off, "IPv4", "IPv4(");
+		format_ipv4_addr(buf, size, off,
+				 a->local_ipv4_addr, a->local_port);
+		format_ipv4_addr(buf, size, off,
+				 a->remote_ipv4_addr, a->remote_port);
+		format(buf, size, off, "IPv4", ",%hx,%hhx)",
+		       a->protocol, a->static_ip_addr);
 		break;
 			     }
 	case EFIDP_MSG_VENDOR: {
@@ -416,28 +455,28 @@ _format_message_dn(char *buf, size_t size, const_efidp dp)
 		ssize_t tmpoff = 0;
 		ssize_t sz;
 
-		sz = format_ipv6_port(addr0, 0, tmpoff, a->local_ipv6_addr,
+		sz = format_ipv6_addr(addr0, 0, tmpoff, a->local_ipv6_addr,
 				      a->local_port);
 		if (sz < 0)
 			return -1;
 		addr0 = alloca(sz+1);
 		tmpoff = 0;
-		sz = format_ipv6_port(addr1, 0, tmpoff, a->remote_ipv6_addr,
+		sz = format_ipv6_addr(addr1, 0, tmpoff, a->remote_ipv6_addr,
 				      a->remote_port);
 		if (sz < 0)
 			return -1;
 		addr1 = alloca(sz+1);
 
 		tmpoff = 0;
-		format_ipv6_port(addr0, sz, tmpoff, a->local_ipv6_addr,
-				      a->local_port);
+		format_ipv6_addr(addr0, sz, tmpoff, a->local_ipv6_addr,
+				 a->local_port);
 
 		tmpoff = 0;
-		format_ipv6_port(addr1, sz, tmpoff, a->remote_ipv6_addr,
-				      a->remote_port);
+		format_ipv6_addr(addr1, sz, tmpoff, a->remote_ipv6_addr,
+				 a->remote_port);
 
 		format(buf, size, off, "IPv6", "IPv6(%s<->%s,%hx,%hhx)",
-			     addr0, addr1, a->protocol, a->ip_addr_origin);
+		       addr0, addr1, a->protocol, a->ip_addr_origin);
 		break;
 			     }
 	case EFIDP_MSG_UART: {
@@ -547,6 +586,43 @@ _format_message_dn(char *buf, size_t size, const_efidp dp)
 	case EFIDP_MSG_SD:
 		format(buf, size, off, "SD", "SD(%d)", dp->sd.slot_number);
 		break;
+	case EFIDP_MSG_BT:
+		format(buf, size, off, "Bluetooth", "Bluetooth(");
+		format_hex_separated(buf, size, off, "Bluetooth", ":", 1,
+				     dp->bt.addr, sizeof(dp->bt.addr));
+		format(buf, size, off, "Bluetooth", ")");
+		break;
+	case EFIDP_MSG_WIFI:
+		format(buf, size, off, "Wi-Fi", "Wi-Fi(");
+		format_hex_separated(buf, size, off, "Wi-Fi", ":", 1,
+				     dp->wifi.ssid, sizeof(dp->wifi.ssid));
+		format(buf, size, off, "Wi-Fi", ")");
+		break;
+	case EFIDP_MSG_EMMC:
+		format(buf, size, off, "eMMC", "eMMC(%d)", dp->emmc.slot);
+		break;
+	case EFIDP_MSG_BTLE:
+		format(buf, size, off, "BluetoothLE", "BluetoothLE(");
+		format_hex_separated(buf, size, off, "BluetoothLE", ":", 1,
+				     dp->btle.addr, sizeof(dp->btle.addr));
+		format(buf, size, off, "BluetoothLE", ",%d)",
+		       dp->btle.addr_type);
+		break;
+	case EFIDP_MSG_DNS: {
+		int end = (efidp_node_size(dp)
+			   - sizeof(dp->dns.header)
+			   - sizeof(dp->dns.is_ipv6)
+			  ) / sizeof(efi_ip_addr_t);
+		format(buf, size, off, "Dns", "Dns(");
+		for (int i=0; i < end; i++) {
+			const efi_ip_addr_t *addr = &dp->dns.addrs[i];
+			if (i != 0)
+				format(buf, size, off, "Dns", ",");
+			format_ip_addr(buf, size, off, "Dns",
+				       dp->dns.is_ipv6, addr);
+		}
+		break;
+	}
 	default:
 		format(buf, size, off, "Msg", "Msg(%d,", dp->subtype);
 		format_hex(buf, size, off, "Msg", (uint8_t *)dp+4,
