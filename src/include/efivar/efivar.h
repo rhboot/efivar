@@ -39,7 +39,7 @@ typedef struct {
 } efi_guid_t;
 
 #ifndef EFIVAR_BUILD_ENVIRONMENT
-#include <efivar-guids.h>
+#include <efivar/efivar-guids.h>
 #endif
 
 #if BYTE_ORDER == LITTLE_ENDIAN
@@ -207,6 +207,6 @@ efi_error_clear(void)
 #define efi_error_val(errval, msg, args...) \
 	efi_error_real__(errval, __FILE__, __func__, __LINE__, (fmt), ## args)
 
-#include <efivar-dp.h>
+#include <efivar/efivar-dp.h>
 
 #endif /* EFIVAR_H */

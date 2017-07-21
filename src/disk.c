@@ -32,8 +32,8 @@
 #include <sys/utsname.h>
 #include <unistd.h>
 
-#include <efivar.h>
-#include <efiboot.h>
+#include <efivar/efivar.h>
+#include <efivar/efiboot.h>
 
 #include "util.h"
 #include "crc32.h"

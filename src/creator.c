@@ -30,8 +30,8 @@
 #include <sys/stat.h>
 #include <sys/socket.h>
 
-#include <efivar.h>
-#include <efiboot.h>
+#include <efivar/efivar.h>
+#include <efivar/efiboot.h>
 
 #include "disk.h"
 #include "dp.h"

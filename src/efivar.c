@@ -29,7 +29,7 @@
 #include <sys/stat.h>
 #include <unistd.h>
 
-#include "efivar.h"
+#include <efivar/efivar.h>
 #include "guid.h"
 
 #define ACTION_LIST		0x1

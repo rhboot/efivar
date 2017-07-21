@@ -22,7 +22,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 
-#include <efivar.h>
+#include <efivar/efivar.h>
 #include "dp.h"
 #include "util.h"
 

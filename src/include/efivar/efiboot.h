@@ -30,9 +30,9 @@
 #include <unistd.h>
 #include <byteswap.h>
 
-#include <efivar.h>
+#include <efivar/efivar.h>
 
-#include <efiboot-creator.h>
-#include <efiboot-loadopt.h>
+#include <efivar/efiboot-creator.h>
+#include <efivar/efiboot-loadopt.h>
 
 #endif /* EFIBOOT_H */

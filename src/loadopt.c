@@ -19,7 +19,7 @@
  *
  */
 
-#include <efivar.h>
+#include <efivar/efivar.h>
 #include <stddef.h>
 
 #include "dp.h"

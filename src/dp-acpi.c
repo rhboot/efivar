@@ -23,7 +23,7 @@
 #include <stdarg.h>
 #include <stddef.h>
 
-#include <efivar.h>
+#include <efivar/efivar.h>
 #include "dp.h"
 
 static ssize_t

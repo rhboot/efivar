@@ -23,7 +23,7 @@
 #include <inttypes.h>
 #include <stddef.h>
 
-#include <efivar.h>
+#include <efivar/efivar.h>
 #include "efivar_endian.h"
 #include "dp.h"
 

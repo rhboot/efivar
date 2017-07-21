@@ -25,7 +25,7 @@
 #include <sys/stat.h>
 #include <unistd.h>
 
-#include "efivar.h"
+#include <efivar/efivar.h>
 #include "lib.h"
 #include "generics.h"
 

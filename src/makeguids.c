@@ -25,7 +25,7 @@
 #include <sys/types.h>
 #include <sys/stat.h>
 
-#include "efivar.h"
+#include <efivar/efivar.h>
 #include "util.h"
 #include "guid.h"
 
@@ -149,7 +149,7 @@ main(int argc, char *argv[])
 
 	fprintf(header, "#ifndef EFIVAR_GUIDS_H\n#define EFIVAR_GUIDS_H 1\n\n");
 
-	fprintf(symout, "#include <efivar.h>\n");
+	fprintf(symout, "#include <efivar/efivar.h>\n");
 	fprintf(symout, "#include <endian.h>\n");
 	fprintf(symout, """\n\
 #if BYTE_ORDER == BIG_ENDIAN\n\

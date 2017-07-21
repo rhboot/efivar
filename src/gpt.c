@@ -34,7 +34,7 @@
 #include <sys/utsname.h>
 #include <unistd.h>
 
-#include <efivar.h>
+#include <efivar/efivar.h>
 
 #include "crc32.h"
 #include "disk.h"
