@@ -33,7 +33,7 @@ all : $(TARGETS)
 static : $(STATICTARGETS)
 
 abidw : $(patsubst %.so,%.abixml,$(LIBTARGETS))
-	git commit -m "Update .abixml files" -s --amend $^
+	git commit -s --amend $^
 
 abicheck : $(patsubst %.so,%.abicheck,$(LIBTARGETS))
 

@@ -34,12 +34,14 @@ a :
 
 .PHONY: $(SUBDIRS) a brick coverity cov-upload
 
+GITTAG = $(shell bash -c "echo $$(($(VERSION) + 1))")
+
 efivar.spec : | Makefile Make.version
 
 COV_EMAIL=$(call get-config,coverity.email)
 COV_TOKEN=$(call get-config,coverity.token)
 COV_URL=$(call get-config,coverity.url)
-COV_FILE=efivar-coverity-$(VERSION)-$(COMMIT_ID).tar.bz2
+COV_FILE=efivar-coverity-$(GITTAG)-$(COMMIT_ID).tar.bz2
 COMMIT_ID=$(shell git log -1 --pretty=%H 2>/dev/null || echo master)
 
 cov-int : clean
@@ -53,8 +55,8 @@ cov-upload :
 	    [[ -n "$(COV_TOKEN)" ]] &&					\
 	    [[ -n "$(COV_EMAIL)" ]] ;					\
 	then								\
-		echo curl --form token=$(COV_TOKEN) --form email="$(COV_EMAIL)" --form file=@"$(COV_FILE)" --form version=$(VERSION).1 --form description="$(COMMIT_ID)" "$(COV_URL)" ; \
-		curl --form token=$(COV_TOKEN) --form email="$(COV_EMAIL)" --form file=@"$(COV_FILE)" --form version=$(VERSION).1 --form description="$(COMMIT_ID)" "$(COV_URL)" ; \
+		echo curl --form token=$(COV_TOKEN) --form email="$(COV_EMAIL)" --form file=@"$(COV_FILE)" --form version=$(GITTAG).1 --form description="$(COMMIT_ID)" "$(COV_URL)" ; \
+		curl --form token=$(COV_TOKEN) --form email="$(COV_EMAIL)" --form file=@"$(COV_FILE)" --form version=$(GITTAG).1 --form description="$(COMMIT_ID)" "$(COV_URL)" ; \
 	else								\
 		echo Coverity output is in $(COV_FILE) ;		\
 	fi
@@ -68,35 +70,33 @@ clean :
 	@rm -vf efivar.spec
 	@rm -vrf cov-int efivar-coverity-*.tar.*
 
-GITTAG = $(VERSION) + 1
-
 test-archive: abicheck efivar.spec
-	@rm -rf /tmp/efivar-$(VERSION) /tmp/efivar-$(VERSION)-tmp
-	@mkdir -p /tmp/efivar-$(VERSION)-tmp
-	@git archive --format=tar $(shell git branch | awk '/^*/ { print $$2 }') | ( cd /tmp/efivar-$(VERSION)-tmp/ ; tar x )
-	@git diff | ( cd /tmp/efivar-$(VERSION)-tmp/ ; patch -s -p1 -b -z .gitdiff )
-	@mv /tmp/efivar-$(VERSION)-tmp/ /tmp/efivar-$(VERSION)/
-	@cp efivar.spec /tmp/efivar-$(VERSION)/
-	@dir=$$PWD; cd /tmp; tar -c --bzip2 -f $$dir/efivar-$(VERSION).tar.bz2 efivar-$(VERSION)
-	@rm -rf /tmp/efivar-$(VERSION)
-	@echo "The archive is in efivar-$(VERSION).tar.bz2"
+	@rm -rf /tmp/efivar-$(GITTAG) /tmp/efivar-$(GITTAG)-tmp
+	@mkdir -p /tmp/efivar-$(GITTAG)-tmp
+	@git archive --format=tar $(shell git branch | awk '/^*/ { print $$2 }') | ( cd /tmp/efivar-$(GITTAG)-tmp/ ; tar x )
+	@git diff | ( cd /tmp/efivar-$(GITTAG)-tmp/ ; patch -s -p1 -b -z .gitdiff )
+	@mv /tmp/efivar-$(GITTAG)-tmp/ /tmp/efivar-$(GITTAG)/
+	@cp efivar.spec /tmp/efivar-$(GITTAG)/
+	@dir=$$PWD; cd /tmp; tar -c --bzip2 -f $$dir/efivar-$(GITTAG).tar.bz2 efivar-$(GITTAG)
+	@rm -rf /tmp/efivar-$(GITTAG)
+	@echo "The archive is in efivar-$(GITTAG).tar.bz2"
 
 bumpver :
-	echo VERSION=$(GITTAG) > Make.version
-	git add Make.version
+	@echo VERSION=$(GITTAG) > Make.version
+	@git add Make.version
 	git commit -m "Bump version to $(GITTAG)" -s
 
 tag:
 	git tag -s $(GITTAG) refs/heads/master
 
 archive: abicheck bumpver abidw tag efivar.spec
-	@rm -rf /tmp/efivar-$(VERSION) /tmp/efivar-$(VERSION)-tmp
-	@mkdir -p /tmp/efivar-$(VERSION)-tmp
-	git archive --format=tar $(GITTAG) | ( cd /tmp/efivar-$(VERSION)-tmp/ ; tar x )
-	@mv /tmp/efivar-$(VERSION)-tmp/ /tmp/efivar-$(VERSION)/
-	@cp efivar.spec /tmp/efivar-$(VERSION)/
-	@dir=$$PWD; cd /tmp; tar -c --bzip2 -f $$dir/efivar-$(VERSION).tar.bz2 efivar-$(VERSION)
-	@rm -rf /tmp/efivar-$(VERSION)
-	@echo "The archive is in efivar-$(VERSION).tar.bz2"
+	@rm -rf /tmp/efivar-$(GITTAG) /tmp/efivar-$(GITTAG)-tmp
+	@mkdir -p /tmp/efivar-$(GITTAG)-tmp
+	@git archive --format=tar $(GITTAG) | ( cd /tmp/efivar-$(GITTAG)-tmp/ ; tar x )
+	@mv /tmp/efivar-$(GITTAG)-tmp/ /tmp/efivar-$(GITTAG)/
+	@cp efivar.spec /tmp/efivar-$(GITTAG)/
+	@dir=$$PWD; cd /tmp; tar -c --bzip2 -f $$dir/efivar-$(GITTAG).tar.bz2 efivar-$(GITTAG)
+	@rm -rf /tmp/efivar-$(GITTAG)
+	@echo "The archive is in efivar-$(GITTAG).tar.bz2"
 
 
