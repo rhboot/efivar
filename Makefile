@@ -68,7 +68,7 @@ clean :
 	@rm -vf efivar.spec
 	@rm -vrf cov-int efivar-coverity-*.tar.*
 
-GITTAG = $(VERSION)
+GITTAG = $(VERSION) + 1
 
 test-archive: abicheck efivar.spec
 	@rm -rf /tmp/efivar-$(VERSION) /tmp/efivar-$(VERSION)-tmp
@@ -81,13 +81,18 @@ test-archive: abicheck efivar.spec
 	@rm -rf /tmp/efivar-$(VERSION)
 	@echo "The archive is in efivar-$(VERSION).tar.bz2"
 
+bumpver :
+	echo VERSION=$(GITTAG) > Make.version
+	git add Make.version
+	git commit -m "Bump version to $(GITTAG)" -s
+
 tag:
 	git tag -s $(GITTAG) refs/heads/master
 
-archive: abicheck abidw tag efivar.spec
+archive: abicheck bumpver abidw tag efivar.spec
 	@rm -rf /tmp/efivar-$(VERSION) /tmp/efivar-$(VERSION)-tmp
 	@mkdir -p /tmp/efivar-$(VERSION)-tmp
-	@git archive --format=tar $(GITTAG) | ( cd /tmp/efivar-$(VERSION)-tmp/ ; tar x )
+	git archive --format=tar $(GITTAG) | ( cd /tmp/efivar-$(VERSION)-tmp/ ; tar x )
 	@mv /tmp/efivar-$(VERSION)-tmp/ /tmp/efivar-$(VERSION)/
 	@cp efivar.spec /tmp/efivar-$(VERSION)/
 	@dir=$$PWD; cd /tmp; tar -c --bzip2 -f $$dir/efivar-$(VERSION).tar.bz2 efivar-$(VERSION)

@@ -26,8 +26,9 @@ include $(TOPDIR)/Make.version
 	$(ABIDW) --headers-dir $(TOPDIR)/src/include/efivar/ --out-file $@ $^
 
 %.abicheck : %.so
-	$(ABIDIFF) --suppr \
-		$(patsubst %.so,%.abignore,$<) \
+	$(ABIDIFF) \
+		--suppr abignore \
+		--headers-dir2 $(TOPDIR)/src/include/efivar/ \
 		$(patsubst %.so,%.abixml,$<) \
 		$<
 

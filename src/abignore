@@ -1,0 +1,20 @@
+# 1 function with some indirect sub-type change:
+#
+# [C]'function int efidp_append_instance(const_efidp, const_efidp, efidp*)' at dp.c:259:1 has some indirect sub-type changes:
+#   parameter 1 of type 'typedef const_efidp' has sub-type changes:
+#     underlying type 'const efidp_data*' changed:
+#       in pointed to type 'const efidp_data':
+#         in unqualified underlying type 'typedef efidp_data' at efivar-dp.h:882:1:
+#           underlying type 'union __anonymous_union__' at efivar-dp.h:825:1 changed:
+#             5 data member insertions:
+#               'efidp_bt __anonymous_union__::bt' at efivar-dp.h:867:1
+#               'efidp_btle __anonymous_union__::btle' at efivar-dp.h:870:1
+#               'efidp_dns __anonymous_union__::dns' at efivar-dp.h:871:1
+#               'efidp_emmc __anonymous_union__::emmc' at efivar-dp.h:869:1
+#               'efidp_wifi __anonymous_union__::wifi' at efivar-dp.h:868:1
+#
+[suppress_type]
+  soname_regexp = libefi(var|boot)\\.so
+  name = efidp_data
+  type_kind = typedef
+  has_data_member_inserted_at = end
