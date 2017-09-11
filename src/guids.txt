@@ -3,6 +3,7 @@
 0abba7dc-e516-4167-bbf5-4d9d1c739416	redhat	Red Hat
 0b6e5233-a65c-44c9-9407-d9ab83bfc8bd	sha224	SHA-224
 126a762d-5758-4fca-8531-201a7f57f850	lenovo_boot_menu	Lenovo Boot Menu
+3b8c8162-188c-46a4-aec9-be43f1d65697	ux_capsule_guid	Firmware update localized text image
 3bd2a492-96c0-4079-b420-fcf98ef103ed	x509_sha256	SHA256 hash of X.509 Certificate
 3c5766e8-269c-4e34-aa14-ed776e85b3b6	rsa2048	RSA 2048
 3CC24E96-22C7-41D8-8863-8E39DCDCC2CF	lenovo	Lenovo
