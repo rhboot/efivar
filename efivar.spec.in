@@ -5,10 +5,10 @@ Summary:        Tools to manage UEFI variables
 License:        LGPLv2.1
 URL:            https://github.com/rhinstaller/efivar
 Requires:       %{name}-libs = %{version}-%{release}
-ExclusiveArch:	%{ix86} x86_64 aarch64
+ExclusiveArch:  %{ix86} x86_64 aarch64
 
-BuildRequires:  popt-devel popt-static git glibc-static libabigail
-Source0:        https://github.com/rhinstaller/efivar/releases/download/efivar-%{version}/efivar-%{version}.tar.bz2
+BuildRequires:  popt-devel git glibc-static libabigail
+Source0:        https://github.com/rhboot/efivar/archive/%{version}.tar.gz
 
 %description
 efivar provides a simple command line interface to the UEFI variable facility.
@@ -38,7 +38,7 @@ git config --unset user.email
 git config --unset user.name
 
 %build
-make libdir=%{_libdir} bindir=%{_bindir} CFLAGS="$RPM_OPT_FLAGS -flto" LDFLAGS="$RPM_LD_FLAGS"
+make libdir=%{_libdir} bindir=%{_bindir} CFLAGS="$RPM_OPT_FLAGS -flto" LDFLAGS="$RPM_LD_FLAGS -flto"
 
 %install
 rm -rf $RPM_BUILD_ROOT
@@ -46,6 +46,11 @@ rm -rf $RPM_BUILD_ROOT
 
 %clean
 rm -rf $RPM_BUILD_ROOT
+
+%check
+%ifarch x86_64
+make abicheck
+%endif
 
 %post libs -p /sbin/ldconfig
 
@@ -69,6 +74,43 @@ rm -rf $RPM_BUILD_ROOT
 %{_libdir}/*.so.*
 
 %changelog
+* Tue Sep 12 2017 Peter Jones <pjones@redhat.com> - 32-1
+- efivar 32
+- lots of coverity fixes; mostly leaked memory and fds and the like
+- fix sysfs pci path formats
+- handle device paths for dns, nfit, bluetooth, wifi, emmc, btle.
+- improved abi checking on releases
+- Fix failures on EDIT_WRITE in edit_variable() when the variable doesn't exist
+- Add efi_guid_ux_capsule_guid to our guids
+- Now with %%check
+
+* Wed Aug 02 2017 Fedora Release Engineering <releng@fedoraproject.org> - 31-3
+- Rebuilt for https://fedoraproject.org/wiki/Fedora_27_Binutils_Mass_Rebuild
+
+* Wed Jul 26 2017 Fedora Release Engineering <releng@fedoraproject.org> - 31-2
+- Rebuilt for https://fedoraproject.org/wiki/Fedora_27_Mass_Rebuild
+
+* Mon Mar 06 2017 Peter Jones <pjones@redhat.com> - 31-1
+- Update to efivar 31
+- Work around NVMe EUI sysfs change
+- Provide some oldish version strings we should have kept.
+- lots of overflow checking on our pointer math in dp parsing
+- fix major/minor device number handling in the linux code
+- Do better formatting checks for MBR partitions
+- Fixes for gcc 7
+
+* Fri Feb 10 2017 Fedora Release Engineering <releng@fedoraproject.org> - 30-5
+- Rebuilt for https://fedoraproject.org/wiki/Fedora_26_Mass_Rebuild
+
+* Mon Oct 17 2016 Peter Jones <pjones@redhat.com> - 30-4
+- Handle NVMe device attributes paths moving around in sysfs.
+
+* Wed Sep 28 2016 Peter Jones <pjones@redhat.com> - 30-3
+- Maybe even provide the *right* old linker deps.
+
+* Tue Sep 27 2016 Peter Jones <pjones@redhat.com> - 30-2
+- Try not to screw up SONAME stuff quite so badly.
+
 * Tue Sep 27 2016 Peter Jones <pjones@redhat.com> - 30-1
 - Fix efidp_*() functions with __pure__ that break with some optimizations
 - Fix NVMe EUI parsing.
