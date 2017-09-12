@@ -26,4 +26,16 @@
 [suppress_variable]
   soname_regexp = ^libefivar\\.so\\.[[:digit:]]+
   symbol_name_regexp = ^efi_guid_[[:alnum:]_]+$
-  change_kind = add-variable
+  change_kind = added-variable
+
+# allow new functions that are prefixed correctly
+[suppress_function]
+  soname_regexp = libefi(var|boot)\\.so\\..*
+  symbol_name_regexp = ^(efidp_|efi_)_[[:alnum:]_]+
+  change_kind = added-function
+
+# allow new variables that are prefixed correctly
+[suppress_variable]
+  soname_regexp = libefi(var|boot)\\.so\\..*
+  symbol_name_regexp = ^(efidp_|efi_)_[[:alnum:]_]+
+  change_kind = added-variable
