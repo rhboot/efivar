@@ -62,12 +62,10 @@ libefivar.so : MAP=libefivar.map
 
 efivar : efivar.c | libefivar.so
 efivar : LIBS=efivar dl
-efivar : PKGS=popt
 
 efivar-static : efivar.c $(patsubst %.o,%.static.o,$(LIBEFIVAR_OBJECTS))
 efivar-static : | $(GENERATED_SOURCES)
 efivar-static : LIBS=dl
-efivar-static : PKGS=popt
 
 libefiboot.a : $(patsubst %.o,%.static.o,$(LIBEFIBOOT_OBJECTS))
 
