@@ -34,7 +34,7 @@ _format_acpi_adr(char *buf, size_t size,
 	ssize_t off = 0;
 	format(buf, size, off, "AcpiAdr", "AcpiAdr(");
 	format_array(buf, size, off, "AcpiAdr", "0x%"PRIx32,
-			__typeof__(dp->acpi_adr.adr[0]), dp->acpi_adr.adr,
+		     __typeof__(dp->acpi_adr.adr[0]), dp->acpi_adr.adr,
 		     (efidp_node_size(dp)-4) / sizeof (dp->acpi_adr.adr[0]));
 	format(buf, size, off, "AcpiAdr", ")");
 	return off;
