@@ -65,7 +65,7 @@ generic_get_next_variable_name(const char *path, efi_guid_t **guid, char **name)
 
 		int fd = dirfd(dir);
 		if (fd < 0) {
-			typeof(errno) errno_value = errno;
+			__typeof__(errno) errno_value = errno;
 			efi_error("dirfd failed");
 			closedir(dir);
 			errno = errno_value;
