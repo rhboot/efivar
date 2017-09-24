@@ -25,7 +25,7 @@ ABIDIFF := abidiff
 
 PKGS	=
 
-clang_cflags = -D_GNU_SOURCE
+clang_cflags = -D_GNU_SOURCE -Wno-address-of-packed-member
 gcc_cflags = -specs=$(TOPDIR)/gcc.specs
 cflags	= $(CFLAGS) -I${TOPDIR}/src/include/ \
 	$(if $(findstring clang,$(CC)),$(clang_cflags),) \
