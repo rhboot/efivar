@@ -78,7 +78,7 @@ typedef struct {
 typedef struct {
 	efidp_header	header;
 	efi_guid_t	vendor_guid;
-	uint8_t		vendor_data[0];
+	uint8_t		vendor_data[];
 } EFIVAR_PACKED efidp_hw_vendor;
 typedef efidp_hw_vendor efidp_vendor_hw;
 #define efidp_make_hw_vendor(buf, size, guid, data, data_size)		\
@@ -541,7 +541,7 @@ typedef struct {
 typedef struct {
 	efidp_header	header;
 	efi_guid_t	vendor_guid;
-	uint8_t		vendor_data[0];
+	uint8_t		vendor_data[];
 } EFIVAR_PACKED efidp_msg_vendor;
 typedef efidp_msg_vendor efidp_vendor_msg;
 #define efidp_make_msg_vendor(buf, size, guid, data, data_size)		\
@@ -614,7 +614,7 @@ typedef struct {
 	uint16_t	options;
 	uint8_t		lun[8];
 	uint16_t	tpgt;
-	uint8_t		target_name[0];
+	uint8_t		target_name[];
 } EFIVAR_PACKED efidp_iscsi;
 
 /* options bits 0:1 */
@@ -654,7 +654,7 @@ extern ssize_t efidp_make_nvme(uint8_t *buf, ssize_t size,
 #define EFIDP_MSG_URI		0x18
 typedef struct {
 	efidp_header	header;
-	uint8_t		uri[0];
+	uint8_t		uri[];
 } EFIVAR_PACKED efidp_uri;
 
 #define EFIDP_MSG_UFS		0x19
@@ -743,7 +743,7 @@ typedef struct {
 typedef struct {
 	efidp_header	header;
 	efi_guid_t	vendor_guid;
-	uint8_t		vendor_data[0];
+	uint8_t		vendor_data[];
 } EFIVAR_PACKED efidp_media_vendor;
 typedef efidp_media_vendor efidp_vendor_media;
 #define efidp_make_media_vendor(buf, size, guid, data, data_size)	\
@@ -766,13 +766,13 @@ typedef struct {
 #define EFIDP_MEDIA_FIRMWARE_FILE	0x6
 typedef struct {
 	efidp_header	header;
-	uint8_t		pi_info[0];
+	uint8_t		pi_info[];
 } EFIVAR_PACKED efidp_firmware_file;
 
 #define EFIDP_MEDIA_FIRMWARE_VOLUME	0x7
 typedef struct {
 	efidp_header	header;
-	uint8_t		pi_info[0];
+	uint8_t		pi_info[];
 } EFIVAR_PACKED efidp_firmware_volume;
 
 #define EFIDP_MEDIA_RELATIVE_OFFSET	0x8
@@ -807,7 +807,7 @@ typedef struct {
 	efidp_header	header;
 	uint16_t	device_type;
 	uint16_t	status;
-	uint8_t		description[0];
+	uint8_t		description[];
 } EFIVAR_PACKED efidp_bios_boot;
 
 #define EFIDP_BIOS_BOOT_DEVICE_TYPE_FLOPPY	1
@@ -890,16 +890,24 @@ extern int efidp_append_node(const_efidp dp, const_efidp dn, efidp *out);
 extern int efidp_append_instance(const_efidp dp, const_efidp dpi, efidp *out);
 
 /*
- * GCC complains that we check for null if we have a nonnull attribute, even
+ * GCC/Clang complains that we check for null if we have a nonnull attribute, even
  * though older or other compilers might just ignore that attribute if they
  * don't support it.  Ugh.
  */
-#if defined(__GNUC__) && __GNUC__ >= 6
+#if defined(__clang__)
+#pragma clang diagnostic ignored "-Wpointer-bool-conversion"
+#elif defined(__GNUC__) && __GNUC__ >= 6
 #pragma GCC diagnostic ignored "-Wnonnull-compare"
 #endif
 
+#if defined(__GNUC__) && !defined(__clang__)
+#define ATTR_ARTIFICIAL __attribute__((__artificial__))
+#else
+#define ATTR_ARTIFICIAL
+#endif
+
 static inline int16_t
-__attribute__((__artificial__))
+ATTR_ARTIFICIAL
 __attribute__((__nonnull__(1)))
 __attribute__((__unused__))
 efidp_type(const_efidp dp)
@@ -912,7 +920,7 @@ efidp_type(const_efidp dp)
 }
 
 static inline int16_t
-__attribute__((__artificial__))
+ATTR_ARTIFICIAL
 __attribute__((__nonnull__(1)))
 __attribute__((__unused__))
 efidp_subtype(const_efidp dp)
@@ -925,7 +933,7 @@ efidp_subtype(const_efidp dp)
 }
 
 static inline ssize_t
-__attribute__((__artificial__))
+ATTR_ARTIFICIAL
 __attribute__((__nonnull__(1)))
 __attribute__((__unused__))
 __attribute__((__warn_unused_result__))
@@ -939,7 +947,7 @@ efidp_node_size(const_efidp dn)
 }
 
 static inline int
-__attribute__((__artificial__))
+ATTR_ARTIFICIAL
 __attribute__((__nonnull__(1, 2)))
 __attribute__((__unused__))
 __attribute__((__warn_unused_result__))
@@ -956,7 +964,7 @@ efidp_next_node(const_efidp in, const_efidp *out)
 		return -1;
 
 	/* I love you gcc. */
-	*out = (const_efidp)(const efidp_header *)((uint8_t *)in + sz);
+	*out = (const_efidp)(const efidp_header *)((const uint8_t *)in + sz);
 	if (*out < in) {
 		errno = EINVAL;
 		return -1;
@@ -965,7 +973,7 @@ efidp_next_node(const_efidp in, const_efidp *out)
 }
 
 static inline int
-__attribute__((__artificial__))
+ATTR_ARTIFICIAL
 __attribute__((__nonnull__(1, 2)))
 __attribute__((__unused__))
 __attribute__((__warn_unused_result__))
@@ -993,7 +1001,7 @@ efidp_next_instance(const_efidp in, const_efidp *out)
 }
 
 static inline int
-__attribute__((__artificial__))
+ATTR_ARTIFICIAL
 __attribute__((__nonnull__(1)))
 __attribute__((__unused__))
 __attribute__((__warn_unused_result__))
@@ -1024,7 +1032,7 @@ efidp_is_multiinstance(const_efidp dn)
 }
 
 static inline int
-__attribute__((__artificial__))
+ATTR_ARTIFICIAL
 __attribute__((__nonnull__(1, 2)))
 __attribute__((__unused__))
 __attribute__((__warn_unused_result__))
@@ -1054,7 +1062,7 @@ efidp_get_next_end(const_efidp in, const_efidp *out)
 }
 
 static inline ssize_t
-__attribute__((__artificial__))
+ATTR_ARTIFICIAL
 __attribute__((__nonnull__(1)))
 __attribute__((__unused__))
 __attribute__((__warn_unused_result__))
@@ -1095,7 +1103,7 @@ efidp_size(const_efidp dp)
 }
 
 static inline ssize_t
-__attribute__((__artificial__))
+ATTR_ARTIFICIAL
 __attribute__((__nonnull__(1)))
 __attribute__((__unused__))
 __attribute__((__warn_unused_result__))
@@ -1124,7 +1132,7 @@ efidp_instance_size(const_efidp dpi)
 }
 
 static inline int
-__attribute__((__artificial__))
+ATTR_ARTIFICIAL
 __attribute__((__nonnull__(1)))
 __attribute__((__unused__))
 efidp_is_valid(const_efidp dp, ssize_t limit)
