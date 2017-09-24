@@ -217,12 +217,12 @@ get_sector_size(int filedes)
 	return sector_size;
 }
 
-#define asprintfa(str, fmt, args...)					\
+#define asprintfa(str, fmt, ...)					\
 	({								\
 		char *_tmp = NULL;					\
 		int _rc;						\
 		*(str) = NULL;						\
-		_rc = asprintf((str), (fmt), ## args);			\
+		_rc = asprintf((str), (fmt), ## __VA_ARGS__);			\
 		if (_rc > 0) {						\
 			_tmp = strdupa(*(str));				\
 			if (!_tmp) {					\
@@ -237,7 +237,7 @@ get_sector_size(int filedes)
 		_rc;							\
 	})
 
-#define read_sysfs_file(buf, fmt, args...)				\
+#define read_sysfs_file(buf, fmt, ...)				\
 	({								\
 		int _rc=-1;						\
 		char *_pathname;					\
@@ -246,7 +246,7 @@ get_sector_size(int filedes)
 		int _saved_errno;					\
 									\
 		*(buf) = NULL;						\
-		_rc = asprintfa(&_pathname, (fmt), ## args);		\
+		_rc = asprintfa(&_pathname, (fmt), ## __VA_ARGS__);		\
 		if (_rc >= 0) {						\
 			int _fd;					\
 			_fd = open(_pathname, O_RDONLY);		\
@@ -273,14 +273,14 @@ get_sector_size(int filedes)
 		_rc;							\
 	})
 
-#define sysfs_readlink(linkbuf, fmt, args...)				\
+#define sysfs_readlink(linkbuf, fmt, ...)				\
 	({								\
 		char *_lb = alloca(PATH_MAX+1);				\
 		char *_pn;						\
 		int _rc;						\
 									\
 		*(linkbuf) = NULL;					\
-		_rc = asprintfa(&_pn, fmt, ## args);			\
+		_rc = asprintfa(&_pn, fmt, ## __VA_ARGS__);			\
 		if (_rc >= 0) {						\
 			ssize_t _linksz;				\
 			_linksz = readlink(_pn, _lb, PATH_MAX);		\
