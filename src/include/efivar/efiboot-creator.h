@@ -18,8 +18,8 @@
  * <http://www.gnu.org/licenses/>.
  *
  */
-#ifndef EFIBOOT_CREATOR_H
-#define EFIBOOT_CREATOR_H
+#ifndef _EFIBOOT_CREATOR_H
+#define _EFIBOOT_CREATOR_H
 
 #define EFIBOOT_ABBREV_NONE		0x00000001
 #define EFIBOOT_ABBREV_HD		0x00000002
@@ -57,4 +57,4 @@ extern ssize_t efi_generate_ipv4_device_path(uint8_t *buf, ssize_t size,
 	__attribute__((__nonnull__ (3,4,5,6,7)))
 	__attribute__((__visibility__ ("default")));
 
-#endif /* EFIBOOT_CREATOR_H */
+#endif /* _EFIBOOT_CREATOR_H */
