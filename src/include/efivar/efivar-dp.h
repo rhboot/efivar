@@ -906,7 +906,6 @@ extern int efidp_append_instance(const_efidp dp, const_efidp dpi, efidp *out);
 
 static inline int16_t
 ATTR_ARTIFICIAL
-__attribute__((__nonnull__(1)))
 __attribute__((__unused__))
 efidp_type(const_efidp dp)
 {
@@ -919,7 +918,6 @@ efidp_type(const_efidp dp)
 
 static inline int16_t
 ATTR_ARTIFICIAL
-__attribute__((__nonnull__(1)))
 __attribute__((__unused__))
 efidp_subtype(const_efidp dp)
 {
@@ -932,7 +930,6 @@ efidp_subtype(const_efidp dp)
 
 static inline ssize_t
 ATTR_ARTIFICIAL
-__attribute__((__nonnull__(1)))
 __attribute__((__unused__))
 __attribute__((__warn_unused_result__))
 efidp_node_size(const_efidp dn)
@@ -946,7 +943,6 @@ efidp_node_size(const_efidp dn)
 
 static inline int
 ATTR_ARTIFICIAL
-__attribute__((__nonnull__(1, 2)))
 __attribute__((__unused__))
 __attribute__((__warn_unused_result__))
 efidp_next_node(const_efidp in, const_efidp *out)
@@ -1061,7 +1057,6 @@ efidp_get_next_end(const_efidp in, const_efidp *out)
 
 static inline ssize_t
 ATTR_ARTIFICIAL
-__attribute__((__nonnull__(1)))
 __attribute__((__unused__))
 __attribute__((__warn_unused_result__))
 efidp_size(const_efidp dp)
