@@ -18,8 +18,8 @@
  * <http://www.gnu.org/licenses/>.
  *
  */
-#ifndef _EFIBOOT_LOADOPT_H
-#define _EFIBOOT_LOADOPT_H 1
+#ifndef EFIBOOT_LOADOPT_H
+#define EFIBOOT_LOADOPT_H 1
 
 typedef struct efi_load_option_s efi_load_option;
 
@@ -73,4 +73,4 @@ extern int efi_loadopt_is_valid(efi_load_option *opt, size_t size)
 	__attribute__((__nonnull__ (1)))
 	__attribute__((__visibility__ ("default")));
 
-#endif /* _EFIBOOT_LOADOPT_H */
+#endif /* EFIBOOT_LOADOPT_H */

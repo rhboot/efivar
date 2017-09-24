@@ -16,8 +16,8 @@
  * along with this library.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
-#ifndef _EFIVAR_DP_H
-#define _EFIVAR_DP_H 1
+#ifndef EFIVAR_DP_H
+#define EFIVAR_DP_H 1
 
 #include <limits.h>
 
@@ -1240,4 +1240,4 @@ extern ssize_t efidp_make_generic(uint8_t *buf, ssize_t size, uint8_t type,
 	efidp_make_generic(buf, size, EFIDP_END_TYPE,			\
 			   EFIDP_END_INSTANCE, sizeof (efidp_header));
 
-#endif /* _EFIVAR_DP_H */
+#endif /* EFIVAR_DP_H */
