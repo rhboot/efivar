@@ -901,7 +901,7 @@ extern int efidp_append_instance(const_efidp dp, const_efidp dpi, efidp *out);
 #endif
 
 #if defined(__GNUC__) && !defined(__clang__)
-#define ATTR_ARTIFICIAL ATTR_ARTIFICIAL
+#define ATTR_ARTIFICIAL __attribute__((__artificial__))
 #else
 #define ATTR_ARTIFICIAL
 #endif
