@@ -217,13 +217,13 @@ efi_error_clear(void)
 }
 #endif
 
-#define efi_error_real__(errval, file, function, line, fmt, args...) \
-	efi_error_set(file, function, line, errval, (fmt), ## args)
+#define efi_error_real__(errval, file, function, line, fmt, ...) \
+	efi_error_set(file, function, line, errval, (fmt), ## __VA_ARGS__)
 
-#define efi_error(fmt, args...) \
-	efi_error_real__(errno, __FILE__, __func__, __LINE__, (fmt), ## args)
-#define efi_error_val(errval, msg, args...) \
-	efi_error_real__(errval, __FILE__, __func__, __LINE__, (fmt), ## args)
+#define efi_error(fmt, ...) \
+	efi_error_real__(errno, __FILE__, __func__, __LINE__, (fmt), ## __VA_ARGS__)
+#define efi_error_val(errval, msg, ...) \
+	efi_error_real__(errval, __FILE__, __func__, __LINE__, (fmt), ## __VA_ARGS__)
 
 #include <efivar/efivar-dp.h>
 
