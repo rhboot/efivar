@@ -78,7 +78,7 @@ typedef struct {
 typedef struct {
 	efidp_header	header;
 	efi_guid_t	vendor_guid;
-	uint8_t		vendor_data[0];
+	uint8_t		vendor_data[];
 } EFIVAR_PACKED efidp_hw_vendor;
 typedef efidp_hw_vendor efidp_vendor_hw;
 #define efidp_make_hw_vendor(buf, size, guid, data, data_size)		\
@@ -541,7 +541,7 @@ typedef struct {
 typedef struct {
 	efidp_header	header;
 	efi_guid_t	vendor_guid;
-	uint8_t		vendor_data[0];
+	uint8_t		vendor_data[];
 } EFIVAR_PACKED efidp_msg_vendor;
 typedef efidp_msg_vendor efidp_vendor_msg;
 #define efidp_make_msg_vendor(buf, size, guid, data, data_size)		\
@@ -614,7 +614,7 @@ typedef struct {
 	uint16_t	options;
 	uint8_t		lun[8];
 	uint16_t	tpgt;
-	uint8_t		target_name[0];
+	uint8_t		target_name[];
 } EFIVAR_PACKED efidp_iscsi;
 
 /* options bits 0:1 */
@@ -654,7 +654,7 @@ extern ssize_t efidp_make_nvme(uint8_t *buf, ssize_t size,
 #define EFIDP_MSG_URI		0x18
 typedef struct {
 	efidp_header	header;
-	uint8_t		uri[0];
+	uint8_t		uri[];
 } EFIVAR_PACKED efidp_uri;
 
 #define EFIDP_MSG_UFS		0x19
@@ -743,7 +743,7 @@ typedef struct {
 typedef struct {
 	efidp_header	header;
 	efi_guid_t	vendor_guid;
-	uint8_t		vendor_data[0];
+	uint8_t		vendor_data[];
 } EFIVAR_PACKED efidp_media_vendor;
 typedef efidp_media_vendor efidp_vendor_media;
 #define efidp_make_media_vendor(buf, size, guid, data, data_size)	\
@@ -766,13 +766,13 @@ typedef struct {
 #define EFIDP_MEDIA_FIRMWARE_FILE	0x6
 typedef struct {
 	efidp_header	header;
-	uint8_t		pi_info[0];
+	uint8_t		pi_info[];
 } EFIVAR_PACKED efidp_firmware_file;
 
 #define EFIDP_MEDIA_FIRMWARE_VOLUME	0x7
 typedef struct {
 	efidp_header	header;
-	uint8_t		pi_info[0];
+	uint8_t		pi_info[];
 } EFIVAR_PACKED efidp_firmware_volume;
 
 #define EFIDP_MEDIA_RELATIVE_OFFSET	0x8
@@ -807,7 +807,7 @@ typedef struct {
 	efidp_header	header;
 	uint16_t	device_type;
 	uint16_t	status;
-	uint8_t		description[0];
+	uint8_t		description[];
 } EFIVAR_PACKED efidp_bios_boot;
 
 #define EFIDP_BIOS_BOOT_DEVICE_TYPE_FLOPPY	1
