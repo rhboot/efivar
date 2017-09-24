@@ -26,11 +26,13 @@
 #include <unistd.h>
 
 /*
- * GCC complains that we check for null if we have a nonnull attribute, even
+ * GCC/Clang complains that we check for null if we have a nonnull attribute, even
  * though older or other compilers might just ignore that attribute if they
  * don't support it.  Ugh.
  */
-#if defined(__GNUC__) && __GNUC__ >= 6
+#if defined(__clang__)
+#pragma clang diagnostic ignored "-Wpointer-bool-conversion"
+#elif defined(__GNUC__) && __GNUC__ >= 6
 #pragma GCC diagnostic ignored "-Wnonnull-compare"
 #endif
 
