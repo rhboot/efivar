@@ -69,7 +69,7 @@ efivarfs_probe(void)
 		rc = statfs(path, &buf);
 		if (rc == 0) {
 			char *tmp;
-			typeof(buf.f_type) magic = EFIVARFS_MAGIC;
+			__typeof__(buf.f_type) magic = EFIVARFS_MAGIC;
 			if (!memcmp(&buf.f_type, &magic, sizeof (magic)))
 				return 1;
 			else
@@ -128,7 +128,7 @@ efivarfs_set_fd_immutable(int fd, int immutable)
 static int
 efivarfs_set_immutable(char *path, int immutable)
 {
-	typeof(errno) error = 0;
+	__typeof__(errno) error = 0;
 	int fd;
 	int rc = 0;
 
@@ -158,7 +158,7 @@ efivarfs_get_variable_size(efi_guid_t guid, const char *name, size_t *size)
 	char *path = NULL;
 	int rc = 0;
 	int ret = -1;
-	typeof(errno) errno_value;
+	__typeof__(errno) errno_value;
 
 	rc = make_efivarfs_path(&path, guid, name);
 	if (rc < 0) {
@@ -212,7 +212,7 @@ static int
 efivarfs_get_variable(efi_guid_t guid, const char *name, uint8_t **data,
 		  size_t *data_size, uint32_t *attributes)
 {
-	typeof(errno) errno_value;
+	__typeof__(errno) errno_value;
 	int ret = -1;
 	size_t size = 0;
 	uint32_t ret_attributes = 0;
@@ -276,7 +276,7 @@ efivarfs_del_variable(efi_guid_t guid, const char *name)
 	if (rc < 0)
 		efi_error("unlink failed");
 
-	typeof(errno) errno_value = errno;
+	__typeof__(errno) errno_value = errno;
 	free(path);
 	errno = errno_value;
 
@@ -288,7 +288,7 @@ efivarfs_set_variable(efi_guid_t guid, const char *name, uint8_t *data,
 		      size_t data_size, uint32_t attributes, mode_t mode)
 {
 	uint8_t buf[sizeof (attributes) + data_size];
-	typeof(errno) errno_value;
+	__typeof__(errno) errno_value;
 	int ret = -1;
 
 	if (strlen(name) > 1024) {
