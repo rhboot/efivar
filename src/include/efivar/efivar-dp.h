@@ -962,7 +962,7 @@ efidp_next_node(const_efidp in, const_efidp *out)
 		return -1;
 
 	/* I love you gcc. */
-	*out = (const_efidp)(const efidp_header *)((uint8_t *)in + sz);
+	*out = (const_efidp)(const efidp_header *)((const uint8_t *)in + sz);
 	if (*out < in) {
 		errno = EINVAL;
 		return -1;
