@@ -35,7 +35,7 @@ format_ipv4_addr_helper(char *buf, size_t size, const char *dp_type,
 	format(buf, size, off, dp_type, "%hhu.%hhu.%hhu.%hhu",
 	       ipaddr[0], ipaddr[1], ipaddr[2], ipaddr[3]);
 	if (port > 0)
-		format(buf, size, off, dp_type, ":%hu", port);
+		format(buf, size, off, dp_type, ":%hu", (uint16_t)port);
 	return off;
 }
 
@@ -102,7 +102,7 @@ format_ipv6_addr_helper(char *buf, size_t size, const char *dp_type,
 
 	format(buf, size, off, "dp_type", "]");
 	if (port >= 0)
-		format(buf, size, off, "Ipv6", ":%hu", port);
+		format(buf, size, off, "Ipv6", ":%hu", (uint16_t)port);
 
 	return off;
 }
