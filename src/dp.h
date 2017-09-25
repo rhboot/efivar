@@ -131,10 +131,13 @@ format_vendor_helper(char *buf, size_t size, char *label, const_efidp dp)
 	format_helper(format_vendor_helper, buf, size, off, label, dp)
 
 #define format_ucs2(buf, size, off, dp_type, str, len) ({		\
-		uint16_t _ucs2buf[(len)];				\
-		memset(_ucs2buf, '\0', sizeof (_ucs2buf));		\
-		memcpy(_ucs2buf, str, sizeof (_ucs2buf)			\
-				      - sizeof (_ucs2buf[0]));		\
+		uint16_t *_ucs2buf;					\
+		uint32_t _ucs2size = sizeof(uint16_t) * len;		\
+		_ucs2buf = alloca(_ucs2size);				\
+		if (_ucs2buf == NULL)					\
+			return -1;					\
+		memset(_ucs2buf, '\0', _ucs2size);			\
+		memcpy(_ucs2buf, str, _ucs2size - sizeof(uint16_t));	\
 		unsigned char *_asciibuf;				\
 		_asciibuf = ucs2_to_utf8(_ucs2buf, (len) - 1);		\
 		if (_asciibuf == NULL)					\
