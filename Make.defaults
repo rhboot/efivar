@@ -40,3 +40,7 @@ ccldflags = $(cflags) -L. $(CCLDFLAGS) $(LDFLAGS) \
 	$(call pkg-config-ccldflags)
 SOFLAGS=-shared
 LDLIBS=$(foreach lib,$(LIBS),-l$(lib)) $(call pkg-config-ldlibs)
+
+COMMIT_ID=$(shell git log -1 --pretty=%H 2>/dev/null || echo master)
+
+NAME=efivar
