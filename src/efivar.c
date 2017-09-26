@@ -313,6 +313,11 @@ prepare_data(const char *filename, void **data, size_t *data_size)
 	struct stat statbuf;
 	int rc;
 
+	if (filename == NULL) {
+		fprintf(stderr, "Input filename must be provided.\n");
+		exit(1);
+	}
+
 	fd = open(filename, O_RDONLY);
 	if (fd < 0)
 		goto err;
