@@ -26,8 +26,16 @@ cov-upload :
 		echo Coverity output is in $(COV_FILE) ;		\
 	fi
 
+coverity : | cov-test
 coverity : cov-file cov-upload
 
 clean : | cov-clean
 
-.PHONY : coverity cov-upload cov-clean cov-file
+COV_BUILD ?= $(shell x=$$(which --skip-alias --skip-functions cov-build 2>/dev/null) ; [ -n "$$x" ] && echo 1)
+ifeq ($(COV_BUILD),)
+	COV_BUILD_ERROR = $(error cov-build not found)
+endif
+
+cov-test : ; $(COV_BUILD_ERROR)
+
+.PHONY : coverity cov-upload cov-clean cov-file cov-test
