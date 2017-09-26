@@ -302,18 +302,21 @@ vars_get_variable(efi_guid_t guid, const char *name, uint8_t **data,
 	int ret = -1;
 	uint8_t *buf = NULL;
 	size_t bufsize = -1;
-	char *path;
-	int rc = asprintf(&path, "%s%s-" GUID_FORMAT "/raw_var",
+	char *path = NULL;
+	int rc;
+	int fd = -1;
+
+	rc = asprintf(&path, "%s%s-" GUID_FORMAT "/raw_var",
 			  get_vars_path(),
 			  name, guid.a, guid.b, guid.c, bswap_16(guid.d),
 			  guid.e[0], guid.e[1], guid.e[2],
 			  guid.e[3], guid.e[4], guid.e[5]);
 	if (rc < 0) {
 		efi_error("asprintf failed");
-		return -1;
+		goto err;
 	}
 
-	int fd = open(path, O_RDONLY);
+	fd = open(path, O_RDONLY);
 	if (fd < 0) {
 		efi_error("open(%s, O_RDONLY) failed", path);
 		goto err;
@@ -389,22 +392,24 @@ vars_del_variable(efi_guid_t guid, const char *name)
 {
 	int errno_value;
 	int ret = -1;
-	char *path;
-	int rc = asprintf(&path, "%s%s-" GUID_FORMAT "/raw_var",
+	char *path = NULL;
+	int rc;
+	int fd = -1;
+	uint8_t *buf = NULL;
+	size_t buf_size = 0;
+	char *delvar;
+
+	rc = asprintf(&path, "%s%s-" GUID_FORMAT "/raw_var",
 			  get_vars_path(),
 			  name, guid.a, guid.b, guid.c, bswap_16(guid.d),
 			  guid.e[0], guid.e[1], guid.e[2],
 			  guid.e[3], guid.e[4], guid.e[5]);
 	if (rc < 0) {
 		efi_error("asprintf failed");
-		return -1;
+		goto err;
 	}
 
-	uint8_t *buf = NULL;
-	size_t buf_size = 0;
-	char *delvar;
-
-	int fd = open(path, O_RDONLY);
+	fd = open(path, O_RDONLY);
 	if (fd < 0) {
 		efi_error("open(%s, O_RDONLY) failed", path);
 		goto err;
@@ -529,6 +534,7 @@ vars_set_variable(efi_guid_t guid, const char *name, uint8_t *data,
 	int errno_value;
 	size_t len;
 	int ret = -1;
+	int fd = -1;
 
 	if (strlen(name) > 1024) {
 		efi_error("variable name size is too large (%zd of 1024)",
@@ -550,11 +556,10 @@ vars_set_variable(efi_guid_t guid, const char *name, uint8_t *data,
 			  guid.e[4], guid.e[5]);
 	if (rc < 0) {
 		efi_error("asprintf failed");
-		return -1;
+		goto err;
 	}
 
 	len = rc;
-	int fd = -1;
 
 	if (!access(path, F_OK)) {
 		rc = efi_del_variable(guid, name);

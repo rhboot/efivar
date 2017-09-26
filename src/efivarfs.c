@@ -217,15 +217,17 @@ efivarfs_get_variable(efi_guid_t guid, const char *name, uint8_t **data,
 	size_t size = 0;
 	uint32_t ret_attributes = 0;
 	uint8_t *ret_data;
+	int fd = -1;
+	char *path = NULL;
+	int rc;
 
-	char *path;
-	int rc = make_efivarfs_path(&path, guid, name);
+	rc = make_efivarfs_path(&path, guid, name);
 	if (rc < 0) {
 		efi_error("make_efivarfs_path failed");
-		return -1;
+		goto err;
 	}
 
-	int fd = open(path, O_RDONLY);
+	fd = open(path, O_RDONLY);
 	if (fd < 0) {
 		efi_error("open(%s)", path);
 		goto err;
