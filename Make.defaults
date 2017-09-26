@@ -26,9 +26,9 @@ ABIDIFF := abidiff
 
 PKGS	=
 
-clang_cflags = -D_GNU_SOURCE -Wno-address-of-packed-member
+clang_cflags = -D_GNU_SOURCE -std=gnu11 -Wno-address-of-packed-member
 gcc_cflags = -specs=$(TOPDIR)/gcc.specs
-cflags	= $(CFLAGS) -std=c11 -I${TOPDIR}/src/include/ \
+cflags	= $(CFLAGS) -I${TOPDIR}/src/include/ \
 	$(if $(findstring clang,$(CC)),$(clang_cflags),) \
 	$(if $(findstring gcc,$(CC)),$(gcc_cflags),) \
 	$(call pkg-config-cflags)
