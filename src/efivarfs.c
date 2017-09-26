@@ -292,6 +292,11 @@ efivarfs_set_variable(efi_guid_t guid, const char *name, uint8_t *data,
 	uint8_t buf[sizeof (attributes) + data_size];
 	__typeof__(errno) errno_value;
 	int ret = -1;
+	char *path = NULL;
+	int fd = -1;
+	int flags = 0;
+	char *flagstr;
+	int rc;
 
 	if (strlen(name) > 1024) {
 		efi_error("name too long (%zd of 1024)", strlen(name));
@@ -299,37 +304,45 @@ efivarfs_set_variable(efi_guid_t guid, const char *name, uint8_t *data,
 		return -1;
 	}
 
-	char *path;
-	int rc = make_efivarfs_path(&path, guid, name);
+	rc = make_efivarfs_path(&path, guid, name);
 	if (rc < 0) {
 		efi_error("make_efivarfs_path failed");
-		return -1;
-	}
-
-	int fd = -1;
-
-	if (!access(path, F_OK) && !(attributes & EFI_VARIABLE_APPEND_WRITE)) {
-		rc = efi_del_variable(guid, name);
-		if (rc < 0) {
-			efi_error("efi_del_variable failed");
-			goto err;
-		}
-	}
-
-	fd = open(path, O_WRONLY|O_CREAT, mode);
-	if (fd < 0) {
-		efi_error("open(%s, O_WRONLY|O_CREAT, mode) failed", path);
 		goto err;
 	}
+
+	if (attributes & EFI_VARIABLE_APPEND_WRITE) {
+		flags = O_APPEND|O_CREAT;
+		flagstr = "O_APPEND|O_CREAT";
+	} else {
+		flags = O_WRONLY|O_CREAT|O_EXCL;
+		flagstr = "O_WRONLY|O_CREAT|O_EXCL";
+	}
+
+	fd = open(path, flags, mode);
+	if (fd < 0) {
+		if (flags == (O_WRONLY|O_CREAT|O_EXCL)) {
+			rc = efi_del_variable(guid, name);
+			if (rc < 0) {
+				efi_error("efi_del_variable failed");
+				goto err;
+			}
+			fd = open(path, flags, mode);
+		}
+	}
+	if (fd < 0) {
+		efi_error("open(%s, %s, %0o) failed", path, flagstr, mode);
+		goto err;
+	}
+
 	efivarfs_set_fd_immutable(fd, 0);
 
 	memcpy(buf, &attributes, sizeof (attributes));
 	memcpy(buf + sizeof (attributes), data, data_size);
 #if 0
-		errno = ENOSPC;
-		rc = -1;
+	errno = ENOSPC;
+	rc = -1;
 #else
-		rc = write(fd, buf, sizeof (attributes) + data_size);
+	rc = write(fd, buf, sizeof (attributes) + data_size);
 #endif
 	if (rc >= 0) {
 		ret = 0;
