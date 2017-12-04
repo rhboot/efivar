@@ -152,25 +152,16 @@ main(int argc, char *argv[])
 	fprintf(symout, "#include <efivar/efivar.h>\n");
 	fprintf(symout, "#include <endian.h>\n");
 	fprintf(symout, """\n\
-#ifndef __bswap_constant_16\n\
-#define __bswap_constant_16(x)\\\n\
-	((unsigned short int) ((((x) >> 8) & 0xff) | (((x) & 0xff) << 8)))\n\
-#endif\n\
-#ifndef __bswap_constant_32\n\
-#define __bswap_constant_32(x)\\\n\
-	((((x) & 0xff000000) >> 24) | (((x) & 0x00ff0000) >>  8) | \\\n\
-	 (((x) & 0x0000ff00) <<  8) | (((x) & 0x000000ff) << 24))\n\
-#endif\n\
 #if BYTE_ORDER == BIG_ENDIAN\n\
 #define cpu_to_be32(n) (n)\n\
 #define cpu_to_be16(n) (n)\n\
-#define cpu_to_le32(n) (__bswap_constant_32(n))\n\
-#define cpu_to_le16(n) (__bswap_constant_16(n))\n\
+#define cpu_to_le32(n) (__builtin_bswap32(n))\n\
+#define cpu_to_le16(n) (__builtin_bswap16(n))\n\
 #else\n\
 #define cpu_to_le32(n) (n)\n\
 #define cpu_to_le16(n) (n)\n\
-#define cpu_to_be32(n) (__bswap_constant_32(n))\n\
-#define cpu_to_be16(n) (__bswap_constant_16(n))\n\
+#define cpu_to_be32(n) (__builtin_bswap32(n))\n\
+#define cpu_to_be16(n) (__builtin_bswap16(n))\n\
 #endif\n\
 """);
 
