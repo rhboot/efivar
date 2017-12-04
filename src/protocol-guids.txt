@@ -1,0 +1,127 @@
+00000000-0000-0000-0000-000000000000	zero	zeroed sentinal guid
+00720665-67eb-4a99-baf7-d3c33a1c7cc9	tcp4sb	TCPv4 Service Binding Protocol
+00ca959f-6cfa-4db1-95bc-e46c47514390	tls	TLS Protocol
+02e800be-8f01-4aa6-946b-d71388e1833f	mtftp4sb	MTFTPv4 Service Binding Protocol
+03c4e603-ac28-11d3-9a2d-0090273fc14d	pxe	PXE Base Code Protocol
+0a8badd5-03b8-4d19-b128-7b8f0edaa596	hiicfgkwd	HII Config Keyword Handler Protocol
+0b64aab0-5429-11d4-9816-00a0c91fadcf	bis	Boot Integrity Services Protocol
+0da55bc9-45f8-4bb4-8719-5224f18a4d45	wmaccon	Wireless Mac Connection Protocol
+0db48a36-4e54-ea9c-9b09-1ea5be3a660b	rest	Rest Protocol
+0faaecb1-226e-4782-aace-7db9bcbf4daf	ftp4sb	FTP 4 Service Binding Protocol
+0fd96974-23aa-4cdc-b9cb-98d17750322a	hiistring	HII String Protocol
+143b7632-b81b-4cb7-abd3-b625a5b9bffe	extscsipassthru	Ext SCSI Pass Thru Protocol
+151c8eae-7f2c-472c-9e54-9828194f6a88	diskio2	Disk IO 2 Protocol
+15853d7c-3ddf-43e0-a1cb-ebf85b8f872c	deferredimg	Deferred Image Load Protocol
+1682fe44-bd7a-4407-b7c7-dca37ca3922d	tlscfg	TLS Configuration Protocol
+1a1241e6-8f19-41a9-bce-e8ef-39e06546	hiiimageex	HII Image Ex Protocol
+1aced566-76ed-4218-bc81-767f1f977a89	netid	Network Interface Identifier Protocol
+1b0fb9bf-699d-4fdd-a7c3-2546681bf63b	wmaccon2	Wireless Mac Connection 2 Protocol
+1d3de7f0-0807-424f-aa69-11a54e19a46f	atapassthru	ATA Pass Thru Protocol
+1e93e633-d65a-459e-ab84-93d9ec266d18	tapeio	Tape IO Protocol
+245dca21-fb7b-11d3-8f01-00a0c969723b	pxecb	PXE Base Code Callback Protocol
+2755590c-6f3c-42fa-9ea4-a3ba543cda25	debug	Debug Support Protocol
+2a4d1adf-21dc-4b81-a42f-8b8ee2380060	smartcard	Smart Card Reader Protocol
+2c8759d5-5c2d-66ef-925f-b66c101957e2	ip6	IPv6 Protocol
+2f707ebb-4a1a-11d4-9a38-0090273fc14d	pcirootbridge	PCI Root bridge IO Protocol
+3152bca5-eade-433d-862e-c01cdc291f44	rng	Random Number Generator Protocol
+31878c87-0b75-11d5-9a4f-0090273fc14d	spointer	Simple Pointer Protocol
+31a6406a-6bdf-4e46-b2a2-ebaa89c40920	hiiimage	HII Image Protocol
+330d4706-f2a0-4e4f-a369-b66fa8d54385	hiicfgaccess	HII Config access Protocol
+387477c1-69c7-11d2-8e39-00a0c969723b	conin	Simple Text Input Protocol
+387477c2-69c7-11d2-8e39-00a0c969723b	conout	Simple Text Output Protocol
+388278d3-7b85-42f0-aba9-fb4bfd69f5ab	btiosb	Bluetooth IO Service Binding Protocol
+3ad9df29-4501-478d-b1f8-7f7fe70e50f3	udp4	UDPv4 Protocol
+3b95aa31-3793-434b-8667-c8070892e05e	ipv4cfg	IPv4 Configuration Protocol
+3e745226-9818-45b6-a2ac-d7cd0e8ba2bc	usb2hc	USB2 HC Protocol Guid
+4006c0c1-fcb3-403e-996d-4a6c8724e06d	loadfile2	Load File 2 Protocol
+41d94cd2-35b6-455a-8258-d4e51334aadd	ip4	IPv4 Protocol
+42881c98-a4f3-44b0-a39d-dfa18667d8cd	hashsb	Hash Service Binding Protocol
+4311edc0-6054-46d4-9e40-893ea952fccc	hiipopup	HII Popup Protocol
+45bcd98e-59ad-4174-9546-344a07485898	supplicantsb	Supplicant Service Binding Protocol
+467313de-4e30-43f1-943e-323f89845db5	btio	Bluetooth IO Protocol
+46e44855-bd60-4ab7-ab0d-a679b9447d77	tcp6	TCPv6 Protocol
+47889fb2-d671-4fab-a0ca-df0e44df70d6	pkcs7verify	PKCS7 Verify Protocol
+4cf5b200-68b8-4ca5-9eec-b23e3f50029a	pciio	PCI IO Protocol
+4f948815-b4b9-43cb-8a33-90e060b34955	udp6	UDPv6 Protocol
+55b1d734-c5e1-49db-9647-b16afbee305b	hash2	Hash 2 Protocol
+56ec3091-954c-11d2-8e3f-00a0c969723b	loadfile	Load File Protocol
+587e72d7-cc50-4f79-8209-ca291fc1a10f	hiicfgrte	HII Config Routing Protocol
+59324945-ec44-4c0d-b1cd-9db139df070c	iscsiname	iSCSI Initiator Name Protocol
+5b446ed1-e30b-4faa-871a-3654eca36080	ipv4cfg2	IPv4 Configuration 2 Protocol
+5d9f96db-e731-4caa-a00d-72e187cd7762	eap	EAP Protocol
+605dab50-e046-4300-abb6-3dd810dd8b23	shim	shim Verify Protocol
+62960cf3-40ff-4263-a77c-dfdebd191b4b	btcfg	Bluetooth Config Protocol
+65530bc7-a359-410f-b010-5aadc7ec2b62	tcp4	TCPv4 Protocol
+66ed4721-3c98-4d3e-81e3-d03dd39a7254	udp6sb	UDPv6 Service Binding Protocol
+6fd5b00c-d426-4283-9887-6cf5cf1cb1fe	usrmgr	User Manager Protocol
+716ef0d9-ff83-4f69-81e9-518bd39a8e70	sdmmcpassthru	SD MMC Pass Thru Protocol
+7671d9d0-53db-4173-aa69-2327f21f0bc7	authinfo	Authentication Info Protocol
+78247c57-63db-4708-99c2-a8b4a9a61f6b	mtftp4	MTFTPv4 Protocol
+7a59b29b-910b-4171-8242-a85a0df25b5b	http	HTTP Protocol
+7ab33a91-ace5-4326-b572-e7ee33d39f16	mnp	Managed Network Protocol
+7f1647c8-b76e-44b2-a565-f70ff19cd19e	dns6sb	DNSv6 Service Binding Protocol
+83f01464-99bd-45e5-b383-af6305d8e9e6	udp4sb	UDPv4 Service Binding Protocol
+849e6875-db35-4df8-b41e-c8f33718073f	hiifontex	HII Font Ex Protocol
+86c77a67-0b97-4633-a187-49104d0685c7	fmp	Firmware Management Protocol
+87c8bad7-0595-4053-8297-dede395f5d5b	dhcp6	DHCPv6 Protocol
+898890e9-84b2-4f3a-8c58-d8577813e0ac	btattr	Bluetooth Attribute Protocol
+8a219718-4ef5-4761-91c8-c0f04bda9e56	dhcp4	DHCPv4 Protocol
+8cf2f62c-bc9b-4821-808d-ec9ec421a1a0	partinfo	Partition Information Protocol
+8d59d32b-c655-4ae9-9b15-f25904992a43	apointer	Absolute Pointer Protocol
+8f76da58-1f99-4275-a4ec-4756515b1ce8	btlecfg	Bluetooth LE Config Protocol
+9042a9de-23dc-4a38-96fb-7aded080516a	gop	Graphics Output Protocol
+932f47e6-2362-4002-803e-3cd54b138f85	scsiio	SCSI IO Protocol
+937fe521-95ae-4d1a-8929-48bcd90ad31a	ip6cfg	IPv6 Configuration Protocol
+952cb795-ff36-48cf-a249-4df486d6ab8d	tlssb	TLS Service Binding Protocol
+95a9a93e-a86e-4926-aaef-9918e772d987	eraseblock	Erase Block Protocol
+964e5b21-6459-11d2-8e39-00a0c969723b	blockio	Block IO Protocol
+964e5b22-6459-11d2-8e39-00a0c969723b	fs	Simple File System Protocol
+9d9a39d8-bd42-4a73-a4d5-8ee94be11380	dhcp4sb	DHCPv4 Service Binding Protocol
+9da34ae0-eaf9-4bbf-8ec3-fd60226c44be	resetnotify	Reset Notification Protocol
+9e23d768-d2f3-4366-9fc3-3a7aba864374	vlan	VLAN Config Protocol
+9e66f251-727c-418c-bfd6-c2b4252818ea	hiiimagedecode	HII Image decoder Protocol
+9fb9a8a1-2f4a-43a6-889c-d0f7b6c47ad5	dhcp6sb	DHCPv6 Service Binding Protocol
+a00490ba-3f1a-4b4c-ab90-4fa99726a1e8	biocrypt	Block IO crypto Protocol
+a19832b9-ac25-11d3-9a2d-0090273fc14d	snp	Simple Network Protocol
+a3979e64-ace8-4ddc-bc07-4d66b8fd0977	ipsec2	IPSec 2 Protocol
+a4c751fc-23ae-4c3e-92e9-4964cf63f349	unicode	Unicode Collation Protocol
+a77b2472-e282-4e9f-a245-c2c0e27bbcc1	blockio2	Block IO 2 Protocol
+ab38a0df-6873-44a9-87e6-d4eb56148449	ramdisk	RAM Disk Protocol
+ae3d28cc-e05b-4fa1-a011-7eb55a3f1401	dns4	DNSv4 Protocol
+afbfde41-2e6e-4262-ba65-62b9236e5495	timestamp	Timestamp Protocol
+b3930571-beba-4fc5-9203-9427242e6a43	bthc	Bluetooth HC Protocol
+b3f79d9a-436c-dc11-b052-cd85df524ce6	regexp	Regular Expression Protocol
+b625b186-e063-44f7-8905-6a74dc6f52b4	dns4sb	DNSv4 Service Binding Protocol
+b81bfab0-0eb3-4cf9-8465-7fa986361664	ufsdevcfg	UFS device Config Protocol
+b9d4c360-bcfb-4f9b-9298-53c136982258	hiiformbrowse2	HII Form Browser 2 Protocol
+ba23b311-343d-11e6-9185-5820b1d65299	httpcb	HTTP Boot Callback Protocol
+bb25cf6f-f1d4-11d2-9a0c-0090273fc1fd	nvmepassthru	NVM Express Pass Thru Protocol
+bb25cf6f-f1d4-11d2-9a0c-0090273fc1fd	serial	Serial IO Protocol
+bdc8e6af-d9bc-4379-a72a-e0c4e75dae1c	httpsb	HTTP Service Binding Protocol
+bf0a78ba-ec29-49cf-a1c9-7ae54eab6a51	mtftp6	MTFTPv6 Protocol
+c51711e7-b4bf-404a-bfb8-0a048ef1ffe4	ip4sb	IPv4 Service Binding Protocol
+c5184932-dba5-46db-a5ba-cc0bda9c1435	hash	Hash Protocol
+c88b0b6d-0dfc-49a7-9c-b449-74b4c3a78	storeagesec	Storage Security Command Protocol
+ca37bc1f-a327-4ae9-828a-8c40d8506a17	dns6	DNSv6 Protocol
+ce345171-ba0b-11d2-8e4f-00a0c969723b	diskio	Disk IO Protocol
+ce5e5929-c7a3-4602-ad9e-c9daf94ebfcf	ipseccfg	IPSec Configuration Protocol
+d40b6b80-97d5-4282-bb1d-223a16918058	nvdimm	NVDIMM Label Protocol
+d8117cfe-94a6-11d4-9a3a-0090273fc14d	decompress	Decompress Protocol
+d9760ff3-3cca-4267-80f9-7527fafa4223	mtftp6sb	MTFTPv6 Service Binding Protocol
+da836f8d-217f-4ca0-99c2-1ca4e16077ea	hash2sb	Hash 2 Service Binding Protocol
+dd9e7534-7762-4698-8c14-f58517a625aa	coninex	Simple Text Input Ex Protocol
+dfb386f7-e100-43ad-9c9a-ed90d08a5e12	ipsec	IPSec Protocol
+e98adb03-b8b9-4af8-ba20-26e9114cbce5	usrcred	User Credential Protocol
+e9ca4775-8657-47fc-97e7-7ed65a084324	hiifont	HII Font Protocol
+eb338826-681b-4295-b356-2b364c757b09	ftp4	FTP 4 Protocol
+eba4e8d2-3858-41ec-a281-2647ba9660d0	debugport	Debugport Protocol
+ec20eb79-6c1a-4664-9a0d-d2e4cc16d664	tcp6sb	TCPv6 Service Binding Protocol
+ec3a978d-7c4e-48fa-9abe-6ad91cc8f811	kms	Key Management Service Protocol
+ec835dd3-fe0f-617b-a621-b350c3e13388	ip6sb	IPv6 Service Binding Protocol
+ef9fc172-a1b2-4693-b327-6d32fc416042	hiidb	HII Database Protocol
+f36ff770-a7e1-42cf-9ed2-56f0f271f44c	mnpsb	Managed Network Service Binding Protocol
+f44c00ee-1f2c-4a00-aa09-1c9f3e0800a3	arpsb	ARP Service Binding Protocol
+f4b427bb-ba21-4f16-bc4e-43e416ab619c	arp	ARP Protocol
+f7102853-7787-4dc2-a8a8-21b5dd05c89b	hiifontglyphgen	HII Font Glyph Generator Protocol
+ffe06bdd-6107-46a6-7bb2-5a9c7ec5275c	acpitable	ACPI Table Protocol
+ffffffff-ffff-ffff-ffff-ffffffffffff	zzignore-this-guid	zzignore-this-guid
