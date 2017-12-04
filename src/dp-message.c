@@ -622,6 +622,11 @@ _format_message_dn(char *buf, size_t size, const_efidp dp)
 		format(buf, size, off, "Dns", ")");
 		break;
 	}
+	case EFIDP_MSG_NVDIMM:
+		format(buf, size, off, "NVDIMM", "NVDIMM(");
+		format_guid(buf, size, off, "NVDIMM", &dp->nvdimm.uuid);
+		format(buf, size, off, "NVDIMM", ")");
+		break;
 	default:
 		format(buf, size, off, "Msg", "Msg(%d,", dp->subtype);
 		format_hex(buf, size, off, "Msg", (uint8_t *)dp+4,
@@ -795,6 +800,26 @@ efidp_make_sas(uint8_t *buf, ssize_t size, uint64_t sas_address)
 		sas->device_topology_info = 0;
 		sas->drive_bay_id = 0;
 		sas->rtp = 0;
+	}
+
+	if (sz < 0)
+		efi_error("efidp_make_generic failed");
+
+	return sz;
+}
+
+ssize_t
+__attribute__((__visibility__ ("default")))
+efidp_make_nvdimm(uint8_t *buf, ssize_t size, efi_guid_t *uuid)
+{
+	efidp_nvdimm *nvdimm = (efidp_nvdimm *)buf;
+	ssize_t req = sizeof (*nvdimm);
+	ssize_t sz;
+
+	sz = efidp_make_generic(buf, size, EFIDP_MESSAGE_TYPE,
+				EFIDP_MSG_NVDIMM, sizeof (*nvdimm));
+	if (size && sz == req) {
+		memcpy(&nvdimm->uuid, uuid, sizeof(*uuid));
 	}
 
 	if (sz < 0)

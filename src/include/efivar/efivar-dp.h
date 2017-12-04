@@ -705,6 +705,13 @@ typedef struct {
 	efi_ip_addr_t	addrs[];
 } EFIVAR_PACKED efidp_dns;
 
+#define EFIDP_MSG_NVDIMM	0x20
+typedef struct {
+	efidp_header	header;
+	efi_guid_t	uuid;
+} EFIVAR_PACKED efidp_nvdimm;
+extern ssize_t efidp_make_nvdimm(uint8_t *buf, ssize_t size, efi_guid_t *uuid);
+
 /* Each media subtype */
 #define EFIDP_MEDIA_HD		0x1
 typedef struct {
@@ -869,6 +876,7 @@ typedef union {
 	efidp_emmc emmc;
 	efidp_btle btle;
 	efidp_dns dns;
+	efidp_nvdimm nvdimm;
 	efidp_hd hd;
 	efidp_cdrom cdrom;
 	efidp_media_vendor media_vendor;

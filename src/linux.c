@@ -77,7 +77,13 @@ set_disk_and_part_name(struct disk_info *info)
 	 * If there's a better way to figure this out, it'd be good, because
 	 * I don't want to have to change this for every new disk type...
 	 */
-	if (!strcmp(penultimate, "block")) {
+	if (!strncmp(ultimate, "pmem", 4)) {
+		if (!info->disk_name) {
+			info->disk_name = strdup(ultimate);
+			if (!info->disk_name)
+				return -1;
+		}
+	} else if (!strcmp(penultimate, "block")) {
 		if (!info->disk_name) {
 			info->disk_name = strdup(ultimate);
 			if (!info->disk_name)
@@ -204,6 +210,27 @@ find_parent_devpath(const char * const child, char **parent)
 	return 0;
 }
 
+/* NVDIMM-P paths */
+static int
+sysfs_test_pmem(const char *buf)
+{
+	char *driverbuf = NULL;
+	int rc;
+
+	rc = sysfs_readlink(&driverbuf,
+			    "/sys/dev/block/%s/device/driver", buf);
+	if (rc < 0 || !driverbuf)
+		return 0;
+
+	char *driver = strrchr(driverbuf, '/');
+	if (!driver || !*driver)
+		return -1;
+	driver+=1;
+	if (!strcmp(driver, "nd_pmem"))
+		return 1;
+	return 0;
+}
+
 static int
 sysfs_test_nvme(const char *buf, ssize_t size)
 {
@@ -326,6 +353,46 @@ sysfs_sata_get_port_info(uint32_t print_id, struct disk_info *info)
 	}
 
 	return 0;
+}
+
+/* pmem12s -> ../devices/LNXSYSTM:00/LNXSYBUS:00/ACPI0012:00/ndbus0/region12/btt12.1/block/pmem12s
+ * dev: 259:0
+ * device -> ../../../btt12.1
+ * device/uuid: 0cee166e-dd56-4bc2-99d2-2544b69025b8
+ * 259:0 -> ../../devices/LNXSYSTM:00/LNXSYBUS:00/ACPI0012:00/ndbus0/region12/btt12.1/block/pmem12s
+ *
+ * pmem12.1s -> ../devices/LNXSYSTM:00/LNXSYBUS:00/ACPI0012:00/ndbus0/region12/btt12.2/block/pmem12.1s
+ * dev: 259:1
+ * device -> ../../../btt12.2
+ * device/uuid: 78d94521-91f7-47db-b3a7-51b764281940
+ * 259:1 -> ../../devices/LNXSYSTM:00/LNXSYBUS:00/ACPI0012:00/ndbus0/region12/btt12.2/block/pmem12.1s
+ *
+ * pmem12.2 -> ../devices/LNXSYSTM:00/LNXSYBUS:00/ACPI0012:00/ndbus0/region12/pfn12.1/block/pmem12.2
+ * dev: 259:2
+ * device -> ../../../pfn12.1
+ * device/uuid: 829c5205-89a5-4581-9819-df7d7754c622
+ * 259:2 -> ../../devices/LNXSYSTM:00/LNXSYBUS:00/ACPI0012:00/ndbus0/region12/pfn12.1/block/pmem12.2
+ */
+static ssize_t
+sysfs_parse_pmem(uint8_t *buf,  ssize_t size, ssize_t *off,
+		 const char *pbuf, ssize_t psize __attribute__((__unused__)),
+		 ssize_t *poff __attribute__((__unused__)),
+		 struct disk_info *info)
+{
+	uint8_t *filebuf = NULL;
+	int rc;
+
+	rc = read_sysfs_file(&filebuf,
+			     "/sys/class/block/%s/device/uuid", pbuf);
+	if ((rc < 0 && errno == ENOENT) || filebuf == NULL)
+		return -1;
+
+	rc = efi_str_to_guid((char *)filebuf, &info->nvdimm_label);
+	if (rc < 0)
+		return -1;
+
+	*off = efidp_make_nvdimm(buf, size, &info->nvdimm_label);
+	return *off;
 }
 
 static ssize_t
@@ -764,44 +831,72 @@ make_blockdev_path(uint8_t *buf, ssize_t size, struct disk_info *info)
 	}
 
 	/*
-	 * the sysfs path basically looks like:
+	 * the sysfs path basically looks like one of:
 	 * ../../devices/pci$PCI_STUFF/$BLOCKDEV_STUFF/block/$DISK/$PART
+	 * ../../devices/LNXSYSTM:00/LNXSYBUS:00/ACPI0012:00/ndbus0/region12/btt12.1/block/pmem12s
 	 */
-	rc = sscanf(linkbuf+loff, "../../devices/%n", &lsz);
-	if (rc != 0)
+	rc = sysfs_test_pmem(linkbuf+loff);
+	if (rc < 0) {
+		efi_error("sysfs_test_pmem(\"%s\") failed", linkbuf+loff);
 		return -1;
-	loff += lsz;
+	}
+	else if (rc > 0) {
+		ssize_t linksz=0;
+		info->interface_type = nd_pmem;
+		rc = sysfs_parse_pmem(buf+off, size?size-off:0, &sz,
+				      linkbuf+loff, PATH_MAX-off,
+				      &linksz, info);
+		if (rc < 0)
+			return -1;
+		loff += linksz;
+		off += sz;
+		found = 1;
+	}
 
-	ssize_t tmplsz=0;
-	sz = make_pci_path(buf, size, linkbuf+loff, &tmplsz);
-	if (sz < 0)
-		return -1;
-	loff += tmplsz;
-	off += sz;
+	if (!found) {
+		rc = sscanf(linkbuf+loff, "../../devices/%n", &lsz);
+		if (rc != 0) {
+			efi_error("scanf(\"%s\", %s, &lz) failed",
+				  linkbuf+loff, "../../devices/%n");
+			return -1;
+		}
+		loff += lsz;
 
-	char *tmppath = strdupa(linkbuf);
-	if (!tmppath)
-		return -1;
-	tmppath[loff] = '\0';
-	rc = sysfs_readlink(&driverbuf, "/sys/dev/block/%s/driver", tmppath);
-	if (rc < 0 || !driverbuf)
-		return -1;
+		ssize_t tmplsz=0;
+		sz = make_pci_path(buf, size, linkbuf+loff, &tmplsz);
+		if (sz < 0)
+			return -1;
+		loff += tmplsz;
+		off += sz;
 
-	char *driver = strrchr(driverbuf, '/');
-	if (!driver || !*driver)
-		return -1;
-	driver+=1;
+		char *tmppath;
+		tmppath = strdupa(linkbuf);
+		if (!tmppath)
+			return -1;
+		tmppath[loff] = '\0';
+		rc = sysfs_readlink(&driverbuf, "/sys/dev/block/%s/driver",
+				    tmppath);
+		if (rc < 0 || !driverbuf)
+			return -1;
 
-	if (!strncmp(driver, "pata_", 5) || !(strcmp(driver, "ata_piix")))
-		info->interface_type = ata;
+		char *driver = strrchr(driverbuf, '/');
+		if (!driver || !*driver)
+			return -1;
+		driver+=1;
 
-	if (info->interface_type == interface_type_unknown ||
-	    info->interface_type == atapi ||
-	    info->interface_type == usb ||
-	    info->interface_type == i1394 ||
-	    info->interface_type == fibre ||
-	    info->interface_type == i2o ||
-	    info->interface_type == md) {
+		if (!strncmp(driver, "pata_", 5) ||
+		    !(strcmp(driver, "ata_piix")))
+			info->interface_type = ata;
+	}
+
+	if (!found &&
+	    (info->interface_type == interface_type_unknown ||
+	     info->interface_type == atapi ||
+	     info->interface_type == usb ||
+	     info->interface_type == i1394 ||
+	     info->interface_type == fibre ||
+	     info->interface_type == i2o ||
+	     info->interface_type == md)) {
 		uint32_t tosser;
 		int tmpoff;
 

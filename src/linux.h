@@ -86,6 +86,7 @@ struct disk_info {
 		struct sas_info sas_info;
 		struct sata_info sata_info;
 		struct nvme_info nvme_info;
+		efi_guid_t nvdimm_label;
 	};
 
 	char *disk_name;
@@ -96,7 +97,7 @@ enum _bus_type {bus_type_unknown, isa, pci};
 enum _interface_type {interface_type_unknown,
 		      ata, atapi, scsi, sata, sas, usb,
 		      i1394, fibre, i2o, md,
-		      virtblk, nvme};
+		      virtblk, nvme, nd_pmem};
 
 extern int eb_disk_info_from_fd(int fd, struct disk_info *info);
 extern int set_disk_and_part_name(struct disk_info *info);

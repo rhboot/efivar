@@ -239,6 +239,9 @@ efi_va_generate_file_device_path_from_esp(uint8_t *buf, ssize_t size,
 		off += sz;
 	}
 
+	if (info.interface_type == nd_pmem)
+		options |= EFIBOOT_ABBREV_FILE;
+
 	if (!(options & EFIBOOT_ABBREV_FILE)) {
 		int disk_fd;
 		int saved_errno;
@@ -362,7 +365,12 @@ efi_generate_file_device_path(uint8_t *buf, ssize_t size,
 
 	va_start(ap, options);
 
-	ret = efi_va_generate_file_device_path_from_esp(buf, size,
+	if (!strcmp(parent_devpath, "/dev/block"))
+		ret = efi_va_generate_file_device_path_from_esp(buf, size,
+							child_devpath, rc,
+							relpath, options, ap);
+	else
+		ret = efi_va_generate_file_device_path_from_esp(buf, size,
 							parent_devpath, rc,
 							relpath, options, ap);
 	saved_errno = errno;
