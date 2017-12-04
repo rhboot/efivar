@@ -220,6 +220,12 @@ efi_va_generate_file_device_path_from_esp(uint8_t *buf, ssize_t size,
 		off = sz;
 	} else if (!(options & EFIBOOT_ABBREV_FILE)
 		   && !(options & EFIBOOT_ABBREV_HD)) {
+		rc = set_disk_and_part_name(&info);
+		if (rc < 0) {
+			efi_error("could not set disk and partition name");
+			goto err;
+		}
+
 		/*
 		 * We're probably on a modern kernel, so just parse the
 		 * symlink from /sys/dev/block/$major:$minor and get it

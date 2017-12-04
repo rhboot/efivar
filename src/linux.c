@@ -129,10 +129,13 @@ get_partition_number(const char *devpath)
 	int ret = -1;
 
 	rc = stat(devpath, &statbuf);
-	if (rc < 0)
+	if (rc < 0) {
+		efi_error("couldn't stat %s\n", devpath);
 		return -1;
+	}
 
 	if (!S_ISBLK(statbuf.st_mode)) {
+		efi_error("%s is not a block device\n", devpath);
 		errno = EINVAL;
 		return -1;
 	}
@@ -141,16 +144,23 @@ get_partition_number(const char *devpath)
 	min = minor(statbuf.st_rdev);
 
 	rc = sysfs_readlink(&linkbuf, "/sys/dev/block/%u:%u", maj, min);
-	if (rc < 0 || !linkbuf)
+	if (rc < 0 || !linkbuf) {
+		efi_error("couldn't get partition number for %u:%u", maj, min);
 		return -1;
+	}
 
 	rc = read_sysfs_file(&partbuf, "/sys/dev/block/%s/partition", linkbuf);
-	if (rc < 0)
-		return -1;
+	if (rc < 0) {
+		efi_error("couldn't get partition number for %s", linkbuf);
+		/* This isn't strictly an error for e.g. nvdimm pmem devices */
+		return 0;
+	}
 
 	rc = sscanf((char *)partbuf, "%d\n", &ret);
-	if (rc != 1)
+	if (rc != 1) {
+		efi_error("couldn't get partition number for %s", partbuf);
 		return -1;
+	}
 	return ret;
 }
 
@@ -747,8 +757,11 @@ make_blockdev_path(uint8_t *buf, ssize_t size, struct disk_info *info)
 
 	rc = sysfs_readlink(&linkbuf, "/sys/dev/block/%"PRIu64":%u",
 			    info->major, info->minor);
-	if (rc < 0 || !linkbuf)
+	if (rc < 0 || !linkbuf) {
+		efi_error("couldn't read link for /sys/dev/block/%"PRIu64":%u",
+			  info->major, info->minor);
 		return -1;
+	}
 
 	/*
 	 * the sysfs path basically looks like:
@@ -920,7 +933,7 @@ eb_disk_info_from_fd(int fd, struct disk_info *info)
 		info->major = major(buf.st_dev);
 		info->minor = minor(buf.st_dev);
 	} else {
-		printf("Cannot stat non-block or non-regular file\n");
+		efi_error("Cannot stat non-block or non-regular file");
 		return 1;
 	}
 
