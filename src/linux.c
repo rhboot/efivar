@@ -839,8 +839,7 @@ make_blockdev_path(uint8_t *buf, ssize_t size, struct disk_info *info)
 	if (rc < 0) {
 		efi_error("sysfs_test_pmem(\"%s\") failed", linkbuf+loff);
 		return -1;
-	}
-	else if (rc > 0) {
+	} else if (rc > 0) {
 		ssize_t linksz=0;
 		info->interface_type = nd_pmem;
 		rc = sysfs_parse_pmem(buf+off, size?size-off:0, &sz,
@@ -1008,6 +1007,7 @@ __attribute__((__visibility__ ("hidden")))
 eb_disk_info_from_fd(int fd, struct disk_info *info)
 {
 	struct stat buf;
+	char *driver;
 	int rc;
 
 	memset(info, 0, sizeof *info);
@@ -1018,7 +1018,7 @@ eb_disk_info_from_fd(int fd, struct disk_info *info)
 	memset(&buf, 0, sizeof(struct stat));
 	rc = fstat(fd, &buf);
 	if (rc == -1) {
-		perror("stat");
+		efi_error("fstat() failed: %m");
 		return 1;
 	}
 	if (S_ISBLK(buf.st_mode)) {
@@ -1094,6 +1094,23 @@ eb_disk_info_from_fd(int fd, struct disk_info *info)
 		info->disknum = 16*(info->major-128) + (info->minor >> 4);
 		info->part    = (info->minor & 0xF);
 		return 0;
+	}
+
+	rc = sysfs_readlink(&driver, "/sys/dev/block/%"PRIu64":%"PRIu32"/device/driver",
+			    info->major, info->minor);
+	if (rc > 0) {
+		char *last = strrchr(driver, '/');
+		if (last) {
+			if (!strcmp(last+1, "nd_pmem")) {
+				info->interface_type = nd_pmem;
+				return 0;
+#if 0 /* dunno */
+			} else if (!strcmp(last+1, "nd_blk")) {
+				/* dunno */
+				info->inteface_type = scsi;
+#endif
+			}
+		}
 	}
 
 	errno = ENOSYS;

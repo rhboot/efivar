@@ -197,6 +197,13 @@ efi_va_generate_file_device_path_from_esp(uint8_t *buf, ssize_t size,
 		goto err;
 	}
 
+	if (info.interface_type == nd_pmem) {
+		options |= EFIBOOT_ABBREV_NONE;
+		options &= ~(EFIBOOT_ABBREV_HD|
+			     EFIBOOT_ABBREV_FILE|
+			     EFIBOOT_ABBREV_EDD10);
+	}
+
 	if (partition > 0)
 		info.part = partition;
 
@@ -239,10 +246,7 @@ efi_va_generate_file_device_path_from_esp(uint8_t *buf, ssize_t size,
 		off += sz;
 	}
 
-	if (info.interface_type == nd_pmem)
-		options |= EFIBOOT_ABBREV_FILE;
-
-	if (!(options & EFIBOOT_ABBREV_FILE)) {
+	if (!(options & EFIBOOT_ABBREV_FILE) && info.part_name) {
 		int disk_fd;
 		int saved_errno;
 		int rc;
