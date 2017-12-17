@@ -1,7 +1,7 @@
-prefix=/usr
-exec_prefix=/usr
+prefix=@@PREFIX@@
+exec_prefix=@@EXEC_PREFIX@@
 libdir=@@LIBDIR@@
-includedir=/usr/include
+includedir=@@INCLUDEDIR@@
 
 Name: efivar
 Description: UEFI Variable Management

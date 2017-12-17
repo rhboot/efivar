@@ -56,6 +56,9 @@ define substitute-version
 	sed						\
 		-e "s,@@VERSION@@,$(VERSION),g"		\
 		-e "s,@@LIBDIR@@,$(libdir),g"		\
+		-e "s,@@PREFIX@@,$(prefix),g"		\
+		-e "s,@@EXEC_PREFIX@@,$(exec_prefix),g"		\
+		-e "s,@@INCLUDEDIR@@,$(includedir),g"		\
 		$(1) > $(2)
 endef
 
