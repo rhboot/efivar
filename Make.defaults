@@ -1,9 +1,10 @@
 prefix	?= /usr/
-libdir	?= $(prefix)/lib64/
+exec_prefix	?= $(prefix)
+libdir	?= $(exec_prefix)/lib64/
 datadir	?= $(prefix)/share/
 mandir	?= $(datadir)/man/
 includedir ?= $(prefix)/include/
-bindir	?= $(prefix)/bin/
+bindir	?= $(exec_prefix)/bin/
 PCDIR	?= $(libdir)/pkgconfig/
 DESTDIR	?=
 
