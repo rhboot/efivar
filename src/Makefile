@@ -47,6 +47,7 @@ include/efivar/efivar-guids.h : makeguids guids.txt
 makeguids : CPPFLAGS+=-DEFIVAR_BUILD_ENVIRONMENT
 makeguids : LIBS=dl
 makeguids : $(MAKEGUIDS_SOURCES)
+makeguids : CCLD=$(CCLD_FOR_BUILD)
 
 guids.o : guids.S | guids.bin names.bin
 
