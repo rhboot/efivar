@@ -21,7 +21,7 @@
 
 # 1 Added variable:
 #
-#  'const __anonymous_struct__ efi_guid_ux_capsule'    {efi_guid_ux_capsule@@LIBEFIVAR_1.32}
+#  'const __anonymous_struct__ efi_guid_ux_capsule'    {efi_guid_ux_capsule@@LIBEFIVAR_1.33}
 #
 [suppress_variable]
   soname_regexp = ^libefivar\\.so\\.[[:digit:]]+
