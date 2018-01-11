@@ -111,10 +111,7 @@ LIBEFIVAR_1.30 {
 		efi_error_clear;
 } LIBEFIVAR_1.29;
 
-LIBEFIVAR_1.32 {
-	global: efi_guid_ux_capsule;
-} LIBEFIVAR_1.30;
-
 LIBEFIVAR_1.33 {
-	global: efidp_make_nvdimm;
-} LIBEFIVAR_1.32;
+	global: efi_guid_ux_capsule;
+		efidp_make_nvdimm;
+} LIBEFIVAR_1.30;
