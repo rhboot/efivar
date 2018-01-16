@@ -391,6 +391,11 @@ sysfs_parse_pmem(uint8_t *buf,  ssize_t size, ssize_t *off,
 	if (rc < 0)
 		return -1;
 
+	/* UUIDs are stored opposite Endian from GUIDs, so our normal GUID
+	 * parser is giving us the wrong thing; swizzle those bytes around.
+	 */
+	swizzle_guid_to_uuid(&info->nvdimm_label);
+
 	*off = efidp_make_nvdimm(buf, size, &info->nvdimm_label);
 	return *off;
 }

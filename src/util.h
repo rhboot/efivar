@@ -21,6 +21,7 @@
 #ifndef EFIVAR_UTIL_H
 #define EFIVAR_UTIL_H 1
 
+#include <endian.h>
 #include <errno.h>
 #include <limits.h>
 #include <stdio.h>
@@ -291,5 +292,19 @@ get_sector_size(int filedes)
 		}							\
 		_rc;							\
 	})
+
+static inline void
+__attribute__((unused))
+swizzle_guid_to_uuid(efi_guid_t *guid)
+{
+	uint32_t *u32;
+	uint16_t *u16;
+
+	u32 = (uint32_t *)guid;
+	u32[0] = __builtin_bswap32(u32[0]);
+	u16 = (uint16_t *)&u32[1];
+	u16[0] = __builtin_bswap16(u16[0]);
+	u16[1] = __builtin_bswap16(u16[1]);
+}
 
 #endif /* EFIVAR_UTIL_H */
