@@ -1,4 +1,4 @@
-<abi-corpus path='libefivar.so' architecture='elf-amd-x86_64' soname='libefivar.so.1'>
+<abi-corpus path='src/libefivar.so' architecture='elf-amd-x86_64' soname='libefivar.so.1'>
   <elf-needed>
     <dependency name='libdl.so.2'/>
     <dependency name='libc.so.6'/>
@@ -53,6 +53,7 @@
     <elf-symbol name='efidp_make_hd' version='libefivar.so.0' is-default-version='yes' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes'/>
     <elf-symbol name='efidp_make_ipv4' version='libefivar.so.0' is-default-version='yes' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes'/>
     <elf-symbol name='efidp_make_mac_addr' version='libefivar.so.0' is-default-version='yes' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes'/>
+    <elf-symbol name='efidp_make_nvdimm' version='LIBEFIVAR_1.33' is-default-version='yes' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes'/>
     <elf-symbol name='efidp_make_nvme' version='libefivar.so.0' is-default-version='yes' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes'/>
     <elf-symbol name='efidp_make_pci' version='libefivar.so.0' is-default-version='yes' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes'/>
     <elf-symbol name='efidp_make_sas' version='libefivar.so.0' is-default-version='yes' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes'/>
@@ -367,6 +368,12 @@
       <parameter type-id='type-id-30' name='total_size' filepath='/home/pjones/devel/github.com/efivar/master/src/dp.c' line='452' column='1'/>
       <return type-id='type-id-30'/>
     </function-decl>
+    <function-decl name='efidp_make_nvdimm' mangled-name='efidp_make_nvdimm' filepath='/home/pjones/devel/github.com/efivar/master/src/dp-message.c' line='813' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='efidp_make_nvdimm@@LIBEFIVAR_1.33'>
+      <parameter type-id='type-id-20' name='buf' filepath='/home/pjones/devel/github.com/efivar/master/src/dp-message.c' line='813' column='1'/>
+      <parameter type-id='type-id-30' name='size' filepath='/home/pjones/devel/github.com/efivar/master/src/dp-message.c' line='813' column='1'/>
+      <parameter type-id='type-id-18' name='uuid' filepath='/home/pjones/devel/github.com/efivar/master/src/dp-message.c' line='813' column='1'/>
+      <return type-id='type-id-30'/>
+    </function-decl>
     <function-decl name='efidp_make_sas' mangled-name='efidp_make_sas' filepath='/home/pjones/devel/github.com/efivar/master/src/dp-message.c' line='787' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='efidp_make_sas@@libefivar.so.0'>
       <parameter type-id='type-id-20' name='buf' filepath='/home/pjones/devel/github.com/efivar/master/src/dp-message.c' line='787' column='1'/>
       <parameter type-id='type-id-30' name='size' filepath='/home/pjones/devel/github.com/efivar/master/src/dp-message.c' line='787' column='1'/>
@@ -615,6 +622,9 @@
       </data-member>
       <data-member access='private'>
         <var-decl name='dns' type-id='type-id-93' visibility='default' filepath='/home/pjones/devel/github.com/efivar/master/src/include/efivar/efivar-dp.h' line='878' column='1'/>
+      </data-member>
+      <data-member access='private'>
+        <var-decl name='nvdimm' type-id='type-id-94' visibility='default' filepath='/home/pjones/devel/github.com/efivar/master/src/include/efivar/efivar-dp.h' line='879' column='1'/>
       </data-member>
       <data-member access='private'>
         <var-decl name='hd' type-id='type-id-95' visibility='default' filepath='/home/pjones/devel/github.com/efivar/master/src/include/efivar/efivar-dp.h' line='880' column='1'/>
@@ -1285,6 +1295,15 @@
     <typedef-decl name='efi_ip_addr_t' type-id='type-id-157' filepath='/home/pjones/devel/github.com/efivar/master/src/include/efivar/efivar.h' line='53' column='1' id='type-id-163'/>
     <array-type-def dimensions='0' type-id='type-id-163' size-in-bits='infinite' id='type-id-156'/>
     <typedef-decl name='efidp_dns' type-id='type-id-155' filepath='/home/pjones/devel/github.com/efivar/master/src/include/efivar/efivar-dp.h' line='706' column='1' id='type-id-93'/>
+    <class-decl name='__anonymous_struct__' size-in-bits='160' is-struct='yes' is-anonymous='yes' naming-typedef-id='type-id-94' visibility='default' filepath='/home/pjones/devel/github.com/efivar/master/src/include/efivar/efivar-dp.h' line='709' column='1' id='type-id-164'>
+      <data-member access='public' layout-offset-in-bits='0'>
+        <var-decl name='header' type-id='type-id-53' visibility='default' filepath='/home/pjones/devel/github.com/efivar/master/src/include/efivar/efivar-dp.h' line='710' column='1'/>
+      </data-member>
+      <data-member access='public' layout-offset-in-bits='32'>
+        <var-decl name='uuid' type-id='type-id-2' visibility='default' filepath='/home/pjones/devel/github.com/efivar/master/src/include/efivar/efivar-dp.h' line='711' column='1'/>
+      </data-member>
+    </class-decl>
+    <typedef-decl name='efidp_nvdimm' type-id='type-id-164' filepath='/home/pjones/devel/github.com/efivar/master/src/include/efivar/efivar-dp.h' line='712' column='1' id='type-id-94'/>
     <class-decl name='__anonymous_struct__' size-in-bits='336' is-struct='yes' is-anonymous='yes' naming-typedef-id='type-id-95' visibility='default' filepath='/home/pjones/devel/github.com/efivar/master/src/include/efivar/efivar-dp.h' line='717' column='1' id='type-id-165'>
       <data-member access='public' layout-offset-in-bits='0'>
         <var-decl name='header' type-id='type-id-53' visibility='default' filepath='/home/pjones/devel/github.com/efivar/master/src/include/efivar/efivar-dp.h' line='718' column='1'/>
