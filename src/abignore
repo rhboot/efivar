@@ -24,18 +24,18 @@
 #  'const __anonymous_struct__ efi_guid_ux_capsule'    {efi_guid_ux_capsule@@LIBEFIVAR_1.32}
 #
 [suppress_variable]
-  soname_regexp = ^libefivar\\.so\\.[[:digit:]]+
+  soname_regexp = libefivar\\.so\\..*
   symbol_name_regexp = ^efi_guid_[[:alnum:]_]+$
   change_kind = added-variable
 
 # allow new functions that are prefixed correctly
 [suppress_function]
-  soname_regexp = libefi(var|boot)\\.so\\..*
-  symbol_name_regexp = ^(efidp_|efi_)_[[:alnum:]_]+
+  soname_regexp = ^libefi(var|boot)\\.so\\..*
+  name_regexp = ^(efidp_|efi_)[[:alnum:]_]+
   change_kind = added-function
 
 # allow new variables that are prefixed correctly
 [suppress_variable]
   soname_regexp = libefi(var|boot)\\.so\\..*
-  symbol_name_regexp = ^(efidp_|efi_)_[[:alnum:]_]+
+  symbol_name_regexp = ^(efidp_|efi_)[[:alnum:]_]+
   change_kind = added-variable
