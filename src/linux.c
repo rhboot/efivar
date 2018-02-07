@@ -941,7 +941,7 @@ make_blockdev_path(uint8_t *buf, ssize_t size, struct disk_info *info)
 		rc = sysfs_test_sata(linkbuf+loff, PATH_MAX-off);
 		if (rc < 0)
 			return -1;
-		if (!found && rc > 0) {
+		else if (rc > 0) {
 			ssize_t linksz=0;
 			rc = sysfs_parse_sata(buf+off, size?size-off:0, &sz,
 					      linkbuf+loff, PATH_MAX-off,
