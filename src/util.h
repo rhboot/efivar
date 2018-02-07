@@ -21,6 +21,7 @@
 #ifndef EFIVAR_UTIL_H
 #define EFIVAR_UTIL_H 1
 
+#include <alloca.h>
 #include <endian.h>
 #include <errno.h>
 #include <limits.h>
@@ -217,6 +218,18 @@ get_sector_size(int filedes)
 		sector_size = 512;
 	return sector_size;
 }
+
+#ifndef strndupa
+#define strndupa(s, l)							\
+       (__extension__ ({						\
+		const char *__in = (s);					\
+                size_t __len = strnlen (__in, (l));			\
+                char *__out = (char *) alloca (__len + 1);		\
+                strncpy(__out, __in, __len);				\
+                __out[__len] = '\0';					\
+                __out;							\
+	}))
+#endif
 
 #define asprintfa(str, fmt, args...)					\
 	({								\
