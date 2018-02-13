@@ -1,4 +1,4 @@
-<abi-corpus path='src/libefivar.so' architecture='elf-amd-x86_64' soname='libefivar.so.1'>
+<abi-corpus path='libefivar.so' architecture='elf-amd-x86_64' soname='libefivar.so.1'>
   <elf-needed>
     <dependency name='libdl.so.2'/>
     <dependency name='libc.so.6'/>

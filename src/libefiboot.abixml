@@ -1,4 +1,4 @@
-<abi-corpus path='src/libefiboot.so' architecture='elf-amd-x86_64' soname='libefiboot.so.1'>
+<abi-corpus path='libefiboot.so' architecture='elf-amd-x86_64' soname='libefiboot.so.1'>
   <elf-needed>
     <dependency name='libefivar.so.1'/>
     <dependency name='libc.so.6'/>
@@ -1087,34 +1087,34 @@
     <qualified-type-def type-id='type-id-20' const='yes' id='type-id-158'/>
     <pointer-type-def type-id='type-id-158' size-in-bits='64' id='type-id-159'/>
     <qualified-type-def type-id='type-id-159' const='yes' id='type-id-160'/>
-    <function-decl name='efi_generate_ipv4_device_path' mangled-name='efi_generate_ipv4_device_path' filepath='/home/pjones/devel/github.com/efivar/master/src/creator.c' line='427' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='efi_generate_ipv4_device_path@@libefiboot.so.0'>
-      <parameter type-id='type-id-19' name='buf' filepath='/home/pjones/devel/github.com/efivar/master/src/creator.c' line='427' column='1'/>
-      <parameter type-id='type-id-15' name='size' filepath='/home/pjones/devel/github.com/efivar/master/src/creator.c' line='427' column='1'/>
-      <parameter type-id='type-id-160' name='ifname' filepath='/home/pjones/devel/github.com/efivar/master/src/creator.c' line='428' column='1'/>
-      <parameter type-id='type-id-160' name='local_addr' filepath='/home/pjones/devel/github.com/efivar/master/src/creator.c' line='429' column='1'/>
-      <parameter type-id='type-id-160' name='remote_addr' filepath='/home/pjones/devel/github.com/efivar/master/src/creator.c' line='430' column='1'/>
-      <parameter type-id='type-id-160' name='gateway_addr' filepath='/home/pjones/devel/github.com/efivar/master/src/creator.c' line='431' column='1'/>
-      <parameter type-id='type-id-160' name='netmask' filepath='/home/pjones/devel/github.com/efivar/master/src/creator.c' line='432' column='1'/>
-      <parameter type-id='type-id-6' name='local_port' filepath='/home/pjones/devel/github.com/efivar/master/src/creator.c' line='433' column='1'/>
-      <parameter type-id='type-id-6' name='remote_port' filepath='/home/pjones/devel/github.com/efivar/master/src/creator.c' line='434' column='1'/>
-      <parameter type-id='type-id-6' name='protocol' filepath='/home/pjones/devel/github.com/efivar/master/src/creator.c' line='435' column='1'/>
-      <parameter type-id='type-id-18' name='addr_origin' filepath='/home/pjones/devel/github.com/efivar/master/src/creator.c' line='436' column='1'/>
+    <function-decl name='efi_generate_ipv4_device_path' mangled-name='efi_generate_ipv4_device_path' filepath='/home/pjones/devel/github.com/efivar/master/src/creator.c' line='428' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='efi_generate_ipv4_device_path@@libefiboot.so.0'>
+      <parameter type-id='type-id-19' name='buf' filepath='/home/pjones/devel/github.com/efivar/master/src/creator.c' line='428' column='1'/>
+      <parameter type-id='type-id-15' name='size' filepath='/home/pjones/devel/github.com/efivar/master/src/creator.c' line='428' column='1'/>
+      <parameter type-id='type-id-160' name='ifname' filepath='/home/pjones/devel/github.com/efivar/master/src/creator.c' line='429' column='1'/>
+      <parameter type-id='type-id-160' name='local_addr' filepath='/home/pjones/devel/github.com/efivar/master/src/creator.c' line='430' column='1'/>
+      <parameter type-id='type-id-160' name='remote_addr' filepath='/home/pjones/devel/github.com/efivar/master/src/creator.c' line='431' column='1'/>
+      <parameter type-id='type-id-160' name='gateway_addr' filepath='/home/pjones/devel/github.com/efivar/master/src/creator.c' line='432' column='1'/>
+      <parameter type-id='type-id-160' name='netmask' filepath='/home/pjones/devel/github.com/efivar/master/src/creator.c' line='433' column='1'/>
+      <parameter type-id='type-id-6' name='local_port' filepath='/home/pjones/devel/github.com/efivar/master/src/creator.c' line='434' column='1'/>
+      <parameter type-id='type-id-6' name='remote_port' filepath='/home/pjones/devel/github.com/efivar/master/src/creator.c' line='435' column='1'/>
+      <parameter type-id='type-id-6' name='protocol' filepath='/home/pjones/devel/github.com/efivar/master/src/creator.c' line='436' column='1'/>
+      <parameter type-id='type-id-18' name='addr_origin' filepath='/home/pjones/devel/github.com/efivar/master/src/creator.c' line='437' column='1'/>
       <return type-id='type-id-15'/>
     </function-decl>
-    <function-decl name='efi_generate_file_device_path' mangled-name='efi_generate_file_device_path' filepath='/home/pjones/devel/github.com/efivar/master/src/creator.c' line='340' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='efi_generate_file_device_path@@libefiboot.so.0'>
-      <parameter type-id='type-id-19' name='buf' filepath='/home/pjones/devel/github.com/efivar/master/src/creator.c' line='340' column='1'/>
-      <parameter type-id='type-id-15' name='size' filepath='/home/pjones/devel/github.com/efivar/master/src/creator.c' line='340' column='1'/>
-      <parameter type-id='type-id-160' name='filepath' filepath='/home/pjones/devel/github.com/efivar/master/src/creator.c' line='341' column='1'/>
-      <parameter type-id='type-id-5' name='options' filepath='/home/pjones/devel/github.com/efivar/master/src/creator.c' line='342' column='1'/>
+    <function-decl name='efi_generate_file_device_path' mangled-name='efi_generate_file_device_path' filepath='/home/pjones/devel/github.com/efivar/master/src/creator.c' line='341' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='efi_generate_file_device_path@@libefiboot.so.0'>
+      <parameter type-id='type-id-19' name='buf' filepath='/home/pjones/devel/github.com/efivar/master/src/creator.c' line='341' column='1'/>
+      <parameter type-id='type-id-15' name='size' filepath='/home/pjones/devel/github.com/efivar/master/src/creator.c' line='341' column='1'/>
+      <parameter type-id='type-id-160' name='filepath' filepath='/home/pjones/devel/github.com/efivar/master/src/creator.c' line='342' column='1'/>
+      <parameter type-id='type-id-5' name='options' filepath='/home/pjones/devel/github.com/efivar/master/src/creator.c' line='343' column='1'/>
       <return type-id='type-id-15'/>
     </function-decl>
-    <function-decl name='efi_generate_file_device_path_from_esp' mangled-name='efi_generate_file_device_path_from_esp' filepath='/home/pjones/devel/github.com/efivar/master/src/creator.c' line='316' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='efi_generate_file_device_path_from_esp@@libefiboot.so.0'>
-      <parameter type-id='type-id-19' name='buf' filepath='/home/pjones/devel/github.com/efivar/master/src/creator.c' line='316' column='1'/>
-      <parameter type-id='type-id-15' name='size' filepath='/home/pjones/devel/github.com/efivar/master/src/creator.c' line='316' column='1'/>
-      <parameter type-id='type-id-159' name='devpath' filepath='/home/pjones/devel/github.com/efivar/master/src/creator.c' line='317' column='1'/>
-      <parameter type-id='type-id-22' name='partition' filepath='/home/pjones/devel/github.com/efivar/master/src/creator.c' line='317' column='1'/>
-      <parameter type-id='type-id-159' name='relpath' filepath='/home/pjones/devel/github.com/efivar/master/src/creator.c' line='318' column='1'/>
-      <parameter type-id='type-id-5' name='options' filepath='/home/pjones/devel/github.com/efivar/master/src/creator.c' line='319' column='1'/>
+    <function-decl name='efi_generate_file_device_path_from_esp' mangled-name='efi_generate_file_device_path_from_esp' filepath='/home/pjones/devel/github.com/efivar/master/src/creator.c' line='317' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='efi_generate_file_device_path_from_esp@@libefiboot.so.0'>
+      <parameter type-id='type-id-19' name='buf' filepath='/home/pjones/devel/github.com/efivar/master/src/creator.c' line='317' column='1'/>
+      <parameter type-id='type-id-15' name='size' filepath='/home/pjones/devel/github.com/efivar/master/src/creator.c' line='317' column='1'/>
+      <parameter type-id='type-id-159' name='devpath' filepath='/home/pjones/devel/github.com/efivar/master/src/creator.c' line='318' column='1'/>
+      <parameter type-id='type-id-22' name='partition' filepath='/home/pjones/devel/github.com/efivar/master/src/creator.c' line='318' column='1'/>
+      <parameter type-id='type-id-159' name='relpath' filepath='/home/pjones/devel/github.com/efivar/master/src/creator.c' line='319' column='1'/>
+      <parameter type-id='type-id-5' name='options' filepath='/home/pjones/devel/github.com/efivar/master/src/creator.c' line='320' column='1'/>
       <return type-id='type-id-15'/>
     </function-decl>
     <function-decl name='__builtin_memcpy' mangled-name='memcpy' visibility='default' binding='global' size-in-bits='64'>
