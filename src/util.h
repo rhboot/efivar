@@ -25,6 +25,7 @@
 #include <endian.h>
 #include <errno.h>
 #include <limits.h>
+#include <sched.h>
 #include <stdio.h>
 #include <stdarg.h>
 #include <stdlib.h>
@@ -137,6 +138,12 @@ read_file(int fd, uint8_t **buf, size_t *bufsize)
 		 * before doing so. */
 		s = read(fd, p, size - filesize);
 		if (s < 0 && errno == EAGAIN) {
+			/*
+			 * if we got EAGAIN, there's a good chance we've hit
+			 * the kernel rate limiter.  Doing more reads is just
+			 * going to make it worse, so instead, give it a rest.
+			 */
+			sched_yield();
 			continue;
 		} else if (s < 0) {
 			int saved_errno = errno;
