@@ -136,6 +136,11 @@ int do_test(struct test *test)
 	if (rc < 0)
 		report_error(test, ret, rc, "get size test failed: %m\n");
 
+	printf("testing efi_get_variable_exists()\n");
+	rc = efi_get_variable_exists(TEST_GUID, test->name);
+	if (rc < 0)
+		report_error(test, ret, rc, "get exists test failed: %m\n");
+
 	if (datasize != test->size)
 		report_error(test, ret, -1, "get size test failed: wrong size: %zd should be %zd\n", datasize, test->size);
 

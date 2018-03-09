@@ -88,6 +88,8 @@ extern int efi_get_variable_size(efi_guid_t guid, const char *name,
 extern int efi_get_variable_attributes(efi_guid_t, const char *name,
 				       uint32_t *attributes)
 				__attribute__((__nonnull__ (2, 3)));
+extern int efi_get_variable_exists(efi_guid_t, const char *name)
+				__attribute__((__nonnull__ (2)));
 extern int efi_get_variable(efi_guid_t guid, const char *name, uint8_t **data,
 			    size_t *data_size, uint32_t *attributes)
 				__attribute__((__nonnull__ (2, 3, 4, 5)));

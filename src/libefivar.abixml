@@ -16,6 +16,7 @@
     <elf-symbol name='efi_get_variable' version='libefivar.so.0' is-default-version='yes' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes'/>
     <elf-symbol name='efi_get_variable_attributes' version='libefivar.so.0' is-default-version='yes' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes'/>
     <elf-symbol name='efi_get_variable_size' version='libefivar.so.0' is-default-version='yes' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes'/>
+    <elf-symbol name='efi_get_variable_exists' version='libefivar.so.0' is-default-version='yes' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes'/>
     <elf-symbol name='efi_guid_cmp' version='LIBEFIVAR_0.24' is-default-version='yes' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes'/>
     <elf-symbol name='efi_guid_is_empty' version='libefivar.so.0' is-default-version='yes' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes'/>
     <elf-symbol name='efi_guid_to_id_guid' version='libefivar.so.0' is-default-version='yes' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes'/>
@@ -269,6 +270,11 @@
       <parameter type-id='type-id-2' name='guid' filepath='/home/pjones/devel/github.com/efivar/master/src/lib.c' line='181' column='1'/>
       <parameter type-id='type-id-37' name='name' filepath='/home/pjones/devel/github.com/efivar/master/src/lib.c' line='181' column='1'/>
       <parameter type-id='type-id-32' name='size' filepath='/home/pjones/devel/github.com/efivar/master/src/lib.c' line='181' column='1'/>
+      <return type-id='type-id-1'/>
+    </function-decl>
+    <function-decl name='efi_get_variable_exists' mangled-name='efi_get_variable_exists' filepath='/home/pjones/devel/github.com/efivar/master/src/lib.c' line='181' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='efi_get_variable_exists@@libefivar.so.0'>
+      <parameter type-id='type-id-2' name='guid' filepath='/home/pjones/devel/github.com/efivar/master/src/lib.c' line='181' column='1'/>
+      <parameter type-id='type-id-37' name='name' filepath='/home/pjones/devel/github.com/efivar/master/src/lib.c' line='181' column='1'/>
       <return type-id='type-id-1'/>
     </function-decl>
     <pointer-type-def type-id='type-id-4' size-in-bits='64' id='type-id-41'/>
