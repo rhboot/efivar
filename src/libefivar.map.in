@@ -115,3 +115,7 @@ LIBEFIVAR_1.33 {
 	global: efi_guid_ux_capsule;
 		efidp_make_nvdimm;
 } LIBEFIVAR_1.30;
+
+LIBEFIVAR_1.35 {
+	global: efi_get_variable_exists;
+} LIBEFIVAR_1.33;

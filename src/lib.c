@@ -176,6 +176,15 @@ efi_get_variable_attributes(efi_guid_t guid, const char *name,
 }
 
 int
+__attribute__((__nonnull__ (2)))
+__attribute__((__visibility__ ("default")))
+efi_get_variable_exists(efi_guid_t guid, const char *name)
+{
+	uint32_t unused_attributes = 0;
+	return efi_get_variable_attributes(guid, name, &unused_attributes);
+}
+
+int
 __attribute__((__nonnull__ (2, 3)))
 __attribute__((__visibility__ ("default")))
 efi_get_variable_size(efi_guid_t guid, const char *name, size_t *size)
