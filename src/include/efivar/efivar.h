@@ -62,7 +62,7 @@ typedef struct {
 
 #if BYTE_ORDER == LITTLE_ENDIAN
 #define EFI_GUID(a,b,c,d,e0,e1,e2,e3,e4,e5) \
-((efi_guid_t) {(a), (b), (c), bswap_16(d), { (e0), (e1), (e2), (e3), (e4), (e5) }})
+((efi_guid_t) {(a), (b), (c), __builtin_bswap16(d), { (e0), (e1), (e2), (e3), (e4), (e5) }})
 #else
 #define EFI_GUID(a,b,c,d,e0,e1,e2,e3,e4,e5) \
 ((efi_guid_t) {(a), (b), (c), (d), { (e0), (e1), (e2), (e3), (e4), (e5) }})
