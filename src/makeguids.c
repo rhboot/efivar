@@ -55,6 +55,42 @@ cmpnamep(const void *p1, const void *p2)
 	return memcmp(gn1->name, gn2->name, sizeof (gn1->name));
 }
 
+struct guid_aliases {
+	char *name;
+	char *alias;
+};
+
+static struct guid_aliases guid_aliases[] = {
+	{ "efi_guid_empty", "efi_guid_zero" },
+	{ NULL, NULL }
+};
+
+static void make_aliases(FILE *symout, FILE *header,
+			 const char *alias, const uint8_t *guid_data)
+{
+	for (unsigned int i = 0; guid_aliases[i].name != NULL; i++) {
+		if (!strcmp(guid_aliases[i].alias, alias)) {
+			fprintf(symout,
+				"\nconst efi_guid_t\n"
+				"\t__attribute__((__visibility__ (\"default\")))\n"
+				"\t%s = {cpu_to_le32(0x%02x%02x%02x%02x),cpu_to_le16(0x%02x%02x),cpu_to_le16(0x%02x%02x),cpu_to_be16(0x%02x%02x),{0x%02x,0x%02x,0x%02x,0x%02x,0x%02x,0x%02x}};\n\n",
+				guid_aliases[i].name,
+				guid_data[3], guid_data[2],
+				guid_data[1], guid_data[0],
+				guid_data[5], guid_data[4],
+				guid_data[7], guid_data[6],
+				guid_data[8], guid_data[9],
+				guid_data[10], guid_data[11],
+				guid_data[12], guid_data[13],
+				guid_data[14], guid_data[15]);
+
+			fprintf(header,
+				"extern const efi_guid_t %s __attribute__((__visibility__ (\"default\")));\n",
+				guid_aliases[i].name);
+		}
+	}
+}
+
 int
 main(int argc, char *argv[])
 {
@@ -171,29 +207,22 @@ main(int argc, char *argv[])
 		if (!strcmp(outbuf[i].symbol, "efi_guid_zzignore-this-guid"))
 			break;
 
-		if (!strcmp(outbuf[i].symbol, "efi_guid_zero")) {
-			fprintf(symout, "const efi_guid_t\n"
-				"__attribute__((__visibility__ (\"default\")))\n"
-				"efi_guid_empty = {0x0,0x0,0x0,0x0,{0x0,0x0,0x0,0x0,0x0,0x0}};\n\n");
-		}
-		if (!strcmp(outbuf[i].symbol, "efi_guid_zero")) {
-			fprintf(header, "extern const efi_guid_t efi_guid_empty __attribute__((__visibility__ (\"default\")));\n");
-		}
+		make_aliases(symout, header, outbuf[i].symbol, guid_data);
 
 		fprintf(header, "extern const efi_guid_t %s __attribute__((__visibility__ (\"default\")));\n", outbuf[i].symbol);
 
-		fprintf(symout, "const \n"
+		fprintf(symout, "const\n"
 			"__attribute__((__visibility__ (\"default\")))\n"
 			"efi_guid_t %s = {cpu_to_le32(0x%02x%02x%02x%02x),cpu_to_le16(0x%02x%02x),cpu_to_le16(0x%02x%02x),cpu_to_be16(0x%02x%02x),{0x%02x,0x%02x,0x%02x,0x%02x,0x%02x,0x%02x}};\n\n",
 			outbuf[i].symbol,
 			guid_data[3], guid_data[2],
-			  guid_data[1], guid_data[0],
+			guid_data[1], guid_data[0],
 			guid_data[5], guid_data[4],
 			guid_data[7], guid_data[6],
 			guid_data[8], guid_data[9],
 			guid_data[10], guid_data[11],
-			  guid_data[12], guid_data[13],
-			  guid_data[14], guid_data[15]);
+			guid_data[12], guid_data[13],
+			guid_data[14], guid_data[15]);
 	}
 
 	fprintf(header, "\n#endif /* EFIVAR_GUIDS_H */\n");
