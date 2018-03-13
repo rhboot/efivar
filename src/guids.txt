@@ -1,6 +1,6 @@
 00000000-0000-0000-0000-000000000000	zero	zeroed sentinal guid
 093e0fae-a6c4-4f50-9f1b-d41e2b89c19a	sha512	SHA-512
-0abba7dc-e516-4167-bbf5-4d9d1c739416	redhat	Red Hat
+0abba7dc-e516-4167-bbf5-4d9d1c739416	fwupdate	Linux Firmware Update Tool
 0b6e5233-a65c-44c9-9407-d9ab83bfc8bd	sha224	SHA-224
 126a762d-5758-4fca-8531-201a7f57f850	lenovo_boot_menu	Lenovo Boot Menu
 3b8c8162-188c-46a4-aec9-be43f1d65697	ux_capsule	Firmware update localized text image

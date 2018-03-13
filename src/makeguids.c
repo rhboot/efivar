@@ -62,6 +62,7 @@ struct guid_aliases {
 
 static struct guid_aliases guid_aliases[] = {
 	{ "efi_guid_empty", "efi_guid_zero" },
+	{ "efi_guid_redhat", "efi_guid_fwupdate" },
 	{ NULL, NULL }
 };
 
