@@ -490,3 +490,6 @@ int main(int argc, char *argv[])
 
 	return 0;
 }
+
+/* make the build fail. */
+foo
