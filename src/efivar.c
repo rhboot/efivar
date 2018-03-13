@@ -166,7 +166,7 @@ bad_name:
 		fprintf(stderr, "efivar: %m\n");
 		exit(1);
 	}
-	strncpy(name_buf, guid_name + name_pos, name_len);
+	strcpy(name_buf, guid_name + name_pos);
 	*name = name_buf;
 }
 
