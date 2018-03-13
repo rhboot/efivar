@@ -19,5 +19,5 @@ before_script:
   - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then docker build -t withgit . ; fi
 
 script:
-  - if [[ "$TRAVIS_OS_NAME" == "linux" ]]&& then docker run --volume $HOME/.ccache:/root/.ccache withgit /bin/sh -c "cd ${TRAVIS_BUILD_DIR} && git remote -v && git status && git checkout -f ${TRAVIS_PULL_REQUEST_SHA} && make clean all"
+  - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then docker run --volume $HOME/.ccache:/root/.ccache withgit /bin/sh -c "cd /root && ./travis-build.sh --branch $TRAVIS_BRANCH --repo $TRAVIS_REPO_SLUG --remote $TRAVIS_PULL_REQUEST_SLUG --pr-sha $TRAVIS_PULL_REQUEST_SHA" ; fi
   - ccache -s
