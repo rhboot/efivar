@@ -1,5 +1,8 @@
 language: c
 cache: ccache
+branches:
+  except:
+    - travis
 
 matrix:
  include:
@@ -8,13 +11,16 @@ matrix:
      services: docker
 
 before_install:
+  - set
   - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then docker pull vathpela/efivar-travis-rawhide:v1 ; fi
 
 before_script:
+  - set
   - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then echo FROM vathpela/efivar-travis-rawhide:v1 > Dockerfile ; fi
   - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then echo ADD . /root >> Dockerfile ; fi
   - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then docker build -t withgit . ; fi
 
 script:
+  - set
   - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then docker run --volume $HOME/.ccache:/root/.ccache withgit /bin/sh -c "cd /root && ./test/scripts/build-travis-deps.sh" ; fi
   - ccache -s
