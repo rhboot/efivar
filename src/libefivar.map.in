@@ -5,6 +5,7 @@ libefivar.so.0 {
 		efi_get_next_variable_name;
 		efi_get_variable;
 		efi_get_variable_attributes;
+		efi_get_variable_exists;
 		efi_get_variable_size;
 		efi_guid_is_empty;
 		efi_guid_to_id_guid;
