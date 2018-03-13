@@ -22,5 +22,5 @@ before_script:
 
 script:
   - set
-  - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then docker run --volume $HOME/.ccache:/root/.ccache withgit /bin/sh -c "cd /root && ./test/scripts/build-travis-deps.sh" ; fi
+  - if [[ "$TRAVIS_OS_NAME" == "linux" ]]&& then docker run --volume $HOME/.ccache:/root/.ccache withgit /bin/sh -c "cd ${TRAVIS_BUILD_DIR} && git remote -v && git status && git checkout -f ${TRAVIS_PULL_REQUEST_SHA} && make clean all"
   - ccache -s
