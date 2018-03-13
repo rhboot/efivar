@@ -53,7 +53,9 @@ while [[ $# > 0 ]] ; do
     shift
 done
 
-git remote add remote https://github.com/${remote_repo}
-git fetch remote
-git checkout -f ${commit_id}
+if [[ -n "${remote_repo}" ]] ; then
+    git remote add remote https://github.com/${remote_repo}
+    git fetch remote
+    git checkout -f ${commit_id}
+fi
 make clean all
