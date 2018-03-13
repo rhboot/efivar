@@ -1,110 +1,20 @@
-sudo: required
 language: c
-install: true
-script: make all
+cache: ccache
 
 matrix:
-  include:
-    - compiler: gcc
-      env:
-        - COMPILER=gcc-4.9
-        - CROSS_COMPILE=x86_64-linux-gnu-
-      dist: xenial
-      addons:
-        apt:
-          sources:
-            - ubuntu-toolchain-r-test
-          packages:
-            - gcc-4.9
-            - binutils
-      before_install:
-        - sudo add-apt-repository ppa:ubuntu-toolchain-r/test -y
-        - sudo apt-get update -qq
-        - sudo apt-get install gcc-4.9 binutils libpopt-dev pkg-config
-        - test -n $CC && unset CC
-    - compiler: gcc
-      env:
-        - COMPILER=gcc-5
-        - CROSS_COMPILE=x86_64-linux-gnu-
-      dist: xenial
-      addons:
-        apt:
-          sources:
-            - ubuntu-toolchain-r-test
-          packages:
-            - gcc-5
-            - binutils
-      before_install:
-        - sudo add-apt-repository ppa:ubuntu-toolchain-r/test -y
-        - sudo apt-get update -qq
-        - sudo apt-get install gcc-5 binutils libpopt-dev pkg-config
-        - test -n $CC && unset CC
-    - compiler: gcc
-      env:
-        - COMPILER=gcc-6
-        - CROSS_COMPILE=x86_64-linux-gnu-
-      dist: xenial
-      addons:
-        apt:
-          sources:
-            - ubuntu-toolchain-r-test
-          packages:
-            - gcc-6
-            - binutils
-      before_install:
-        - sudo add-apt-repository ppa:ubuntu-toolchain-r/test -y
-        - sudo apt-get update -qq
-        - sudo apt-get install gcc-6 binutils libpopt-dev pkg-config
-        - test -n $CC && unset CC
-#    - compiler: gcc
-#      env:
-#        - COMPILER=gcc-7
-#        - CROSS_COMPILE=x86_64-linux-gnu-
-#      dist: zesty
-#      addons:
-#        apt:
-#          sources:
-#            - ubuntu-toolchain-r-test
-#          packages:
-#            - gcc-7
-#            - binutils
-#      before_install:
-#        - sudo add-apt-repository ppa:ubuntu-toolchain-r/test -y
-#        - sudo apt-get update -qq
-#        - sudo apt-get install gcc-7 binutils libpopt-dev pkg-config
-#        - test -n $CC && unset CC
-#    - compiler: clang
-#      env: COMPILER=clang-3.6
-#      before_install:
-#        - sudo add-apt-repository ppa:ubuntu-toolchain-r/test -y
-#        - sudo add-apt-repository ppa:jonathonf/llvm -y
-#        - sudo apt-get update -qq
-#        - sudo apt-get install clang-3.6 binutils libpopt-dev pkg-config
-#    - compiler: clang
-#      env: COMPILER=clang-3.7
-#      before_install:
-#        - sudo add-apt-repository ppa:ubuntu-toolchain-r/test -y
-#        - sudo add-apt-repository ppa:jonathonf/llvm -y
-#        - sudo apt-get update -qq
-#        - sudo apt-get install clang-3.7 binutils libpopt-dev pkg-config
-#    - compiler: clang
-#      env: COMPILER=clang-3.8
-#      before_install:
-#        - sudo add-apt-repository ppa:ubuntu-toolchain-r/test -y
-#        - sudo add-apt-repository ppa:jonathonf/llvm -y
-#        - sudo apt-get update -qq
-#        - sudo apt-get install clang-3.8 binutils libpopt-dev pkg-config
-#    - compiler: clang
-#      env: COMPILER=clang-3.9
-#      before_install:
-#        - sudo add-apt-repository ppa:ubuntu-toolchain-r/test -y
-#        - sudo add-apt-repository ppa:jonathonf/llvm -y
-#        - sudo apt-get update -qq
-#        - sudo apt-get install clang-3.9 binutils libpopt-dev pkg-config
-#    - compiler: clang
-#      env: COMPILER=clang-4.0
-#      before_install:
-#        - sudo add-apt-repository ppa:ubuntu-toolchain-r/test -y
-#        - sudo add-apt-repository ppa:jonathonf/llvm -y
-#        - sudo apt-get update -qq
-#        - sudo apt-get install clang-4.0 binutils libpopt-dev pkg-config
+ include:
+   - os: linux
+     dist: trusty
+     services: docker
+
+before_install:
+  - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then docker pull vathpela/efivar-travis-rawhide:v1 ; fi
+
+before_script:
+  - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then echo FROM vathpela/efivar-travis-rawhide:v1 > Dockerfile ; fi
+  - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then echo ADD . /root >> Dockerfile ; fi
+  - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then docker build -t withgit . ; fi
+
+script:
+  - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then docker run --volume $HOME/.ccache:/root/.ccache withgit /bin/sh -c "cd /root && ./test/scripts/build-travis-deps.sh" ; fi
+  - ccache -s
