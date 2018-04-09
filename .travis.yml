@@ -11,13 +11,7 @@ matrix:
      services: docker
 
 before_install:
-  - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then docker pull vathpela/efivar-travis-rawhide:v1 ; fi
-
-before_script:
-  - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then echo FROM vathpela/efivar-travis-rawhide:v1 > Dockerfile ; fi
-  - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then echo ADD . /root >> Dockerfile ; fi
-  - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then docker build -t withgit . ; fi
+  - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then docker pull vathpela/efivar-travis-rawhide:v2 ; fi
 
 script:
-  - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then docker run --volume $HOME/.ccache:/root/.ccache withgit /bin/sh -c "cd /root && git fetch && git reset --hard origin/master -- && ./travis-build.sh --branch $TRAVIS_BRANCH --repo \"$TRAVIS_REPO_SLUG\" --remote \"$TRAVIS_PULL_REQUEST_SLUG\" --pr-sha \"$TRAVIS_PULL_REQUEST_SHA\"" ; fi
-  - ccache -s
+  - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then docker run vathpela/efivar-travis-rawhide:v2 /bin/sh -c "cd /root/efivar && git fetch && git reset --hard origin/master -- && ./travis-build.sh --branch $TRAVIS_BRANCH --repo \"$TRAVIS_REPO_SLUG\" --remote \"$TRAVIS_PULL_REQUEST_SLUG\" --pr-sha \"$TRAVIS_PULL_REQUEST_SHA\"" ; fi
