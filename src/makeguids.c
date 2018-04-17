@@ -18,6 +18,8 @@
  *
  */
 
+#include "fix_coverity.h"
+
 #include <err.h>
 #include <fcntl.h>
 #include <stdlib.h>

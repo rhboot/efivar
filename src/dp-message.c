@@ -18,6 +18,8 @@
  *
  */
 
+#include "fix_coverity.h"
+
 #include <arpa/inet.h>
 #include <errno.h>
 #include <inttypes.h>

@@ -18,6 +18,8 @@
  *
  */
 
+#include "fix_coverity.h"
+
 #include <dlfcn.h>
 #include <errno.h>
 #include <stdio.h>

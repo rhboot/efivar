@@ -18,6 +18,8 @@
  *
  */
 
+#include "fix_coverity.h"
+
 #include <errno.h>
 #include <fcntl.h>
 #include <linux/magic.h>

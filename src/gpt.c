@@ -22,6 +22,8 @@
  *
  */
 
+#include "fix_coverity.h"
+
 #include <asm/byteorder.h>
 #include <errno.h>
 #include <fcntl.h>

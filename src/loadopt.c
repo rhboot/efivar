@@ -19,6 +19,8 @@
  *
  */
 
+#include "fix_coverity.h"
+
 #include <efivar/efivar.h>
 #include <stddef.h>
 

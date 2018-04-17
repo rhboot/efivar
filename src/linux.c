@@ -18,6 +18,9 @@
  * <http://www.gnu.org/licenses/>.
  *
  */
+
+#include "fix_coverity.h"
+
 #include <dirent.h>
 #include <errno.h>
 #include <fcntl.h>
