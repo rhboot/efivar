@@ -20,3 +20,4 @@ src/makeguids
 src/guid-symbols.c
 *.map
 cov-int
+scan-results/

@@ -8,6 +8,10 @@
 #ifndef FIX_COVERITY_H
 #define FIX_COVERITY_H
 
+#ifndef _GNU_SOURCE
+#define _GNU_SOURCE
+#endif
+
 #ifndef __COVERITY_GCC_VERSION_AT_LEAST
 #define __COVERITY_GCC_VERSION_AT_LEAST(x, y) 0
 #define FAKE__COVERITY_GCC_VERSION_AT_LEAST__
