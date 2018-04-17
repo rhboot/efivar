@@ -175,7 +175,7 @@ bad_name:
 static void
 show_variable(char *guid_name, int display_type)
 {
-	efi_guid_t guid;
+	efi_guid_t guid = efi_guid_empty;
 	char *name = NULL;
 	int rc;
 
@@ -184,6 +184,11 @@ show_variable(char *guid_name, int display_type)
 	uint32_t attributes;
 
 	parse_name(guid_name, &name, &guid);
+	if (!name || efi_guid_is_empty(&guid)) {
+		fprintf(stderr, "efivar: could not parse variable name.\n");
+		show_errors();
+		exit(1);
+	}
 
 	errno = 0;
 	rc = efi_get_variable(guid, name, &data, &data_size, &attributes);
@@ -252,13 +257,17 @@ show_variable(char *guid_name, int display_type)
 		}
 		printf("\n");
 	}
+
+	free(name);
+	if (data)
+		free(data);
 }
 
 static void
 edit_variable(const char *guid_name, void *data, size_t data_size,
 	      uint32_t attrib, int edit_type)
 {
-	efi_guid_t guid;
+	efi_guid_t guid = efi_guid_empty;
 	char *name = NULL;
 	int rc;
 	uint8_t *old_data = NULL;
@@ -266,6 +275,11 @@ edit_variable(const char *guid_name, void *data, size_t data_size,
 	uint32_t old_attributes = 0;
 
 	parse_name(guid_name, &name, &guid);
+	if (!name || efi_guid_is_empty(&guid)) {
+		fprintf(stderr, "efivar: could not parse variable name.\n");
+		show_errors();
+		exit(1);
+	}
 
 	rc = efi_get_variable(guid, name, &old_data, &old_data_size,
 				&old_attributes);
@@ -288,6 +302,10 @@ edit_variable(const char *guid_name, void *data, size_t data_size,
 					old_attributes, 0644);
 			break;
 	}
+
+	free(name);
+	if (old_data)
+		free(old_data);
 
 	if (rc < 0) {
 		fprintf(stderr, "efivar: %m\n");

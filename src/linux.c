@@ -971,7 +971,12 @@ make_blockdev_path(uint8_t *buf, ssize_t size, struct disk_info *info)
 					     &linksz, info);
 			if (rc < 0)
 				return -1;
-			loff += linksz;
+			/*
+			 * clang-analyzer complains about this because they
+			 * don't believe in writing code to avoid introducing
+			 * bugs later.
+			 */
+			// loff += linksz;
 			off += sz;
 			found = 1;
 		}
@@ -1151,7 +1156,11 @@ make_net_pci_path(uint8_t *buf, ssize_t size, const char * const ifname)
 	if (sz < 0)
 		return -1;
 	off += sz;
-	loff += tmplsz;
+	/*
+	 * clang-analyzer complains about this because they don't believe in
+	 * writing code to avoid introducing bugs later.
+	 */
+	//loff += tmplsz;
 
 	return off;
 }

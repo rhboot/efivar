@@ -83,9 +83,16 @@ format_ipv6_addr_helper(char *buf, size_t size, const char *dp_type,
 	if (this_zero_block_size > largest_zero_block_size) {
 		largest_zero_block_size = this_zero_block_size;
 		largest_zero_block_offset = this_zero_block_offset;
+		/*
+		 * clang-analyzer hates these because they're the last use,
+		 * and they don't believe in writing code so that bugs won't
+		 * be introduced later...
+		 */
+#if 0
 		this_zero_block_size = 0;
 		this_zero_block_offset = -1;
 		in_zero_block = 0;
+#endif
 	}
 	if (largest_zero_block_size == 1)
 		largest_zero_block_offset = -1;
