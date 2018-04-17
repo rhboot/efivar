@@ -74,13 +74,17 @@ _format_acpi_dn(char *buf, size_t size, const_efidp dp)
 		hidlen = strnlen(hidstr, limit);
 		limit -= hidlen + 1;
 
-		uidstr = hidstr + hidlen + 1;
-		uidlen = strnlen(uidstr, limit);
-		limit -= uidlen + 1;
+		if (limit) {
+			uidstr = hidstr + hidlen + 1;
+			uidlen = strnlen(uidstr, limit);
+			limit -= uidlen + 1;
+		}
 
-		cidstr = uidstr + uidlen + 1;
-		cidlen = strnlen(cidstr, limit);
-		limit -= cidlen + 1;
+		if (limit) {
+			cidstr = uidstr + uidlen + 1;
+			cidlen = strnlen(cidstr, limit);
+			// limit -= cidlen + 1;
+		}
 
 		if (uidstr) {
 			switch (dp->acpi_hid.hid) {
@@ -92,6 +96,28 @@ _format_acpi_dn(char *buf, size_t size, const_efidp dp)
 				format(buf, size, off, "PcieRoot",
 				       "PcieRoot(%s)", uidstr);
 				return off;
+			default:
+				format(buf, size, off, "AcpiEx", "AcpiEx(");
+				if (hidlen)
+					format(buf, size, off, "AcpiEx", "%s",
+							hidstr);
+				else
+					format(buf, size, off, "AcpiEx", "0x%"PRIx32,
+							dp->acpi_hid_ex.hid);
+				if (cidlen)
+					format(buf, size, off, "AcpiEx", ",%s",
+							cidstr);
+				else
+					format(buf, size, off, "AcpiEx", ",0x%"PRIx32,
+							dp->acpi_hid_ex.cid);
+				if (uidlen)
+					format(buf, size, off, "AcpiEx", ",%s",
+							uidstr);
+				else
+					format(buf, size, off, "AcpiEx", ",0x%"PRIx32,
+							dp->acpi_hid_ex.uid);
+				format(buf, size, off, "AcpiEx", ")");
+				break;
 			}
 		}
 	}
