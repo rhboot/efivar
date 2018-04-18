@@ -43,8 +43,6 @@
 #include "disk.h"
 #include "gpt.h"
 
-static int report_errors;
-
 /**
  * is_mbr_valid(): test MBR for validity
  * @mbr: pointer to a legacy mbr structure
@@ -129,30 +127,26 @@ msdos_disk_get_partition_info (int fd, int write_signature,
 	*mbr_type = 0x01;
 	*signature_type = 0x01;
 
-	if (!mbr->unique_mbr_signature && !write_signature && report_errors) {
-		printf("\n\n******************************************************\n");
-		printf("Warning! This MBR disk does not have a unique signature.\n");
-		printf("If this is not the first disk found by EFI, you may not be able\n");
-		printf("to boot from it without a unique signature.\n");
-		printf("Run efibootmgr with the -w flag to write a unique signature\n");
-		printf("to the disk.\n");
-		printf("******************************************************\n\n");
+	if (!mbr->unique_mbr_signature && !write_signature) {
+		efi_error("\n******************************************************\n"
+			  "Warning! This MBR disk does not have a unique signature.\n"
+			  "If this is not the first disk found by EFI, you may not be able\n"
+			  "to boot from it without a unique signature.\n"
+			  "Run efibootmgr with the -w flag to write a unique signature\n"
+			  "to the disk.\n"
+			  "******************************************************");
 	} else if (!mbr->unique_mbr_signature && write_signature) {
 		/* MBR Signatures must be unique for the
 		   EFI Boot Manager
 		   to find the right disk to boot from */
 		rc = fstat(fd, &stat);
 		if (rc < 0) {
-			if (report_errors)
-				perror("fstat disk");
 			efi_error("could not fstat disk");
 			return rc;
 		}
 
 		rc = gettimeofday(&tv, NULL);
 		if (rc < 0) {
-			if (report_errors)
-				perror("gettimeofday");
 			efi_error("gettimeofday failed");
 			return rc;
 		}
@@ -260,9 +254,6 @@ _make_hd_dn(uint8_t *buf, ssize_t size, int fd, uint32_t partition,
 	uint8_t signature[16]="", format=0, signature_type=0;
 	int rc;
 
-	char *report=getenv("LIBEFIBOOT_REPORT_GPT_ERRORS");
-	if (report)
-		report_errors = 1;
 	errno = 0;
 
 	rc = get_partition_info(fd, options,
