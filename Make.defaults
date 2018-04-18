@@ -41,7 +41,7 @@ ccldflags = $(cflags) -L. $(CCLDFLAGS) $(LDFLAGS) \
 	-Wl,-z,muldefs \
 	$(if $(findstring clang,$(CCLD)),$(clang_ccldflags),) \
 	$(if $(findstring gcc,$(CCLD)),$(gcc_ccldflags),) \
-	$(call pkg-config-ccldflags)
+	$(call pkg-config-ldflags)
 SOFLAGS=-shared
 LDLIBS=$(foreach lib,$(LIBS),-l$(lib)) $(call pkg-config-ldlibs)
 
