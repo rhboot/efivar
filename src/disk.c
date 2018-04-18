@@ -207,7 +207,7 @@ get_partition_info(int fd, uint32_t options,
 	this_bytes_read = read(fd, mbr_sector, mbr_size);
 	if (this_bytes_read < (ssize_t)sizeof(*mbr)) {
 		efi_error("short read trying to read mbr data");
-		rc=1;
+		rc = -1;
 		goto error_free_mbr;
 	}
 	mbr = (legacy_mbr *)mbr_sector;
@@ -218,7 +218,7 @@ get_partition_info(int fd, uint32_t options,
 						  signature_type,
 			(options & EFIBOOT_OPTIONS_IGNORE_PMBR_ERR)?1:0,
 			sector_size);
-	if (gpt_invalid) {
+	if (gpt_invalid < 0) {
 		mbr_invalid = msdos_disk_get_partition_info(fd,
 			(options & EFIBOOT_OPTIONS_WRITE_SIGNATURE)?1:0,
 							    mbr, part,
@@ -226,9 +226,9 @@ get_partition_info(int fd, uint32_t options,
 							    signature,
 							    mbr_type,
 							    signature_type);
-		if (mbr_invalid) {
+		if (mbr_invalid < 0) {
 			efi_error("neither MBR nor GPT is valid");
-			rc=1;
+			rc = -1;
 			goto error_free_mbr;
 		}
 		efi_error_clear();
