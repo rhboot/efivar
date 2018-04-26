@@ -157,3 +157,28 @@ efi_error_clear(void)
 	error_table = NULL;
 	current = 0;
 }
+
+static int efi_verbose;
+static FILE *efi_errlog;
+
+FILE PUBLIC *
+efi_get_logfile(void)
+{
+	if (efi_errlog)
+		return efi_errlog;
+	return stderr;
+}
+
+void PUBLIC
+efi_set_verbose(int verbosity, FILE *errlog)
+{
+	efi_verbose = verbosity;
+	if (errlog)
+		efi_errlog = errlog;
+}
+
+int PUBLIC
+efi_get_verbose(void)
+{
+	return efi_verbose;
+}

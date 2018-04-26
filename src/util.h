@@ -24,14 +24,19 @@
 #include <alloca.h>
 #include <endian.h>
 #include <errno.h>
+#include <fcntl.h>
 #include <limits.h>
 #include <sched.h>
-#include <stdio.h>
 #include <stdarg.h>
+#include <stdbool.h>
 #include <stdlib.h>
+#include <stdint.h>
+#include <stdio.h>
 #include <string.h>
 #include <sys/ioctl.h>
 #include <sys/mount.h>
+#include <sys/stat.h>
+#include <sys/types.h>
 #include <tgmath.h>
 #include <unistd.h>
 
@@ -348,5 +353,26 @@ swizzle_guid_to_uuid(efi_guid_t *guid)
         u16[0] = __builtin_bswap16(u16[0]);
         u16[1] = __builtin_bswap16(u16[1]);
 }
+
+#define debug_(file, line, func, level, fmt, args...)                   \
+        ({                                                              \
+                if (efi_get_verbose() >= level) {                       \
+                        FILE *logfile_ = efi_get_logfile();             \
+                        int len_ = strlen(fmt);                         \
+                        fprintf(logfile_, "%s:%d %s(): ",               \
+                                file, line, func);                      \
+                        fprintf(logfile_, fmt, ## args);                \
+                        if (!len_ || fmt[len_ - 1] != '\n')             \
+                                fprintf(logfile_, "\n");                \
+                }                                                       \
+        })
+
+#define debug(level, fmt, args...) debug_(__FILE__, __LINE__, __func__, level, fmt, ## args)
+
+#define DEBUG 1
+
+extern void PUBLIC efi_set_verbose(int verbosity, FILE *errlog);
+extern int PUBLIC efi_get_verbose(void);
+extern FILE PUBLIC *efi_get_logfile(void);
 
 #endif /* EFIVAR_UTIL_H */

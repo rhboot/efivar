@@ -120,3 +120,9 @@ LIBEFIVAR_1.35 {
 	global: efi_get_variable_exists;
 		efi_guid_fwupdate;
 } LIBEFIVAR_1.33;
+
+LIBEFIVAR_1.36 {
+	global: efi_set_verbose;
+		efi_get_verbose;
+		efi_get_logfile;
+} LIBEFIVAR_1.35;
