@@ -32,6 +32,7 @@
 #include "disk.h"
 #include "linux.h"
 #include "crc32.h"
+#include "hexdump.h"
 
 #endif /* !PRIVATE_EFIVAR_H_ */
 // vim:fenc=utf-8:tw=75:et
