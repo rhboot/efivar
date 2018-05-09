@@ -38,7 +38,6 @@
 #include "disk.h"
 #include "dp.h"
 #include "linux.h"
-#include "list.h"
 #include "util.h"
 
 static int
