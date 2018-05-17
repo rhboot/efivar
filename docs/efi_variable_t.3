@@ -68,7 +68,7 @@ Each pair of \fB_set\fR() and \fB_get\fR() accessors have essentially the same s
 .SH "RETURN VALUE"
 \fBefi_variable_import\fR() returns 0 on success, and -1 on failure.  In cases where it cannot parse the data, \fBerrno\fR will be set to \fBEINVAL\fR.  In cases where memory has been exhausted, \fBerrno\fR will be set to \fBENOMEM\fR.
 .PP
-\fBefi_variable_export\fR() returns the size of the buffer data on success, or a negative value in the case of an error.  If \fBdata\fR or \fBsize\fR parameters are not provided, this function will return how much storage is a caller must allocate.  Otherwise, this function will use the storage provided in \fBdata\fR; if \fBsize\fR is less than the needed space, the buffer will not be modified, and the return value will be the difficiency in size.
+\fBefi_variable_export\fR() returns the size of the buffer data on success, or a negative value in the case of an error.  If \fBdata\fR or \fBsize\fR parameters are not provided, this function will return how much storage a caller must allocate.  Otherwise, this function will use the storage provided in \fBdata\fR; if \fBsize\fR is less than the needed space, the buffer will not be modified, and the return value will be the difficiency in size.
 .PP
 \fBefi_variable_alloc\fR() returns a newly allocated \fBefi_variable_t\fR object, but does not peform any allocation for that object's \fBname\fR, \fBguid\fR, or \fBdata\fR.  In the case that memory is exhausted, \fBNULL\fR will be returned, and \fBerrno\fR will be set to \fBENOMEM\fR.
 .PP
