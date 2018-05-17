@@ -25,8 +25,7 @@
 #include <stdarg.h>
 #include <stddef.h>
 
-#include <efivar/efivar.h>
-#include "dp.h"
+#include "efivar.h"
 
 static ssize_t
 _format_acpi_adr(char *buf, size_t size,

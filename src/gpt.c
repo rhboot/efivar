@@ -36,13 +36,7 @@
 #include <sys/utsname.h>
 #include <unistd.h>
 
-#include <efivar/efivar.h>
-
-#include "crc32.h"
-#include "disk.h"
-#include "gpt.h"
-#include "util.h"
-#include "efivar_endian.h"
+#include "efivar.h"
 
 #ifndef BLKGETLASTSECT
 #define BLKGETLASTSECT _IO(0x12,108) /* get last sector of block device */

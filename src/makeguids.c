@@ -27,9 +27,7 @@
 #include <sys/types.h>
 #include <sys/stat.h>
 
-#include <efivar/efivar.h>
-#include "util.h"
-#include "guid.h"
+#include "efivar.h"
 
 efi_guid_t const efi_guid_zero = {0};
 efi_guid_t const efi_guid_empty = {0};

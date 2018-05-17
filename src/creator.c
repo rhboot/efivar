@@ -32,13 +32,7 @@
 #include <sys/stat.h>
 #include <sys/socket.h>
 
-#include <efivar/efivar.h>
-#include <efivar/efiboot.h>
-
-#include "disk.h"
-#include "dp.h"
-#include "linux.h"
-#include "util.h"
+#include "efiboot.h"
 
 static int
 __attribute__((__nonnull__ (1,2,3)))

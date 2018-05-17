@@ -40,12 +40,7 @@
 #include <sys/stat.h>
 #include <unistd.h>
 
-#include <efivar/efivar.h>
-#include <efivar/efiboot.h>
-
-#include "dp.h"
-#include "linux.h"
-#include "util.h"
+#include "efiboot.h"
 
 int
 __attribute__((__visibility__ ("hidden")))

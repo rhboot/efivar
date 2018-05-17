@@ -25,8 +25,7 @@
 #include <stdarg.h>
 #include <stddef.h>
 
-#include <efivar/efivar.h>
-#include "dp.h"
+#include "efivar.h"
 
 ssize_t
 _format_media_dn(char *buf, size_t size, const_efidp dp)

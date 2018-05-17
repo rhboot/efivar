@@ -35,13 +35,7 @@
 #include <sys/utsname.h>
 #include <unistd.h>
 
-#include <efivar/efivar.h>
-#include <efivar/efiboot.h>
-
-#include "util.h"
-#include "crc32.h"
-#include "disk.h"
-#include "gpt.h"
+#include "efiboot.h"
 
 /**
  * is_mbr_valid(): test MBR for validity

@@ -25,9 +25,7 @@
 #include <inttypes.h>
 #include <stddef.h>
 
-#include <efivar/efivar.h>
-#include "efivar_endian.h"
-#include "dp.h"
+#include "efivar.h"
 
 static ssize_t
 format_ipv4_addr_helper(char *buf, size_t size, const char *dp_type,

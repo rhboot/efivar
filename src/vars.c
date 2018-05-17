@@ -31,9 +31,7 @@
 #include <sys/types.h>
 #include <sys/utsname.h>
 
-#include "lib.h"
-#include "generics.h"
-#include "util.h"
+#include "efivar.h"
 
 static const char default_vars_path[] = "/sys/firmware/efi/vars/";
 

@@ -23,8 +23,7 @@
 #include <errno.h>
 #include <inttypes.h>
 
-#include <efivar/efivar.h>
-#include "dp.h"
+#include "efivar.h"
 
 ssize_t
 format_edd10_guid(char *buf, size_t size, const char *dp_type, const_efidp dp)
