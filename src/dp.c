@@ -24,9 +24,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 
-#include <efivar/efivar.h>
-#include "dp.h"
-#include "util.h"
+#include "efivar.h"
 
 static const efidp_header end_entire = {
 	.type = EFIDP_END_TYPE,

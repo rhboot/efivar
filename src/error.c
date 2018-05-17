@@ -28,6 +28,8 @@
 #include <string.h>
 #include <unistd.h>
 
+#include "efiboot.h"
+
 /*
  * GCC/Clang complains that we check for null if we have a nonnull attribute,
  * even though older or other compilers might just ignore that attribute if

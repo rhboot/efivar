@@ -21,10 +21,9 @@
 
 #include "fix_coverity.h"
 
-#include <efivar/efivar.h>
 #include <stddef.h>
 
-#include "dp.h"
+#include "efiboot.h"
 #include "include/efivar/efiboot-loadopt.h"
 
 typedef struct efi_load_option_s {

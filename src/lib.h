@@ -21,8 +21,6 @@
 #ifndef LIBEFIVAR_LIB_H
 #define LIBEFIVAR_LIB_H 1
 
-#include <efivar/efivar.h>
-
 #include <dirent.h>
 #include <limits.h>
 

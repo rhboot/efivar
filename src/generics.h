@@ -29,8 +29,6 @@
 #include <sys/types.h>
 #include <unistd.h>
 
-#include "guid.h"
-
 static DIR *dir;
 
 static inline int

@@ -37,8 +37,7 @@
 extern char *optarg;
 extern int optind, opterr, optopt;
 
-#include <efivar/efivar.h>
-#include "guid.h"
+#include "efivar.h"
 
 #define ACTION_LIST		0x1
 #define ACTION_PRINT		0x2

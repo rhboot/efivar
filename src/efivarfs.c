@@ -33,9 +33,7 @@
 #include <sys/vfs.h>
 #include <unistd.h>
 
-#include "lib.h"
-#include "generics.h"
-#include "util.h"
+#include "efivar.h"
 
 #include <linux/fs.h>
 

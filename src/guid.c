@@ -24,8 +24,7 @@
 #include <errno.h>
 #include <stdio.h>
 
-#include <efivar/efivar.h>
-#include "guid.h"
+#include "efivar.h"
 
 #define GUID_LENGTH_WITH_NUL 37
 
