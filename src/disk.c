@@ -71,11 +71,11 @@ is_mbr_valid(legacy_mbr *mbr)
  *
  ************************************************************/
 static int
-msdos_disk_get_extended_partition_info (int fd __attribute__((unused)),
-					legacy_mbr *mbr __attribute__((unused)),
-					uint32_t num __attribute__((unused)),
-					uint64_t *start __attribute__((unused)),
-					uint64_t *size __attribute__((unused)))
+msdos_disk_get_extended_partition_info (int fd UNUSED,
+					legacy_mbr *mbr UNUSED,
+					uint32_t num UNUSED,
+					uint64_t *start UNUSED,
+					uint64_t *size UNUSED)
 {
         /* Until I can handle these... */
         //fprintf(stderr, "Extended partition info not supported.\n");
@@ -190,7 +190,7 @@ get_partition_info(int fd, uint32_t options,
 	legacy_mbr *mbr;
 	void *mbr_sector;
 	size_t mbr_size;
-	off_t offset __attribute__((unused));
+	off_t offset UNUSED;
 	int this_bytes_read = 0;
 	int gpt_invalid=0, mbr_invalid=0;
 	int rc=0;
@@ -239,8 +239,7 @@ get_partition_info(int fd, uint32_t options,
 	return rc;
 }
 
-ssize_t
-__attribute__((__visibility__ ("hidden")))
+ssize_t HIDDEN
 _make_hd_dn(uint8_t *buf, ssize_t size, int fd, uint32_t partition,
 	    uint32_t options)
 {

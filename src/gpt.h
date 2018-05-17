@@ -77,13 +77,13 @@ typedef struct _gpt_header {
 	uint32_t sizeof_partition_entry;
 	uint32_t partition_entry_array_crc32;
 	uint8_t reserved2[GPT_BLOCK_SIZE - 92];
-} __attribute__ ((packed)) gpt_header;
+} PACKED gpt_header;
 
 typedef struct _gpt_entry_attributes {
 	uint64_t required_to_function:1;
 	uint64_t reserved:47;
         uint64_t type_guid_specific:16;
-} __attribute__ ((packed)) gpt_entry_attributes;
+} PACKED gpt_entry_attributes;
 
 typedef struct _gpt_entry {
 	efi_guid_t partition_type_guid;
@@ -92,7 +92,7 @@ typedef struct _gpt_entry {
 	uint64_t ending_lba;
 	gpt_entry_attributes attributes;
 	uint16_t partition_name[72 / sizeof(uint16_t)];
-} __attribute__ ((packed)) gpt_entry;
+} PACKED gpt_entry;
 
 
 /*
@@ -126,7 +126,7 @@ typedef struct _partition_record {
 				   EFI firmware to define the start of the partition. */
 	uint32_t size_in_lba;	/* Size of partition in LBA. Used by EFI firmware to determine
 				   the size of the partition. */
-} __attribute__ ((packed)) partition_record;
+} PACKED partition_record;
 
 
 /* Protected Master Boot Record  & Legacy MBR share same structure */
@@ -138,7 +138,7 @@ typedef struct _legacy_mbr {
 	uint16_t unknown;
 	partition_record partition[4];
 	uint16_t signature;
-} __attribute__ ((packed)) legacy_mbr;
+} PACKED legacy_mbr;
 
 #define EFI_GPT_PRIMARY_PARTITION_TABLE_LBA 1
 
@@ -149,8 +149,7 @@ extern int gpt_disk_get_partition_info (int fd, uint32_t num, uint64_t *start,
 					uint8_t *signature_type,
 					int ignore_pmbr_error,
 					int logical_sector_size)
-	__attribute__((__nonnull__ (3, 4, 5, 6, 7)))
-	__attribute__((__visibility__ ("hidden")));
+	NONNULL(3, 4, 5, 6, 7) HIDDEN;
 
 #endif /* _EFIBOOT_GPT_H */
 

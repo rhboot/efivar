@@ -35,6 +35,18 @@
 #include <tgmath.h>
 #include <unistd.h>
 
+#define UNUSED __attribute__((__unused__))
+#define HIDDEN __attribute__((__visibility__ ("hidden")))
+#define PUBLIC __attribute__((__visibility__ ("default")))
+#define DESTRUCTOR __attribute__((destructor))
+#define CONSTRUCTOR __attribute__((constructor))
+#define ALIAS(x) __attribute__((weak, alias (#x)))
+#define NONNULL(...) __attribute__((__nonnull__(__VA_ARGS__)))
+#define PRINTF(...) __attribute__((__format__(printf, __VA_ARGS__)))
+#define FLATTEN __attribute__((__flatten__))
+#define PACKED __attribute__((__packed__))
+#define VERSION(sym, ver) __asm__(".symver " # sym "," # ver)
+
 /*
  * I'm not actually sure when these appear, but they're present in the
  * version in front of me.
@@ -131,9 +143,7 @@
                 })
 #endif
 
-
-static inline int
-__attribute__((unused))
+static inline int UNUSED
 read_file(int fd, uint8_t **buf, size_t *bufsize)
 {
         uint8_t *p;
@@ -209,8 +219,7 @@ read_file(int fd, uint8_t **buf, size_t *bufsize)
         return 0;
 }
 
-static inline uint64_t
-__attribute__((unused))
+static inline uint64_t UNUSED
 lcm(uint64_t x, uint64_t y)
 {
         uint64_t m = x, n = y, o;
@@ -229,8 +238,7 @@ lcm(uint64_t x, uint64_t y)
  * Returns:
  *  sector size, or 512.
  ************************************************************/
-static inline int
-__attribute__((unused))
+static inline int UNUSED
 get_sector_size(int filedes)
 {
         int rc, sector_size = 512;
@@ -328,8 +336,7 @@ get_sector_size(int filedes)
                 _rc;                                                    \
         })
 
-static inline void
-__attribute__((unused))
+static inline void UNUSED
 swizzle_guid_to_uuid(efi_guid_t *guid)
 {
         uint32_t *u32;

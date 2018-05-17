@@ -30,17 +30,13 @@
 
 extern const efi_guid_t efi_guid_zero;
 
-int
-__attribute__((__nonnull__ (1, 2)))
-__attribute__((__visibility__ ("default")))
+int NONNULL(1, 2) PUBLIC
 efi_guid_cmp(const efi_guid_t *a, const efi_guid_t *b)
 {
 	return memcmp(a, b, sizeof (efi_guid_t));
 }
 
-int
-__attribute__((__nonnull__ (1)))
-__attribute__((__visibility__ ("default")))
+int NONNULL(1) PUBLIC
 efi_guid_is_zero(const efi_guid_t *guid)
 {
 	return !efi_guid_cmp(guid,&efi_guid_zero);
@@ -48,13 +44,9 @@ efi_guid_is_zero(const efi_guid_t *guid)
 
 int
 efi_guid_is_empty(const efi_guid_t *guid)
-__attribute__((__nonnull__ (1)))
-__attribute__((__visibility__ ("default")))
-__attribute__ ((weak, alias ("efi_guid_is_zero")));
+        NONNULL(1) PUBLIC ALIAS(efi_guid_is_zero);
 
-int
-__attribute__((__nonnull__ (1, 2)))
-__attribute__((__visibility__ ("default")))
+int NONNULL(1, 2) PUBLIC
 efi_str_to_guid(const char *s, efi_guid_t *guid)
 {
 	int rc;
@@ -64,9 +56,7 @@ efi_str_to_guid(const char *s, efi_guid_t *guid)
 	return rc;
 }
 
-int
-__attribute__((__nonnull__ (1)))
-__attribute__((__visibility__ ("default")))
+int NONNULL(1) PUBLIC
 efi_guid_to_str(const efi_guid_t *guid, char **sp)
 {
 	char *ret = NULL;
@@ -104,17 +94,12 @@ efi_guid_to_str(const efi_guid_t *guid, char **sp)
 	return rc;
 }
 
-extern struct guidname efi_well_known_guids
-	__attribute__((__visibility__ ("default")));
-extern struct guidname efi_well_known_names
-	__attribute__((__visibility__ ("default")));
-extern struct guidname efi_well_known_guids_end
-	__attribute__((__visibility__ ("default")));
-extern struct guidname efi_well_known_names_end
-	__attribute__((__visibility__ ("default")));
+extern struct guidname efi_well_known_guids PUBLIC;
+extern struct guidname efi_well_known_names PUBLIC;
+extern struct guidname efi_well_known_guids_end PUBLIC;
+extern struct guidname efi_well_known_names_end PUBLIC;
 
-static int
-__attribute__((__nonnull__ (1, 2)))
+static int NONNULL(1, 2)
 cmpguidp(const void *p1, const void *p2)
 {
 	struct guidname *gn1 = (struct guidname *)p1;
@@ -123,8 +108,7 @@ cmpguidp(const void *p1, const void *p2)
 	return memcmp(&gn1->guid, &gn2->guid, sizeof (gn1->guid));
 }
 
-static int
-__attribute__((__nonnull__ (1, 2)))
+static int NONNULL(1, 2)
 cmpnamep(const void *p1, const void *p2)
 {
 	struct guidname *gn1 = (struct guidname *)p1;
@@ -133,8 +117,7 @@ cmpnamep(const void *p1, const void *p2)
 	return memcmp(gn1->name, gn2->name, sizeof (gn1->name));
 }
 
-static int
-__attribute__((__nonnull__ (1, 2)))
+static int NONNULL(1, 2)
 _get_common_guidname(const efi_guid_t *guid, struct guidname **result)
 {
 	intptr_t end = (intptr_t)&efi_well_known_guids_end;
@@ -159,9 +142,7 @@ _get_common_guidname(const efi_guid_t *guid, struct guidname **result)
 	return 0;
 }
 
-int
-__attribute__((__nonnull__ (1, 2)))
-__attribute__((__visibility__ ("default")))
+int NONNULL(1, 2) PUBLIC
 efi_guid_to_name(efi_guid_t *guid, char **name)
 {
 	struct guidname *result;
@@ -176,9 +157,7 @@ efi_guid_to_name(efi_guid_t *guid, char **name)
 	return rc;
 }
 
-int
-__attribute__((__nonnull__ (1, 2)))
-__attribute__((__visibility__ ("default")))
+int NONNULL(1, 2) PUBLIC
 efi_guid_to_symbol(efi_guid_t *guid, char **symbol)
 {
 	struct guidname *result;
@@ -192,9 +171,7 @@ efi_guid_to_symbol(efi_guid_t *guid, char **symbol)
 	return -1;
 }
 
-int
-__attribute__((__nonnull__ (1)))
-__attribute__((__visibility__ ("default")))
+int NONNULL(1) PUBLIC
 efi_guid_to_id_guid(const efi_guid_t *guid, char **sp)
 {
 	struct guidname *result = NULL;
@@ -246,9 +223,7 @@ efi_guid_to_id_guid(const efi_guid_t *guid, char **sp)
 	return rc;
 }
 
-int
-__attribute__((__nonnull__ (1, 2)))
-__attribute__((__visibility__ ("default")))
+int NONNULL(1, 2) PUBLIC
 efi_symbol_to_guid(const char *symbol, efi_guid_t *guid)
 {
 	void *dlh = dlopen(NULL, RTLD_LAZY);
@@ -264,9 +239,7 @@ efi_symbol_to_guid(const char *symbol, efi_guid_t *guid)
 	return 0;
 }
 
-int
-__attribute__((__nonnull__ (1, 2)))
-__attribute__((__visibility__ ("default")))
+int NONNULL(1, 2) PUBLIC
 efi_name_to_guid(const char *name, efi_guid_t *guid)
 {
 	intptr_t end = (intptr_t)&efi_well_known_names_end;
@@ -313,6 +286,4 @@ efi_name_to_guid(const char *name, efi_guid_t *guid)
 
 int
 efi_id_guid_to_guid(const char *name, efi_guid_t *guid)
-	__attribute__((__nonnull__ (1, 2)))
-	__attribute__((__visibility__ ("default")))
-	__attribute__ ((weak, alias ("efi_name_to_guid")));
+        NONNULL(1, 2) PUBLIC ALIAS(efi_name_to_guid);

@@ -43,8 +43,7 @@ efidp_data_address(const_efidp dp)
 	return (void *)((uint8_t *)dp + sizeof (dp));
 }
 
-int
-__attribute__((__visibility__ ("default")))
+int PUBLIC
 efidp_set_node_data(const_efidp dn, void *buf, size_t bufsize)
 {
 	if (dn->length < 4 || bufsize > (size_t)dn->length - 4) {
@@ -98,8 +97,7 @@ efidp_duplicate_extra(const_efidp dp, efidp *out, size_t extra)
 	return 0;
 }
 
-int
-__attribute__((__visibility__ ("default")))
+int PUBLIC
 efidp_duplicate_path(const_efidp  dp, efidp *out)
 {
 	int rc;
@@ -109,8 +107,7 @@ efidp_duplicate_path(const_efidp  dp, efidp *out)
 	return rc;
 }
 
-int
-__attribute__((__visibility__ ("default")))
+int PUBLIC
 efidp_append_path(const_efidp dp0, const_efidp dp1, efidp *out)
 {
 	ssize_t lsz, rsz, newsz = 0;
@@ -192,8 +189,7 @@ efidp_append_path(const_efidp dp0, const_efidp dp1, efidp *out)
 	return 0;
 }
 
-int
-__attribute__((__visibility__ ("default")))
+int PUBLIC
 efidp_append_node(const_efidp dp, const_efidp dn, efidp *out)
 {
 	ssize_t lsz = 0, rsz = 0, newsz;
@@ -254,8 +250,7 @@ efidp_append_node(const_efidp dp, const_efidp dn, efidp *out)
 	return 0;
 }
 
-int
-__attribute__((__visibility__ ("default")))
+int PUBLIC
 efidp_append_instance(const_efidp dp, const_efidp dpi, efidp *out)
 {
 	ssize_t lsz, rsz;
@@ -302,8 +297,7 @@ efidp_append_instance(const_efidp dp, const_efidp dpi, efidp *out)
 
 }
 
-ssize_t
-__attribute__((__visibility__ ("default")))
+ssize_t PUBLIC
 efidp_format_device_path(char *buf, size_t size, const_efidp dp, ssize_t limit)
 {
 	ssize_t off = 0;
@@ -407,30 +401,25 @@ efidp_format_device_path(char *buf, size_t size, const_efidp dp, ssize_t limit)
 	return off+1;
 }
 
-ssize_t
-__attribute__((__visibility__ ("default")))
-efidp_parse_device_node(char *path __attribute__((unused)),
-			efidp out __attribute__((unused)),
-			size_t size __attribute__((unused)))
+ssize_t PUBLIC
+efidp_parse_device_node(char *path UNUSED, efidp out UNUSED,
+                        size_t size UNUSED)
 {
 	efi_error("not implented");
 	errno = -ENOSYS;
 	return -1;
 }
 
-ssize_t
-__attribute__((__visibility__ ("default")))
-efidp_parse_device_path(char *path __attribute__((unused)),
-			efidp out __attribute__((unused)),
-			size_t size __attribute__((unused)))
+ssize_t PUBLIC
+efidp_parse_device_path(char *path UNUSED, efidp out UNUSED,
+			size_t size UNUSED)
 {
 	efi_error("not implented");
 	errno = -ENOSYS;
 	return -1;
 }
 
-ssize_t
-__attribute__((__visibility__ ("default")))
+ssize_t PUBLIC
 efidp_make_vendor(uint8_t *buf, ssize_t size, uint8_t type, uint8_t subtype,
 		  efi_guid_t vendor_guid, void *data, size_t data_size)
 {
@@ -446,8 +435,7 @@ efidp_make_vendor(uint8_t *buf, ssize_t size, uint8_t type, uint8_t subtype,
 	return sz;
 }
 
-ssize_t
-__attribute__((__visibility__ ("default")))
+ssize_t PUBLIC
 efidp_make_generic(uint8_t *buf, ssize_t size, uint8_t type, uint8_t subtype,
 		   ssize_t total_size)
 {

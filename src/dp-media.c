@@ -153,8 +153,7 @@ _format_media_dn(char *buf, size_t size, const_efidp dp)
 	return off;
 }
 
-ssize_t
-__attribute__((__visibility__ ("default")))
+ssize_t PUBLIC
 efidp_make_file(uint8_t *buf, ssize_t size, char *filepath)
 {
 	efidp_file *file = (efidp_file *)buf;
@@ -175,8 +174,7 @@ efidp_make_file(uint8_t *buf, ssize_t size, char *filepath)
 	return sz;
 }
 
-ssize_t
-__attribute__((__visibility__ ("default")))
+ssize_t PUBLIC
 efidp_make_hd(uint8_t *buf, ssize_t size, uint32_t num, uint64_t part_start,
 	      uint64_t part_size, uint8_t *signature, uint8_t format,
 	      uint8_t signature_type)

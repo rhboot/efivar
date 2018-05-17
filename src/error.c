@@ -52,9 +52,7 @@ typedef struct {
 static error_table_entry *error_table;
 static unsigned int current;
 
-int
-__attribute__((__visibility__ ("default")))
-__attribute__((__nonnull__ (2, 3, 4, 5, 6)))
+int PUBLIC NONNULL(2, 3, 4, 5, 6)
 efi_error_get(unsigned int n,
 	      char ** const filename,
 	      char ** const function,
@@ -80,10 +78,7 @@ efi_error_get(unsigned int n,
 	return 1;
 }
 
-int
-__attribute__((__visibility__ ("default")))
-__attribute__((__nonnull__ (1, 2, 5)))
-__attribute__((__format__ (printf, 5, 6)))
+int PUBLIC NONNULL(1, 2, 5) PRINTF(5, 6)
 efi_error_set(const char *filename,
 	      const char *function,
 	      int line,
@@ -141,9 +136,7 @@ err:
 	return -1;
 }
 
-void
-__attribute__((__visibility__ ("default")))
-__attribute__((destructor))
+void PUBLIC DESTRUCTOR
 efi_error_clear(void)
 {
 	if (error_table) {

@@ -82,8 +82,7 @@ _format_hw_dn(char *buf, size_t size, const_efidp dp)
 	return off;
 }
 
-ssize_t
-__attribute__((__visibility__ ("default")))
+ssize_t PUBLIC
 efidp_make_pci(uint8_t *buf, ssize_t size, uint8_t device, uint8_t function)
 {
 	efidp_pci *pci = (efidp_pci *)buf;
@@ -102,8 +101,7 @@ efidp_make_pci(uint8_t *buf, ssize_t size, uint8_t device, uint8_t function)
 	return sz;
 }
 
-ssize_t
-__attribute__((__visibility__ ("default")))
+ssize_t PUBLIC
 efidp_make_edd10(uint8_t *buf, ssize_t size, uint32_t hardware_device)
 {
 	efi_guid_t edd10_guid = EDD10_HARDWARE_VENDOR_PATH_GUID;

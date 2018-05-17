@@ -124,7 +124,7 @@ format_ipv6_addr_helper(char *buf, size_t size, const char *dp_type,
 
 static ssize_t
 format_ip_addr_helper(char *buf, size_t size,
-		      const char *dp_type __attribute__((__unused__)),
+		      const char *dp_type UNUSED,
 		      int is_ipv6, const efi_ip_addr_t *addr)
 {
 	ssize_t off = 0;
@@ -143,7 +143,7 @@ format_ip_addr_helper(char *buf, size_t size,
 
 static ssize_t
 format_uart(char *buf, size_t size,
-	    const char *dp_type __attribute__((__unused__)),
+	    const char *dp_type UNUSED,
 	    const_efidp dp)
 {
 	uint32_t value;
@@ -163,7 +163,7 @@ format_uart(char *buf, size_t size,
 
 static ssize_t
 format_sas(char *buf, size_t size,
-	   const char *dp_type __attribute__((__unused__)),
+	   const char *dp_type UNUSED,
 	   const_efidp dp)
 {
 	ssize_t off = 0;
@@ -233,7 +233,7 @@ format_sas(char *buf, size_t size,
 
 static ssize_t
 format_usb_class(char *buf, size_t size,
-		 const char *dp_type __attribute__((__unused__)),
+		 const char *dp_type UNUSED,
 		 const_efidp dp)
 {
 	ssize_t off = 0;
@@ -394,7 +394,7 @@ _format_message_dn(char *buf, size_t size, const_efidp dp)
 			efi_guid_t guid;
 			char label[40];
 			ssize_t (*formatter)(char *buf, size_t size,
-				const char *dp_type __attribute__((__unused__)),
+				const char *dp_type UNUSED,
 				const_efidp dp);
 		} subtypes[] = {
 			{ .guid = EFIDP_PC_ANSI_GUID,
@@ -418,7 +418,7 @@ _format_message_dn(char *buf, size_t size, const_efidp dp)
 		};
 		char *label = NULL;
 		ssize_t (*formatter)(char *buf, size_t size,
-			const char *dp_type __attribute__((__unused__)),
+			const char *dp_type UNUSED,
 			const_efidp dp) = NULL;
 
 		for (int i = 0; !efi_guid_is_zero(&subtypes[i].guid); i++) {
@@ -644,8 +644,7 @@ _format_message_dn(char *buf, size_t size, const_efidp dp)
 	return off;
 }
 
-ssize_t
-__attribute__((__visibility__ ("default")))
+ssize_t PUBLIC
 efidp_make_mac_addr(uint8_t *buf, ssize_t size, uint8_t if_type,
 		    const uint8_t * const mac_addr, ssize_t mac_addr_size)
 {
@@ -666,8 +665,7 @@ efidp_make_mac_addr(uint8_t *buf, ssize_t size, uint8_t if_type,
 	return sz;
 }
 
-ssize_t
-__attribute__((__visibility__ ("default")))
+ssize_t PUBLIC
 efidp_make_ipv4(uint8_t *buf, ssize_t size, uint32_t local, uint32_t remote,
 		uint32_t gateway, uint32_t netmask,
 		uint16_t local_port, uint16_t remote_port,
@@ -696,8 +694,7 @@ efidp_make_ipv4(uint8_t *buf, ssize_t size, uint32_t local, uint32_t remote,
 	return sz;
 }
 
-ssize_t
-__attribute__((__visibility__ ("default")))
+ssize_t PUBLIC
 efidp_make_scsi(uint8_t *buf, ssize_t size, uint16_t target, uint16_t lun)
 {
 	efidp_scsi *scsi = (efidp_scsi *)buf;
@@ -715,8 +712,7 @@ efidp_make_scsi(uint8_t *buf, ssize_t size, uint16_t target, uint16_t lun)
 	return sz;
 }
 
-ssize_t
-__attribute__((__visibility__ ("default")))
+ssize_t PUBLIC
 efidp_make_nvme(uint8_t *buf, ssize_t size, uint32_t namespace_id,
 		uint8_t *ieee_eui_64)
 {
@@ -742,8 +738,7 @@ efidp_make_nvme(uint8_t *buf, ssize_t size, uint32_t namespace_id,
 	return sz;
 }
 
-ssize_t
-__attribute__((__visibility__ ("default")))
+ssize_t PUBLIC
 efidp_make_sata(uint8_t *buf, ssize_t size, uint16_t hba_port,
 		int16_t port_multiplier_port, uint16_t lun)
 {
@@ -765,8 +760,7 @@ efidp_make_sata(uint8_t *buf, ssize_t size, uint16_t hba_port,
 	return sz;
 }
 
-ssize_t
-__attribute__((__visibility__ ("default")))
+ssize_t PUBLIC
 efidp_make_atapi(uint8_t *buf, ssize_t size, uint16_t primary,
 		uint16_t slave, uint16_t lun)
 {
@@ -789,8 +783,7 @@ efidp_make_atapi(uint8_t *buf, ssize_t size, uint16_t primary,
 }
 
 
-ssize_t
-__attribute__((__visibility__ ("default")))
+ssize_t PUBLIC
 efidp_make_sas(uint8_t *buf, ssize_t size, uint64_t sas_address)
 {
 	efidp_sas *sas = (efidp_sas *)buf;
@@ -815,8 +808,7 @@ efidp_make_sas(uint8_t *buf, ssize_t size, uint64_t sas_address)
 	return sz;
 }
 
-ssize_t
-__attribute__((__visibility__ ("default")))
+ssize_t PUBLIC
 efidp_make_nvdimm(uint8_t *buf, ssize_t size, efi_guid_t *uuid)
 {
 	efidp_nvdimm *nvdimm = (efidp_nvdimm *)buf;

@@ -22,8 +22,7 @@
 #define ev_bits(val, mask, shift) \
 	(((val) & ((mask) << (shift))) >> (shift))
 
-static inline size_t
-__attribute__((__unused__))
+static inline size_t UNUSED
 ucs2len(const uint16_t * const s, ssize_t limit)
 {
 	ssize_t i;
@@ -32,8 +31,7 @@ ucs2len(const uint16_t * const s, ssize_t limit)
 	return i;
 }
 
-static inline size_t
-__attribute__((__unused__))
+static inline size_t UNUSED
 ucs2size(const uint16_t * const s, ssize_t limit)
 {
 	size_t rc = ucs2len(s, limit);
@@ -44,9 +42,7 @@ ucs2size(const uint16_t * const s, ssize_t limit)
 	return rc;
 }
 
-static inline size_t
-__attribute__((__unused__))
-__attribute__((__nonnull__ (1)))
+static inline size_t UNUSED NONNULL(1)
 utf8len(uint8_t *s, ssize_t limit)
 {
 	ssize_t i, j;
@@ -63,9 +59,7 @@ utf8len(uint8_t *s, ssize_t limit)
 	return j;
 }
 
-static inline size_t
-__attribute__((__unused__))
-__attribute__((__nonnull__ (1)))
+static inline size_t UNUSED NONNULL(1)
 utf8size(uint8_t *s, ssize_t limit)
 {
 	size_t ret = utf8len(s,limit);
@@ -74,8 +68,7 @@ utf8size(uint8_t *s, ssize_t limit)
 	return ret;
 }
 
-static inline unsigned char *
-__attribute__((__unused__))
+static inline unsigned char * UNUSED
 ucs2_to_utf8(const uint16_t * const chars, ssize_t limit)
 {
 	ssize_t i, j;
@@ -130,9 +123,7 @@ ucs2_to_utf8(const uint16_t * const chars, ssize_t limit)
 	return (unsigned char *)strdup((char *)ret);
 }
 
-static inline ssize_t
-__attribute__((__unused__))
-__attribute__((__nonnull__ (4)))
+static inline ssize_t UNUSED NONNULL(4)
 utf8_to_ucs2(uint16_t *ucs2, ssize_t size, int terminate, uint8_t *utf8)
 {
 	ssize_t req;

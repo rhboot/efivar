@@ -29,7 +29,7 @@
 
 static ssize_t
 _format_acpi_adr(char *buf, size_t size,
-		 const char *dp_type __attribute__((__unused__)),
+		 const char *dp_type UNUSED,
 		 const_efidp dp)
 {
 	ssize_t off = 0;
@@ -239,8 +239,7 @@ _format_acpi_dn(char *buf, size_t size, const_efidp dp)
 	return off;
 }
 
-ssize_t
-__attribute__((__visibility__ ("default")))
+ssize_t PUBLIC
 efidp_make_acpi_hid(uint8_t *buf, ssize_t size, uint32_t hid, uint32_t uid)
 {
 	efidp_acpi_hid *acpi_hid = (efidp_acpi_hid *)buf;
@@ -260,9 +259,7 @@ efidp_make_acpi_hid(uint8_t *buf, ssize_t size, uint32_t hid, uint32_t uid)
 	return sz;
 }
 
-ssize_t
-__attribute__((__visibility__ ("default")))
-__attribute__((__nonnull__ (6,7,8)))
+ssize_t PUBLIC NONNULL(6, 7, 8)
 efidp_make_acpi_hid_ex(uint8_t *buf, ssize_t size,
 		       uint32_t hid, uint32_t uid, uint32_t cid,
 		       char *hidstr, char *uidstr, char *cidstr)
