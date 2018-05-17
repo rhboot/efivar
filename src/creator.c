@@ -34,8 +34,7 @@
 
 #include "efiboot.h"
 
-static int
-__attribute__((__nonnull__ (1,2,3)))
+static int NONNULL(1, 2, 3)
 find_file(const char * const filepath, char **devicep, char **relpathp)
 {
 	struct stat fsb = { 0, };
@@ -306,9 +305,7 @@ err:
 	return ret;
 }
 
-ssize_t
-__attribute__((__nonnull__ (3, 5)))
-__attribute__((__visibility__ ("default")))
+ssize_t NONNULL(3, 5) PUBLIC
 efi_generate_file_device_path_from_esp(uint8_t *buf, ssize_t size,
 				       const char *devpath, int partition,
 				       const char *relpath,
@@ -330,9 +327,7 @@ efi_generate_file_device_path_from_esp(uint8_t *buf, ssize_t size,
 	return ret;
 }
 
-ssize_t
-__attribute__((__nonnull__ (3)))
-__attribute__((__visibility__ ("default")))
+ssize_t NONNULL(3) PUBLIC
 efi_generate_file_device_path(uint8_t *buf, ssize_t size,
 			      const char * const filepath,
 			      uint32_t options, ...)
@@ -390,17 +385,16 @@ err:
 	return ret;
 }
 
-static ssize_t
-__attribute__((__nonnull__ (3,4,5,6)))
+static ssize_t NONNULL(3, 4, 5, 6)
 make_ipv4_path(uint8_t *buf, ssize_t size,
-	       const char * const local_addr __attribute__((unused)),
-	       const char * const remote_addr __attribute__((unused)),
-	       const char * const gateway_addr __attribute__((unused)),
-	       const char * const netmask __attribute__((unused)),
-	       uint16_t local_port __attribute__((unused)),
-	       uint16_t remote_port __attribute__((unused)),
-	       uint16_t protocol __attribute__((unused)),
-	       uint8_t addr_origin __attribute__((unused)))
+	       const char * const local_addr UNUSED,
+	       const char * const remote_addr UNUSED,
+	       const char * const gateway_addr UNUSED,
+	       const char * const netmask UNUSED,
+	       uint16_t local_port UNUSED,
+	       uint16_t remote_port UNUSED,
+	       uint16_t protocol UNUSED,
+	       uint8_t addr_origin UNUSED)
 {
 	ssize_t ret;
 
@@ -417,9 +411,7 @@ make_ipv4_path(uint8_t *buf, ssize_t size,
 	return ret;
 }
 
-ssize_t
-__attribute__((__nonnull__ (3,4,5,6,7)))
-__attribute__((__visibility__ ("default")))
+ssize_t NONNULL(3, 4, 5, 6, 7) PUBLIC
 efi_generate_ipv4_device_path(uint8_t *buf, ssize_t size,
 			      const char * const ifname,
 			      const char * const local_addr,

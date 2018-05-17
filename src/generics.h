@@ -31,8 +31,7 @@
 
 static DIR *dir;
 
-static inline int
-__attribute__((unused))
+static inline int UNUSED
 generic_get_next_variable_name(const char *path, efi_guid_t **guid, char **name)
 {
 	static char ret_name[NAME_MAX+1];
@@ -119,8 +118,8 @@ generic_get_next_variable_name(const char *path, efi_guid_t **guid, char **name)
 	return 1;
 }
 
-static void __attribute__((destructor)) close_dir(void);
-static void
+static void DESTRUCTOR close_dir(void);
+static void DESTRUCTOR
 close_dir(void)
 {
 	if (dir != NULL) {
@@ -131,9 +130,7 @@ close_dir(void)
 
 /* this is a simple read/delete/write implementation of "update".  Good luck.
  * -- pjones */
-static int
-__attribute__((__unused__))
-__attribute__((__flatten__))
+static int UNUSED FLATTEN
 generic_append_variable(efi_guid_t guid, const char *name,
 		       uint8_t *new_data, size_t new_data_size,
 		       uint32_t new_attributes)

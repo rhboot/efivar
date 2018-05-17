@@ -56,7 +56,7 @@ typedef struct efi_kernel_variable_32_t {
 	uint8_t		Data[1024];
 	uint32_t	Status;
 	uint32_t	Attributes;
-} __attribute__((packed)) efi_kernel_variable_32_t;
+} PACKED efi_kernel_variable_32_t;
 
 typedef struct efi_kernel_variable_64_t {
 	uint16_t	VariableName[1024/sizeof(uint16_t)];
@@ -65,7 +65,7 @@ typedef struct efi_kernel_variable_64_t {
 	uint8_t		Data[1024];
 	uint64_t	Status;
 	uint32_t	Attributes;
-} __attribute__((packed)) efi_kernel_variable_64_t;
+} PACKED efi_kernel_variable_64_t;
 
 static ssize_t
 get_file_data_size(int dfd, char *name)

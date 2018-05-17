@@ -76,8 +76,7 @@ check_segment_sanity(const char *text, size_t len)
 	return 0;
 }
 
-static inline int
-__attribute__((unused))
+static inline int UNUSED
 text_to_guid(const char *text, efi_guid_t *guid)
 {
 	/* these variables represent the length of the /string/ they hold,

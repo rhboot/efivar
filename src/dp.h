@@ -84,8 +84,7 @@
 		_rc;							\
 	})
 
-static inline ssize_t
-__attribute__((__unused__))
+static inline ssize_t UNUSED
 format_hex_helper(char *buf, size_t size, const char *dp_type, char *separator,
 		  int stride, const void * const addr, const size_t len)
 {
@@ -107,8 +106,7 @@ format_hex_helper(char *buf, size_t size, const char *dp_type, char *separator,
 	format_helper(format_hex_helper, buf, size, off, dp_type, sep, stride, \
 		      addr, len)
 
-static inline ssize_t
-__attribute__((__unused__))
+static inline ssize_t UNUSED
 format_vendor_helper(char *buf, size_t size, char *label, const_efidp dp)
 {
 	ssize_t off = 0;

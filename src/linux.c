@@ -42,8 +42,7 @@
 
 #include "efiboot.h"
 
-int
-__attribute__((__visibility__ ("hidden")))
+int HIDDEN
 set_disk_and_part_name(struct disk_info *info)
 {
 	char *linkbuf;
@@ -121,8 +120,7 @@ set_disk_and_part_name(struct disk_info *info)
 	return 0;
 }
 
-int
-__attribute__((__visibility__ ("hidden")))
+int HIDDEN
 get_partition_number(const char *devpath)
 {
 	struct stat statbuf = { 0, };
@@ -168,8 +166,7 @@ get_partition_number(const char *devpath)
 	return ret;
 }
 
-int
-__attribute__((__visibility__ ("hidden")))
+int HIDDEN
 find_parent_devpath(const char * const child, char **parent)
 {
 	int ret;
@@ -373,9 +370,8 @@ sysfs_sata_get_port_info(uint32_t print_id, struct disk_info *info)
  */
 static ssize_t
 sysfs_parse_pmem(uint8_t *buf,  ssize_t size, ssize_t *off,
-		 const char *pbuf, ssize_t psize __attribute__((__unused__)),
-		 ssize_t *poff __attribute__((__unused__)),
-		 struct disk_info *info)
+                 const char *pbuf, ssize_t psize UNUSED,
+                 ssize_t *poff UNUSED, struct disk_info *info)
 {
 	uint8_t *filebuf = NULL;
 	int rc;
@@ -814,8 +810,7 @@ make_pci_path(uint8_t *buf, ssize_t size, char *pathstr, ssize_t *pathoff)
 	return off;
 }
 
-int
-__attribute__((__visibility__ ("hidden")))
+int HIDDEN
 make_blockdev_path(uint8_t *buf, ssize_t size, struct disk_info *info)
 {
 	char *linkbuf = NULL;
@@ -1010,8 +1005,7 @@ make_blockdev_path(uint8_t *buf, ssize_t size, struct disk_info *info)
 	return off;
 }
 
-int
-__attribute__((__visibility__ ("hidden")))
+int HIDDEN
 eb_disk_info_from_fd(int fd, struct disk_info *info)
 {
 	struct stat buf;
@@ -1160,8 +1154,7 @@ make_net_pci_path(uint8_t *buf, ssize_t size, const char * const ifname)
 	return off;
 }
 
-ssize_t
-__attribute__((__visibility__ ("hidden")))
+ssize_t HIDDEN
 make_mac_path(uint8_t *buf, ssize_t size, const char * const ifname)
 {
 	struct ifreq ifr;
