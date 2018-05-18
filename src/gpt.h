@@ -32,34 +32,33 @@
 #define MSDOS_MBR_SIGNATURE 0xaa55
 #define GPT_BLOCK_SIZE 512
 
-
-#define GPT_HEADER_SIGNATURE ((uint64_t)(0x5452415020494645LL))
+#define GPT_HEADER_SIGNATURE ((uint64_t)(0x5452415020494645ULL))
 #define GPT_HEADER_REVISION_V1_02 0x00010200
 #define GPT_HEADER_REVISION_V1_00 0x00010000
 #define GPT_HEADER_REVISION_V0_99 0x00009900
 #define GPT_PRIMARY_PARTITION_TABLE_LBA 1
 
-#define PARTITION_SYSTEM_GUID \
-    EFI_GUID( 0xC12A7328, 0xF81F, 0x11d2, 0xBA4B, \
-              0x00, 0xA0, 0xC9, 0x3E, 0xC9, 0x3B)
-#define LEGACY_MBR_PARTITION_GUID \
-    EFI_GUID( 0x024DEE41, 0x33E7, 0x11d3, 0x9D69, \
-              0x00, 0x08, 0xC7, 0x81, 0xF3, 0x9F)
-#define PARTITION_MSFT_RESERVED_GUID \
-    EFI_GUID( 0xE3C9E316, 0x0B5C, 0x4DB8, 0x817D, \
-              0xF9, 0x2D, 0xF0, 0x02, 0x15, 0xAE)
-#define PARTITION_BASIC_DATA_GUID \
-    EFI_GUID( 0xEBD0A0A2, 0xB9E5, 0x4433, 0x87C0, \
-              0x68, 0xB6, 0xB7, 0x26, 0x99, 0xC7)
-#define PARTITION_LINUX_RAID_GUID \
-    EFI_GUID( 0xa19d880f, 0x05fc, 0x4d3b, 0xA006, \
-              0x74, 0x3f, 0x0f, 0x84, 0x91, 0x1e)
-#define PARTITION_LINUX_SWAP_GUID \
-    EFI_GUID( 0x0657fd6d, 0xa4ab, 0x43c4, 0x84E5, \
-              0x09, 0x33, 0xc8, 0x4b, 0x4f, 0x4f)
-#define PARTITION_LINUX_LVM_GUID \
-    EFI_GUID( 0xe6d6d379, 0xf507, 0x44c2, 0xa23c, \
-              0x23, 0x8f, 0x2a, 0x3d, 0xf9, 0x28)
+#define PARTITION_SYSTEM_GUID                           \
+        EFI_GUID(0xC12A7328, 0xF81F, 0x11d2, 0xBA4B,    \
+                 0x00, 0xA0, 0xC9, 0x3E, 0xC9, 0x3B)
+#define LEGACY_MBR_PARTITION_GUID                       \
+        EFI_GUID(0x024DEE41, 0x33E7, 0x11d3, 0x9D69,    \
+                 0x00, 0x08, 0xC7, 0x81, 0xF3, 0x9F)
+#define PARTITION_MSFT_RESERVED_GUID                    \
+        EFI_GUID(0xE3C9E316, 0x0B5C, 0x4DB8, 0x817D,    \
+                 0xF9, 0x2D, 0xF0, 0x02, 0x15, 0xAE)
+#define PARTITION_BASIC_DATA_GUID                       \
+        EFI_GUID(0xEBD0A0A2, 0xB9E5, 0x4433, 0x87C0,    \
+                 0x68, 0xB6, 0xB7, 0x26, 0x99, 0xC7)
+#define PARTITION_LINUX_RAID_GUID                       \
+        EFI_GUID(0xa19d880f, 0x05fc, 0x4d3b, 0xA006,    \
+                 0x74, 0x3f, 0x0f, 0x84, 0x91, 0x1e)
+#define PARTITION_LINUX_SWAP_GUID                       \
+        EFI_GUID(0x0657fd6d, 0xa4ab, 0x43c4, 0x84E5,    \
+                 0x09, 0x33, 0xc8, 0x4b, 0x4f, 0x4f)
+#define PARTITION_LINUX_LVM_GUID                        \
+        EFI_GUID(0xe6d6d379, 0xf507, 0x44c2, 0xa23c,    \
+                 0x23, 0x8f, 0x2a, 0x3d, 0xf9, 0x28)
 
 typedef struct _gpt_header {
 	uint64_t signature;
@@ -94,44 +93,41 @@ typedef struct _gpt_entry {
 	uint16_t partition_name[72 / sizeof(uint16_t)];
 } PACKED gpt_entry;
 
-
 /*
-   These values are only defaults.  The actual on-disk structures
-   may define different sizes, so use those unless creating a new GPT disk!
-*/
-
+ * These values are only defaults.  The actual on-disk structures
+ * may define different sizes, so use those unless creating a new GPT disk!
+ */
 #define GPT_DEFAULT_RESERVED_PARTITION_ENTRY_ARRAY_SIZE 16384
+
 /*
-   Number of actual partition entries should be calculated
-   as:
-*/
+ * Number of actual partition entries should be calculated as:
+ */
 #define GPT_DEFAULT_RESERVED_PARTITION_ENTRIES \
         (GPT_DEFAULT_RESERVED_PARTITION_ENTRY_ARRAY_SIZE / \
          sizeof(gpt_entry))
 
-
 typedef struct _partition_record {
-	uint8_t boot_indicator;	/* Not used by EFI firmware. Set to 0x80 to indicate that this
-				   is the bootable legacy partition. */
-	uint8_t start_head;		/* Start of partition in CHS address, not used by EFI firmware. */
-	uint8_t start_sector;	/* Start of partition in CHS address, not used by EFI firmware. */
-	uint8_t start_track;	/* Start of partition in CHS address, not used by EFI firmware. */
-	uint8_t os_type;		/* OS type. A value of 0xEF defines an EFI system partition.
-				   Other values are reserved for legacy operating systems, and
-				   allocated independently of the EFI specification. */
-	uint8_t end_head;		/* End of partition in CHS address, not used by EFI firmware. */
-	uint8_t end_sector;		/* End of partition in CHS address, not used by EFI firmware. */
-	uint8_t end_track;		/* End of partition in CHS address, not used by EFI firmware. */
-	uint32_t starting_lba;	/* Starting LBA address of the partition on the disk. Used by
-				   EFI firmware to define the start of the partition. */
-	uint32_t size_in_lba;	/* Size of partition in LBA. Used by EFI firmware to determine
-				   the size of the partition. */
+	uint8_t boot_indicator; /* Not used by EFI firmware. Set to 0x80 to indicate that this
+                                   is the bootable legacy partition. */
+	uint8_t start_head;     /* Start of partition in CHS address, not used by EFI firmware. */
+	uint8_t start_sector;   /* Start of partition in CHS address, not used by EFI firmware. */
+	uint8_t start_track;    /* Start of partition in CHS address, not used by EFI firmware. */
+	uint8_t os_type;        /* OS type. A value of 0xEF defines an EFI system partition.
+                                   Other values are reserved for legacy operating systems, and
+                                   allocated independently of the EFI specification. */
+	uint8_t end_head;       /* End of partition in CHS address, not used by EFI firmware. */
+	uint8_t end_sector;     /* End of partition in CHS address, not used by EFI firmware. */
+	uint8_t end_track;      /* End of partition in CHS address, not used by EFI firmware. */
+	uint32_t starting_lba;  /* Starting LBA address of the partition on the disk. Used by
+                                   EFI firmware to define the start of the partition. */
+	uint32_t size_in_lba;   /* Size of partition in LBA. Used by EFI firmware to determine
+                                   the size of the partition. */
 } PACKED partition_record;
 
-
-/* Protected Master Boot Record  & Legacy MBR share same structure */
-/* Needs to be packed because the u16s force misalignment. */
-
+/*
+ * Protected Master Boot Record & Legacy MBR share same structure, which needs
+ * to be packed because the uint16_t members force misalignment.
+ */
 typedef struct _legacy_mbr {
 	uint8_t bootcode[440];
 	uint32_t unique_mbr_signature;
@@ -143,31 +139,10 @@ typedef struct _legacy_mbr {
 #define EFI_GPT_PRIMARY_PARTITION_TABLE_LBA 1
 
 /* Functions */
-extern int gpt_disk_get_partition_info (int fd, uint32_t num, uint64_t *start,
-					uint64_t *size, uint8_t *signature,
-					uint8_t *mbr_type,
-					uint8_t *signature_type,
-					int ignore_pmbr_error,
-					int logical_sector_size)
-	NONNULL(3, 4, 5, 6, 7) HIDDEN;
+extern int NONNULL(3, 4, 5, 6, 7) HIDDEN
+gpt_disk_get_partition_info (int fd, uint32_t num, uint64_t *start,
+                             uint64_t *size, uint8_t *signature,
+                             uint8_t *mbr_type, uint8_t *signature_type,
+                             int ignore_pmbr_error, int logical_sector_size);
 
 #endif /* _EFIBOOT_GPT_H */
-
-/*
- * Overrides for Emacs so that we follow Linus's tabbing style.
- * Emacs will notice this stuff at the end of the file and automatically
- * adjust the settings for this buffer only.  This must remain at the end
- * of the file.
- * ---------------------------------------------------------------------------
- * Local variables:
- * c-indent-level: 4
- * c-brace-imaginary-offset: 0
- * c-brace-offset: -4
- * c-argdecl-indent: 4
- * c-label-offset: -4
- * c-continued-statement-offset: 4
- * c-continued-brace-offset: 0
- * indent-tabs-mode: nil
- * tab-width: 8
- * End:
- */
