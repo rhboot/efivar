@@ -106,14 +106,12 @@ extern int make_blockdev_path(uint8_t *buf, ssize_t size,
 
 extern int eb_nvme_ns_id(int fd, uint32_t *ns_id);
 
-extern int get_partition_number(const char *devpath)
-        HIDDEN;
+extern int HIDDEN get_partition_number(const char *devpath);
 
-extern int find_parent_devpath(const char * const child, char **parent)
-	HIDDEN;
+extern int HIDDEN find_parent_devpath(const char * const child,
+                                      char **parent);
 
-extern ssize_t make_mac_path(uint8_t *buf, ssize_t size,
-			     const char * const ifname)
-	HIDDEN;
+extern ssize_t HIDDEN make_mac_path(uint8_t *buf, ssize_t size,
+                                    const char * const ifname);
 
 #endif /* _EFIBOOT_LINUX_H */

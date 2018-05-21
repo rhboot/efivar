@@ -226,9 +226,9 @@ efi_variables_supported(void)
 	return 1;
 }
 
-static void libefivar_init(void) CONSTRUCTOR;
+static void CONSTRUCTOR libefivar_init(void);
 
-static void
+static void CONSTRUCTOR
 libefivar_init(void)
 {
 	struct efi_var_operations *ops_list[] = {
