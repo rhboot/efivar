@@ -55,10 +55,10 @@ include $(TOPDIR)/Make.version
 define substitute-version
 	sed						\
 		-e "s,@@VERSION@@,$(VERSION),g"		\
-		-e "s,@@LIBDIR@@,$(libdir),g"		\
-		-e "s,@@PREFIX@@,$(prefix),g"		\
-		-e "s,@@EXEC_PREFIX@@,$(exec_prefix),g"		\
-		-e "s,@@INCLUDEDIR@@,$(includedir),g"		\
+		-e "s,@@LIBDIR@@,$(LIBDIR),g"		\
+		-e "s,@@PREFIX@@,$(PREFIX),g"		\
+		-e "s,@@EXEC_PREFIX@@,$(EXEC_PREFIX),g"		\
+		-e "s,@@INCLUDEDIR@@,$(INCLUDEDIR),g"		\
 		$(1) > $(2)
 endef
 

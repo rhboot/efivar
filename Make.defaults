@@ -1,11 +1,11 @@
-prefix	?= /usr
-exec_prefix	?= $(prefix)
-libdir	?= $(exec_prefix)/lib64
-datadir	?= $(prefix)/share
-mandir	?= $(datadir)/man
-includedir ?= $(prefix)/include
-bindir	?= $(exec_prefix)/bin
-PCDIR	?= $(libdir)/pkgconfig
+PREFIX	?= /usr
+EXEC_PREFIX ?= $(PREFIX)
+LIBDIR	?= $(PREFIX)/lib64
+DATADIR	?= $(PREFIX)/share
+MANDIR	?= $(DATADIR)/man
+INCLUDEDIR ?= $(PREFIX)/include
+BINDIR	?= $(EXEC_PREFIX)/bin
+PCDIR	?= $(LIBDIR)/pkgconfig
 DESTDIR	?=
 
 INSTALL ?= install
