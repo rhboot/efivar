@@ -1,6 +1,7 @@
 SRCDIR = $(realpath .)
 TOPDIR = $(realpath ..)
 
+include $(TOPDIR)/Make.deprecated
 include $(TOPDIR)/Make.version
 include $(TOPDIR)/Make.rules
 include $(TOPDIR)/Make.defaults
@@ -43,10 +44,10 @@ clean :
 test :
 
 install :
-	$(INSTALL) -d -m 755 $(DESTDIR)$(mandir)/man1
-	$(foreach x, $(MAN1TARGETS), $(INSTALL) -m 644 $(x) $(DESTDIR)/$(mandir)/man1/;)
-	$(INSTALL) -d -m 755 $(DESTDIR)$(mandir)/man3
-	$(foreach x, $(MAN3TARGETS), $(INSTALL) -m 644 $(x) $(DESTDIR)/$(mandir)/man3/;)
+	$(INSTALL) -d -m 755 $(DESTDIR)$(MANDIR)/man1
+	$(foreach x, $(MAN1TARGETS), $(INSTALL) -m 644 $(x) $(DESTDIR)/$(MANDIR)/man1/;)
+	$(INSTALL) -d -m 755 $(DESTDIR)$(MANDIR)/man3
+	$(foreach x, $(MAN3TARGETS), $(INSTALL) -m 644 $(x) $(DESTDIR)/$(MANDIR)/man3/;)
 
 .PHONY: all clean install
 

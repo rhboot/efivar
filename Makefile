@@ -1,5 +1,6 @@
 TOPDIR = $(shell echo $$PWD)
 
+include $(TOPDIR)/Make.deprecated
 include $(TOPDIR)/Make.version
 include $(TOPDIR)/Make.rules
 include $(TOPDIR)/Make.defaults

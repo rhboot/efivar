@@ -1,6 +1,7 @@
 SRCDIR = $(realpath .)
 TOPDIR = $(realpath ..)
 
+include $(TOPDIR)/Make.deprecated
 include $(TOPDIR)/Make.version
 include $(TOPDIR)/Make.rules
 include $(TOPDIR)/Make.defaults
@@ -86,18 +87,18 @@ clean :
 	@rm -rfv .*.P .*.h.P *.S.P include/efivar/.*.h.P
 
 install : all
-	$(INSTALL) -d -m 755 $(DESTDIR)$(libdir)
+	$(INSTALL) -d -m 755 $(DESTDIR)$(LIBDIR)
 	$(foreach x,$(LIBTARGETS), \
-		$(INSTALL) -m 755 $(x) $(DESTDIR)$(libdir)/$(x).1.$(VERSION) ;\
-		ln -fs $(x).1.$(VERSION) $(DESTDIR)$(libdir)/$(x).1 ;\
-		ln -fs $(x).1.$(VERSION) $(DESTDIR)$(libdir)/$(x) ;\
+		$(INSTALL) -m 755 $(x) $(DESTDIR)$(LIBDIR)/$(x).1.$(VERSION) ;\
+		ln -fs $(x).1.$(VERSION) $(DESTDIR)$(LIBDIR)/$(x).1 ;\
+		ln -fs $(x).1.$(VERSION) $(DESTDIR)$(LIBDIR)/$(x) ;\
 		)
 	$(INSTALL) -d -m 755 $(DESTDIR)$(PCDIR)
 	$(foreach x, $(PCTARGETS), $(INSTALL) -m 644 $(x) $(DESTDIR)$(PCDIR) ;)
-	$(INSTALL) -d -m 755 $(DESTDIR)$(includedir)/efivar
-	$(foreach x, $(wildcard $(TOPDIR)/src/include/efivar/*.h), $(INSTALL) -m 644 $(x) $(DESTDIR)$(includedir)/efivar/$(notdir $(x));)
-	$(INSTALL) -d -m 755 $(DESTDIR)$(bindir)
-	$(foreach x, $(BINTARGETS), $(INSTALL) -m 755 $(x) $(DESTDIR)$(bindir);)
+	$(INSTALL) -d -m 755 $(DESTDIR)$(INCLUDEDIR)/efivar
+	$(foreach x, $(wildcard $(TOPDIR)/src/include/efivar/*.h), $(INSTALL) -m 644 $(x) $(DESTDIR)$(INCLUDEDIR)/efivar/$(notdir $(x));)
+	$(INSTALL) -d -m 755 $(DESTDIR)$(BINDIR)
+	$(foreach x, $(BINTARGETS), $(INSTALL) -m 755 $(x) $(DESTDIR)$(BINDIR);)
 
 test : all
 	$(MAKE) -C test $@
