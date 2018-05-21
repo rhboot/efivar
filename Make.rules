@@ -84,3 +84,5 @@ endef
 define get-config
 $(shell git config --local --get "efivar.$(1)")
 endef
+
+# vim:ft=make

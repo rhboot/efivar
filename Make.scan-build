@@ -18,3 +18,4 @@ scan-build-all : clean
 
 .PHONY : scan-build scan-clean
 
+# vim:ft=make
