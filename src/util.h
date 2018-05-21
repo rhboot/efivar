@@ -157,8 +157,10 @@ read_file(int fd, uint8_t **buf, size_t *bufsize)
         ssize_t s = 0;
 
         uint8_t *newbuf;
-        if (!(newbuf = calloc(size, sizeof (uint8_t))))
+        if (!(newbuf = calloc(size, sizeof (uint8_t)))) {
+                efi_error("could not allocate memory");
                 return -1;
+        }
         *buf = newbuf;
 
         do {
@@ -181,6 +183,7 @@ read_file(int fd, uint8_t **buf, size_t *bufsize)
                         *buf = NULL;
                         *bufsize = 0;
                         errno = saved_errno;
+                        efi_error("could not read from file");
                         return -1;
                 }
                 filesize += s;
@@ -195,6 +198,7 @@ read_file(int fd, uint8_t **buf, size_t *bufsize)
                                 *buf = NULL;
                                 *bufsize = 0;
                                 errno = ENOMEM;
+                                efi_error("could not read from file");
                                 return -1;
                         }
                         newbuf = realloc(*buf, size + 4096);
@@ -204,6 +208,7 @@ read_file(int fd, uint8_t **buf, size_t *bufsize)
                                 *buf = NULL;
                                 *bufsize = 0;
                                 errno = saved_errno;
+                                efi_error("could not allocate memory");
                                 return -1;
                         }
                         *buf = newbuf;
@@ -216,6 +221,7 @@ read_file(int fd, uint8_t **buf, size_t *bufsize)
         if (!newbuf) {
                 free(*buf);
                 *buf = NULL;
+                efi_error("could not allocate memory");
                 return -1;
         }
         newbuf[filesize] = '\0';
