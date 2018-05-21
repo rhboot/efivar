@@ -238,6 +238,13 @@ libefivar_init(void)
 		NULL
 	};
 	char *ops_name = getenv("LIBEFIVAR_OPS");
+        if (ops_name && strcasestr(ops_name, "help")) {
+                printf("LIBEFIVAR_OPS operations available:\n");
+                for (int i = 0; ops_list[i] != NULL; i++)
+                        printf("\t%s\n", ops_list[i]->name);
+                exit(0);
+        }
+
 	for (int i = 0; ops_list[i] != NULL; i++)
 	{
 		if (ops_name != NULL) {
