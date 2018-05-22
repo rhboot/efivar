@@ -48,7 +48,7 @@ set_disk_and_part_name(struct disk_info *info)
 	char *linkbuf;
 	ssize_t rc;
 
-	rc = sysfs_readlink(&linkbuf, "/sys/dev/block/%"PRIu64":%"PRIu32,
+	rc = sysfs_readlink(&linkbuf, "dev/block/%"PRIu64":%"PRIu32,
 		      info->major, info->minor);
 	if (rc < 0 || !linkbuf)
 		return -1;
@@ -145,13 +145,13 @@ get_partition_number(const char *devpath)
 	maj = major(statbuf.st_rdev);
 	min = minor(statbuf.st_rdev);
 
-	rc = sysfs_readlink(&linkbuf, "/sys/dev/block/%u:%u", maj, min);
+	rc = sysfs_readlink(&linkbuf, "dev/block/%u:%u", maj, min);
 	if (rc < 0 || !linkbuf) {
 		efi_error("couldn't get partition number for %u:%u", maj, min);
 		return -1;
 	}
 
-	rc = read_sysfs_file(&partbuf, "/sys/dev/block/%s/partition", linkbuf);
+	rc = read_sysfs_file(&partbuf, "dev/block/%s/partition", linkbuf);
 	if (rc < 0) {
 		efi_error("couldn't get partition number for %s", linkbuf);
 		/* This isn't strictly an error for e.g. nvdimm pmem devices */
@@ -180,7 +180,7 @@ find_parent_devpath(const char * const child, char **parent)
 	node++;
 
 	/* look up full path symlink */
-	ret = sysfs_readlink(&linkbuf, "/sys/class/block/%s", node);
+	ret = sysfs_readlink(&linkbuf, "class/block/%s", node);
 	if (ret < 0 || !linkbuf)
 		return ret;
 
@@ -213,7 +213,7 @@ sysfs_test_pmem(const char *buf)
 	int rc;
 
 	rc = sysfs_readlink(&driverbuf,
-			    "/sys/dev/block/%s/device/driver", buf);
+			    "dev/block/%s/device/driver", buf);
 	if (rc < 0 || !driverbuf)
 		return 0;
 
@@ -327,7 +327,7 @@ sysfs_sata_get_port_info(uint32_t print_id, struct disk_info *info)
 	}
 	closedir(d);
 
-	rc = read_sysfs_file(&buf, "/sys/class/ata_port/ata%d/port_no",
+	rc = read_sysfs_file(&buf, "class/ata_port/ata%d/port_no",
 			     print_id);
 	if (rc <= 0 || buf == NULL)
 		return -1;
@@ -377,7 +377,7 @@ sysfs_parse_pmem(uint8_t *buf,  ssize_t size, ssize_t *off,
 	int rc;
 
 	rc = read_sysfs_file(&filebuf,
-			     "/sys/class/block/%s/device/uuid", pbuf);
+			     "class/block/%s/device/uuid", pbuf);
 	if ((rc < 0 && errno == ENOENT) || filebuf == NULL)
 		return -1;
 
@@ -435,11 +435,11 @@ sysfs_parse_nvme(uint8_t *buf, ssize_t size, ssize_t *off,
 	 * now fish the eui out of sysfs is there is one...
 	 */
 	rc = read_sysfs_file(&filebuf,
-			     "/sys/class/block/nvme%dn%d/eui",
+			     "class/block/nvme%dn%d/eui",
 			     ctrl_id, ns_id);
 	if ((rc < 0 && errno == ENOENT) || filebuf == NULL) {
 		rc = read_sysfs_file(&filebuf,
-			     "/sys/class/block/nvme%dn%d/device/eui",
+			     "class/block/nvme%dn%d/device/eui",
 			     ctrl_id, ns_id);
 	}
 	if (rc >= 0 && filebuf != NULL) {
@@ -680,7 +680,7 @@ sysfs_parse_sas(uint8_t *buf, ssize_t size, ssize_t *off,
 	 * we also need to get the actual sas_address from someplace...
 	 */
 	rc = read_sysfs_file(&filebuf,
-			     "/sys/class/block/%s/device/sas_address",
+			     "class/block/%s/device/sas_address",
 			     disk_name);
 	if (rc < 0 || filebuf == NULL)
 		return -1;
@@ -730,7 +730,7 @@ make_pci_path(uint8_t *buf, ssize_t size, char *pathstr, ssize_t *pathoff)
 
 	uint8_t *fbuf = NULL;
 	rc = read_sysfs_file(&fbuf,
-			     "/sys/devices/pci%04hx:%02hhx/firmware_node/hid",
+			     "devices/pci%04hx:%02hhx/firmware_node/hid",
 			     root_domain, root_bus);
 	if (rc < 0 || fbuf == NULL)
 		return -1;
@@ -753,7 +753,7 @@ make_pci_path(uint8_t *buf, ssize_t size, char *pathstr, ssize_t *pathoff)
 	fbuf = NULL;
 	int use_uid_str = 0;
 	rc = read_sysfs_file(&fbuf,
-			     "/sys/devices/pci%04hx:%02hhx/firmware_node/uid",
+			     "devices/pci%04hx:%02hhx/firmware_node/uid",
 			     root_domain, root_bus);
 	if ((rc <= 0 && errno != ENOENT) || fbuf == NULL)
 		return -1;
@@ -820,7 +820,7 @@ make_blockdev_path(uint8_t *buf, ssize_t size, struct disk_info *info)
 	int rc;
 	int found = 0;
 
-	rc = sysfs_readlink(&linkbuf, "/sys/dev/block/%"PRIu64":%u",
+	rc = sysfs_readlink(&linkbuf, "dev/block/%"PRIu64":%u",
 			    info->major, info->minor);
 	if (rc < 0 || !linkbuf) {
 		efi_error("couldn't read link for /sys/dev/block/%"PRIu64":%u",
@@ -871,7 +871,7 @@ make_blockdev_path(uint8_t *buf, ssize_t size, struct disk_info *info)
 		if (!tmppath)
 			return -1;
 		tmppath[loff] = '\0';
-		rc = sysfs_readlink(&driverbuf, "/sys/dev/block/%s/driver",
+		rc = sysfs_readlink(&driverbuf, "dev/block/%s/driver",
 				    tmppath);
 		if (rc < 0 || !driverbuf)
 			return -1;
@@ -975,7 +975,7 @@ make_blockdev_path(uint8_t *buf, ssize_t size, struct disk_info *info)
 	if (!found && info->interface_type == scsi) {
 		char *linkbuf;
 
-		rc = sysfs_readlink(&linkbuf, "/sys/class/block/%s/device",
+		rc = sysfs_readlink(&linkbuf, "class/block/%s/device",
 			      info->disk_name);
 		if (rc < 0 || !linkbuf)
 			return 0;
@@ -1098,7 +1098,7 @@ eb_disk_info_from_fd(int fd, struct disk_info *info)
 		return 0;
 	}
 
-	rc = sysfs_readlink(&driver, "/sys/dev/block/%"PRIu64":%"PRIu32"/device/driver",
+	rc = sysfs_readlink(&driver, "dev/block/%"PRIu64":%"PRIu32"/device/driver",
 			    info->major, info->minor);
 	if (rc > 0) {
 		char *last = strrchr(driver, '/');
@@ -1127,7 +1127,7 @@ make_net_pci_path(uint8_t *buf, ssize_t size, const char * const ifname)
 	int lsz = 0;
 	int rc;
 
-	rc = sysfs_readlink(&linkbuf, "/sys/class/net/%s", ifname);
+	rc = sysfs_readlink(&linkbuf, "class/net/%s", ifname);
 	if (rc < 0 || !linkbuf)
 		return -1;
 

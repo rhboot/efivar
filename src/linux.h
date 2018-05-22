@@ -114,4 +114,78 @@ extern int HIDDEN find_parent_devpath(const char * const child,
 extern ssize_t HIDDEN make_mac_path(uint8_t *buf, ssize_t size,
                                     const char * const ifname);
 
+#define read_sysfs_file(buf, fmt, args...)                              \
+        ({                                                              \
+                uint8_t *buf_ = NULL;                                   \
+                ssize_t bufsize_ = -1;                                  \
+                int error_;                                             \
+                                                                        \
+                bufsize_ = get_file(&buf_, "/sys/" fmt, ## args);       \
+                if (bufsize_ > 0) {                                     \
+                        uint8_t *buf2_ = alloca(bufsize_);              \
+                        error_ = errno;                                 \
+                        if (buf2_)                                      \
+                                memcpy(buf2_, buf_, bufsize_);          \
+                        free(buf_);                                     \
+                        *(buf) = (__typeof__(*(buf)))buf2_;             \
+                        errno = error_;                                 \
+                }                                                       \
+                bufsize_;                                               \
+        })
+
+#define sysfs_readlink(linkbuf, fmt, args...)                           \
+        ({                                                              \
+                char *_lb = alloca(PATH_MAX+1);                         \
+                char *_pn;                                              \
+                int _rc;                                                \
+                                                                        \
+                *(linkbuf) = NULL;                                      \
+                _rc = asprintfa(&_pn, "/sys/" fmt, ## args);            \
+                if (_rc >= 0) {                                         \
+                        ssize_t _linksz;                                \
+                        _rc = _linksz = readlink(_pn, _lb, PATH_MAX);   \
+                        if (_linksz >= 0)                               \
+                                _lb[_linksz] = '\0';                    \
+                        else                                            \
+                                efi_error("readlink of %s failed", _pn);\
+                        *(linkbuf) = _lb;                               \
+                } else {                                                \
+                        efi_error("could not allocate memory");         \
+                }                                                       \
+                _rc;                                                    \
+        })
+
+#define sysfs_stat(statbuf, fmt, args...)                               \
+        ({                                                              \
+                int rc_;                                                \
+                char *pn_;                                              \
+                                                                        \
+                rc_ = asprintfa(&pn_, "/sys/" fmt, ## args);            \
+                if (rc_ >= 0) {                                         \
+                        rc_ = stat(pn_, statbuf);                       \
+                        if (rc_ < 0)                                    \
+                                efi_error("could not stat %s", pn_);    \
+                } else {                                                \
+                        efi_error("could not allocate memory");         \
+                }                                                       \
+                rc_;                                                    \
+        })
+
+#define sysfs_opendir(fmt, args...)                                     \
+        ({                                                              \
+                int rc_;                                                \
+                char *pn_;                                              \
+                DIR *dir_ = NULL;                                       \
+                                                                        \
+                rc_ = asprintfa(&pn_, "/sys/" fmt, ## args);            \
+                if (rc_ >= 0) {                                         \
+                        dir_ = opendir(pn_);                            \
+                        if (dir_ == NULL)                               \
+                                efi_error("could not open %s", pn_);    \
+                } else {                                                \
+                        efi_error("could not allocate memory");         \
+                }                                                       \
+                dir_;                                                   \
+        })
+
 #endif /* _EFIBOOT_LINUX_H */
