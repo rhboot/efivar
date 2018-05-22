@@ -241,25 +241,6 @@ lcm(uint64_t x, uint64_t y)
         return (x / n) * y;
 }
 
-/************************************************************
- * get_sector_size
- * Requires:
- *  - filedes is an open file descriptor, suitable for reading
- * Modifies: nothing
- * Returns:
- *  sector size, or 512.
- ************************************************************/
-static inline int UNUSED
-get_sector_size(int filedes)
-{
-        int rc, sector_size = 512;
-
-        rc = ioctl(filedes, BLKSSZGET, &sector_size);
-        if (rc)
-                sector_size = 512;
-        return sector_size;
-}
-
 #ifndef strndupa
 #define strndupa(s, l)                                                  \
        (__extension__ ({                                                \

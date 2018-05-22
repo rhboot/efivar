@@ -108,6 +108,8 @@ extern int eb_nvme_ns_id(int fd, uint32_t *ns_id);
 
 extern int HIDDEN get_partition_number(const char *devpath);
 
+int UNUSED get_sector_size(int filedes);
+
 extern int HIDDEN find_parent_devpath(const char * const child,
                                       char **parent);
 
