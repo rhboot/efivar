@@ -1014,8 +1014,8 @@ eb_disk_info_from_fd(int fd, struct disk_info *info)
 
 	memset(info, 0, sizeof *info);
 
-	info->pci_root.root_pci_domain = 0xffff;
-	info->pci_root.root_pci_bus = 0xff;
+	info->pci_root.pci_root_domain = 0xffff;
+	info->pci_root.pci_root_bus = 0xff;
 
 	memset(&buf, 0, sizeof(struct stat));
 	rc = fstat(fd, &buf);
