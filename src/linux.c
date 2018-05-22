@@ -1202,3 +1202,22 @@ err:
 		close(fd);
 	return ret;
 }
+
+/************************************************************
+ * get_sector_size
+ * Requires:
+ *  - filedes is an open file descriptor, suitable for reading
+ * Modifies: nothing
+ * Returns:
+ *  sector size, or 512.
+ ************************************************************/
+int UNUSED
+get_sector_size(int filedes)
+{
+        int rc, sector_size = 512;
+
+        rc = ioctl(filedes, BLKSSZGET, &sector_size);
+        if (rc)
+                sector_size = 512;
+        return sector_size;
+}
