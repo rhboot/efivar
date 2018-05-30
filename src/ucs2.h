@@ -76,7 +76,7 @@ ucs2_to_utf8(const uint16_t * const chars, ssize_t limit)
 
 	if (limit < 0)
 		limit = ucs2len(chars, -1);
-	ret = alloca(limit * 6 + 1);
+	ret = malloc(limit * 6 + 1);
 	if (!ret)
 		return NULL;
 	memset(ret, 0, limit * 6 +1);
@@ -120,7 +120,7 @@ ucs2_to_utf8(const uint16_t * const chars, ssize_t limit)
 #endif
 	}
 	ret[j] = '\0';
-	return (unsigned char *)strdup((char *)ret);
+	return ret;
 }
 
 static inline ssize_t UNUSED NONNULL(4)
