@@ -127,7 +127,7 @@ get_partition_number(const char *devpath)
 	int rc;
 	unsigned int maj, min;
 	char *linkbuf;
-	uint8_t *partbuf;
+	uint8_t *partbuf = NULL; /* XXX this is wrong and the code below will be wrong */
 	int ret = -1;
 
 	rc = stat(devpath, &statbuf);
