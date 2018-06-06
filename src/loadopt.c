@@ -25,6 +25,8 @@
 
 #include "efiboot.h"
 #include "include/efivar/efiboot-loadopt.h"
+#include "util.h"
+#include "hexdump.h"
 
 typedef struct efi_load_option_s {
 	uint32_t attributes;
@@ -44,6 +46,9 @@ efi_loadopt_create(uint8_t *buf, ssize_t size, uint32_t attributes,
 		     + sizeof (uint16_t) + desc_len
 		     + dp_size + optional_data_size;
 
+	debug(DEBUG, "entry buf:%p size:%zd dp:%p dp_size:%zd",
+	      buf, size, dp, dp_size);
+
 	if (size == 0)
 		return sz;
 
@@ -52,24 +57,37 @@ efi_loadopt_create(uint8_t *buf, ssize_t size, uint32_t attributes,
 		return -1;
 	}
 
+	debug(DEBUG, "testing buf");
 	if (!buf) {
 invalid:
 		errno = EINVAL;
 		return -1;
 	}
 
+	debug(DEBUG, "testing optional data presence");
 	if (!optional_data && optional_data_size != 0)
 		goto invalid;
 
+	debug(DEBUG, "testing dp presence");
 	if ((!dp && dp_size == 0) || dp_size < 0)
 		goto invalid;
 
 	if (dp) {
-		if (!efidp_is_valid(dp, dp_size))
+		debug(DEBUG, "testing dp validity");
+		if (!efidp_is_valid(dp, dp_size)) {
+			if (efi_get_verbose() >= 1)
+				hexdump((void *)dp, dp_size);
 			goto invalid;
+		}
 
-		if (efidp_size(dp) != dp_size)
+		debug(DEBUG,
+		      "testing dp size: dp_size:%zd efidp_size(dp):%zd",
+		      dp_size, efidp_size(dp));
+		if (efidp_size(dp) != dp_size) {
+			if (efi_get_verbose() >= 1)
+				hexdump((void *)dp, dp_size);
 			goto invalid;
+		}
 	}
 
 	if (buf) {
