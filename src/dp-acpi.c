@@ -262,7 +262,8 @@ efidp_make_acpi_hid(uint8_t *buf, ssize_t size, uint32_t hid, uint32_t uid)
 ssize_t PUBLIC NONNULL(6, 7, 8)
 efidp_make_acpi_hid_ex(uint8_t *buf, ssize_t size,
 		       uint32_t hid, uint32_t uid, uint32_t cid,
-		       char *hidstr, char *uidstr, char *cidstr)
+		       const char *hidstr, const char *uidstr,
+		       const char *cidstr)
 {
 	efidp_acpi_hid_ex *acpi_hid = (efidp_acpi_hid_ex *)buf;
 	ssize_t req;
