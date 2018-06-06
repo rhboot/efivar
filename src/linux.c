@@ -883,26 +883,6 @@ make_blockdev_path(uint8_t *buf, ssize_t size, struct disk_info *info)
 
 	}
 
-	if (!found &&
-	    (info->interface_type == interface_type_unknown ||
-	     info->interface_type == atapi ||
-	     info->interface_type == usb ||
-	     info->interface_type == i1394 ||
-	     info->interface_type == fibre ||
-	     info->interface_type == md)) {
-		uint32_t tosser;
-		int tmpoff;
-
-		rc = sscanf(linkbuf+loff, "virtio%x/%n", &tosser, &tmpoff);
-		if (rc < 0) {
-			return -1;
-		} else if (rc == 1) {
-			info->interface_type = virtblk;
-			loff += tmpoff;
-			found = 1;
-		}
-	}
-
 	/* /dev/nvme0n1 looks like:
 	 * /sys/dev/block/259:0 -> ../../devices/pci0000:00/0000:00:1d.0/0000:05:00.0/nvme/nvme0/nvme0n1
 	 */
