@@ -61,6 +61,8 @@ struct sata_info {
 	uint32_t ata_devno;
 	uint32_t ata_port;
 	uint32_t ata_pmp;
+
+	uint32_t ata_print_id;
 };
 
 struct nvme_info {
@@ -94,14 +96,60 @@ struct disk_info {
 	char *part_name;
 };
 
-enum _bus_type {bus_type_unknown, isa, pci};
-enum _interface_type {interface_type_unknown,
-		      ata, atapi, scsi, sata, sas, usb,
-		      i1394, fibre, i2o, md,
-		      virtblk, nvme, nd_pmem};
+enum interface_type {
+        unknown = 0,
+        bus_type_unknown = 0, /* XXX remove later */
+        interface_type_unknown = 0, /* XXX remove later */
+        isa, pci, network,
+        ata, atapi, scsi, sata, sas,
+        usb, i1394, fibre, i2o,
+        md, virtblk,
+        nvme, nd_pmem,
+};
+
+struct dev_probe;
+
+struct device {
+        enum interface_type interface_type;
+        char *link;
+        char *device;
+        char *driver;
+
+        struct dev_probe **probes;
+        unsigned int n_probes;
+
+        union {
+                struct {
+                        struct stat stat;
+
+                        unsigned int controllernum;
+                        unsigned int disknum;
+                        int part;
+                        uint64_t major;
+                        uint32_t minor;
+                        uint32_t edd10_devicenum;
+
+                        char *disk_name;
+                        char *part_name;
+
+                        struct pci_root_info pci_root;
+                        unsigned int n_pci_devs;
+                        struct pci_dev_info *pci_dev;
+
+                        union {
+                                struct scsi_info scsi_info;
+                                struct sas_info sas_info;
+                                struct sata_info sata_info;
+                                struct nvme_info nvme_info;
+                                efi_guid_t nvdimm_label;
+                        };
+                };
+                char *ifname;
+        };
+};
 
 extern int eb_disk_info_from_fd(int fd, struct disk_info *info);
-extern int set_disk_and_part_name(struct disk_info *info);
+extern int HIDDEN set_disk_and_part_name(struct disk_info *info);
 extern int make_blockdev_path(uint8_t *buf, ssize_t size,
 			      struct disk_info *info);
 
@@ -190,5 +238,26 @@ extern ssize_t HIDDEN make_mac_path(uint8_t *buf, ssize_t size,
                 }                                                       \
                 dir_;                                                   \
         })
+
+#define DEV_PROVIDES_ROOT       1
+#define DEV_PROVIDES_HD         2
+
+struct dev_probe {
+        char *name;
+        enum interface_type *iftypes;
+        uint32_t flags;
+        ssize_t (*parse)(struct device *dev, const char * const current);
+        ssize_t (*create)(struct device *dev,
+                          uint8_t *buf, ssize_t size, ssize_t off);
+        char *(*make_part_name)(struct device *dev);
+};
+
+extern ssize_t parse_scsi_link(const char *current, uint32_t *host,
+                                      uint32_t *bus, uint32_t *device,
+                                      uint32_t *target, uint64_t *lun);
+
+#define set_part(x, y) /* XXX remove later */
+
+/* device support implementations */
 
 #endif /* _EFIBOOT_LINUX_H */
