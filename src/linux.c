@@ -92,18 +92,6 @@ set_disk_and_part_name(struct disk_info *info)
 			if (rc < 0)
 				return -1;
 		}
-	} else if (!strncmp(penultimate, "nvme", 4)) {
-		if (!info->disk_name) {
-			info->disk_name = strdup(ultimate);
-			if (!info->disk_name)
-				return -1;
-		}
-		if (!info->part_name) {
-			rc = asprintf(&info->part_name, "%sp%d",
-				      info->disk_name, info->part);
-			if (rc < 0)
-				return -1;
-		}
 	} else {
 		if (!info->disk_name) {
 			info->disk_name = strdup(penultimate);
@@ -222,14 +210,6 @@ sysfs_test_pmem(const char *buf)
 		return -1;
 	driver+=1;
 	if (!strcmp(driver, "nd_pmem"))
-		return 1;
-	return 0;
-}
-
-static int
-sysfs_test_nvme(const char *buf, ssize_t size)
-{
-	if (!strncmp(buf, "nvme/", MIN(size, 5)))
 		return 1;
 	return 0;
 }
@@ -393,81 +373,6 @@ sysfs_parse_pmem(uint8_t *buf,  ssize_t size, ssize_t *off,
 	*off = efidp_make_nvdimm(buf, size, &info->nvdimm_label);
 	return *off;
 }
-
-static ssize_t
-sysfs_parse_nvme(uint8_t *buf, ssize_t size, ssize_t *off,
-		const char *pbuf, ssize_t psize, ssize_t *poff,
-		struct disk_info *info)
-{
-	int rc;
-	int psz = 0;
-	uint8_t *filebuf = NULL;
-
-	*poff = 0;
-	*off = 0;
-
-	char *newpbuf;
-
-	newpbuf = strndupa(pbuf, psize+1);
-	if (!newpbuf)
-		return -1;
-	newpbuf[psize] = '\0';
-
-	int32_t tosser0;
-	int32_t ctrl_id;
-	int32_t ns_id;
-
-	/* buf is:
-	 * nvme/nvme0/nvme0n1
-	 */
-	rc = sscanf(newpbuf, "nvme/nvme%d/nvme%dn%d%n", &tosser0,
-		    &ctrl_id, &ns_id, &psz);
-	if (rc != 3)
-		return -1;
-	*poff += psz;
-
-	info->nvme_info.ctrl_id = ctrl_id;
-	info->nvme_info.ns_id = ns_id;
-	info->nvme_info.has_eui = 0;
-	info->interface_type = nvme;
-
-	/*
-	 * now fish the eui out of sysfs is there is one...
-	 */
-	rc = read_sysfs_file(&filebuf,
-			     "class/block/nvme%dn%d/eui",
-			     ctrl_id, ns_id);
-	if ((rc < 0 && errno == ENOENT) || filebuf == NULL) {
-		rc = read_sysfs_file(&filebuf,
-			     "class/block/nvme%dn%d/device/eui",
-			     ctrl_id, ns_id);
-	}
-	if (rc >= 0 && filebuf != NULL) {
-		uint8_t eui[8];
-		if (rc < 23) {
-			errno = EINVAL;
-			return -1;
-		}
-		rc = sscanf((char *)filebuf,
-			    "%02hhx %02hhx %02hhx %02hhx "
-			    "%02hhx %02hhx %02hhx %02hhx",
-			    &eui[0], &eui[1], &eui[2], &eui[3],
-			    &eui[4], &eui[5], &eui[6], &eui[7]);
-		if (rc < 8) {
-			errno = EINVAL;
-			return -1;
-		}
-		info->nvme_info.has_eui = 1;
-		memcpy(info->nvme_info.eui, eui, sizeof(eui));
-	}
-
-	*off = efidp_make_nvme(buf, size,
-			       info->nvme_info.ns_id,
-			       info->nvme_info.has_eui ? info->nvme_info.eui
-						       : NULL);
-	return *off;
-}
-
 
 static ssize_t
 sysfs_parse_sata(uint8_t *buf, ssize_t size, ssize_t *off,
@@ -881,26 +786,6 @@ make_blockdev_path(uint8_t *buf, ssize_t size, struct disk_info *info)
 			return -1;
 		driver+=1;
 
-	}
-
-	/* /dev/nvme0n1 looks like:
-	 * /sys/dev/block/259:0 -> ../../devices/pci0000:00/0000:00:1d.0/0000:05:00.0/nvme/nvme0/nvme0n1
-	 */
-	if (!found) {
-		rc = sysfs_test_nvme(linkbuf+loff, PATH_MAX-off);
-		if (rc < 0)
-			return -1;
-		else if (rc > 0) {
-			ssize_t linksz;
-			rc = sysfs_parse_nvme(buf+off, size?size-off:0, &sz,
-					      linkbuf+loff, PATH_MAX-off,
-					      &linksz, info);
-			if (rc < 0)
-				return -1;
-			loff += linksz;
-			off += sz;
-			found = 1;
-		}
 	}
 
 	/* /dev/sda as SATA looks like:
