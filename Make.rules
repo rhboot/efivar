@@ -24,6 +24,7 @@ include $(TOPDIR)/Make.version
 
 %.abixml : %.so
 	$(ABIDW) --headers-dir $(TOPDIR)/src/include/efivar/ --out-file $@ $^
+	@sed -i -s 's,$(TOPDIR)/,,g' $@
 
 %.abicheck : %.so
 	$(ABIDIFF) \
