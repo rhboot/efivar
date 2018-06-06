@@ -969,31 +969,6 @@ make_blockdev_path(uint8_t *buf, ssize_t size, struct disk_info *info)
 		}
 	}
 
-	if (!found && info->interface_type == scsi) {
-		char *linkbuf;
-
-		rc = sysfs_readlink(&linkbuf, "class/block/%s/device",
-			      info->disk_name);
-		if (rc < 0 || !linkbuf)
-			return 0;
-
-		rc = sscanf(linkbuf, "../../../%d:%d:%d:%"PRIu64,
-			    &info->scsi_info.scsi_bus,
-			    &info->scsi_info.scsi_device,
-			    &info->scsi_info.scsi_target,
-			    &info->scsi_info.scsi_lun);
-		if (rc != 4)
-			return -1;
-
-		sz = efidp_make_scsi(buf+off, size?size-off:0,
-				     info->scsi_info.scsi_target,
-				     info->scsi_info.scsi_lun);
-		if (sz < 0)
-			return -1;
-		off += sz;
-		found = 1;
-	}
-
 	if (!found) {
 		errno = ENOENT;
 		return -1;
@@ -1035,26 +1010,6 @@ eb_disk_info_from_fd(int fd, struct disk_info *info)
 	if (info->major >= 80 && info->major <= 87) {
 		info->interface_type = i2o;
 		info->disknum = 16*(info->major-80) + (info->minor >> 4);
-		info->part    = (info->minor & 0xF);
-		return 0;
-	}
-
-	/* SCSI disks can have up to 16 partitions, or 4 bits worth
-	 * and have one bit for the disk number.
-	 */
-	if (info->major == 8) {
-		info->interface_type = scsi;
-		info->disknum = (info->minor >> 4);
-		info->part    = (info->minor & 0xF);
-		return 0;
-	} else  if (info->major >= 65 && info->major <= 71) {
-		info->interface_type = scsi;
-		info->disknum = 16*(info->major-64) + (info->minor >> 4);
-		info->part    = (info->minor & 0xF);
-		return 0;
-	} else  if (info->major >= 128 && info->major <= 135) {
-		info->interface_type = scsi;
-		info->disknum = 16*(info->major-128) + (info->minor >> 4);
 		info->part    = (info->minor & 0xF);
 		return 0;
 	}
