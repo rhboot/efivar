@@ -25,6 +25,7 @@
 #include <errno.h>
 #include <fcntl.h>
 #include <inttypes.h>
+#include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -239,8 +240,24 @@ get_partition_info(int fd, uint32_t options,
 	return rc;
 }
 
+bool HIDDEN
+is_partitioned(int fd)
+{
+	int rc;
+	uint32_t options = 0;
+	uint32_t part = 1;
+	uint64_t start = 0, size = 0;
+	uint8_t signature = 0, mbr_type = 0, signature_type = 0;
+
+	rc = get_partition_info(fd, options, part, &start, &size,
+				&signature, &mbr_type, &signature_type);
+	if (rc < 0)
+		return false;
+	return true;
+}
+
 ssize_t HIDDEN
-_make_hd_dn(uint8_t *buf, ssize_t size, int fd, uint32_t partition,
+_make_hd_dn(uint8_t *buf, ssize_t size, int fd, int32_t partition,
 	    uint32_t options)
 {
 	uint64_t part_start=0, part_size = 0;
@@ -249,8 +266,10 @@ _make_hd_dn(uint8_t *buf, ssize_t size, int fd, uint32_t partition,
 
 	errno = 0;
 
-	rc = get_partition_info(fd, options,
-				partition > 0 ? partition : 1, &part_start,
+	if (partition <= 0)
+		return 0;
+
+	rc = get_partition_info(fd, options, partition, &part_start,
 				&part_size, signature, &format,
 				&signature_type);
 	if (rc < 0) {
@@ -258,8 +277,8 @@ _make_hd_dn(uint8_t *buf, ssize_t size, int fd, uint32_t partition,
 		return rc;
 	}
 
-	rc = efidp_make_hd(buf, size, partition>0?partition:1, part_start,
-			   part_size, signature, format, signature_type);
+	rc = efidp_make_hd(buf, size, partition, part_start, part_size,
+			   signature, format, signature_type);
 	if (rc < 0)
 		efi_error("could not make HD DP node");
 	return rc;
