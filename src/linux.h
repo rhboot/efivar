@@ -259,6 +259,7 @@ extern ssize_t parse_scsi_link(const char *current, uint32_t *host,
 #define set_part(x, y) /* XXX remove later */
 
 /* device support implementations */
+extern struct dev_probe pmem_parser;
 extern struct dev_probe pci_parser;
 extern struct dev_probe sas_parser;
 extern struct dev_probe sata_parser;
