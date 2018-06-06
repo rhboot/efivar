@@ -148,12 +148,12 @@ struct device {
         };
 };
 
-extern int eb_disk_info_from_fd(int fd, struct disk_info *info);
+extern int HIDDEN eb_disk_info_from_fd(int fd, struct disk_info *info);
 extern int HIDDEN set_disk_and_part_name(struct disk_info *info);
-extern int make_blockdev_path(uint8_t *buf, ssize_t size,
-			      struct disk_info *info);
+extern int HIDDEN make_blockdev_path(uint8_t *buf, ssize_t size,
+                                     struct disk_info *info);
 
-extern int eb_nvme_ns_id(int fd, uint32_t *ns_id);
+extern int HIDDEN eb_nvme_ns_id(int fd, uint32_t *ns_id);
 
 extern int HIDDEN get_partition_number(const char *devpath);
 
