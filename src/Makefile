@@ -34,6 +34,12 @@ all : $(TARGETS)
 
 static : $(STATICTARGETS)
 
+abiclean :
+	@rm -vf $(patsubst %.so,%.abixml,$@)
+
+abixml : | $(LIBTARGETS)
+abixml : $(patsubst %.so,%.abixml,$(LIBTARGETS))
+
 abidw : $(patsubst %.so,%.abixml,$(LIBTARGETS))
 	git commit -s --amend $^
 
@@ -104,7 +110,7 @@ install : all
 test : all
 	$(MAKE) -C test $@
 
-.PHONY: test deps
+.PHONY: test deps abiclean abixml
 .SECONDARY : libefivar.so.1.$(VERSION) libefivar.so.1
 .SECONDARY : libefiboot.so.1.$(VERSION) libefivar.so.1
 .SECONDARY : include/efivar/efivar-guids.h guid-symbols.c

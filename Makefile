@@ -23,6 +23,10 @@ install :
 abidw abicheck efivar efivar-static static:
 	$(MAKE) -C src $@
 
+abiupdate :
+	$(MAKE) clean all
+	$(MAKE) -C src abiclean abixml
+
 $(SUBDIRS) :
 	$(MAKE) -C $@
 
@@ -35,7 +39,7 @@ a :
 		exit 1 ; \
 	fi
 
-.PHONY: $(SUBDIRS) a brick
+.PHONY: $(SUBDIRS) a brick abiupdate
 
 GITTAG = $(shell bash -c "echo $$(($(VERSION) + 1))")
 
