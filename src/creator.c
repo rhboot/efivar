@@ -139,12 +139,12 @@ err:
 }
 
 static int
-open_disk(struct disk_info *info, int flags)
+open_disk(struct device *dev, int flags)
 {
 	char *diskpath = NULL;
 	int rc;
 
-	rc = asprintfa(&diskpath, "/dev/%s", info->disk_name);
+	rc = asprintfa(&diskpath, "/dev/%s", dev->disk_name);
 	if (rc < 0) {
 		efi_error("could not allocate buffer");
 		return -1;
@@ -173,11 +173,15 @@ efi_va_generate_file_device_path_from_esp(uint8_t *buf, ssize_t size,
 				       const char *relpath,
 				       uint32_t options, va_list ap)
 {
-	int rc;
 	ssize_t ret = -1, off = 0, sz;
-	struct disk_info info = { 0, };
+	struct device *dev = NULL;
 	int fd = -1;
 	int saved_errno;
+
+	debug(DEBUG, "partition:%d", partition);
+
+	if (buf && size)
+		memset(buf, '\0', size);
 
 	fd = open(devpath, O_RDONLY);
 	if (fd < 0) {
@@ -185,74 +189,17 @@ efi_va_generate_file_device_path_from_esp(uint8_t *buf, ssize_t size,
 		goto err;
 	}
 
-	rc = eb_disk_info_from_fd(fd, &info);
-	if (rc < 0 && errno != ENOSYS) {
+	dev = device_get(fd, partition);
+	if (dev == NULL) {
 		efi_error("could not get ESP disk info");
 		goto err;
 	}
 
-	if (info.interface_type == nd_pmem) {
-		options |= EFIBOOT_ABBREV_NONE;
-		options &= ~(EFIBOOT_ABBREV_HD|
-			     EFIBOOT_ABBREV_FILE|
-			     EFIBOOT_ABBREV_EDD10);
-	}
-
-	if (partition > 0)
-		info.part = partition;
-
-	if (options & EFIBOOT_ABBREV_EDD10) {
-		va_list aq;
-		va_copy(aq, ap);
-
-		info.edd10_devicenum = va_arg(aq, uint32_t);
-
-		va_end(aq);
-	}
-
-	if ((options & EFIBOOT_ABBREV_EDD10)
-			&& (!(options & EFIBOOT_ABBREV_FILE)
-			    && !(options & EFIBOOT_ABBREV_HD))) {
-		sz = efidp_make_edd10(buf, size, info.edd10_devicenum);
-		if (sz < 0) {
-			efi_error("could not make EDD 1.0 device path");
-			goto err;
-		}
-		off = sz;
-	} else if (!(options & EFIBOOT_ABBREV_FILE)
-		   && !(options & EFIBOOT_ABBREV_HD)) {
-		rc = set_disk_and_part_name(&info);
-		if (rc < 0) {
-			efi_error("could not set disk and partition name");
-			goto err;
-		}
-
-		/*
-		 * We're probably on a modern kernel, so just parse the
-		 * symlink from /sys/dev/block/$major:$minor and get it
-		 * from there.
-		 */
-		sz = make_blockdev_path(buf, size, &info);
-		if (sz < 0) {
-			efi_error("could not create device path");
-			goto err;
-		}
-		off += sz;
-	}
-
-	if ((!(options & EFIBOOT_ABBREV_FILE) && info.part_name) ||
-	    ((options & EFIBOOT_ABBREV_HD) && ! info.part_name)) {
+	if (partition < 0) {
 		int disk_fd;
-		int saved_errno;
-		int rc;
 
-		rc = set_disk_and_part_name(&info);
-		if (rc < 0) {
-			efi_error("could not set disk and partition name");
-			goto err;
-		}
-
-		disk_fd = open_disk(&info,
+		debug(DEBUG, "partition: %d", partition);
+		disk_fd = open_disk(dev,
 				    (options & EFIBOOT_OPTIONS_WRITE_SIGNATURE)
 				     ? O_RDWR : O_RDONLY);
 		if (disk_fd < 0) {
@@ -260,7 +207,81 @@ efi_va_generate_file_device_path_from_esp(uint8_t *buf, ssize_t size,
 			goto err;
 		}
 
-		sz = make_hd_dn(buf, size, off, disk_fd, info.part, options);
+		if (is_partitioned(disk_fd))
+			partition = 1;
+		else
+			partition = 0;
+		debug(DEBUG, "is_partitioned(): partition -> %d", partition);
+
+		close(disk_fd);
+	}
+
+	set_part(dev, partition);
+
+	if (partition == 0) {
+		options |= EFIBOOT_ABBREV_NONE;
+		options &= ~(EFIBOOT_ABBREV_HD|
+			     EFIBOOT_ABBREV_FILE|
+			     EFIBOOT_ABBREV_EDD10);
+	}
+
+	if (options & EFIBOOT_ABBREV_NONE)
+		debug(DEBUG, "EFIBOOT_ABBREV_NONE");
+	if (options & EFIBOOT_ABBREV_HD)
+		debug(DEBUG, "EFIBOOT_ABBREV_HD");
+	if (options & EFIBOOT_ABBREV_FILE)
+		debug(DEBUG, "EFIBOOT_ABBREV_FILE");
+	if (options & EFIBOOT_ABBREV_EDD10)
+		debug(DEBUG, "EFIBOOT_ABBREV_EDD10");
+
+	if (options & EFIBOOT_ABBREV_EDD10) {
+		va_list aq;
+		va_copy(aq, ap);
+
+		dev->edd10_devicenum = va_arg(aq, uint32_t);
+
+		va_end(aq);
+	}
+
+	if ((options & EFIBOOT_ABBREV_EDD10)
+			&& (!(options & EFIBOOT_ABBREV_FILE)
+			    && !(options & EFIBOOT_ABBREV_HD))) {
+		sz = efidp_make_edd10(buf, size, dev->edd10_devicenum);
+		if (sz < 0) {
+			efi_error("could not make EDD 1.0 device path");
+			goto err;
+		}
+		off = sz;
+	} else if (!(options & EFIBOOT_ABBREV_FILE)
+		   && !(options & EFIBOOT_ABBREV_HD)) {
+
+		/*
+		 * We're probably on a modern kernel, so just parse the
+		 * symlink from /sys/dev/block/$major:$minor and get it
+		 * from there.
+		 */
+		sz = make_blockdev_path(buf, size, dev);
+		if (sz < 0) {
+			efi_error("could not create device path");
+			goto err;
+		}
+		off += sz;
+	}
+
+	if ((!(options & EFIBOOT_ABBREV_FILE) && dev->part_name) ||
+	    ((options & EFIBOOT_ABBREV_HD) && ! dev->part_name)) {
+		int disk_fd;
+		int saved_errno;
+
+		disk_fd = open_disk(dev,
+				    (options & EFIBOOT_OPTIONS_WRITE_SIGNATURE)
+				     ? O_RDWR : O_RDONLY);
+		if (disk_fd < 0) {
+			efi_error("could not open disk");
+			goto err;
+		}
+
+		sz = make_hd_dn(buf, size, off, disk_fd, dev->part, options);
 		saved_errno = errno;
 		close(disk_fd);
 		errno = saved_errno;
@@ -289,19 +310,12 @@ efi_va_generate_file_device_path_from_esp(uint8_t *buf, ssize_t size,
 	ret = off;
 err:
 	saved_errno = errno;
-	if (info.disk_name) {
-		free(info.disk_name);
-		info.disk_name = NULL;
-	}
-
-	if (info.part_name) {
-		free(info.part_name);
-		info.part_name = NULL;
-	}
-
+	if (dev)
+		device_free(dev);
 	if (fd >= 0)
 		close(fd);
 	errno = saved_errno;
+	debug(DEBUG, "= %zd", ret);
 	return ret;
 }
 
@@ -349,12 +363,6 @@ efi_generate_file_device_path(uint8_t *buf, ssize_t size,
 	rc = find_parent_devpath(child_devpath, &parent_devpath);
 	if (rc < 0) {
 		efi_error("could not find parent device for file");
-		goto err;
-	}
-
-	rc = get_partition_number(child_devpath);
-	if (rc < 0) {
-		efi_error("could not get partition number for device");
 		goto err;
 	}
 

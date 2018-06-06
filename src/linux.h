@@ -72,34 +72,8 @@ struct nvme_info {
         uint8_t eui[8];
 };
 
-struct disk_info {
-	int interface_type;
-	unsigned int controllernum;
-	unsigned int disknum;
-	unsigned char part;
-	uint64_t major;
-	uint32_t minor;
-	uint32_t edd10_devicenum;
-
-	struct pci_root_info pci_root;
-	struct pci_dev_info pci_dev;
-
-	union {
-		struct scsi_info scsi_info;
-		struct sas_info sas_info;
-		struct sata_info sata_info;
-		struct nvme_info nvme_info;
-		efi_guid_t nvdimm_label;
-	};
-
-	char *disk_name;
-	char *part_name;
-};
-
 enum interface_type {
-        unknown = 0,
-        bus_type_unknown = 0, /* XXX remove later */
-        interface_type_unknown = 0, /* XXX remove later */
+        unknown,
         isa, pci, network,
         ata, atapi, scsi, sata, sas,
         usb, i1394, fibre, i2o,
@@ -148,14 +122,17 @@ struct device {
         };
 };
 
-extern int HIDDEN eb_disk_info_from_fd(int fd, struct disk_info *info);
-extern int HIDDEN set_disk_and_part_name(struct disk_info *info);
+extern struct device HIDDEN *device_get(int fd, int partition);
+extern void HIDDEN device_free(struct device *dev);
+extern int HIDDEN set_disk_and_part_name(struct device *dev);
+extern int HIDDEN set_part(struct device *dev, int value);
+extern int HIDDEN set_part_name(struct device *dev, const char * const fmt, ...);
+extern int HIDDEN set_disk_name(struct device *dev, const char * const fmt, ...);
+
 extern int HIDDEN make_blockdev_path(uint8_t *buf, ssize_t size,
-                                     struct disk_info *info);
+                                     struct device *dev);
 
 extern int HIDDEN eb_nvme_ns_id(int fd, uint32_t *ns_id);
-
-extern int HIDDEN get_partition_number(const char *devpath);
 
 int HIDDEN get_sector_size(int filedes);
 
@@ -256,8 +233,6 @@ extern ssize_t parse_scsi_link(const char *current, uint32_t *host,
                                       uint32_t *bus, uint32_t *device,
                                       uint32_t *target, uint64_t *lun);
 
-#define set_part(x, y) /* XXX remove later */
-
 /* device support implementations */
 extern struct dev_probe pmem_parser;
 extern struct dev_probe pci_parser;
@@ -268,6 +243,5 @@ extern struct dev_probe virtblk_parser;
 extern struct dev_probe i2o_parser;
 extern struct dev_probe scsi_parser;
 extern struct dev_probe ata_parser;
-
 
 #endif /* _EFIBOOT_LINUX_H */
