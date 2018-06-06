@@ -66,10 +66,10 @@ struct sata_info {
 };
 
 struct nvme_info {
-	int32_t ctrl_id;
-	int32_t ns_id;
-	int has_eui;
-	uint8_t eui[8];
+        int32_t ctrl_id;
+        int32_t ns_id;
+        int has_eui;
+        uint8_t eui[8];
 };
 
 struct disk_info {
@@ -259,6 +259,7 @@ extern ssize_t parse_scsi_link(const char *current, uint32_t *host,
 #define set_part(x, y) /* XXX remove later */
 
 /* device support implementations */
+extern struct dev_probe nvme_parser;
 extern struct dev_probe virtblk_parser;
 extern struct dev_probe i2o_parser;
 extern struct dev_probe scsi_parser;
