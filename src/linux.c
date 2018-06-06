@@ -889,7 +889,6 @@ make_blockdev_path(uint8_t *buf, ssize_t size, struct disk_info *info)
 	     info->interface_type == usb ||
 	     info->interface_type == i1394 ||
 	     info->interface_type == fibre ||
-	     info->interface_type == i2o ||
 	     info->interface_type == md)) {
 		uint32_t tosser;
 		int tmpoff;
@@ -1004,14 +1003,6 @@ eb_disk_info_from_fd(int fd, struct disk_info *info)
 	} else {
 		efi_error("Cannot stat non-block or non-regular file");
 		return 1;
-	}
-
-        /* I2O disks can have up to 16 partitions, or 4 bits worth. */
-	if (info->major >= 80 && info->major <= 87) {
-		info->interface_type = i2o;
-		info->disknum = 16*(info->major-80) + (info->minor >> 4);
-		info->part    = (info->minor & 0xF);
-		return 0;
 	}
 
 	rc = sysfs_readlink(&driver, "dev/block/%"PRIu64":%"PRIu32"/device/driver",
