@@ -881,9 +881,6 @@ make_blockdev_path(uint8_t *buf, ssize_t size, struct disk_info *info)
 			return -1;
 		driver+=1;
 
-		if (!strncmp(driver, "pata_", 5) ||
-		    !(strcmp(driver, "ata_piix")))
-			info->interface_type = ata;
 	}
 
 	if (!found &&
@@ -1032,42 +1029,6 @@ eb_disk_info_from_fd(int fd, struct disk_info *info)
 	} else {
 		efi_error("Cannot stat non-block or non-regular file");
 		return 1;
-	}
-
-	/* IDE disks can have up to 64 partitions, or 6 bits worth,
-	 * and have one bit for the disk number.
-	 * This leaves an extra bit at the top.
-	 */
-	if (info->major == 3) {
-		info->disknum = (info->minor >> 6) & 1;
-		info->controllernum = (info->major - 3 + 0) + info->disknum;
-		info->interface_type = ata;
-		info->part    = info->minor & 0x3F;
-		return 0;
-	} else if (info->major == 22) {
-		info->disknum = (info->minor >> 6) & 1;
-		info->controllernum = (info->major - 22 + 2) + info->disknum;
-		info->interface_type = ata;
-		info->part    = info->minor & 0x3F;
-		return 0;
-	} else if (info->major >= 33 && info->major <= 34) {
-		info->disknum = (info->minor >> 6) & 1;
-		info->controllernum = (info->major - 33 + 4) + info->disknum;
-		info->interface_type = ata;
-		info->part    = info->minor & 0x3F;
-		return 0;
-	} else if (info->major >= 56 && info->major <= 57) {
-		info->disknum = (info->minor >> 6) & 1;
-		info->controllernum = (info->major - 56 + 8) + info->disknum;
-		info->interface_type = ata;
-		info->part    = info->minor & 0x3F;
-		return 0;
-	} else if (info->major >= 88 && info->major <= 91) {
-		info->disknum = (info->minor >> 6) & 1;
-		info->controllernum = (info->major - 88 + 12) + info->disknum;
-		info->interface_type = ata;
-		info->part    = info->minor & 0x3F;
-		return 0;
 	}
 
         /* I2O disks can have up to 16 partitions, or 4 bits worth. */
