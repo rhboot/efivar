@@ -37,10 +37,10 @@ struct pci_dev_info {
 };
 
 struct scsi_info {
-	uint32_t scsi_bus;
-	uint32_t scsi_device;
-	uint32_t scsi_target;
-	uint64_t scsi_lun;
+        uint32_t scsi_bus;
+        uint32_t scsi_device;
+        uint32_t scsi_target;
+        uint64_t scsi_lun;
 };
 
 struct sas_info {
@@ -259,6 +259,8 @@ extern ssize_t parse_scsi_link(const char *current, uint32_t *host,
 #define set_part(x, y) /* XXX remove later */
 
 /* device support implementations */
+extern struct dev_probe scsi_parser;
 extern struct dev_probe ata_parser;
+
 
 #endif /* _EFIBOOT_LINUX_H */
