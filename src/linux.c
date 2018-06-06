@@ -215,14 +215,6 @@ sysfs_test_pmem(const char *buf)
 }
 
 static int
-sysfs_test_sata(const char *buf, ssize_t size)
-{
-	if (!strncmp(buf, "ata", MIN(size, 3)))
-		return 1;
-	return 0;
-}
-
-static int
 sysfs_test_sas(const char *buf, ssize_t size)
 {
 	int rc;
@@ -251,82 +243,6 @@ sysfs_test_sas(const char *buf, ssize_t size)
 	rc = stat(path, &statbuf);
 	if (rc >= 0)
 		return 1;
-	return 0;
-}
-
-static ssize_t
-sysfs_sata_get_port_info(uint32_t print_id, struct disk_info *info)
-{
-	DIR *d;
-	struct dirent *de;
-	uint8_t *buf = NULL;
-	int rc;
-
-	d = opendir("/sys/class/ata_device/");
-	if (!d) {
-		efi_error("opendir failed on /sys/class/ata_device/");
-		return -1;
-	}
-
-	while ((de = readdir(d)) != NULL) {
-		uint32_t found_print_id;
-		uint32_t found_pmp;
-		uint32_t found_devno = 0;
-
-		if (!strcmp(de->d_name, ".") || !strcmp(de->d_name, ".."))
-			continue;
-
-		int rc;
-		rc = sscanf(de->d_name, "dev%d.%d.%d", &found_print_id,
-			    &found_pmp, &found_devno);
-		if (rc < 2 || rc > 3) {
-			closedir(d);
-			errno = EINVAL;
-			return -1;
-		} else if (found_print_id != print_id) {
-			continue;
-		} else if (rc == 3) {
-			/*
-			 * the kernel doesn't't ever tell us the SATA PMPN
-			 * sentinal value, it'll give us devM.N instead of
-			 * devM.N.O in that case instead.
-			 */
-			if (found_pmp > 0x7fff) {
-				closedir(d);
-				errno = EINVAL;
-				return -1;
-			}
-			info->sata_info.ata_devno = 0;
-			info->sata_info.ata_pmp = found_pmp;
-			break;
-		} else if (rc == 2) {
-			info->sata_info.ata_devno = 0;
-			info->sata_info.ata_pmp = 0xffff;
-			break;
-		}
-	}
-	closedir(d);
-
-	rc = read_sysfs_file(&buf, "class/ata_port/ata%d/port_no",
-			     print_id);
-	if (rc <= 0 || buf == NULL)
-		return -1;
-
-	rc = sscanf((char *)buf, "%d", &info->sata_info.ata_port);
-	if (rc != 1)
-		return -1;
-
-	/*
-	 * ata_port numbers are 1-indexed from libata in the kernel, but
-	 * they're 0-indexed in the spec.  For maximal confusion.
-	 */
-	if (info->sata_info.ata_port == 0) {
-		errno = EINVAL;
-		return -1;
-	} else {
-		info->sata_info.ata_port -= 1;
-	}
-
 	return 0;
 }
 
@@ -371,113 +287,6 @@ sysfs_parse_pmem(uint8_t *buf,  ssize_t size, ssize_t *off,
 	swizzle_guid_to_uuid(&info->nvdimm_label);
 
 	*off = efidp_make_nvdimm(buf, size, &info->nvdimm_label);
-	return *off;
-}
-
-static ssize_t
-sysfs_parse_sata(uint8_t *buf, ssize_t size, ssize_t *off,
-		 const char *pbuf, ssize_t psize, ssize_t *poff,
-		 struct disk_info *info)
-{
-	int psz = 0;
-	int rc;
-
-	*poff = 0;
-	*off = 0;
-
-	uint32_t print_id;
-
-	uint32_t scsi_bus;
-	uint32_t scsi_device;
-	uint32_t scsi_target;
-	uint32_t scsi_lun;
-
-	char *newpbuf;
-
-	newpbuf = strndupa(pbuf, psize+1);
-	if (!newpbuf)
-		return -1;
-	newpbuf[psize] = '\0';
-
-	/* find the ata info:
-	 * ata1/host0/target0:0:0/
-	 *    ^dev  ^host   x y z
-	 */
-	rc = sscanf(newpbuf, "ata%d/host%d/target%d:%d:%d/%n",
-		    &print_id, &scsi_bus, &scsi_device, &scsi_target, &scsi_lun,
-		    &psz);
-	if (rc != 5)
-		return -1;
-	*poff += psz;
-
-	/* find the emulated scsi bits (and ignore them)
-	 * 0:0:0:0/
-	 */
-	uint32_t dummy0, dummy1, dummy2;
-	uint64_t dummy3;
-	rc = sscanf(newpbuf+*poff, "%d:%d:%d:%"PRIu64"/%n", &dummy0, &dummy1,
-		    &dummy2, &dummy3, &psz);
-	if (rc != 4)
-		return -1;
-	*poff += psz;
-
-	/* what's left is:
-	 * block/sda/sda4
-	 */
-	char *disk_name = NULL;
-	char *part_name = NULL;
-	int psz1 = 0;
-	rc = sscanf(newpbuf+*poff, "block/%m[^/]%n/%m[^/]%n", &disk_name, &psz,
-		    &part_name, &psz1);
-	if (rc == 1) {
-		rc = asprintf(&part_name, "%s%d", disk_name, info->part);
-		if (rc < 0) {
-			free(disk_name);
-			errno = EINVAL;
-			return -1;
-		}
-		*poff += psz;
-	} else if (rc != 2) {
-		errno = EINVAL;
-		return -1;
-	} else {
-		*poff += psz1;
-	}
-
-	info->sata_info.scsi_bus = scsi_bus;
-	info->sata_info.scsi_device = scsi_device;
-	info->sata_info.scsi_target = scsi_target;
-	info->sata_info.scsi_lun = scsi_lun;
-
-	rc = sysfs_sata_get_port_info(print_id, info);
-	if (rc < 0) {
-		free(disk_name);
-		free(part_name);
-		return -1;
-	}
-
-	/* check the original of this; it's guaranteed in our copy */
-	if (pbuf[*poff] != '\0') {
-		free(disk_name);
-		free(part_name);
-		errno = EINVAL;
-		return -1;
-	}
-
-	info->disk_name = disk_name;
-	info->part_name = part_name;
-	if (info->interface_type == interface_type_unknown)
-		info->interface_type = sata;
-
-	if (info->interface_type == ata) {
-		*off = efidp_make_atapi(buf, size, info->sata_info.ata_port,
-					info->sata_info.ata_pmp,
-					info->sata_info.ata_devno);
-	} else {
-		*off = efidp_make_sata(buf, size, info->sata_info.ata_port,
-				       info->sata_info.ata_pmp,
-				       info->sata_info.ata_devno);
-	}
 	return *off;
 }
 
@@ -786,26 +595,6 @@ make_blockdev_path(uint8_t *buf, ssize_t size, struct disk_info *info)
 			return -1;
 		driver+=1;
 
-	}
-
-	/* /dev/sda as SATA looks like:
-	 * /sys/dev/block/8:0 -> ../../devices/pci0000:00/0000:00:1f.2/ata1/host0/target0:0:0/0:0:0:0/block/sda
-	 */
-	if (!found) {
-		rc = sysfs_test_sata(linkbuf+loff, PATH_MAX-off);
-		if (rc < 0)
-			return -1;
-		else if (rc > 0) {
-			ssize_t linksz=0;
-			rc = sysfs_parse_sata(buf+off, size?size-off:0, &sz,
-					      linkbuf+loff, PATH_MAX-off,
-					      &linksz, info);
-			if (rc < 0)
-				return -1;
-			loff += linksz;
-			off += sz;
-			found = 1;
-		}
 	}
 
 	/* /dev/sdc as SAS looks like:
