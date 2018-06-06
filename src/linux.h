@@ -44,12 +44,12 @@ struct scsi_info {
 };
 
 struct sas_info {
-	uint32_t scsi_bus;
-	uint32_t scsi_device;
-	uint32_t scsi_target;
-	uint64_t scsi_lun;
+        uint32_t scsi_bus;
+        uint32_t scsi_device;
+        uint32_t scsi_target;
+        uint64_t scsi_lun;
 
-	uint64_t sas_address;
+        uint64_t sas_address;
 };
 
 struct sata_info {
@@ -259,6 +259,7 @@ extern ssize_t parse_scsi_link(const char *current, uint32_t *host,
 #define set_part(x, y) /* XXX remove later */
 
 /* device support implementations */
+extern struct dev_probe sas_parser;
 extern struct dev_probe sata_parser;
 extern struct dev_probe nvme_parser;
 extern struct dev_probe virtblk_parser;

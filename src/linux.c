@@ -214,38 +214,6 @@ sysfs_test_pmem(const char *buf)
 	return 0;
 }
 
-static int
-sysfs_test_sas(const char *buf, ssize_t size)
-{
-	int rc;
-	char *path;
-	struct stat statbuf = { 0, };
-	char *newbuf;
-
-	int host;
-	int sz;
-
-	newbuf = strndupa(buf, size+1);
-	if (!newbuf)
-		return -1;
-	newbuf[size] = '\0';
-
-	errno = 0;
-	rc = sscanf(newbuf, "host%d/%n", &host, &sz);
-	if (rc < 1)
-		return (errno == 0) ? 0 : -1;
-
-	rc = asprintfa(&path, "/sys/class/scsi_host/host%d/host_sas_address",
-			host);
-	if (rc < 0)
-		return -1;
-
-	rc = stat(path, &statbuf);
-	if (rc >= 0)
-		return 1;
-	return 0;
-}
-
 /* pmem12s -> ../devices/LNXSYSTM:00/LNXSYBUS:00/ACPI0012:00/ndbus0/region12/btt12.1/block/pmem12s
  * dev: 259:0
  * device -> ../../../btt12.1
@@ -287,128 +255,6 @@ sysfs_parse_pmem(uint8_t *buf,  ssize_t size, ssize_t *off,
 	swizzle_guid_to_uuid(&info->nvdimm_label);
 
 	*off = efidp_make_nvdimm(buf, size, &info->nvdimm_label);
-	return *off;
-}
-
-static ssize_t
-sysfs_parse_sas(uint8_t *buf, ssize_t size, ssize_t *off,
-		const char *pbuf, ssize_t psize, ssize_t *poff,
-		struct disk_info *info)
-{
-	int rc;
-	int psz = 0;
-	uint8_t *filebuf = NULL;
-	uint64_t sas_address;
-
-	char *newpbuf;
-
-	newpbuf = strndupa(pbuf, psize+1);
-	if (!newpbuf)
-		return -1;
-	newpbuf[psize] = '\0';
-
-	*poff = 0;
-	*off = 0;
-
-	/* buf is:
-	 * host4/port-4:0/end_device-4:0/target4:0:0/4:0:0:0/block/sdc/sdc1
-	 */
-	uint32_t tosser0, tosser1, tosser2;
-
-	/* ignore a bunch of stuff
-	 *    host4/port-4:0
-	 * or host4/port-4:0:0
-	 */
-	rc = sscanf(newpbuf+*poff, "host%d/port-%d:%d%n", &tosser0, &tosser1,
-		    &tosser2, &psz);
-	if (rc != 3)
-		return -1;
-	*poff += psz;
-
-	psz = 0;
-	rc = sscanf(pbuf+*poff, ":%d%n", &tosser0, &psz);
-	if (rc != 0 && rc != 1)
-		return -1;
-	*poff += psz;
-
-	/* next:
-	 *    /end_device-4:0
-	 * or /end_device-4:0:0
-	 * awesomely these are the exact same fields that go into port-blah,
-	 * but we don't care for now about any of them anyway.
-	 */
-	rc = sscanf(newpbuf+*poff, "/end_device-%d:%d%n", &tosser0, &tosser1,
-		    &psz);
-	if (rc != 2)
-		return -1;
-	*poff += psz;
-
-	psz = 0;
-	rc = sscanf(newpbuf+*poff, ":%d%n", &tosser0, &psz);
-	if (rc != 0 && rc != 1)
-		return -1;
-	*poff += psz;
-
-	/* now:
-	 * /target4:0:0/
-	 */
-	uint64_t tosser3;
-	rc = sscanf(newpbuf+*poff, "/target%d:%d:%"PRIu64"/%n", &tosser0,
-		    &tosser1, &tosser3, &psz);
-	if (rc != 3)
-		return -1;
-	*poff += psz;
-
-	/* now:
-	 * %d:%d:%d:%llu/
-	 */
-	rc = sscanf(newpbuf+*poff, "%d:%d:%d:%"PRIu64"/%n",
-		    &info->sas_info.scsi_bus,
-		    &info->sas_info.scsi_device,
-		    &info->sas_info.scsi_target,
-		    &info->sas_info.scsi_lun, &psz);
-	if (rc != 4)
-		return -1;
-	*poff += psz;
-
-	/* what's left is:
-	 * block/sdc/sdc1
-	 */
-	char *disk_name = NULL;
-	char *part_name = NULL;
-	rc = sscanf(newpbuf+*poff, "block/%m[^/]/%m[^/]%n", &disk_name,
-		    &part_name, &psz);
-	if (rc != 2)
-		return -1;
-	*poff += psz;
-
-	/* check the original of this; it's guaranteed in our copy */
-	if (pbuf[*poff] != '\0') {
-		free(disk_name);
-		free(part_name);
-		errno = EINVAL;
-		return -1;
-	}
-
-	/*
-	 * we also need to get the actual sas_address from someplace...
-	 */
-	rc = read_sysfs_file(&filebuf,
-			     "class/block/%s/device/sas_address",
-			     disk_name);
-	if (rc < 0 || filebuf == NULL)
-		return -1;
-
-	rc = sscanf((char *)filebuf, "%"PRIx64, &sas_address);
-	if (rc != 1)
-		return -1;
-
-	info->sas_info.sas_address = sas_address;
-	info->disk_name = disk_name;
-	info->part_name = part_name;
-	info->interface_type = sas;
-
-	*off = efidp_make_sas(buf, size, sas_address);
 	return *off;
 }
 
@@ -595,31 +441,6 @@ make_blockdev_path(uint8_t *buf, ssize_t size, struct disk_info *info)
 			return -1;
 		driver+=1;
 
-	}
-
-	/* /dev/sdc as SAS looks like:
-	 * /sys/dev/block/8:32 -> ../../devices/pci0000:00/0000:00:01.0/0000:01:00.0/host4/port-4:0/end_device-4:0/target4:0:0/4:0:0:0/block/sdc
-	 */
-	if (!found) {
-		rc = sysfs_test_sas(linkbuf+loff, PATH_MAX-off);
-		if (rc < 0)
-			return -1;
-		else if (rc > 0) {
-			ssize_t linksz=0;
-			rc = sysfs_parse_sas(buf+off, size?size-off:0, &sz,
-					     linkbuf+loff, PATH_MAX-off,
-					     &linksz, info);
-			if (rc < 0)
-				return -1;
-			/*
-			 * clang-analyzer complains about this because they
-			 * don't believe in writing code to avoid introducing
-			 * bugs later.
-			 */
-			// loff += linksz;
-			off += sz;
-			found = 1;
-		}
 	}
 
 	if (!found) {
