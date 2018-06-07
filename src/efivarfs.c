@@ -126,15 +126,16 @@ efivarfs_set_fd_immutable(int fd, int immutable)
 }
 
 static int
-efivarfs_make_fd_mutable(int fd, unsigned *orig_attrs)
+efivarfs_make_fd_mutable(int fd, unsigned long *orig_attrs)
 {
-	unsigned mutable_attrs;
+	unsigned long mutable_attrs = 0;
 
+        *orig_attrs = 0;
 	if (ioctl(fd, FS_IOC_GETFLAGS, orig_attrs) == -1)
 		return -1;
 	if ((*orig_attrs & FS_IMMUTABLE_FL) == 0)
 		return 0;
-	mutable_attrs = *orig_attrs & ~(unsigned)FS_IMMUTABLE_FL;
+        mutable_attrs = *orig_attrs & ~(unsigned long)FS_IMMUTABLE_FL;
 	if (ioctl(fd, FS_IOC_SETFLAGS, &mutable_attrs) == -1)
 		return -1;
 	return 0;
@@ -321,7 +322,7 @@ efivarfs_set_variable(efi_guid_t guid, const char *name, uint8_t *data,
 	uint8_t *buf;
 	int rfd = -1;
 	struct stat rfd_stat;
-	unsigned orig_attrs = 0;
+	unsigned long orig_attrs = 0;
 	int restore_immutable_fd = -1;
 	int wfd = -1;
 	int open_wflags;
@@ -446,8 +447,12 @@ err:
 		efi_error("failed to unlink %s", path);
 
 	ioctl(restore_immutable_fd, FS_IOC_SETFLAGS, &orig_attrs);
-	close(wfd);
-	close(rfd);
+
+        if (wfd >= 0)
+                close(wfd);
+        if (rfd >= 0)
+                close(rfd);
+
 	free(buf);
 	free(path);
 
