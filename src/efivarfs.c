@@ -348,7 +348,7 @@ efivarfs_set_variable(efi_guid_t guid, const char *name, uint8_t *data,
 	alloc_size = sizeof (attributes) + data_size;
 	buf = malloc(alloc_size);
 	if (buf == NULL) {
-		efi_error("malloc(%zu) failed\n", alloc_size);
+		efi_error("malloc(%zu) failed", alloc_size);
 		goto err;
 	}
 
