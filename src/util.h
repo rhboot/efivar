@@ -365,6 +365,7 @@ swizzle_guid_to_uuid(efi_guid_t *guid)
         })
 
 #define debug(level, fmt, args...) debug_(__FILE__, __LINE__, __func__, level, fmt, ## args)
+#define arrow(l,b,o,p,n,m) ({if(n==m){char c_=b[p+1]; b[o]='^'; b[p+o]='^';b[p+o+1]='\0';debug(l,"%s",b);b[o]=' ';b[p+o]=' ';b[p+o+1]=c_;}})
 
 #define DEBUG 1
 
