@@ -157,6 +157,10 @@ parse_sata(struct device *dev, const char *devlink)
         pos = 0;
 
         debug(DEBUG, "entry");
+        if (is_pata(dev)) {
+                debug(DEBUG, "This is a PATA device; skipping.");
+                return 0;
+        }
 
         /* find the ata info:
          * ata1/host0/target0:0:0/0:0:0:0
