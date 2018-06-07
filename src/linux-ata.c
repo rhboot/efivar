@@ -28,6 +28,27 @@
 
 #include "efiboot.h"
 
+bool HIDDEN
+is_pata(struct device *dev)
+{
+        if (!strncmp(dev->driver, "pata_", 5) ||
+            !strncmp(dev->driver, "ata_", 4))
+                return true;
+
+        if (dev->n_pci_devs > 0 &&
+            dev->pci_dev[dev->n_pci_devs - 1].driverlink) {
+                char *slash = dev->pci_dev[dev->n_pci_devs - 1].driverlink;
+
+                slash = strrchr(slash, '/');
+                if (slash &&
+                    (!strncmp(slash, "/ata_", 5) ||
+                     !strncmp(slash, "/pata_", 6)))
+                    return true;
+        }
+
+        return false;
+}
+
 /*
  * support for old-school ATA devices
  *
@@ -37,8 +58,12 @@
  * 11:0 -> ../../devices/pci0000:00/0000:00:11.5/ata3/host2/target2:0:0/2:0:0:0/block/sr0
  */
 static ssize_t
-parse_ata(struct device *dev, const char *current UNUSED)
+parse_ata(struct device *dev, const char *current)
 {
+        uint32_t scsi_host, scsi_bus, scsi_device, scsi_target;
+        uint64_t scsi_lun;
+        int pos;
+
         debug(DEBUG, "entry");
         /* IDE disks can have up to 64 partitions, or 6 bits worth,
          * and have one bit for the disk number.
@@ -70,14 +95,10 @@ parse_ata(struct device *dev, const char *current UNUSED)
                 dev->interface_type = ata;
                 set_part(dev, dev->minor & 0x3F);
         } else {
-                /*
-                 * If it isn't one of those majors, it isn't a PATA device.
-                 */
-                return 0;
+                debug(DEBUG, "If this is ATA, it isn't using a traditional IDE inode.");
         }
 
-        if (!strncmp(dev->driver, "pata_", 5) ||
-                   !(strcmp(dev->driver, "ata_piix"))) {
+        if (is_pata(dev)) {
                 dev->interface_type = ata;
         } else {
                 /*
@@ -87,10 +108,44 @@ parse_ata(struct device *dev, const char *current UNUSED)
                 return 0;
         }
 
+        char *host = strstr(current, "/host");
+        if (!host)
+                return -1;
+
+        pos = parse_scsi_link(host + 1, &scsi_host,
+                              &scsi_bus, &scsi_device,
+                              &scsi_target, &scsi_lun);
+        if (pos < 0)
+                return -1;
+
+        dev->ata_info.scsi_host = scsi_host;
+        dev->ata_info.scsi_bus = scsi_bus;
+        dev->ata_info.scsi_device = scsi_device;
+        dev->ata_info.scsi_target = scsi_target;
+        dev->ata_info.scsi_lun = scsi_lun;
+
         char *block = strstr(current, "/block/");
         if (!block)
                 return -1;
         return block + 1 - current;
+}
+
+static ssize_t
+dp_create_ata(struct device *dev,
+              uint8_t *buf, ssize_t size, ssize_t off)
+{
+        ssize_t sz;
+
+        debug(DEBUG, "entry");
+
+        sz = efidp_make_atapi(buf + off, size ? size - off : 0,
+                              dev->ata_info.scsi_device,
+                              dev->ata_info.scsi_target - 1,
+                              dev->ata_info.scsi_lun);
+        if (sz < 0)
+                efi_error("efidp_make_atapi() failed");
+
+        return sz;
 }
 
 enum interface_type ata_iftypes[] = { ata, atapi, unknown };
@@ -100,5 +155,5 @@ struct dev_probe ata_parser = {
         .iftypes = ata_iftypes,
         .flags = DEV_PROVIDES_HD,
         .parse = parse_ata,
-        .create = NULL,
+        .create = dp_create_ata,
 };

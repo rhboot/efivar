@@ -280,6 +280,10 @@ device_free(struct device *dev)
                         free(dev->part_name);
         }
 
+        for (unsigned int i = 0; i < dev->n_pci_devs; i++)
+                if (dev->pci_dev[i].driverlink)
+                        free(dev->pci_dev[i].driverlink);
+
         if (dev->pci_dev)
                 free(dev->pci_dev);
 

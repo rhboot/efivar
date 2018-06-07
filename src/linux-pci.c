@@ -157,6 +157,21 @@ parse_pci(struct device *dev, const char *current)
                 dev->pci_dev[i].pci_bus = bus;
                 dev->pci_dev[i].pci_device = device;
                 dev->pci_dev[i].pci_function = function;
+                char *tmp = strndup(current, devpart-current+1);
+                char *linkbuf = NULL;
+                if (!tmp) {
+                        efi_error("could not allocate memory");
+                        return -1;
+                }
+                tmp[devpart - current] = '\0';
+                rc = sysfs_readlink(&linkbuf, "class/block/%s/driver", tmp);
+                free(tmp);
+                if (rc < 0) {
+                        efi_error("Could not find driver for pci device");
+                        return -1;
+                }
+                dev->pci_dev[i].driverlink = strdup(linkbuf);
+                debug(DEBUG, "driver:%s\n", linkbuf);
                 dev->n_pci_devs += 1;
         }
 
@@ -172,6 +187,9 @@ dp_create_pci(struct device *dev,
         debug(DEBUG, "entry buf:%p size:%zd off:%zd", buf, size, off);
 
         if (dev->pci_root.pci_root_acpi_uid_str) {
+                debug(DEBUG, "creating acpi_hid_ex dp hid:0x%08x uid:\"%s\"",
+                      dev->pci_root.pci_root_acpi_hid,
+                      dev->pci_root.pci_root_acpi_uid_str);
                 new = efidp_make_acpi_hid_ex(buf + off, size ? size - off : 0,
                                             dev->pci_root.pci_root_acpi_hid,
                                             0, 0, "",
@@ -182,6 +200,9 @@ dp_create_pci(struct device *dev,
                         return new;
                 }
         } else {
+                debug(DEBUG, "creating acpi_hid dp hid:0x%08x uid:0x%0"PRIx64,
+                      dev->pci_root.pci_root_acpi_hid,
+                      dev->pci_root.pci_root_acpi_uid);
                 new = efidp_make_acpi_hid(buf + off, size ? size - off : 0,
                                          dev->pci_root.pci_root_acpi_hid,
                                          dev->pci_root.pci_root_acpi_uid);
@@ -193,7 +214,9 @@ dp_create_pci(struct device *dev,
         off += new;
         sz += new;
 
+        debug(DEBUG, "creating PCI device path nodes");
         for (unsigned int i = 0; i < dev->n_pci_devs; i++) {
+                debug(DEBUG, "creating PCI device path node %u", i);
                 new = efidp_make_pci(buf + off, size ? size - off : 0,
                                     dev->pci_dev[i].pci_device,
                                     dev->pci_dev[i].pci_function);

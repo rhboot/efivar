@@ -34,6 +34,7 @@ struct pci_dev_info {
         uint8_t pci_bus;
         uint8_t pci_device;
         uint8_t pci_function;
+        char *driverlink;
 };
 
 struct scsi_info {
@@ -63,6 +64,15 @@ struct sata_info {
         uint32_t ata_pmp;
 
         uint32_t ata_print_id;
+};
+
+struct ata_info {
+        uint32_t scsi_bus;
+        uint32_t scsi_device;
+        uint32_t scsi_target;
+        uint64_t scsi_lun;
+
+        uint32_t scsi_host;
 };
 
 struct nvme_info {
@@ -114,6 +124,7 @@ struct device {
                                 struct scsi_info scsi_info;
                                 struct sas_info sas_info;
                                 struct sata_info sata_info;
+                                struct ata_info ata_info;
                                 struct nvme_info nvme_info;
                                 efi_guid_t nvdimm_label;
                         };
@@ -128,7 +139,7 @@ extern int HIDDEN set_disk_and_part_name(struct device *dev);
 extern int HIDDEN set_part(struct device *dev, int value);
 extern int HIDDEN set_part_name(struct device *dev, const char * const fmt, ...);
 extern int HIDDEN set_disk_name(struct device *dev, const char * const fmt, ...);
-
+extern bool HIDDEN is_pata(struct device *dev);
 extern int HIDDEN make_blockdev_path(uint8_t *buf, ssize_t size,
                                      struct device *dev);
 
