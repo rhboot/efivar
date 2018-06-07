@@ -21,6 +21,7 @@ include $(TOPDIR)/Make.version
 	  -Wl,-soname,$@.1 \
 	  -Wl,--version-script=$(MAP) \
 	  -o $@ $^ $(LDLIBS)
+	ln -vfs $@ $@.1
 
 %.abixml : %.so
 	$(ABIDW) --headers-dir $(TOPDIR)/src/include/efivar/ --out-file $@ $^
