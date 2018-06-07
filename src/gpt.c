@@ -535,14 +535,14 @@ compare_gpts(gpt_header *pgpt, gpt_header *agpt, uint64_t lastlba)
 		return;
 
 	if (le64_to_cpu(pgpt->my_lba) != le64_to_cpu(agpt->alternate_lba)) {
-		efi_error("GPT:Primary header LBA != Alt. header alternate_lba\n"
+		efi_error("GPT:Primary header LBA != Alt. header alternate_lba"
 			  "GPT:0x%" PRIx64 " != 0x%" PRIx64,
 			  (uint64_t)le64_to_cpu(pgpt->my_lba),
 			  (uint64_t)le64_to_cpu(agpt->alternate_lba));
 		error_found++;
 	}
 	if (le64_to_cpu(pgpt->alternate_lba) != le64_to_cpu(agpt->my_lba)) {
-		efi_error("GPT:Primary header alternate_lba != Alt. header my_lba\n"
+		efi_error("GPT:Primary header alternate_lba != Alt. header my_lba"
 			  "GPT:0x%" PRIx64 " != 0x%" PRIx64,
 			  (uint64_t)le64_to_cpu(pgpt->alternate_lba),
 			  (uint64_t)le64_to_cpu(agpt->my_lba));
@@ -550,7 +550,7 @@ compare_gpts(gpt_header *pgpt, gpt_header *agpt, uint64_t lastlba)
 	}
 	if (le64_to_cpu(pgpt->first_usable_lba) !=
 	    le64_to_cpu(agpt->first_usable_lba)) {
-		efi_error("GPT:first_usable_lbas don't match.\n"
+		efi_error("GPT:first_usable_lbas don't match."
 			  "GPT:0x%" PRIx64 " != 0x%" PRIx64,
 			  (uint64_t)le64_to_cpu(pgpt->first_usable_lba),
 			  (uint64_t)le64_to_cpu(agpt->first_usable_lba));
@@ -558,7 +558,7 @@ compare_gpts(gpt_header *pgpt, gpt_header *agpt, uint64_t lastlba)
 	}
 	if (le64_to_cpu(pgpt->last_usable_lba) !=
 	    le64_to_cpu(agpt->last_usable_lba)) {
-		efi_error("GPT:last_usable_lbas don't match.\n"
+		efi_error("GPT:last_usable_lbas don't match."
 			  "GPT:0x%" PRIx64 " != 0x%" PRIx64,
 			  (uint64_t)le64_to_cpu(pgpt->last_usable_lba),
 			  (uint64_t)le64_to_cpu(agpt->last_usable_lba));
@@ -591,14 +591,14 @@ compare_gpts(gpt_header *pgpt, gpt_header *agpt, uint64_t lastlba)
 		error_found++;
 	}
 	if (le64_to_cpu(pgpt->alternate_lba) != lastlba) {
-		efi_error("GPT:Primary header thinks Alt. header is not at the end of the disk.\n"
+		efi_error("GPT:Primary header thinks Alt. header is not at the end of the disk."
 			  "GPT:0x%" PRIx64 " != 0x%" PRIx64,
 			  (uint64_t)le64_to_cpu(pgpt->alternate_lba), lastlba);
 		error_found++;
 	}
 
 	if (le64_to_cpu(agpt->my_lba) != lastlba) {
-		efi_error("GPT:Alternate GPT header not at the end of the disk.\n"
+		efi_error("GPT:Alternate GPT header not at the end of the disk."
 			  "GPT:0x%" PRIx64 " != 0x%" PRIx64,
 			  (uint64_t)le64_to_cpu(agpt->my_lba), lastlba);
 		error_found++;
