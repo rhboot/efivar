@@ -180,12 +180,14 @@ set_disk_and_part_name(struct device *dev)
         errno = 0;
         debug(DEBUG, "dev->disk_name:%p dev->part_name:%p", dev->disk_name, dev->part_name);
         debug(DEBUG, "dev->part:%d", dev->part);
-        debug(DEBUG, "ultimate:%s", ultimate);
-        debug(DEBUG, "penultimate:%s", penultimate);
-        debug(DEBUG, "approximate:%s", approximate);
-        debug(DEBUG, "proximate:%s", proximate);
+        debug(DEBUG, "ultimate:\"%s\"", ultimate ? : "");
+        debug(DEBUG, "penultimate:\"%s\"", penultimate ? : "");
+        debug(DEBUG, "approximate:\"%s\"", approximate ? : "");
+        debug(DEBUG, "proximate:\"%s\"", proximate ? : "");
 
-        if (!strcmp(proximate, "nvme") || !strcmp(approximate, "block")) {
+        if (ultimate && penultimate &&
+            ((proximate && !strcmp(proximate, "nvme")) ||
+             (approximate && !strcmp(approximate, "block")))) {
                 /*
                  * 259:1 -> ../../devices/pci0000:00/0000:00:1d.0/0000:05:00.0/nvme/nvme0/nvme0n1/nvme0n1p1
                  * 8:1 -> ../../devices/pci0000:00/0000:00:17.0/ata2/host1/target1:0:0/1:0:0:0/block/sda/sda1
@@ -196,14 +198,14 @@ set_disk_and_part_name(struct device *dev)
                 set_disk_name(dev, "%s", penultimate);
                 set_part_name(dev, "%s", ultimate);
                 debug(DEBUG, "disk:%s part:%s", penultimate, ultimate);
-        } else if (!strcmp(approximate, "nvme")) {
+        } else if (ultimate && approximate && !strcmp(approximate, "nvme")) {
                 /*
                  * 259:0 -> ../../devices/pci0000:00/0000:00:1d.0/0000:05:00.0/nvme/nvme0/nvme0n1
                  */
                 set_disk_name(dev, "%s", ultimate);
                 set_part_name(dev, "%sp%d", ultimate, dev->part);
                 debug(DEBUG, "disk:%s part:%sp%d", ultimate, ultimate, dev->part);
-        } else if (!strcmp(penultimate, "block")) {
+        } else if (ultimate && penultimate && !strcmp(penultimate, "block")) {
                 /*
                  * 253:0 -> ../../devices/virtual/block/dm-0 (... I guess)
                  * 8:0 -> ../../devices/pci0000:00/0000:00:17.0/ata2/host1/target1:0:0/1:0:0:0/block/sda
@@ -216,7 +218,7 @@ set_disk_and_part_name(struct device *dev)
                 set_disk_name(dev, "%s", ultimate);
                 set_part_name(dev, "%s%d", ultimate, dev->part);
                 debug(DEBUG, "disk:%s part:%s%d", ultimate, ultimate, dev->part);
-        } else if (!strcmp(approximate, "mtd")) {
+        } else if (ultimate && approximate && !strcmp(approximate, "mtd")) {
                 /*
                  * 31:0 -> ../../devices/platform/1e000000.palmbus/1e000b00.spi/spi_master/spi32766/spi32766.0/mtd/mtd0/mtdblock0
                  */
@@ -494,14 +496,14 @@ make_mac_path(uint8_t *buf, ssize_t size, const char * const ifname)
 {
         struct ifreq ifr;
         struct ethtool_drvinfo drvinfo = { 0, };
-        int fd, rc;
+        int fd = -1, rc;
         ssize_t ret = -1, sz, off = 0;
         char busname[PATH_MAX+1] = "";
         struct device dev;
 
         memset(&dev, 0, sizeof (dev));
         dev.interface_type = network;
-        dev.ifname = strdup(ifname);
+        dev.ifname = strdupa(ifname);
         if (!dev.ifname)
                 return -1;
 
@@ -511,7 +513,7 @@ make_mac_path(uint8_t *buf, ssize_t size, const char * const ifname)
          */
         rc = sysfs_readlink(&dev.link, "class/net/%s", ifname);
         if (rc < 0 || !dev.link)
-                return -1;
+                goto err;
 
         memset(&ifr, 0, sizeof (ifr));
         strncpy(ifr.ifr_name, ifname, IF_NAMESIZE);
@@ -521,7 +523,7 @@ make_mac_path(uint8_t *buf, ssize_t size, const char * const ifname)
 
         fd = socket(AF_INET, SOCK_DGRAM, 0);
         if (fd < 0)
-                return -1;
+                goto err;
 
         rc = ioctl(fd, SIOCETHTOOL, &ifr);
         if (rc < 0)
