@@ -20,12 +20,8 @@ install :
 		$(MAKE) -C $$x $@ ; \
 	done
 
-abidw abicheck efivar efivar-static static:
+efivar efivar-static static:
 	$(MAKE) -C src $@
-
-abiupdate :
-	$(MAKE) clean all
-	$(MAKE) -C src abiclean abixml
 
 $(SUBDIRS) :
 	$(MAKE) -C $@
@@ -39,7 +35,7 @@ a :
 		exit 1 ; \
 	fi
 
-.PHONY: $(SUBDIRS) a brick abiupdate
+.PHONY: $(SUBDIRS) a brick
 
 GITTAG = $(shell bash -c "echo $$(($(VERSION) + 1))")
 
@@ -51,7 +47,7 @@ clean :
 	done
 	@rm -vf efivar.spec
 
-test-archive: abicheck efivar.spec
+test-archive: efivar.spec
 	@rm -rf /tmp/efivar-$(GITTAG) /tmp/efivar-$(GITTAG)-tmp
 	@mkdir -p /tmp/efivar-$(GITTAG)-tmp
 	@git archive --format=tar $(shell git branch | awk '/^*/ { print $$2 }') | ( cd /tmp/efivar-$(GITTAG)-tmp/ ; tar x )
@@ -70,7 +66,7 @@ bumpver :
 tag:
 	git tag -s $(GITTAG) refs/heads/master
 
-archive: abicheck bumpver abidw tag efivar.spec
+archive: bumpver tag efivar.spec
 	@rm -rf /tmp/efivar-$(GITTAG) /tmp/efivar-$(GITTAG)-tmp
 	@mkdir -p /tmp/efivar-$(GITTAG)-tmp
 	@git archive --format=tar $(GITTAG) | ( cd /tmp/efivar-$(GITTAG)-tmp/ ; tar x )

@@ -23,17 +23,6 @@ include $(TOPDIR)/Make.version
 	  -o $@ $^ $(LDLIBS)
 	ln -vfs $@ $@.1
 
-%.abixml : %.so
-	$(ABIDW) --headers-dir $(TOPDIR)/src/include/efivar/ --out-file $@ $^
-	@sed -i -s 's,$(TOPDIR)/,,g' $@
-
-%.abicheck : %.so
-	$(ABIDIFF) \
-		--suppr abignore \
-		--headers-dir2 $(TOPDIR)/src/include/efivar/ \
-		$(patsubst %.so,%.abixml,$<) \
-		$<
-
 %.o : %.c
 	$(CC) $(cflags) -fPIC $(CPPFLAGS) -c -o $@ $(filter %.c %.o %.S,$^)
 
