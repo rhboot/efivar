@@ -82,6 +82,11 @@ struct nvme_info {
         uint8_t eui[8];
 };
 
+struct nvdimm_info {
+        efi_guid_t namespace_label;
+        efi_guid_t nvdimm_label;
+};
+
 enum interface_type {
         unknown,
         isa, pci, network,
@@ -126,7 +131,7 @@ struct device {
                                 struct sata_info sata_info;
                                 struct ata_info ata_info;
                                 struct nvme_info nvme_info;
-                                efi_guid_t nvdimm_label;
+                                struct nvdimm_info nvdimm_info;
                         };
                 };
                 char *ifname;
