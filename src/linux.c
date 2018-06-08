@@ -386,9 +386,21 @@ struct device HIDDEN
 
         rc = sysfs_readlink(&tmpbuf, "block/%s/device/driver", dev->disk_name);
         if (rc < 0 || !tmpbuf) {
-                efi_error("readlink of /sys/block/%s/device/driver failed",
-                          dev->disk_name);
-                goto err;
+                if (errno == ENOENT) {
+                        /*
+                         * nvme, for example, will have nvme0n1/device point
+                         * at nvme0, and we need to look for device/driver
+                         * there.
+                         */
+                        rc = sysfs_readlink(&tmpbuf,
+                                            "block/%s/device/device/driver",
+                                            dev->disk_name);
+                }
+                if (rc < 0 || !tmpbuf) {
+                        efi_error("readlink of /sys/block/%s/device/driver failed",
+                                  dev->disk_name);
+                        goto err;
+                }
         }
 
         linkbuf = pathseg(tmpbuf, -1);
