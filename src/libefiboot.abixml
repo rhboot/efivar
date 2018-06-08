@@ -21,7 +21,7 @@
     <elf-symbol name='efi_loadopt_path' version='libefiboot.so.0' is-default-version='yes' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes'/>
     <elf-symbol name='efi_loadopt_pathlen' version='libefiboot.so.0' is-default-version='yes' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes'/>
   </elf-function-symbols>
-  <abi-instr version='1.0' address-size='64' path='linux-i2o.c' comp-dir-path='src' language='LANG_C99'>
+  <abi-instr version='1.0' address-size='64' path='linux-sas.c' comp-dir-path='src' language='LANG_C99'>
     <class-decl name='dev_probe' size-in-bits='384' is-struct='yes' visibility='default' filepath='src/linux.h' line='238' column='1' id='type-id-1'>
       <data-member access='public' layout-offset-in-bits='0'>
         <var-decl name='name' type-id='type-id-2' visibility='default' filepath='src/linux.h' line='239' column='1'/>
@@ -204,12 +204,12 @@
     <typedef-decl name='__off_t' type-id='type-id-13' filepath='/usr/include/bits/types.h' line='140' column='1' id='type-id-33'/>
     <typedef-decl name='__blksize_t' type-id='type-id-13' filepath='/usr/include/bits/types.h' line='162' column='1' id='type-id-34'/>
     <typedef-decl name='__blkcnt_t' type-id='type-id-13' filepath='/usr/include/bits/types.h' line='167' column='1' id='type-id-35'/>
-    <class-decl name='timespec' size-in-bits='128' is-struct='yes' visibility='default' filepath='/usr/include/bits/types/struct_timespec.h' line='8' column='1' id='type-id-36'>
+    <class-decl name='timespec' size-in-bits='128' is-struct='yes' visibility='default' filepath='/usr/include/bits/types/struct_timespec.h' line='9' column='1' id='type-id-36'>
       <data-member access='public' layout-offset-in-bits='0'>
-        <var-decl name='tv_sec' type-id='type-id-39' visibility='default' filepath='/usr/include/bits/types/struct_timespec.h' line='10' column='1'/>
+        <var-decl name='tv_sec' type-id='type-id-39' visibility='default' filepath='/usr/include/bits/types/struct_timespec.h' line='11' column='1'/>
       </data-member>
       <data-member access='public' layout-offset-in-bits='64'>
-        <var-decl name='tv_nsec' type-id='type-id-40' visibility='default' filepath='/usr/include/bits/types/struct_timespec.h' line='11' column='1'/>
+        <var-decl name='tv_nsec' type-id='type-id-40' visibility='default' filepath='/usr/include/bits/types/struct_timespec.h' line='12' column='1'/>
       </data-member>
     </class-decl>
     <typedef-decl name='__time_t' type-id='type-id-13' filepath='/usr/include/bits/types.h' line='148' column='1' id='type-id-39'/>
@@ -416,7 +416,7 @@
     <pointer-type-def type-id='type-id-44' size-in-bits='64' id='type-id-69'/>
     <pointer-type-def type-id='type-id-70' size-in-bits='64' id='type-id-6'/>
     <pointer-type-def type-id='type-id-71' size-in-bits='64' id='type-id-7'/>
-    <var-decl name='i2o_parser' type-id='type-id-1' visibility='default' filepath='src/linux.h' line='259' column='1'/>
+    <var-decl name='sas_parser' type-id='type-id-1' visibility='default' filepath='src/linux.h' line='255' column='1'/>
     <function-type size-in-bits='64' id='type-id-71'>
       <parameter type-id='type-id-64'/>
       <return type-id='type-id-2'/>
@@ -434,29 +434,29 @@
       <return type-id='type-id-15'/>
     </function-type>
   </abi-instr>
-  <abi-instr version='1.0' address-size='64' path='linux-sas.c' comp-dir-path='src' language='LANG_C99'>
-    <var-decl name='sas_parser' type-id='type-id-1' visibility='default' filepath='src/linux.h' line='255' column='1'/>
-  </abi-instr>
-  <abi-instr version='1.0' address-size='64' path='linux-sata.c' comp-dir-path='src' language='LANG_C99'>
-    <var-decl name='sata_parser' type-id='type-id-1' visibility='default' filepath='src/linux.h' line='256' column='1'/>
-  </abi-instr>
-  <abi-instr version='1.0' address-size='64' path='linux-scsi.c' comp-dir-path='src' language='LANG_C99'>
-    <var-decl name='scsi_parser' type-id='type-id-1' visibility='default' filepath='src/linux.h' line='260' column='1'/>
-  </abi-instr>
   <abi-instr version='1.0' address-size='64' path='linux-virtblk.c' comp-dir-path='src' language='LANG_C99'>
     <var-decl name='virtblk_parser' type-id='type-id-1' visibility='default' filepath='src/linux.h' line='258' column='1'/>
+  </abi-instr>
+  <abi-instr version='1.0' address-size='64' path='linux-ata.c' comp-dir-path='src' language='LANG_C99'>
+    <var-decl name='ata_parser' type-id='type-id-1' visibility='default' filepath='src/linux.h' line='261' column='1'/>
   </abi-instr>
   <abi-instr version='1.0' address-size='64' path='linux-pmem.c' comp-dir-path='src' language='LANG_C99'>
     <var-decl name='pmem_parser' type-id='type-id-1' visibility='default' filepath='src/linux.h' line='253' column='1'/>
   </abi-instr>
-  <abi-instr version='1.0' address-size='64' path='linux-ata.c' comp-dir-path='src' language='LANG_C99'>
-    <var-decl name='ata_parser' type-id='type-id-1' visibility='default' filepath='src/linux.h' line='261' column='1'/>
+  <abi-instr version='1.0' address-size='64' path='linux-sata.c' comp-dir-path='src' language='LANG_C99'>
+    <var-decl name='sata_parser' type-id='type-id-1' visibility='default' filepath='src/linux.h' line='256' column='1'/>
   </abi-instr>
   <abi-instr version='1.0' address-size='64' path='linux-pci.c' comp-dir-path='src' language='LANG_C99'>
     <var-decl name='pci_parser' type-id='type-id-1' visibility='default' filepath='src/linux.h' line='254' column='1'/>
   </abi-instr>
   <abi-instr version='1.0' address-size='64' path='linux-nvme.c' comp-dir-path='src' language='LANG_C99'>
     <var-decl name='nvme_parser' type-id='type-id-1' visibility='default' filepath='src/linux.h' line='257' column='1'/>
+  </abi-instr>
+  <abi-instr version='1.0' address-size='64' path='linux-scsi.c' comp-dir-path='src' language='LANG_C99'>
+    <var-decl name='scsi_parser' type-id='type-id-1' visibility='default' filepath='src/linux.h' line='260' column='1'/>
+  </abi-instr>
+  <abi-instr version='1.0' address-size='64' path='linux-i2o.c' comp-dir-path='src' language='LANG_C99'>
+    <var-decl name='i2o_parser' type-id='type-id-1' visibility='default' filepath='src/linux.h' line='259' column='1'/>
   </abi-instr>
   <abi-instr version='1.0' address-size='64' path='&lt;artificial&gt;' comp-dir-path='src' language='LANG_C99'>
     <qualified-type-def type-id='type-id-47' const='yes' id='type-id-72'/>
