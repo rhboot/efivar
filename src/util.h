@@ -369,8 +369,4 @@ swizzle_guid_to_uuid(efi_guid_t *guid)
 
 #define DEBUG 1
 
-extern void PUBLIC efi_set_verbose(int verbosity, FILE *errlog);
-extern int PUBLIC efi_get_verbose(void);
-extern FILE PUBLIC *efi_get_logfile(void);
-
 #endif /* EFIVAR_UTIL_H */

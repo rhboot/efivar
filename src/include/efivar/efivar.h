@@ -25,6 +25,7 @@
 #include <stdarg.h>
 #include <stdint.h>
 #include <string.h>
+#include <stdio.h>
 #include <sys/stat.h>
 #include <sys/types.h>
 #include <unistd.h>
@@ -226,6 +227,13 @@ efi_error_clear(void)
 	efi_error_real__(errno, __FILE__, __func__, __LINE__, (fmt), ## args)
 #define efi_error_val(errval, msg, args...) \
 	efi_error_real__(errval, __FILE__, __func__, __LINE__, (fmt), ## args)
+
+extern void efi_set_verbose(int verbosity, FILE *errlog)
+        __attribute__((__visibility__("default")));
+extern int efi_get_verbose(void)
+        __attribute__((__visibility__("default")));
+extern FILE * efi_get_logfile(void)
+        __attribute__((__visibility__("default")));
 
 #include <efivar/efivar-dp.h>
 
