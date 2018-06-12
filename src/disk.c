@@ -257,8 +257,8 @@ is_partitioned(int fd)
 }
 
 ssize_t HIDDEN
-_make_hd_dn(uint8_t *buf, ssize_t size, int fd, int32_t partition,
-	    uint32_t options)
+make_hd_dn(uint8_t *buf, ssize_t size, int fd, int32_t partition,
+           uint32_t options)
 {
 	uint64_t part_start=0, part_size = 0;
 	uint8_t signature[16]="", format=0, signature_type=0;

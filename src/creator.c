@@ -281,7 +281,8 @@ efi_va_generate_file_device_path_from_esp(uint8_t *buf, ssize_t size,
 			goto err;
 		}
 
-		sz = make_hd_dn(buf, size, off, disk_fd, dev->part, options);
+		sz = make_hd_dn(buf+off, size?size-off:0,
+                                disk_fd, dev->part, options);
 		saved_errno = errno;
 		close(disk_fd);
 		errno = saved_errno;
