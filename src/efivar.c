@@ -485,13 +485,13 @@ int main(int argc, char *argv[])
 		case ACTION_LIST_GUIDS: {
 			efi_guid_t sentinal = {0xffffffff,0xffff,0xffff,0xffff,
 					       {0xff,0xff,0xff,0xff,0xff,0xff}};
-			extern struct guidname efi_well_known_guids;
+			extern struct guidname efi_well_known_guids[];
 			extern struct guidname efi_well_known_guids_end;
 			intptr_t start = (intptr_t)&efi_well_known_guids;
 			intptr_t end = (intptr_t)&efi_well_known_guids_end;
 			unsigned int i;
 
-			struct guidname *guid = &efi_well_known_guids;
+			struct guidname *guid = &efi_well_known_guids[0];
 			for (i = 0; i < (end-start) / sizeof(*guid); i++) {
 				if (!efi_guid_cmp(&sentinal, &guid[i].guid))
 					break;
