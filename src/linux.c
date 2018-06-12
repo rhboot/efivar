@@ -356,7 +356,7 @@ struct device HIDDEN
 
         if (dev->part == -1) {
                 rc = read_sysfs_file(&tmpbuf, "dev/block/%s/partition", dev->link);
-                if (rc < 0) {
+                if (rc < 0 || !tmpbuf) {
                         efi_error("device has no /partition node; not a partition");
                 } else {
                         rc = sscanf((char *)tmpbuf, "%d\n", &dev->part);

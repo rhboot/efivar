@@ -166,7 +166,7 @@ parse_pci(struct device *dev, const char *current)
                 tmp[devpart - current] = '\0';
                 rc = sysfs_readlink(&linkbuf, "class/block/%s/driver", tmp);
                 free(tmp);
-                if (rc < 0) {
+                if (rc < 0 || !linkbuf) {
                         efi_error("Could not find driver for pci device");
                         return -1;
                 }
