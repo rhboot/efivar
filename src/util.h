@@ -149,22 +149,24 @@
 #endif
 
 static inline int UNUSED
-read_file(int fd, uint8_t **buf, size_t *bufsize)
+read_file(int fd, uint8_t **result, size_t *bufsize)
 {
         uint8_t *p;
         size_t size = 4096;
         size_t filesize = 0;
         ssize_t s = 0;
+        uint8_t *buf, *newbuf;
 
-        uint8_t *newbuf;
         if (!(newbuf = calloc(size, sizeof (uint8_t)))) {
                 efi_error("could not allocate memory");
+                *result = buf = NULL;
+                *bufsize = 0;
                 return -1;
         }
-        *buf = newbuf;
+        buf = newbuf;
 
         do {
-                p = *buf + filesize;
+                p = buf + filesize;
                 /* size - filesize shouldn't exceed SSIZE_MAX because we're
                  * only allocating 4096 bytes at a time and we're checking that
                  * before doing so. */
@@ -179,8 +181,8 @@ read_file(int fd, uint8_t **buf, size_t *bufsize)
                         continue;
                 } else if (s < 0) {
                         int saved_errno = errno;
-                        free(*buf);
-                        *buf = NULL;
+                        free(buf);
+                        *result = buf = NULL;
                         *bufsize = 0;
                         errno = saved_errno;
                         efi_error("could not read from file");
@@ -194,38 +196,38 @@ read_file(int fd, uint8_t **buf, size_t *bufsize)
                         /* See if we're going to overrun and return an error
                          * instead. */
                         if (size > (size_t)-1 - 4096) {
-                                free(*buf);
-                                *buf = NULL;
+                                free(buf);
+                                *result = buf = NULL;
                                 *bufsize = 0;
                                 errno = ENOMEM;
                                 efi_error("could not read from file");
                                 return -1;
                         }
-                        newbuf = realloc(*buf, size + 4096);
+                        newbuf = realloc(buf, size + 4096);
                         if (newbuf == NULL) {
                                 int saved_errno = errno;
-                                free(*buf);
-                                *buf = NULL;
+                                free(buf);
+                                *result = buf = NULL;
                                 *bufsize = 0;
                                 errno = saved_errno;
                                 efi_error("could not allocate memory");
                                 return -1;
                         }
-                        *buf = newbuf;
-                        memset(*buf + size, '\0', 4096);
+                        buf = newbuf;
+                        memset(buf + size, '\0', 4096);
                         size += 4096;
                 }
         } while (1);
 
-        newbuf = realloc(*buf, filesize+1);
+        newbuf = realloc(buf, filesize+1);
         if (!newbuf) {
-                free(*buf);
-                *buf = NULL;
+                free(buf);
+                *result = buf = NULL;
                 efi_error("could not allocate memory");
                 return -1;
         }
         newbuf[filesize] = '\0';
-        *buf = newbuf;
+        *result = newbuf;
         *bufsize = filesize+1;
         return 0;
 }
@@ -329,7 +331,7 @@ get_file(uint8_t **result, const char * const fmt, ...)
         close(fd);
         errno = error;
 
-        if (rc < 0) {
+        if (rc < 0 || bufsize < 1) {
                 efi_error("could not read file \"%s\"", path);
                 return -1;
         }
