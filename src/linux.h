@@ -173,6 +173,11 @@ extern ssize_t HIDDEN make_mac_path(uint8_t *buf, ssize_t size,
                         free(buf_);                                     \
                         *(buf) = (__typeof__(*(buf)))buf2_;             \
                         errno = error_;                                 \
+                } else if (buf_) {                                      \
+                        /* covscan is _sure_ we leak buf_ if bufsize_ */\
+                        /* is <= 0, which is wrong, but appease it.   */\
+                        free(buf_);                                     \
+                        buf_ = NULL;                                    \
                 }                                                       \
                 bufsize_;                                               \
         })
