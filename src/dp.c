@@ -443,9 +443,17 @@ efidp_make_generic(uint8_t *buf, ssize_t size, uint8_t type, uint8_t subtype,
 
 	if (!size)
 		return total_size;
+
+	if (!buf) {
+		errno = EINVAL;
+		efi_error("%s was called with nonzero size and NULL buffer",
+			  __func__);
+		return -1;
+	}
+
 	if (size < total_size) {
-		efi_error("total size is bigger than size limit");
 		errno = ENOSPC;
+		efi_error("total size is bigger than size limit");
 		return -1;
 	}
 

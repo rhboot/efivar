@@ -162,6 +162,12 @@ efidp_make_file(uint8_t *buf, ssize_t size, char *filepath)
 	ssize_t len = utf8len(lf, -1) + 1;
 	ssize_t req = sizeof (*file) + len * sizeof (uint16_t);
 
+	if (len == 0) {
+		errno = EINVAL;
+		efi_error("%s() called with %s file path", __func__,
+			  filepath == NULL ? "NULL" : "empty");
+		return -1;
+	}
 	sz = efidp_make_generic(buf, size, EFIDP_MEDIA_TYPE, EFIDP_MEDIA_FILE,
 				req);
 	if (size && sz == req) {
