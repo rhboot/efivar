@@ -429,14 +429,17 @@ struct device HIDDEN
 
         const char *current = dev->link;
         bool needs_root = true;
+        int last_successful_probe = -1;
 
         debug(DEBUG, "searching for device nodes in %s", dev->link);
         for (i = 0; dev_probes[i] && dev_probes[i]->parse; i++) {
                 struct dev_probe *probe = dev_probes[i];
                 ssize_t pos;
 
-                if (!needs_root && (probe->flags & DEV_PROVIDES_ROOT)) {
-                        debug(DEBUG, "not testing %s because flags is 0x%x", probe->name, probe->flags);
+                if (!needs_root &&
+                    (probe->flags & DEV_PROVIDES_ROOT)) {
+                        debug(DEBUG, "not testing %s because flags is 0x%x",
+                              probe->name, probe->flags);
                         continue;
                 }
 
@@ -445,22 +448,51 @@ struct device HIDDEN
                 if (pos < 0) {
                         efi_error("parsing %s failed", probe->name);
                         goto err;
-                } else if (pos == 0) {
+                } else if (pos > 0) {
+                        debug(DEBUG, "%s matched %s", probe->name, current);
+                        dev->flags |= probe->flags;
+
+                        if (probe->flags & DEV_PROVIDES_HD ||
+                            probe->flags & DEV_PROVIDES_ROOT ||
+                            probe->flags & DEV_ABBREV_ONLY)
+                                needs_root = false;
+
+                        dev->probes[n++] = dev_probes[i];
+                        current += pos;
+                        debug(DEBUG, "current:%s", current);
+                        last_successful_probe = i;
+
+                        if (!*current || !strncmp(current, "block/", 6))
+                                break;
+
                         continue;
                 }
-                debug(DEBUG, "%s matched %s", probe->name, current);
-                dev->flags |= probe->flags;
 
-                if (probe->flags & DEV_PROVIDES_HD ||
-                    probe->flags & DEV_PROVIDES_ROOT ||
-                    probe->flags & DEV_ABBREV_ONLY)
-                        needs_root = false;
-                dev->probes[n++] = dev_probes[i];
-                current += pos;
-                debug(DEBUG, "current:%s", current);
-
-                if (!*current || !strncmp(current, "block/", 6))
-                        break;
+                debug(DEBUG, "dev_probes[i+1]: %p dev->interface_type: %d\n",
+                      dev_probes[i+1], dev->interface_type);
+                if (dev_probes[i+1] == NULL && dev->interface_type == unknown) {
+                        int new_pos = 0;
+                        rc = sscanf(current, "%*[^/]/%n", &new_pos);
+                        if (rc < 0) {
+                                efi_error(
+                                     "Cannot parse device link segment \"%s\"",
+                                     current);
+                                goto err;
+                        }
+                        debug(DEBUG,
+                              "Cannot parse device link segment \"%s\"",
+                              current);
+                        debug(DEBUG, "Skipping to \"%s\"", current + new_pos);
+                        debug(DEBUG,
+                              "This means we can only write abbreviated paths");
+                        if (rc < 0)
+                                goto err;
+                        if (new_pos == 0)
+                                goto err;
+                        dev->flags |= DEV_ABBREV_ONLY;
+                        i = last_successful_probe;
+                        current += new_pos;
+                }
         }
 
         if (dev->interface_type == unknown) {
