@@ -147,7 +147,6 @@ enum interface_type pci_iftypes[] = { pci, unknown };
 struct dev_probe HIDDEN pci_parser = {
         .name = "pci",
         .iftypes = pci_iftypes,
-        .flags = DEV_PROVIDES_ROOT,
         .parse = parse_pci,
         .create = dp_create_pci,
 };

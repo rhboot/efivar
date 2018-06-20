@@ -235,6 +235,8 @@ static struct dev_probe *dev_probes[] = {
          * be found first.
          */
         &pmem_parser,
+        &acpi_root_parser,
+        &pci_root_parser,
         &pci_parser,
         &virtblk_parser,
         &sas_parser,
@@ -447,7 +449,7 @@ struct device HIDDEN
                 }
                 debug(DEBUG, "%s matched %s", probe->name, current);
 
-                if (probe->flags & DEV_PROVIDES_HD)
+                if (probe->flags & DEV_PROVIDES_HD || probe->flags & DEV_PROVIDES_ROOT)
                         needs_root = false;
                 dev->probes[n++] = dev_probes[i];
                 current += pos;
