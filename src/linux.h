@@ -244,7 +244,8 @@ struct dev_probe {
         char *name;
         enum interface_type *iftypes;
         uint32_t flags;
-        ssize_t (*parse)(struct device *dev, const char * const current);
+        ssize_t (*parse)(struct device *dev,
+                         const char * const current, const char * const root);
         ssize_t (*create)(struct device *dev,
                           uint8_t *buf, ssize_t size, ssize_t off);
         char *(*make_part_name)(struct device *dev);

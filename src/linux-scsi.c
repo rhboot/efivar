@@ -160,7 +160,7 @@ parse_scsi_link(const char *current, uint32_t *scsi_host,
 }
 
 static ssize_t
-parse_scsi(struct device *dev, const char *current)
+parse_scsi(struct device *dev, const char *current, const char *root UNUSED)
 {
         uint32_t scsi_host, scsi_bus, scsi_device, scsi_target;
         uint64_t scsi_lun;

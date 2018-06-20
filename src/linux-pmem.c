@@ -70,7 +70,7 @@
  */
 
 static ssize_t
-parse_pmem(struct device *dev, const char *current)
+parse_pmem(struct device *dev, const char *current, const char *root UNUSED)
 {
         uint8_t *filebuf = NULL;
         uint8_t system, sysbus, acpi_id;

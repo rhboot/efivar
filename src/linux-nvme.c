@@ -48,7 +48,7 @@
  */
 
 static ssize_t
-parse_nvme(struct device *dev, const char *current)
+parse_nvme(struct device *dev, const char *current, const char *root UNUSED)
 {
         int rc;
         int32_t tosser0, tosser1, tosser2, ctrl_id, ns_id, partition;
