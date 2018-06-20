@@ -243,6 +243,13 @@ efi_va_generate_file_device_path_from_esp(uint8_t *buf, ssize_t size,
 		va_end(aq);
 	}
 
+        if (!(options & (EFIBOOT_ABBREV_FILE|EFIBOOT_ABBREV_HD)) &&
+            (dev->flags & DEV_ABBREV_ONLY)) {
+                errno = EINVAL;
+                efi_error("Device must use File() or HD() device path");
+                goto err;
+        }
+
 	if ((options & EFIBOOT_ABBREV_EDD10)
 			&& (!(options & EFIBOOT_ABBREV_FILE)
 			    && !(options & EFIBOOT_ABBREV_HD))) {
