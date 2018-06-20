@@ -272,6 +272,13 @@ device_free(struct device *dev)
         if (dev->probes)
                 free(dev->probes);
 
+        if (dev->acpi_root.acpi_hid_str)
+                free(dev->acpi_root.acpi_hid_str);
+        if (dev->acpi_root.acpi_uid_str)
+                free(dev->acpi_root.acpi_uid_str);
+        if (dev->acpi_root.acpi_cid_str)
+                free(dev->acpi_root.acpi_cid_str);
+
         if (dev->interface_type == network) {
                 if (dev->ifname)
                         free(dev->ifname);
@@ -325,8 +332,8 @@ struct device HIDDEN
                 goto err;
         }
 
-        dev->pci_root.pci_root_domain = 0xffff;
-        dev->pci_root.pci_root_bus = 0xff;
+        dev->pci_root.pci_domain = 0xffff;
+        dev->pci_root.pci_bus = 0xff;
 
         if (S_ISBLK(dev->stat.st_mode)) {
                 dev->major = major(dev->stat.st_rdev);
