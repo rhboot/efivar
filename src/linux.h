@@ -95,7 +95,7 @@ struct nvdimm_info {
 
 enum interface_type {
         unknown,
-        isa, acpi_root, pci_root, pci, network,
+        isa, acpi_root, pci_root, soc_root, pci, network,
         ata, atapi, scsi, sata, sas,
         usb, i1394, fibre, i2o,
         md, virtblk,
@@ -268,6 +268,7 @@ extern ssize_t parse_scsi_link(const char *current, uint32_t *host,
 extern struct dev_probe pmem_parser;
 extern struct dev_probe pci_root_parser;
 extern struct dev_probe acpi_root_parser;
+extern struct dev_probe soc_root_parser;
 extern struct dev_probe pci_parser;
 extern struct dev_probe sas_parser;
 extern struct dev_probe sata_parser;

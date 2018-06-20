@@ -237,6 +237,7 @@ static struct dev_probe *dev_probes[] = {
         &pmem_parser,
         &acpi_root_parser,
         &pci_root_parser,
+        &soc_root_parser,
         &pci_parser,
         &virtblk_parser,
         &sas_parser,
