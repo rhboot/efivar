@@ -21,12 +21,18 @@
 #ifndef _EFIBOOT_LINUX_H
 #define _EFIBOOT_LINUX_H
 
+struct acpi_root_info {
+        uint32_t acpi_hid;
+        uint64_t acpi_uid;
+        uint32_t acpi_cid;
+        char *acpi_hid_str;
+        char *acpi_uid_str;
+        char *acpi_cid_str;
+};
+
 struct pci_root_info {
-        uint16_t pci_root_domain;
-        uint8_t pci_root_bus;
-        uint32_t pci_root_acpi_hid;
-        uint64_t pci_root_acpi_uid;
-        char *pci_root_acpi_uid_str;
+        uint16_t pci_domain;
+        uint8_t pci_bus;
 };
 
 struct pci_dev_info {
@@ -121,6 +127,7 @@ struct device {
                         char *disk_name;
                         char *part_name;
 
+                        struct acpi_root_info acpi_root;
                         struct pci_root_info pci_root;
                         unsigned int n_pci_devs;
                         struct pci_dev_info *pci_dev;
@@ -147,7 +154,7 @@ extern int HIDDEN set_disk_name(struct device *dev, const char * const fmt, ...)
 extern bool HIDDEN is_pata(struct device *dev);
 extern int HIDDEN make_blockdev_path(uint8_t *buf, ssize_t size,
                                      struct device *dev);
-
+extern int HIDDEN parse_acpi_hid_uid(struct device *dev, const char *fmt, ...);
 extern int HIDDEN eb_nvme_ns_id(int fd, uint32_t *ns_id);
 
 int HIDDEN get_sector_size(int filedes);
