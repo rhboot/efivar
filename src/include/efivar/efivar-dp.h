@@ -133,7 +133,7 @@ typedef struct {
 	/* three ascii string fields follow */
 	char		hidstr[];
 } EFIVAR_PACKED efidp_acpi_hid_ex;
-extern ssize_t __attribute__((__nonnull__ (6,7,8)))
+extern ssize_t
 efidp_make_acpi_hid_ex(uint8_t *buf, ssize_t size,
                        uint32_t hid, uint32_t uid, uint32_t cid,
                        const char *hidstr, const char *uidstr,
