@@ -138,7 +138,7 @@ sysfs_sata_get_port_info(uint32_t print_id, struct device *dev)
 }
 
 static ssize_t
-parse_sata(struct device *dev, const char *devlink)
+parse_sata(struct device *dev, const char *devlink, const char *root UNUSED)
 {
         const char *current = devlink;
         uint32_t print_id;

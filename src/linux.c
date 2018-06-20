@@ -352,7 +352,7 @@ struct device HIDDEN
                 efi_error("strdup(\"%s\") failed", linkbuf);
                 goto err;
         }
-        debug(DEBUG, "dev->link: %s\n", dev->link);
+        debug(DEBUG, "dev->link: %s", dev->link);
 
         if (dev->part == -1) {
                 rc = read_sysfs_file(&tmpbuf, "dev/block/%s/partition", dev->link);
@@ -431,7 +431,7 @@ struct device HIDDEN
                 }
 
                 debug(DEBUG, "trying %s", probe->name);
-                pos = probe->parse(dev, current);
+                pos = probe->parse(dev, current, dev->link);
                 if (pos < 0) {
                         efi_error("parsing %s failed", probe->name);
                         goto err;

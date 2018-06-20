@@ -45,7 +45,7 @@
  * I'm not sure at the moment if they're the same or not.
  */
 static ssize_t
-parse_sas(struct device *dev, const char *current)
+parse_sas(struct device *dev, const char *current, const char *root UNUSED)
 {
         struct stat statbuf = { 0, };
         int rc;

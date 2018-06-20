@@ -33,7 +33,7 @@
  * ... probably doesn't work.
  */
 static ssize_t
-parse_i2o(struct device *dev, const char *current UNUSED)
+parse_i2o(struct device *dev, const char *current UNUSED, const char *root UNUSED)
 {
         debug(DEBUG, "entry");
         /* I2O disks can have up to 16 partitions, or 4 bits worth. */

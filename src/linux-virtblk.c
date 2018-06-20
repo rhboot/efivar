@@ -45,7 +45,7 @@
  * But usually we just write the HD() entry, of course.
  */
 static ssize_t
-parse_virtblk(struct device *dev, const char *current)
+parse_virtblk(struct device *dev, const char *current, const char *root UNUSED)
 {
         uint32_t tosser;
         int pos;

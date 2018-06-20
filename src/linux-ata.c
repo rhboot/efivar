@@ -58,7 +58,7 @@ is_pata(struct device *dev)
  * 11:0 -> ../../devices/pci0000:00/0000:00:11.5/ata3/host2/target2:0:0/2:0:0:0/block/sr0
  */
 static ssize_t
-parse_ata(struct device *dev, const char *current)
+parse_ata(struct device *dev, const char *current, const char *root UNUSED)
 {
         uint32_t scsi_host, scsi_bus, scsi_device, scsi_target;
         uint64_t scsi_lun;
