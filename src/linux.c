@@ -448,8 +448,11 @@ struct device HIDDEN
                         continue;
                 }
                 debug(DEBUG, "%s matched %s", probe->name, current);
+                dev->flags |= probe->flags;
 
-                if (probe->flags & DEV_PROVIDES_HD || probe->flags & DEV_PROVIDES_ROOT)
+                if (probe->flags & DEV_PROVIDES_HD ||
+                    probe->flags & DEV_PROVIDES_ROOT ||
+                    probe->flags & DEV_ABBREV_ONLY)
                         needs_root = false;
                 dev->probes[n++] = dev_probes[i];
                 current += pos;

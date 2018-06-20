@@ -106,6 +106,7 @@ struct dev_probe;
 
 struct device {
         enum interface_type interface_type;
+        uint32_t flags;
         char *link;
         char *device;
         char *driver;
@@ -246,6 +247,7 @@ extern ssize_t HIDDEN make_mac_path(uint8_t *buf, ssize_t size,
 
 #define DEV_PROVIDES_ROOT       1
 #define DEV_PROVIDES_HD         2
+#define DEV_ABBREV_ONLY         4
 
 struct dev_probe {
         char *name;
