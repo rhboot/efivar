@@ -17,6 +17,7 @@
  *
  */
 
+#ifndef EFIVAR_BUILD_ENVIRONMENT
 #ifndef LIBEFIVAR_GENERIC_NEXT_VARIABLE_NAME_H
 #define LIBEFIVAR_GENERIC_NEXT_VARIABLE_NAME_H 1
 
@@ -182,3 +183,4 @@ generic_append_variable(efi_guid_t guid, const char *name,
 }
 
 #endif /* LIBEFIVAR_GENERIC_NEXT_VARIABLE_NAME_H */
+#endif /* EFIVAR_BUILD_ENVIRONMENT */
