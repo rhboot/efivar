@@ -494,10 +494,15 @@ slash_err:
                         dev->flags |= DEV_ABBREV_ONLY;
                         i = last_successful_probe;
                         current += pos;
+
+                        if (!*current || !strncmp(current, "block/", 6))
+                                break;
                 }
         }
 
-        if (dev->interface_type == unknown) {
+        if (dev->interface_type == unknown &&
+            !(dev->flags & DEV_ABBREV_ONLY) &&
+            !strcmp(current, "block/")) {
                 efi_error("unknown storage interface");
                 errno = ENOSYS;
                 goto err;
