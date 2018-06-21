@@ -92,7 +92,7 @@ parse_scsi_link(const char *current, uint32_t *scsi_host,
         pos0 = 0;
 
         debug("searching for port-4:0 or port-4:0:0");
-        rc = sscanf(current, "port-%d:%d%n:%d%n", &tosser0,
+        rc = sscanf(current+sz, "port-%d:%d%n:%d%n", &tosser0,
                     &tosser1, &pos0, &tosser2, &pos1);
         debug("current:\"%s\" rc:%d pos0:%d pos1:%d\n", current+sz, rc, pos0, pos1);
         arrow(LOG_DEBUG, spaces, 9, pos0, rc, 2);
