@@ -51,9 +51,9 @@ _format_acpi_hid_ex(char *buf, size_t size, const char *dp_type UNUSED,
 {
 	ssize_t off = 0;
 
-	debug(DEBUG, "hid:0x%08x hidstr:\"%s\"", dp->acpi_hid_ex.hid, hidstr);
-	debug(DEBUG, "cid:0x%08x cidstr:\"%s\"", dp->acpi_hid_ex.cid, cidstr);
-	debug(DEBUG, "uid:0x%08x uidstr:\"%s\"", dp->acpi_hid_ex.uid, uidstr);
+	debug("hid:0x%08x hidstr:\"%s\"", dp->acpi_hid_ex.hid, hidstr);
+	debug("cid:0x%08x cidstr:\"%s\"", dp->acpi_hid_ex.cid, cidstr);
+	debug("uid:0x%08x uidstr:\"%s\"", dp->acpi_hid_ex.uid, uidstr);
 
 	if (!hidstr && !cidstr && (uidstr || dp->acpi_hid_ex.uid)) {
 		format(buf, size, off, "AcpiExp",
@@ -109,12 +109,12 @@ _format_acpi_dn(char *buf, size_t size, const_efidp dp)
 	// size_t cidlen = 0;
 
 	if (dp->subtype == EFIDP_ACPI_ADR) {
-		debug(DEBUG, "formatting ACPI _ADR");
+		debug("formatting ACPI _ADR");
 		format_acpi_adr(buf, size, off, dp);
 		return off;
 	} else if (dp->subtype != EFIDP_ACPI_HID_EX &&
 		   dp->subtype != EFIDP_ACPI_HID) {
-		debug(DEBUG, "DP subtype %d, formatting as ACPI Path", dp->subtype);
+		debug("DP subtype %d, formatting as ACPI Path", dp->subtype);
 		format(buf, size, off, "AcpiPath", "AcpiPath(%d,", dp->subtype);
 		format_hex(buf, size, off, "AcpiPath", (uint8_t *)dp+4,
 			   (efidp_node_size(dp)-4) / 2);
@@ -124,7 +124,7 @@ _format_acpi_dn(char *buf, size_t size, const_efidp dp)
 		ssize_t limit = efidp_node_size(dp)
 				- offsetof(efidp_acpi_hid_ex, hidstr);
 
-		debug(DEBUG, "formatting ACPI HID EX");
+		debug("formatting ACPI HID EX");
 		hidstr = dp->acpi_hid_ex.hidstr;
 		hidlen = strnlen(hidstr, limit);
 		limit -= hidlen + 1;
@@ -230,20 +230,20 @@ _format_acpi_dn(char *buf, size_t size, const_efidp dp)
 			break;
 					    }
 		default:
-			debug(DEBUG, "Decoding non-well-known HID");
+			debug("Decoding non-well-known HID");
 			switch (dp->subtype) {
 			case EFIDP_ACPI_HID_EX:
 				format_acpi_hid_ex(buf, size, off, dp,
 						   hidstr, cidstr, uidstr);
 				break;
 			case EFIDP_ACPI_HID:
-				debug(DEBUG, "Decoding ACPI HID");
+				debug("Decoding ACPI HID");
 				format(buf, size, off, "Acpi",
 				       "Acpi(0x%08x,0x%"PRIx32")",
 				       dp->acpi_hid.hid, dp->acpi_hid.uid);
 				break;
 			default:
-				debug(DEBUG, "ACPI subtype %d???",
+				debug("ACPI subtype %d???",
 				      dp->subtype);
 				errno = EINVAL;
 				return -1;

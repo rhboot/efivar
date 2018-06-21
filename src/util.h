@@ -360,7 +360,7 @@ swizzle_guid_to_uuid(efi_guid_t *guid)
         u16[1] = __builtin_bswap16(u16[1]);
 }
 
-#define debug_(file, line, func, level, fmt, args...)                   \
+#define log_(file, line, func, level, fmt, args...)                     \
         ({                                                              \
                 if (efi_get_verbose() >= level) {                       \
                         FILE *logfile_ = efi_get_logfile();             \
@@ -373,9 +373,13 @@ swizzle_guid_to_uuid(efi_guid_t *guid)
                 }                                                       \
         })
 
-#define debug(level, fmt, args...) debug_(__FILE__, __LINE__, __func__, level, fmt, ## args)
-#define arrow(l,b,o,p,n,m) ({if(n==m){char c_=b[p+1]; b[o]='^'; b[p+o]='^';b[p+o+1]='\0';debug(l,"%s",b);b[o]=' ';b[p+o]=' ';b[p+o+1]=c_;}})
-
-#define DEBUG 1
+#define LOG_VERBOSE 0
+#define LOG_DEBUG 1
+#ifdef log
+#undef log
+#endif
+#define log(level, fmt, args...) log_(__FILE__, __LINE__, __func__, level, fmt, ## args)
+#define arrow(l,b,o,p,n,m) ({if(n==m){char c_=b[p+1]; b[o]='^'; b[p+o]='^';b[p+o+1]='\0';log(l,"%s",b);b[o]=' ';b[p+o]=' ';b[p+o+1]=c_;}})
+#define debug(fmt, args...) log(LOG_DEBUG, fmt, ## args)
 
 #endif /* EFIVAR_UTIL_H */

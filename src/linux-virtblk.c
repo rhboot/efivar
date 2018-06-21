@@ -58,12 +58,12 @@ parse_virtblk(struct device *dev, const char *current, const char *root UNUSED)
         spaces[pos] = '\0';
         pos = 0;
 
-        debug(DEBUG, "entry");
+        debug("entry");
 
-        debug(DEBUG, "searching for virtio0/");
+        debug("searching for virtio0/");
         rc = sscanf(current, "virtio%x/%n", &tosser, &pos);
-        debug(DEBUG, "current:\"%s\" rc:%d pos:%d\n", current, rc, pos);
-        arrow(DEBUG, spaces, 9, pos, rc, 1);
+        debug("current:\"%s\" rc:%d pos:%d\n", current, rc, pos);
+        arrow(LOG_DEBUG, spaces, 9, pos, rc, 1);
         /*
          * If we couldn't find virtioX/ then it isn't a virtio device.
          */

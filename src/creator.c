@@ -178,7 +178,7 @@ efi_va_generate_file_device_path_from_esp(uint8_t *buf, ssize_t size,
 	int fd = -1;
 	int saved_errno;
 
-	debug(DEBUG, "partition:%d", partition);
+	debug("partition:%d", partition);
 
 	if (buf && size)
 		memset(buf, '\0', size);
@@ -198,7 +198,7 @@ efi_va_generate_file_device_path_from_esp(uint8_t *buf, ssize_t size,
 	if (partition < 0) {
 		int disk_fd;
 
-		debug(DEBUG, "partition: %d", partition);
+		debug("partition: %d", partition);
 		disk_fd = open_disk(dev,
 				    (options & EFIBOOT_OPTIONS_WRITE_SIGNATURE)
 				     ? O_RDWR : O_RDONLY);
@@ -211,7 +211,7 @@ efi_va_generate_file_device_path_from_esp(uint8_t *buf, ssize_t size,
 			partition = 1;
 		else
 			partition = 0;
-		debug(DEBUG, "is_partitioned(): partition -> %d", partition);
+		debug("is_partitioned(): partition -> %d", partition);
 
 		close(disk_fd);
 	}
@@ -226,13 +226,13 @@ efi_va_generate_file_device_path_from_esp(uint8_t *buf, ssize_t size,
 	}
 
 	if (options & EFIBOOT_ABBREV_NONE)
-		debug(DEBUG, "EFIBOOT_ABBREV_NONE");
+		debug("EFIBOOT_ABBREV_NONE");
 	if (options & EFIBOOT_ABBREV_HD)
-		debug(DEBUG, "EFIBOOT_ABBREV_HD");
+		debug("EFIBOOT_ABBREV_HD");
 	if (options & EFIBOOT_ABBREV_FILE)
-		debug(DEBUG, "EFIBOOT_ABBREV_FILE");
+		debug("EFIBOOT_ABBREV_FILE");
 	if (options & EFIBOOT_ABBREV_EDD10)
-		debug(DEBUG, "EFIBOOT_ABBREV_EDD10");
+		debug("EFIBOOT_ABBREV_EDD10");
 
 	if (options & EFIBOOT_ABBREV_EDD10) {
 		va_list aq;
@@ -245,6 +245,7 @@ efi_va_generate_file_device_path_from_esp(uint8_t *buf, ssize_t size,
 
         if (!(options & (EFIBOOT_ABBREV_FILE|EFIBOOT_ABBREV_HD)) &&
             (dev->flags & DEV_ABBREV_ONLY)) {
+                efi_error_clear();
                 errno = EINVAL;
                 efi_error("Device must use File() or HD() device path");
                 goto err;
@@ -323,7 +324,7 @@ err:
 	if (fd >= 0)
 		close(fd);
 	errno = saved_errno;
-	debug(DEBUG, "= %zd", ret);
+	debug("= %zd", ret);
 	return ret;
 }
 

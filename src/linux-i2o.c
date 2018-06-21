@@ -35,7 +35,7 @@
 static ssize_t
 parse_i2o(struct device *dev, const char *current UNUSED, const char *root UNUSED)
 {
-        debug(DEBUG, "entry");
+        debug("entry");
         /* I2O disks can have up to 16 partitions, or 4 bits worth. */
         if (dev->major >= 80 && dev->major <= 87) {
                 dev->interface_type = i2o;

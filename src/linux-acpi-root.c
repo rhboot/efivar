@@ -59,7 +59,7 @@ parse_acpi_root(struct device *dev, const char *current, const char *root UNUSED
         spaces[pos] = '\0';
         pos = 0;
 
-        debug(DEBUG, "entry");
+        debug("entry");
 
         /*
          * find the ACPI root dunno0 and dunno1; they basically look like:
@@ -69,7 +69,7 @@ parse_acpi_root(struct device *dev, const char *current, const char *root UNUSED
          * side in sscanf.
          */
         rc = sscanf(devpart, "../../devices/platform/%n", &pos);
-        debug(DEBUG, "devpart:\"%s\" rc:%d pos:%d", devpart, rc, pos);
+        debug("devpart:\"%s\" rc:%d pos:%d", devpart, rc, pos);
         if (rc != 0 || pos < 1)
                 return 0;
         devpart += pos;
@@ -100,15 +100,15 @@ parse_acpi_root(struct device *dev, const char *current, const char *root UNUSED
                 return -1;
         }
         dev->acpi_root.acpi_hid_str[pos] = 0;
-        debug(DEBUG, "acpi_hid_str:\"%s\"", dev->acpi_root.acpi_hid_str);
+        debug("acpi_hid_str:\"%s\"", dev->acpi_root.acpi_hid_str);
 
         pos -= 4;
-        debug(DEBUG, "devpart:\"%s\" rc:%d pos:%d", devpart, rc, pos);
+        debug("devpart:\"%s\" rc:%d pos:%d", devpart, rc, pos);
         acpi_header = strndupa(devpart, pos);
         if (!acpi_header)
                 return 0;
         acpi_header[pos] = 0;
-        debug(DEBUG, "devpart:\"%s\" acpi_header:\"%s\"", devpart, acpi_header);
+        debug("devpart:\"%s\" acpi_header:\"%s\"", devpart, acpi_header);
         devpart += pos;
 
         /*
@@ -119,26 +119,26 @@ parse_acpi_root(struct device *dev, const char *current, const char *root UNUSED
                 efi_error("Could not parse ACPI path \"%s\"", devpart);
                 return 0;
         }
-        debug(DEBUG, "devpart:\"%s\" parsed:%04hx:%02hhx pos:%d rc:%d",
+        debug("devpart:\"%s\" parsed:%04hx:%02hhx pos:%d rc:%d",
               devpart, pad0, pad1, pos, rc);
 
         devpart += pos;
 
         rc = parse_acpi_hid_uid(dev, "devices/platform/%s%04hX:%02hhX",
                                 acpi_header, pad0, pad1);
-        debug(DEBUG, "rc:%d acpi_header:%s pad0:%04hX pad1:%02hhX",
+        debug("rc:%d acpi_header:%s pad0:%04hX pad1:%02hhX",
               rc, acpi_header, pad0, pad1);
         if (rc < 0 && errno == ENOENT) {
                 rc = parse_acpi_hid_uid(dev, "devices/platform/%s%04hx:%02hhx",
                                 acpi_header, pad0, pad1);
-                debug(DEBUG, "rc:%d acpi_header:%s pad0:%04hx pad1:%02hhx",
+                debug("rc:%d acpi_header:%s pad0:%04hx pad1:%02hhx",
                       rc, acpi_header, pad0, pad1);
         }
         if (rc < 0) {
                 efi_error("Could not parse hid/uid");
                 return rc;
         }
-        debug(DEBUG, "Parsed HID:0x%08x UID:0x%"PRIx64" uidstr:\"%s\" path:\"%s\"",
+        debug("Parsed HID:0x%08x UID:0x%"PRIx64" uidstr:\"%s\" path:\"%s\"",
               dev->acpi_root.acpi_hid, dev->acpi_root.acpi_uid,
               dev->acpi_root.acpi_uid_str,
               dev->acpi_root.acpi_cid_str);
@@ -152,10 +152,10 @@ dp_create_acpi_root(struct device *dev,
 {
         ssize_t sz = 0, new = 0;
 
-        debug(DEBUG, "entry buf:%p size:%zd off:%zd", buf, size, off);
+        debug("entry buf:%p size:%zd off:%zd", buf, size, off);
 
         if (dev->acpi_root.acpi_uid_str || dev->acpi_root.acpi_cid_str) {
-                debug(DEBUG, "creating acpi_hid_ex dp hid:0x%08x uid:0x%"PRIx64" uidstr:\"%s\" cidstr:\"%s\"",
+                debug("creating acpi_hid_ex dp hid:0x%08x uid:0x%"PRIx64" uidstr:\"%s\" cidstr:\"%s\"",
                       dev->acpi_root.acpi_hid, dev->acpi_root.acpi_uid,
                       dev->acpi_root.acpi_uid_str, dev->acpi_root.acpi_cid_str);
                 new = efidp_make_acpi_hid_ex(buf + off, size ? size - off : 0,
@@ -170,7 +170,7 @@ dp_create_acpi_root(struct device *dev,
                         return new;
                 }
         } else {
-                debug(DEBUG, "creating acpi_hid dp hid:0x%08x uid:0x%0"PRIx64,
+                debug("creating acpi_hid dp hid:0x%08x uid:0x%0"PRIx64,
                       dev->acpi_root.acpi_hid,
                       dev->acpi_root.acpi_uid);
                 new = efidp_make_acpi_hid(buf + off, size ? size - off : 0,
@@ -183,7 +183,7 @@ dp_create_acpi_root(struct device *dev,
         }
         sz += new;
 
-        debug(DEBUG, "returning %zd", sz);
+        debug("returning %zd", sz);
         return sz;
 }
 

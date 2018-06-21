@@ -51,7 +51,7 @@ parse_scsi_link(const char *current, uint32_t *scsi_host,
         spaces[sz] = '\0';
         sz = 0;
 
-        debug(DEBUG, "entry");
+        debug("entry");
         /*
          * This structure is completely ridiculous.
          *
@@ -82,21 +82,21 @@ parse_scsi_link(const char *current, uint32_t *scsi_host,
          *    host4/port-4:0
          * or host4/port-4:0:0
          */
-        debug(DEBUG, "searching for host4/");
+        debug("searching for host4/");
         rc = sscanf(current, "host%d/%n", scsi_host, &pos0);
-        debug(DEBUG, "current:\"%s\" rc:%d pos0:%d\n", current+sz, rc, pos0);
-        arrow(DEBUG, spaces, 9, pos0, rc, 1);
+        debug("current:\"%s\" rc:%d pos0:%d\n", current+sz, rc, pos0);
+        arrow(LOG_DEBUG, spaces, 9, pos0, rc, 1);
         if (rc != 1)
                 return -1;
         sz += pos0;
         pos0 = 0;
 
-        debug(DEBUG, "searching for port-4:0 or port-4:0:0");
+        debug("searching for port-4:0 or port-4:0:0");
         rc = sscanf(current, "port-%d:%d%n:%d%n", &tosser0,
                     &tosser1, &pos0, &tosser2, &pos1);
-        debug(DEBUG, "current:\"%s\" rc:%d pos0:%d pos1:%d\n", current+sz, rc, pos0, pos1);
-        arrow(DEBUG, spaces, 9, pos0, rc, 2);
-        arrow(DEBUG, spaces, 9, pos1, rc, 3);
+        debug("current:\"%s\" rc:%d pos0:%d pos1:%d\n", current+sz, rc, pos0, pos1);
+        arrow(LOG_DEBUG, spaces, 9, pos0, rc, 2);
+        arrow(LOG_DEBUG, spaces, 9, pos1, rc, 3);
         if (rc == 2 || rc == 3) {
                 sz += pos0;
                 pos0 = 0;
@@ -107,18 +107,18 @@ parse_scsi_link(const char *current, uint32_t *scsi_host,
                  * awesomely these are the exact same fields that go into port-blah,
                  * but we don't care for now about any of them anyway.
                  */
-                debug(DEBUG, "searching for /end_device-4:0/ or /end_device-4:0:0/");
+                debug("searching for /end_device-4:0/ or /end_device-4:0:0/");
                 rc = sscanf(current + sz, "/end_device-%d:%d%n", &tosser0, &tosser1, &pos0);
-                debug(DEBUG, "current:\"%s\" rc:%d pos0:%d\n", current+sz, rc, pos0);
-                arrow(DEBUG, spaces, 9, pos0, rc, 2);
+                debug("current:\"%s\" rc:%d pos0:%d\n", current+sz, rc, pos0);
+                arrow(LOG_DEBUG, spaces, 9, pos0, rc, 2);
                 if (rc != 2)
                         return -1;
                 sz += pos0;
                 pos0 = 0;
 
                 rc = sscanf(current + sz, ":%d%n", &tosser0, &pos0);
-                debug(DEBUG, "current:\"%s\" rc:%d pos0:%d\n", current+sz, rc, pos0);
-                arrow(DEBUG, spaces, 9, pos0, rc, 2);
+                debug("current:\"%s\" rc:%d pos0:%d\n", current+sz, rc, pos0);
+                arrow(LOG_DEBUG, spaces, 9, pos0, rc, 2);
                 if (rc != 0 && rc != 1)
                         return -1;
                 sz += pos0;
@@ -134,11 +134,11 @@ parse_scsi_link(const char *current, uint32_t *scsi_host,
          * /target4:0:0/
          */
         uint64_t tosser3;
-        debug(DEBUG, "searching for target4:0:0/");
+        debug("searching for target4:0:0/");
         rc = sscanf(current + sz, "target%d:%d:%"PRIu64"/%n", &tosser0, &tosser1,
                     &tosser3, &pos0);
-        debug(DEBUG, "current:\"%s\" rc:%d pos0:%d\n", current+sz, rc, pos0);
-        arrow(DEBUG, spaces, 9, pos0, rc, 3);
+        debug("current:\"%s\" rc:%d pos0:%d\n", current+sz, rc, pos0);
+        arrow(LOG_DEBUG, spaces, 9, pos0, rc, 3);
         if (rc != 3)
                 return -1;
         sz += pos0;
@@ -147,11 +147,11 @@ parse_scsi_link(const char *current, uint32_t *scsi_host,
         /* now:
          * %d:%d:%d:%llu/
          */
-        debug(DEBUG, "searching for 4:0:0:0/");
+        debug("searching for 4:0:0:0/");
         rc = sscanf(current + sz, "%d:%d:%d:%"PRIu64"/%n",
                     scsi_bus, scsi_device, scsi_target, scsi_lun, &pos0);
-        debug(DEBUG, "current:\"%s\" rc:%d pos0:%d\n", current+sz, rc, pos0);
-        arrow(DEBUG, spaces, 9, pos0, rc, 4);
+        debug("current:\"%s\" rc:%d pos0:%d\n", current+sz, rc, pos0);
+        arrow(LOG_DEBUG, spaces, 9, pos0, rc, 4);
         if (rc != 4)
                 return -1;
         sz += pos0;
@@ -175,17 +175,17 @@ parse_scsi(struct device *dev, const char *current, const char *root UNUSED)
         spaces[pos] = '\0';
         pos = 0;
 
-        debug(DEBUG, "entry");
+        debug("entry");
 
-        debug(DEBUG, "searching for ../../../0:0:0:0");
+        debug("searching for ../../../0:0:0:0");
         rc = sscanf(dev->device, "../../../%d:%d:%d:%"PRIu64"%n",
                     &dev->scsi_info.scsi_bus,
                     &dev->scsi_info.scsi_device,
                     &dev->scsi_info.scsi_target,
                     &dev->scsi_info.scsi_lun,
                     &pos);
-        debug(DEBUG, "current:\"%s\" rc:%d pos:%d\n", dev->device, rc, pos);
-        arrow(DEBUG, spaces, 9, pos, rc, 3);
+        debug("current:\"%s\" rc:%d pos:%d\n", dev->device, rc, pos);
+        arrow(LOG_DEBUG, spaces, 9, pos, rc, 3);
         if (rc != 4)
                 return 0;
 
@@ -225,7 +225,7 @@ dp_create_scsi(struct device *dev,
 {
         ssize_t sz = 0;
 
-        debug(DEBUG, "entry");
+        debug("entry");
 
         sz = efidp_make_scsi(buf + off, size ? size - off : 0,
                              dev->scsi_info.scsi_target,
