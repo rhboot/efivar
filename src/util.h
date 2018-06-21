@@ -332,6 +332,13 @@ get_file(uint8_t **result, const char * const fmt, ...)
         errno = error;
 
         if (rc < 0 || bufsize < 1) {
+                /*
+                 * I don't think this can happen, but I can't convince
+                 * cov-scan
+                 */
+                if (buf)
+                        free(buf);
+                *result = NULL;
                 efi_error("could not read file \"%s\"", path);
                 return -1;
         }
