@@ -93,7 +93,7 @@ hid_err:
         errno = 0;
         fbuf = NULL;
         rc = read_sysfs_file(&fbuf, "%s/firmware_node/uid", path);
-        if ((rc <= 0 && errno != ENOENT) || fbuf == NULL) {
+        if ((rc < 0 && errno != ENOENT) || (rc > 0 && fbuf == NULL)) {
                 efi_error("could not read %s/firmware_node/uid", path);
                 return -1;
         }
