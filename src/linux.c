@@ -308,7 +308,8 @@ struct device HIDDEN
 {
         struct device *dev;
         char *linkbuf = NULL, *tmpbuf = NULL;
-        unsigned int i, n = 0;
+        int i = 0;
+        unsigned int n = 0;
         int rc;
 
         size_t nmemb = (sizeof(dev_probes)
@@ -432,9 +433,11 @@ struct device HIDDEN
         int last_successful_probe = -1;
 
         debug("searching for device nodes in %s", dev->link);
-        for (i = 0; dev_probes[i] && dev_probes[i]->parse; i++) {
+        for (i = 0;
+             dev_probes[i] && dev_probes[i]->parse && *current;
+             i++) {
                 struct dev_probe *probe = dev_probes[i];
-                ssize_t pos;
+                int pos;
 
                 if (!needs_root &&
                     (probe->flags & DEV_PROVIDES_ROOT)) {
@@ -471,24 +474,26 @@ struct device HIDDEN
                 debug("dev_probes[i+1]: %p dev->interface_type: %d\n",
                       dev_probes[i+1], dev->interface_type);
                 if (dev_probes[i+1] == NULL && dev->interface_type == unknown) {
-                        int new_pos = 0;
-                        rc = sscanf(current, "%*[^/]/%n", &new_pos);
+                        pos = 0;
+                        rc = sscanf(current, "%*[^/]/%n", &pos);
                         if (rc < 0) {
-                                efi_error(
-                                     "Cannot parse device link segment \"%s\"",
-                                     current);
+slash_err:
+                                efi_error("Cannot parse device link segment \"%s\"", current);
                                 goto err;
                         }
+
+                        while (current[pos] == '/')
+                                pos += 1;
+
+                        if (!current[pos])
+                                goto slash_err;
+
                         debug("Cannot parse device link segment \"%s\"", current);
                         debug("Skipping to \"%s\"", current + pos);
                         debug("This means we can only create abbreviated paths");
-                        if (rc < 0)
-                                goto err;
-                        if (new_pos == 0)
-                                goto err;
                         dev->flags |= DEV_ABBREV_ONLY;
                         i = last_successful_probe;
-                        current += new_pos;
+                        current += pos;
                 }
         }
 
