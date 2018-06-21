@@ -181,7 +181,6 @@ dp_create_acpi_root(struct device *dev,
                         return new;
                 }
         }
-        off += new;
         sz += new;
 
         debug(DEBUG, "returning %zd", sz);
