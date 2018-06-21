@@ -49,7 +49,7 @@ parse_acpi_hid_uid(struct device *dev, const char *fmt, ...)
                 return -1;
 
         rc = read_sysfs_file(&fbuf, "%s/firmware_node/path", path);
-        if (rc > 0) {
+        if (rc > 0 && fbuf) {
                 size_t l = strlen(fbuf);
                 if (l > 1) {
                         fbuf[l-1] = 0;
