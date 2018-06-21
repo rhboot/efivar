@@ -64,7 +64,7 @@ parse_ata(struct device *dev, const char *current, const char *root UNUSED)
         uint64_t scsi_lun;
         int pos;
 
-        debug(DEBUG, "entry");
+        debug("entry");
         /* IDE disks can have up to 64 partitions, or 6 bits worth,
          * and have one bit for the disk number.
          * This leaves an extra bit at the top.
@@ -95,7 +95,7 @@ parse_ata(struct device *dev, const char *current, const char *root UNUSED)
                 dev->interface_type = ata;
                 set_part(dev, dev->minor & 0x3F);
         } else {
-                debug(DEBUG, "If this is ATA, it isn't using a traditional IDE inode.");
+                debug("If this is ATA, it isn't using a traditional IDE inode.");
         }
 
         if (is_pata(dev)) {
@@ -136,7 +136,7 @@ dp_create_ata(struct device *dev,
 {
         ssize_t sz;
 
-        debug(DEBUG, "entry");
+        debug("entry");
 
         sz = efidp_make_atapi(buf + off, size ? size - off : 0,
                               dev->ata_info.scsi_device,

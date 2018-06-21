@@ -55,7 +55,7 @@ parse_sas(struct device *dev, const char *current, const char *root UNUSED)
         uint8_t *filebuf = NULL;
         uint64_t sas_address;
 
-        debug(DEBUG, "entry");
+        debug("entry");
 
         pos = parse_scsi_link(current, &scsi_host,
                               &scsi_bus, &scsi_device,
@@ -111,7 +111,7 @@ dp_create_sas(struct device *dev,
 {
         ssize_t sz;
 
-        debug(DEBUG, "entry");
+        debug("entry");
 
         sz = efidp_make_sas(buf + off, size ? size - off : 0,
                             dev->sas_info.sas_address);

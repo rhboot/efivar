@@ -56,7 +56,7 @@ parse_pci_root(struct device *dev, const char *current, const char *root UNUSED)
         spaces[pos] = '\0';
         pos = 0;
 
-        debug(DEBUG, "entry");
+        debug("entry");
 
         /*
          * find the pci root domain and port; they basically look like:
@@ -87,11 +87,11 @@ static ssize_t
 dp_create_pci_root(struct device *dev UNUSED,
                    uint8_t *buf, ssize_t size, ssize_t off)
 {
-        debug(DEBUG, "entry buf:%p size:%zd off:%zd", buf, size, off);
-        debug(DEBUG, "returning 0");
+        debug("entry buf:%p size:%zd off:%zd", buf, size, off);
+        debug("returning 0");
 #if 0
         if (dev->acpi_root.acpi_uid_str) {
-                debug(DEBUG, "creating acpi_hid_ex dp hid:0x%08x uid:\"%s\"",
+                debug("creating acpi_hid_ex dp hid:0x%08x uid:\"%s\"",
                       dev->acpi_root.acpi_hid,
                       dev->acpi_root.acpi_uid_str);
                 new = efidp_make_acpi_hid_ex(buf + off, size ? size - off : 0,
@@ -104,7 +104,7 @@ dp_create_pci_root(struct device *dev UNUSED,
                         return new;
                 }
         } else {
-                debug(DEBUG, "creating acpi_hid dp hid:0x%08x uid:0x%0"PRIx64,
+                debug("creating acpi_hid dp hid:0x%08x uid:0x%0"PRIx64,
                       dev->acpi_root.acpi_hid,
                       dev->acpi_root.acpi_uid);
                 new = efidp_make_acpi_hid(buf + off, size ? size - off : 0,
@@ -118,7 +118,7 @@ dp_create_pci_root(struct device *dev UNUSED,
         off += new;
         sz += new;
 
-        debug(DEBUG, "returning %zd", sz);
+        debug("returning %zd", sz);
         return sz;
 #else
         return 0;

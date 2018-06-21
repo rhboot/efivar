@@ -78,7 +78,7 @@ parse_pmem(struct device *dev, const char *current, const char *root UNUSED)
         int ndbus, region, btt_region_id, btt_id, rc, pos;
         char *namespace = NULL;
 
-        debug(DEBUG, "entry");
+        debug("entry");
 
         if (!strcmp(dev->driver, "nd_pmem")) {
                 ;
@@ -121,7 +121,7 @@ parse_pmem(struct device *dev, const char *current, const char *root UNUSED)
                 return -1;
 
         filebuf = NULL;
-        debug(DEBUG, "nvdimm namespace is \"%s\"", namespace);
+        debug("nvdimm namespace is \"%s\"", namespace);
         rc = read_sysfs_file(&filebuf, "bus/nd/devices/%s/uuid", namespace);
         free(namespace);
         if (rc < 0 || filebuf == NULL)
@@ -165,7 +165,7 @@ dp_create_pmem(struct device *dev,
 {
         ssize_t sz, sz1;
 
-        debug(DEBUG, "entry");
+        debug("entry");
 
         sz = efidp_make_nvdimm(buf + off, size ? size - off : 0,
                                &dev->nvdimm_info.namespace_label);

@@ -156,9 +156,9 @@ parse_sata(struct device *dev, const char *devlink, const char *root UNUSED)
         spaces[pos] = '\0';
         pos = 0;
 
-        debug(DEBUG, "entry");
+        debug("entry");
         if (is_pata(dev)) {
-                debug(DEBUG, "This is a PATA device; skipping.");
+                debug("This is a PATA device; skipping.");
                 return 0;
         }
 
@@ -166,10 +166,10 @@ parse_sata(struct device *dev, const char *devlink, const char *root UNUSED)
          * ata1/host0/target0:0:0/0:0:0:0
          *    ^dev  ^host   x y z
          */
-        debug(DEBUG, "searching for ata1/");
+        debug("searching for ata1/");
         rc = sscanf(current, "ata%"PRIu32"/%n", &print_id, &pos);
-        debug(DEBUG, "current:\"%s\" rc:%d pos:%d\n", current, rc, pos);
-        arrow(DEBUG, spaces, 9, pos, rc, 1);
+        debug("current:\"%s\" rc:%d pos:%d\n", current, rc, pos);
+        arrow(LOG_DEBUG, spaces, 9, pos, rc, 1);
         /*
          * If we don't find this one, it isn't an ata device, so return 0 not
          * error.  Later errors mean it is an ata device, but we can't parse
@@ -180,30 +180,30 @@ parse_sata(struct device *dev, const char *devlink, const char *root UNUSED)
         current += pos;
         pos = 0;
 
-        debug(DEBUG, "searching for host0/");
+        debug("searching for host0/");
         rc = sscanf(current, "host%"PRIu32"/%n", &scsi_bus, &pos);
-        debug(DEBUG, "current:\"%s\" rc:%d pos:%d\n", current, rc, pos);
-        arrow(DEBUG, spaces, 9, pos, rc, 1);
+        debug("current:\"%s\" rc:%d pos:%d\n", current, rc, pos);
+        arrow(LOG_DEBUG, spaces, 9, pos, rc, 1);
         if (rc != 1)
                 return -1;
         current += pos;
         pos = 0;
 
-        debug(DEBUG, "searching for target0:0:0:0/");
+        debug("searching for target0:0:0:0/");
         rc = sscanf(current, "target%"PRIu32":%"PRIu32":%"PRIu64"/%n",
                     &scsi_device, &scsi_target, &scsi_lun, &pos);
-        debug(DEBUG, "current:\"%s\" rc:%d pos:%d\n", current, rc, pos);
-        arrow(DEBUG, spaces, 9, pos, rc, 3);
+        debug("current:\"%s\" rc:%d pos:%d\n", current, rc, pos);
+        arrow(LOG_DEBUG, spaces, 9, pos, rc, 3);
         if (rc != 3)
                 return -1;
         current += pos;
         pos = 0;
 
-        debug(DEBUG, "searching for 0:0:0:0/");
+        debug("searching for 0:0:0:0/");
         rc = sscanf(current, "%"PRIu32":%"PRIu32":%"PRIu32":%"PRIu64"/%n",
                     &tosser0, &tosser1, &tosser2, &tosser3, &pos);
-        debug(DEBUG, "current:\"%s\" rc:%d pos:%d\n", current, rc, pos);
-        arrow(DEBUG, spaces, 9, pos, rc, 4);
+        debug("current:\"%s\" rc:%d pos:%d\n", current, rc, pos);
+        arrow(LOG_DEBUG, spaces, 9, pos, rc, 4);
         if (rc != 4)
                 return -1;
         current += pos;
@@ -229,7 +229,7 @@ dp_create_sata(struct device *dev,
 {
         ssize_t sz = -1;
 
-        debug(DEBUG, "entry buf:%p size:%zd off:%zd", buf, size, off);
+        debug("entry buf:%p size:%zd off:%zd", buf, size, off);
 
         if (dev->interface_type == ata || dev->interface_type == atapi) {
                 sz = efidp_make_atapi(buf + off, size ? size - off : 0,

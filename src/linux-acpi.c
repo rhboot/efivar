@@ -39,12 +39,12 @@ parse_acpi_hid_uid(struct device *dev, const char *fmt, ...)
         uint32_t acpi_hid = 0;
         uint64_t acpi_uid_int = 0;
 
-        debug(DEBUG, "entry");
+        debug("entry");
 
         va_start(ap, fmt);
         rc = vasprintfa(&path, fmt, ap);
         va_end(ap);
-        debug(DEBUG, "path:%s rc:%d", path, rc);
+        debug("path:%s rc:%d", path, rc);
         if (rc < 0 || path == NULL)
                 return -1;
 
@@ -54,7 +54,7 @@ parse_acpi_hid_uid(struct device *dev, const char *fmt, ...)
                 if (l > 1) {
                         fbuf[l-1] = 0;
                         dev->acpi_root.acpi_cid_str = strdup(fbuf);
-                        debug(DEBUG, "Setting ACPI root path to \"%s\"", fbuf);
+                        debug("Setting ACPI root path to \"%s\"", fbuf);
                 }
         }
 
@@ -73,7 +73,7 @@ hid_err:
         rc -= 4;
 
         rc = sscanf((char *)fbuf + rc, "%04hx", &tmp16);
-        debug(DEBUG, "rc:%d hid:0x%08x\n", rc, tmp16);
+        debug("rc:%d hid:0x%08x\n", rc, tmp16);
         if (rc != 1)
                 goto hid_err;
 
@@ -88,7 +88,7 @@ hid_err:
         if (acpi_hid == EFIDP_ACPI_PCIE_ROOT_HID)
                 acpi_hid = EFIDP_ACPI_PCI_ROOT_HID;
         dev->acpi_root.acpi_hid = acpi_hid;
-        debug(DEBUG, "acpi root HID:0x%08x", acpi_hid);
+        debug("acpi root HID:0x%08x", acpi_hid);
 
         errno = 0;
         fbuf = NULL;
@@ -111,7 +111,7 @@ hid_err:
                         }
                 }
         }
-        debug(DEBUG, "acpi root UID:0x%"PRIx64" uidstr:\"%s\"",
+        debug("acpi root UID:0x%"PRIx64" uidstr:\"%s\"",
               dev->acpi_root.acpi_uid, dev->acpi_root.acpi_uid_str);
 
         errno = 0;

@@ -51,13 +51,13 @@ parse_soc_root(struct device *dev UNUSED, const char *current, const char *root 
         spaces[pos] = '\0';
         pos = 0;
 
-        debug(DEBUG, "entry");
+        debug("entry");
 
         rc = sscanf(devpart, "../../devices/platform/soc/%*[^/]/%n", &pos);
         if (rc != 0)
                 return 0;
         devpart += pos;
-        debug(DEBUG, "new position is \"%s\"", devpart);
+        debug("new position is \"%s\"", devpart);
 
         return devpart - current;
 }

@@ -62,15 +62,15 @@ parse_nvme(struct device *dev, const char *current, const char *root UNUSED)
         spaces[pos0] = '\0';
         pos0 = 0;
 
-        debug(DEBUG, "entry");
+        debug("entry");
 
-        debug(DEBUG, "searching for nvme/nvme0/nvme0n1 or nvme/nvme0/nvme0n1/nvme0n1p1");
+        debug("searching for nvme/nvme0/nvme0n1 or nvme/nvme0/nvme0n1/nvme0n1p1");
         rc = sscanf(current, "nvme/nvme%d/nvme%dn%d%n/nvme%dn%dp%d%n",
                     &tosser0, &ctrl_id, &ns_id, &pos0,
                     &tosser1, &tosser2, &partition, &pos1);
-        debug(DEBUG, "current:\"%s\" rc:%d pos0:%d pos1:%d\n", current, rc, pos0, pos1);
-        arrow(DEBUG, spaces, 9, pos0, rc, 3);
-        arrow(DEBUG, spaces, 9, pos1, rc, 6);
+        debug("current:\"%s\" rc:%d pos0:%d pos1:%d\n", current, rc, pos0, pos1);
+        arrow(LOG_DEBUG, spaces, 9, pos0, rc, 3);
+        arrow(LOG_DEBUG, spaces, 9, pos1, rc, 6);
         /*
          * If it isn't of that form, it's not one of our nvme devices.
          */
@@ -130,7 +130,7 @@ dp_create_nvme(struct device *dev,
 {
         ssize_t sz;
 
-        debug(DEBUG, "entry");
+        debug("entry");
 
         sz = efidp_make_nvme(buf + off, size ? size - off : 0,
                              dev->nvme_info.ns_id,

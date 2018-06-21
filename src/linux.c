@@ -178,12 +178,12 @@ set_disk_and_part_name(struct device *dev)
         char *proximate = pathseg(dev->link, -4);
 
         errno = 0;
-        debug(DEBUG, "dev->disk_name:%p dev->part_name:%p", dev->disk_name, dev->part_name);
-        debug(DEBUG, "dev->part:%d", dev->part);
-        debug(DEBUG, "ultimate:\"%s\"", ultimate ? : "");
-        debug(DEBUG, "penultimate:\"%s\"", penultimate ? : "");
-        debug(DEBUG, "approximate:\"%s\"", approximate ? : "");
-        debug(DEBUG, "proximate:\"%s\"", proximate ? : "");
+        debug("dev->disk_name:%p dev->part_name:%p", dev->disk_name, dev->part_name);
+        debug("dev->part:%d", dev->part);
+        debug("ultimate:\"%s\"", ultimate ? : "");
+        debug("penultimate:\"%s\"", penultimate ? : "");
+        debug("approximate:\"%s\"", approximate ? : "");
+        debug("proximate:\"%s\"", proximate ? : "");
 
         if (ultimate && penultimate &&
             ((proximate && !strcmp(proximate, "nvme")) ||
@@ -197,14 +197,14 @@ set_disk_and_part_name(struct device *dev)
                  */
                 set_disk_name(dev, "%s", penultimate);
                 set_part_name(dev, "%s", ultimate);
-                debug(DEBUG, "disk:%s part:%s", penultimate, ultimate);
+                debug("disk:%s part:%s", penultimate, ultimate);
         } else if (ultimate && approximate && !strcmp(approximate, "nvme")) {
                 /*
                  * 259:0 -> ../../devices/pci0000:00/0000:00:1d.0/0000:05:00.0/nvme/nvme0/nvme0n1
                  */
                 set_disk_name(dev, "%s", ultimate);
                 set_part_name(dev, "%sp%d", ultimate, dev->part);
-                debug(DEBUG, "disk:%s part:%sp%d", ultimate, ultimate, dev->part);
+                debug("disk:%s part:%sp%d", ultimate, ultimate, dev->part);
         } else if (ultimate && penultimate && !strcmp(penultimate, "block")) {
                 /*
                  * 253:0 -> ../../devices/virtual/block/dm-0 (... I guess)
@@ -217,13 +217,13 @@ set_disk_and_part_name(struct device *dev)
                  */
                 set_disk_name(dev, "%s", ultimate);
                 set_part_name(dev, "%s%d", ultimate, dev->part);
-                debug(DEBUG, "disk:%s part:%s%d", ultimate, ultimate, dev->part);
+                debug("disk:%s part:%s%d", ultimate, ultimate, dev->part);
         } else if (ultimate && approximate && !strcmp(approximate, "mtd")) {
                 /*
                  * 31:0 -> ../../devices/platform/1e000000.palmbus/1e000b00.spi/spi_master/spi32766/spi32766.0/mtd/mtd0/mtdblock0
                  */
                 set_disk_name(dev, "%s", ultimate);
-                debug(DEBUG, "disk:%s", ultimate);
+                debug("disk:%s", ultimate);
         }
 
         return 0;
@@ -321,7 +321,7 @@ struct device HIDDEN
         }
 
         dev->part = partition;
-        debug(DEBUG, "partition:%d dev->part:%d", partition, dev->part);
+        debug("partition:%d dev->part:%d", partition, dev->part);
         dev->probes = calloc(nmemb, sizeof(struct dev_probe *));
         if (!dev->probes) {
                 efi_error("could not allocate %zd bytes",
@@ -362,7 +362,7 @@ struct device HIDDEN
                 efi_error("strdup(\"%s\") failed", linkbuf);
                 goto err;
         }
-        debug(DEBUG, "dev->link: %s", dev->link);
+        debug("dev->link: %s", dev->link);
 
         if (dev->part == -1) {
                 rc = read_sysfs_file(&tmpbuf, "dev/block/%s/partition", dev->link);
@@ -380,8 +380,8 @@ struct device HIDDEN
                 efi_error("could not set disk and partition names");
                 goto err;
         }
-        debug(DEBUG, "dev->disk_name: %s", dev->disk_name);
-        debug(DEBUG, "dev->part_name: %s", dev->part_name);
+        debug("dev->disk_name: %s", dev->disk_name);
+        debug("dev->part_name: %s", dev->part_name);
 
         rc = sysfs_readlink(&tmpbuf, "block/%s/device", dev->disk_name);
         if (rc < 0 || !tmpbuf) {
@@ -431,25 +431,25 @@ struct device HIDDEN
         bool needs_root = true;
         int last_successful_probe = -1;
 
-        debug(DEBUG, "searching for device nodes in %s", dev->link);
+        debug("searching for device nodes in %s", dev->link);
         for (i = 0; dev_probes[i] && dev_probes[i]->parse; i++) {
                 struct dev_probe *probe = dev_probes[i];
                 ssize_t pos;
 
                 if (!needs_root &&
                     (probe->flags & DEV_PROVIDES_ROOT)) {
-                        debug(DEBUG, "not testing %s because flags is 0x%x",
+                        debug("not testing %s because flags is 0x%x",
                               probe->name, probe->flags);
                         continue;
                 }
 
-                debug(DEBUG, "trying %s", probe->name);
+                debug("trying %s", probe->name);
                 pos = probe->parse(dev, current, dev->link);
                 if (pos < 0) {
                         efi_error("parsing %s failed", probe->name);
                         goto err;
                 } else if (pos > 0) {
-                        debug(DEBUG, "%s matched %s", probe->name, current);
+                        debug("%s matched %s", probe->name, current);
                         dev->flags |= probe->flags;
 
                         if (probe->flags & DEV_PROVIDES_HD ||
@@ -459,7 +459,7 @@ struct device HIDDEN
 
                         dev->probes[n++] = dev_probes[i];
                         current += pos;
-                        debug(DEBUG, "current:%s", current);
+                        debug("current:%s", current);
                         last_successful_probe = i;
 
                         if (!*current || !strncmp(current, "block/", 6))
@@ -468,7 +468,7 @@ struct device HIDDEN
                         continue;
                 }
 
-                debug(DEBUG, "dev_probes[i+1]: %p dev->interface_type: %d\n",
+                debug("dev_probes[i+1]: %p dev->interface_type: %d\n",
                       dev_probes[i+1], dev->interface_type);
                 if (dev_probes[i+1] == NULL && dev->interface_type == unknown) {
                         int new_pos = 0;
@@ -479,12 +479,9 @@ struct device HIDDEN
                                      current);
                                 goto err;
                         }
-                        debug(DEBUG,
-                              "Cannot parse device link segment \"%s\"",
-                              current);
-                        debug(DEBUG, "Skipping to \"%s\"", current + new_pos);
-                        debug(DEBUG,
-                              "This means we can only write abbreviated paths");
+                        debug("Cannot parse device link segment \"%s\"", current);
+                        debug("Skipping to \"%s\"", current + pos);
+                        debug("This means we can only create abbreviated paths");
                         if (rc < 0)
                                 goto err;
                         if (new_pos == 0)
@@ -512,7 +509,7 @@ make_blockdev_path(uint8_t *buf, ssize_t size, struct device *dev)
 {
         ssize_t off = 0;
 
-        debug(DEBUG, "entry buf:%p size:%zd", buf, size);
+        debug("entry buf:%p size:%zd", buf, size);
 
         for (unsigned int i = 0; dev->probes[i] &&
                                  dev->probes[i]->parse; i++) {
@@ -531,7 +528,7 @@ make_blockdev_path(uint8_t *buf, ssize_t size, struct device *dev)
                 off += sz;
         }
 
-        debug(DEBUG, "= %zd", off);
+        debug("= %zd", off);
 
         return off;
 }

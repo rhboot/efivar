@@ -56,7 +56,7 @@ parse_pci(struct device *dev, const char *current, const char *root)
         spaces[pos] = '\0';
         pos = 0;
 
-        debug(DEBUG, "entry");
+        debug("entry");
 
         /* find the pci domain/bus/device/function:
          * 0000:00:01.0/0000:01:00.0/
@@ -69,16 +69,16 @@ parse_pci(struct device *dev, const char *current, const char *root)
                 unsigned int i = dev->n_pci_devs;
 
                 pos = 0;
-                debug(DEBUG, "searching for 0000:00:00.0/");
+                debug("searching for 0000:00:00.0/");
                 rc = sscanf(devpart, "%hx:%hhx:%hhx.%hhx/%n",
                             &domain, &bus, &device, &function, &pos);
-                debug(DEBUG, "current:\"%s\" rc:%d pos:%d", devpart, rc, pos);
-                arrow(DEBUG, spaces, 9, pos, rc, 3);
+                debug("current:\"%s\" rc:%d pos:%d", devpart, rc, pos);
+                arrow(LOG_DEBUG, spaces, 9, pos, rc, 3);
                 if (rc != 4)
                         break;
                 devpart += pos;
 
-                debug(DEBUG, "found pci domain %04hx:%02hhx:%02hhx.%02hhx",
+                debug("found pci domain %04hx:%02hhx:%02hhx.%02hhx",
                       domain, bus, device, function);
                 pci_dev = realloc(dev->pci_dev,
                                   sizeof(*pci_dev) * (i + 1));
@@ -108,11 +108,11 @@ parse_pci(struct device *dev, const char *current, const char *root)
                 }
                 free(tmp);
                 dev->pci_dev[i].driverlink = strdup(linkbuf);
-                debug(DEBUG, "driver:%s\n", linkbuf);
+                debug("driver:%s\n", linkbuf);
                 dev->n_pci_devs += 1;
         }
 
-        debug(DEBUG, "next:\"%s\"", devpart);
+        debug("next:\"%s\"", devpart);
         return devpart - current;
 }
 
@@ -122,11 +122,11 @@ dp_create_pci(struct device *dev,
 {
         ssize_t sz = 0, new = 0;
 
-        debug(DEBUG, "entry buf:%p size:%zd off:%zd", buf, size, off);
+        debug("entry buf:%p size:%zd off:%zd", buf, size, off);
 
-        debug(DEBUG, "creating PCI device path nodes");
+        debug("creating PCI device path nodes");
         for (unsigned int i = 0; i < dev->n_pci_devs; i++) {
-                debug(DEBUG, "creating PCI device path node %u", i);
+                debug("creating PCI device path node %u", i);
                 new = efidp_make_pci(buf + off, size ? size - off : 0,
                                     dev->pci_dev[i].pci_device,
                                     dev->pci_dev[i].pci_function);
@@ -138,7 +138,7 @@ dp_create_pci(struct device *dev,
                 off += new;
         }
 
-        debug(DEBUG, "returning %zd", sz);
+        debug("returning %zd", sz);
         return sz;
 }
 
