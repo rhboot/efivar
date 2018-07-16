@@ -117,8 +117,6 @@ parse_nvme(struct device *dev, const char *current, const char *root UNUSED)
                 }
                 dev->nvme_info.has_eui = 1;
                 memcpy(dev->nvme_info.eui, eui, sizeof(eui));
-        } else {
-                return -1;
         }
 
         return pos0;
