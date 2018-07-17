@@ -93,11 +93,15 @@ hid_err:
         errno = 0;
         fbuf = NULL;
         rc = read_sysfs_file(&fbuf, "%s/firmware_node/uid", path);
-        if ((rc <= 0 && errno != ENOENT) || fbuf == NULL) {
+        if (rc <= 0 && errno != ENOENT) {
                 efi_error("could not read %s/firmware_node/uid", path);
                 return -1;
-        }
-        if (rc > 0) {
+        } else if (rc > 0) {
+		if (fbuf == NULL) {
+                        efi_error("empty buffer from %s/firmware_node/uid",
+                                  path);
+	                return -1;
+		}
                 rc = sscanf((char *)fbuf, "%"PRIu64"\n", &acpi_uid_int);
                 if (rc == 1) {
                         dev->acpi_root.acpi_uid = acpi_uid_int;
