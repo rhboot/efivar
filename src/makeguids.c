@@ -147,6 +147,7 @@ main(int argc, char *argv[])
 		outbuf = realloc(outbuf, line * sizeof (struct guidname));
 		if (!outbuf)
 			err(1, "makeguids");
+		memset(outbuf + line - 1, 0, sizeof(struct guidname));
 
 		char *symbol = strchr(guidstr, '\t');
 		if (symbol == NULL)
