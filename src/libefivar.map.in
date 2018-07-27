@@ -51,6 +51,7 @@ libefivar.so.0 {
 		efidp_make_sata;
 		efidp_make_scsi;
 		efidp_make_vendor;
+		efidp_make_emmc;
 		efidp_parse_device_node;
 		efidp_parse_device_path;
 		efidp_set_node_data;
