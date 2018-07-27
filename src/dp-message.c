@@ -826,3 +826,21 @@ efidp_make_nvdimm(uint8_t *buf, ssize_t size, efi_guid_t *uuid)
 
 	return sz;
 }
+
+ssize_t PUBLIC
+efidp_make_emmc(uint8_t *buf, ssize_t size, uint32_t slot_id)
+{
+	efidp_emmc *emmc = (efidp_emmc *)buf;
+	ssize_t req = sizeof (*emmc);
+	ssize_t sz;
+
+	sz = efidp_make_generic(buf, size, EFIDP_MESSAGE_TYPE,
+					EFIDP_MSG_NVME, sizeof (*emmc));
+	if (size && sz == req)
+		emmc->slot = slot_id;
+
+	if (sz < 0)
+		efi_error("efidp_make_generic failed");
+
+	return sz;
+}
