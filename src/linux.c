@@ -246,6 +246,7 @@ static struct dev_probe *dev_probes[] = {
         &ata_parser,
         &scsi_parser,
         &i2o_parser,
+        &emmc_parser,
         NULL
 };
 
