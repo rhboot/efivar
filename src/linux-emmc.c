@@ -66,17 +66,17 @@ parse_emmc(struct device *dev, const char *current, const char *root UNUSED)
                     &pos0, &tosser3, &partition, &pos1);
         debug(DEBUG, "current:\"%s\" rc:%d pos0:%d pos1:%d\n", current, rc, pos0, pos1);
         arrow(DEBUG, spaces, 9, pos0, rc, 4);
-        arrow(DEBUG, spaces, 9, pos1, rc, 8);
+        arrow(DEBUG, spaces, 9, pos1, rc, 6);
         /*
          * If it isn't of that form, it's not one of our emmc devices.
          */
-        if (rc != 4 && rc != 8)
+        if (rc != 4 && rc != 6)
                 return 0;
 
         dev->emmc_info.slot_id = slot_id;
         dev->interface_type = emmc;
 
-        if (rc == 8) {
+        if (rc == 6) {
                 if (dev->part == -1)
                         dev->part = partition;
 
