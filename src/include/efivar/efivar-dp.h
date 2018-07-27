@@ -689,6 +689,8 @@ typedef struct {
 	uint8_t		slot;
 } EFIVAR_PACKED efidp_emmc;
 
+extern ssize_t efidp_make_emmc(uint8_t *buf, ssize_t size, uint32_t slot_id);
+
 #define EFIDP_MSG_BTLE		0x1e
 typedef struct {
 	efidp_header	header;

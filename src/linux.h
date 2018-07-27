@@ -93,6 +93,10 @@ struct nvdimm_info {
         efi_guid_t nvdimm_label;
 };
 
+struct emmc_info {
+       int32_t slot_id;
+};
+
 enum interface_type {
         unknown,
         isa, acpi_root, pci_root, soc_root, pci, network,
@@ -100,6 +104,7 @@ enum interface_type {
         usb, i1394, fibre, i2o,
         md, virtblk,
         nvme, nd_pmem,
+        emmc,
 };
 
 struct dev_probe;
@@ -139,6 +144,7 @@ struct device {
                                 struct sata_info sata_info;
                                 struct ata_info ata_info;
                                 struct nvme_info nvme_info;
+                                struct emmc_info emmc_info;
                                 struct nvdimm_info nvdimm_info;
                         };
                 };
@@ -277,5 +283,6 @@ extern struct dev_probe virtblk_parser;
 extern struct dev_probe i2o_parser;
 extern struct dev_probe scsi_parser;
 extern struct dev_probe ata_parser;
+extern struct dev_probe emmc_parser;
 
 #endif /* _EFIBOOT_LINUX_H */
