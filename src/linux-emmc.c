@@ -58,15 +58,15 @@ parse_emmc(struct device *dev, const char *current, const char *root UNUSED)
         spaces[pos0] = '\0';
         pos0 = 0;
 
-        debug(DEBUG, "entry");
+        debug("entry");
 
-        debug(DEBUG, "searching for mmc_host/mmc0/mmc0:0001/block/mmcblk0 or mmc_host/mmc0/mmc0:0001/block/mmcblk0/mmcblk0p1");
+        debug("searching for mmc_host/mmc0/mmc0:0001/block/mmcblk0 or mmc_host/mmc0/mmc0:0001/block/mmcblk0/mmcblk0p1");
         rc = sscanf(current, "mmc_host/mmc%d/mmc%d:%d/block/mmcblk%d%n/mmcblk%dp%d%n",
                     &tosser0, &tosser1, &tosser2, &slot_id,
                     &pos0, &tosser3, &partition, &pos1);
-        debug(DEBUG, "current:\"%s\" rc:%d pos0:%d pos1:%d\n", current, rc, pos0, pos1);
-        arrow(DEBUG, spaces, 9, pos0, rc, 4);
-        arrow(DEBUG, spaces, 9, pos1, rc, 6);
+        debug("current:\"%s\" rc:%d pos0:%d pos1:%d\n", current, rc, pos0, pos1);
+        arrow(LOG_DEBUG, spaces, 9, pos0, rc, 4);
+        arrow(LOG_DEBUG, spaces, 9, pos1, rc, 6);
         /*
          * If it isn't of that form, it's not one of our emmc devices.
          */
@@ -92,7 +92,7 @@ dp_create_emmc(struct device *dev,
 {
         ssize_t sz;
 
-        debug(DEBUG, "entry");
+        debug("entry");
 
         sz = efidp_make_emmc(buf + off, size ? size - off : 0,
                              dev->emmc_info.slot_id);
