@@ -14,28 +14,28 @@
 #               'efidp_wifi __anonymous_union__::wifi' at efivar-dp.h:868:1
 #
 [suppress_type]
-  soname_regexp = libefi(var|boot)\\.so\\..*
   name = efidp_data
   type_kind = typedef
   has_data_member_inserted_at = end
+  soname_regexp = libefi(var|boot)\\.so\\..*
 
 # 1 Added variable:
 #
 #  'const __anonymous_struct__ efi_guid_ux_capsule'    {efi_guid_ux_capsule@@LIBEFIVAR_1.33}
 #
 [suppress_variable]
+  change_kind = added-variable
   soname_regexp = libefivar\\.so\\..*
   symbol_name_regexp = ^efi_guid_[[:alnum:]_]+$
-  change_kind = added-variable
 
 # allow new functions that are prefixed correctly
 [suppress_function]
+  change_kind = added-function
   soname_regexp = ^libefi(var|boot)\\.so\\..*
   name_regexp = ^(efidp_|efi_)[[:alnum:]_]+
-  change_kind = added-function
 
 # allow new variables that are prefixed correctly
 [suppress_variable]
+  change_kind = added-variable
   soname_regexp = libefi(var|boot)\\.so\\..*
   symbol_name_regexp = ^(efidp_|efi_)[[:alnum:]_]+
-  change_kind = added-variable
