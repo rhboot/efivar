@@ -67,7 +67,9 @@ parse_pci(struct device *dev, const char *current, const char *root)
                 uint8_t bus, device, function;
                 struct pci_dev_info *pci_dev;
                 unsigned int i = dev->n_pci_devs;
+                struct stat statbuf;
 
+                debug("devpart is \"%s\"", devpart);
                 pos = 0;
                 debug("searching for 0000:00:00.0/");
                 rc = sscanf(devpart, "%hx:%hhx:%hhx.%hhx/%n",
@@ -100,15 +102,23 @@ parse_pci(struct device *dev, const char *current, const char *root)
                         return -1;
                 }
                 tmp[devpart - root] = '\0';
-                rc = sysfs_readlink(&linkbuf, "class/block/%s/driver", tmp);
-                if (rc < 0 || !linkbuf) {
-                        efi_error("Could not find driver for pci device %s", tmp);
-                        free(tmp);
-                        return -1;
+                rc = sysfs_stat(&statbuf, "class/block/%s/driver", tmp);
+                if (rc < 0 && errno == ENOENT) {
+                        debug("No driver link for /sys/class/block/%s", tmp);
+                        debug("Assuming this is just a buggy platform core driver");
+                        dev->pci_dev[i].driverlink = NULL;
+                } else {
+                        rc = sysfs_readlink(&linkbuf, "class/block/%s/driver", tmp);
+                        if (rc < 0 || !linkbuf) {
+                                efi_error("Could not find driver for pci device %s", tmp);
+                                free(tmp);
+                                return -1;
+                        } else {
+                                dev->pci_dev[i].driverlink = strdup(linkbuf);
+                                debug("driver:%s\n", linkbuf);
+                        }
                 }
                 free(tmp);
-                dev->pci_dev[i].driverlink = strdup(linkbuf);
-                debug("driver:%s\n", linkbuf);
                 dev->n_pci_devs += 1;
         }
 
