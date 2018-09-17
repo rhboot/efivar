@@ -388,43 +388,50 @@ struct device HIDDEN
 
         rc = sysfs_readlink(&tmpbuf, "block/%s/device", dev->disk_name);
         if (rc < 0 || !tmpbuf) {
-                efi_error("readlink of /sys/block/%s/device failed",
+                debug("readlink of /sys/block/%s/device failed",
                           dev->disk_name);
-                goto err;
+
+                dev->device = strdup("");
+        } else {
+                dev->device = strdup(tmpbuf);
         }
 
-        dev->device = strdup(tmpbuf);
         if (!dev->device) {
                 efi_error("strdup(\"%s\") failed", tmpbuf);
                 goto err;
         }
 
-        rc = sysfs_readlink(&tmpbuf, "block/%s/device/driver", dev->disk_name);
-        if (rc < 0 || !tmpbuf) {
-                if (errno == ENOENT) {
-                        /*
-                         * nvme, for example, will have nvme0n1/device point
-                         * at nvme0, and we need to look for device/driver
-                         * there.
-                         */
-                        rc = sysfs_readlink(&tmpbuf,
-                                            "block/%s/device/device/driver",
-                                            dev->disk_name);
-                }
+        if (dev->device[0] != 0) {
+                rc = sysfs_readlink(&tmpbuf, "block/%s/device/driver", dev->disk_name);
                 if (rc < 0 || !tmpbuf) {
-                        efi_error("readlink of /sys/block/%s/device/driver failed",
-                                  dev->disk_name);
+                        if (errno == ENOENT) {
+                                /*
+                                 * nvme, for example, will have nvme0n1/device point
+                                 * at nvme0, and we need to look for device/driver
+                                 * there.
+                                 */
+                                rc = sysfs_readlink(&tmpbuf,
+                                                    "block/%s/device/device/driver",
+                                                    dev->disk_name);
+                        }
+                        if (rc < 0 || !tmpbuf) {
+                                efi_error("readlink of /sys/block/%s/device/driver failed",
+                                          dev->disk_name);
+                                goto err;
+                        }
+                }
+
+                linkbuf = pathseg(tmpbuf, -1);
+                if (!linkbuf) {
+                        efi_error("could not get segment -1 of \"%s\"", tmpbuf);
                         goto err;
                 }
+
+                dev->driver = strdup(linkbuf);
+        } else {
+                dev->driver = strdup("");
         }
 
-        linkbuf = pathseg(tmpbuf, -1);
-        if (!linkbuf) {
-                efi_error("could not get segment -1 of \"%s\"", tmpbuf);
-                goto err;
-        }
-
-        dev->driver = strdup(linkbuf);
         if (!dev->driver) {
                 efi_error("strdup(\"%s\") failed", linkbuf);
                 goto err;
