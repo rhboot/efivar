@@ -117,7 +117,9 @@ reset_part_name(struct device *dev)
         if (dev->part < 1)
                 return 0;
 
-        if (dev->probes[dev->n_probes]->make_part_name) {
+        if (dev->n_probes > 0 &&
+            dev->probes[dev->n_probes-1] &&
+            dev->probes[dev->n_probes-1]->make_part_name) {
                 part = dev->probes[dev->n_probes]->make_part_name(dev);
                 dev->part_name = part;
                 rc = 0;
