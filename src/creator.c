@@ -350,6 +350,36 @@ efi_generate_file_device_path_from_esp(uint8_t *buf, ssize_t size,
 	return ret;
 }
 
+static int
+get_part(char *devpath)
+{
+	int fd;
+	int partition = -1;
+	struct device *dev = NULL;
+
+	fd = open(devpath, O_RDONLY);
+	if (fd < 0) {
+		efi_error("could not open device for ESP");
+		goto err;
+	}
+
+	dev = device_get(fd, -1);
+	if (dev == NULL) {
+		efi_error("could not get ESP disk info");
+		goto err;
+	}
+
+	partition = dev->part;
+	if (partition < 0)
+		partition = 0;
+err:
+	if (dev)
+		device_free(dev);
+	if (fd >= 0)
+		close(fd);
+	return partition;
+}
+
 ssize_t NONNULL(3) PUBLIC
 efi_generate_file_device_path(uint8_t *buf, ssize_t size,
 			      const char * const filepath,
@@ -374,6 +404,19 @@ efi_generate_file_device_path(uint8_t *buf, ssize_t size,
 		efi_error("could not find parent device for file");
 		goto err;
 	}
+        debug("child_devpath:%s", child_devpath);
+
+	debug("parent_devpath:%s", parent_devpath);
+	debug("child_devpath:%s", child_devpath);
+	debug("rc:%d", rc);
+
+	rc = get_part(child_devpath);
+	if (rc < 0) {
+		efi_error("Couldn't get partition number for %s",
+			  child_devpath);
+		goto err;
+	}
+	debug("detected partition:%d", rc);
 
 	va_start(ap, options);
 
