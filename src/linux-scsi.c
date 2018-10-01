@@ -38,7 +38,9 @@
 ssize_t HIDDEN
 parse_scsi_link(const char *current, uint32_t *scsi_host,
                 uint32_t *scsi_bus, uint32_t *scsi_device,
-                uint32_t *scsi_target, uint64_t *scsi_lun)
+                uint32_t *scsi_target, uint64_t *scsi_lun,
+                uint32_t *local_port_id, uint32_t *remote_port_id,
+                uint32_t *remote_target_id)
 {
         int rc;
         int sz = 0;
@@ -70,11 +72,32 @@ parse_scsi_link(const char *current, uint32_t *scsi_host,
          * /sys/block/sdc/device looks like:
          * device-> ../../../4:2:0:0
          *
+         * OR
+         *
+         * 8:0 -> ../../devices/pci0000:74/0000:74:02.0/host2/port-2:0/expander-2:0/port-2:0:2/end_device-2:0:2/target2:0:0/2:0:0:0/block/sda
+         * 8:1 -> ../../devices/pci0000:74/0000:74:02.0/host2/port-2:0/expander-2:0/port-2:0:2/end_device-2:0:2/target2:0:0/2:0:0:0/block/sda/sda1
+         *
+         * /sys/block/sda/device looks like:
+         * device -> ../../../2:0:0:0 *
+         *
+         * sas_address exists, but it's hard to find:
+         * /sys/devices/pci0000:74/0000:74:02.0/host2/port-2:0/expander-2:0/sas_device/expander-2:0/sas_address
+         * but sas_host_address is nowhere to be found, and sas_address
+         * doesn't directly exist under /sys/class/ anywhere.  So you actually
+         * have to go to
+         * /sys/devices/pci0000:74/0000:74:02.0/host2/port-2:0/expander-2:0/sas_device/expander-2:0/sas_address
+         * and chop that off to
+         * /sys/devices/pci0000:74/0000:74:02.0/host2/port-2:0/expander-2:0/
+         * and then add a bunch of port and end device crap to it to get:
+         * /sys/devices/pci0000:74/0000:74:02.0/host2/port-2:0/expander-2:0/port-2:0:2/end_device-2:0:2/sas_device/end_device-2:0:2/sas_address
+
          */
 
         /*
          * So we start when current is:
          * host4/port-4:0/end_device-4:0/target4:0:0/4:0:0:0/block/sdc/sdc1
+         * or
+         * host2/port-2:0/expander-2:0/port-2:0:2/end_device-2:0:2/target2:0:0/2:0:0:0/block/sda/sda1
          */
         uint32_t tosser0, tosser1, tosser2;
 
@@ -91,6 +114,14 @@ parse_scsi_link(const char *current, uint32_t *scsi_host,
         sz += pos0;
         pos0 = 0;
 
+        /*
+         * We might have this next:
+         * port-2:0/expander-2:0/port-2:0:2/end_device-2:0:2/target2:0:0/2:0:0:0/block/sda/sda1
+         * or:
+         * port-2:0/end_device-2:0:2/target2:0:0/2:0:0:0/block/sda/sda1
+         * or maybe (not sure):
+         * port-2:0:2/end_device-2:0:2/target2:0:0/2:0:0:0/block/sda/sda1
+         */
         debug("searching for port-4:0 or port-4:0:0");
         rc = sscanf(current+sz, "port-%d:%d%n:%d%n", &tosser0,
                     &tosser1, &pos0, &tosser2, &pos1);
@@ -100,6 +131,52 @@ parse_scsi_link(const char *current, uint32_t *scsi_host,
         if (rc == 2 || rc == 3) {
                 sz += pos0;
                 pos0 = 0;
+                if (local_port_id && rc == 2)
+                        *local_port_id = tosser1;
+                if (remote_port_id && rc == 3)
+                        *remote_port_id = tosser2;
+
+                if (current[sz] == '/')
+                        sz += 1;
+
+                /*
+                 * We might have this next:
+                 * expander-2:0/port-2:0:2/end_device-2:0:2/target2:0:0/2:0:0:0/block/sda/sda1
+                 *                       ^ port id
+                 *                     ^ scsi target id
+                 *                   ^ host number
+                 *          ^ host number
+                 * We don't actually care about either number in expander-.../,
+                 * because they're replicated in all the other places.  We just need
+                 * to get past it.
+                 */
+                debug("searching for expander-4:0/");
+                rc = sscanf(current+sz, "expander-%d:%d/%n", &tosser0, &tosser1, &pos0);
+                debug("current:\"%s\" rc:%d pos0:%d\n", current+sz, rc, pos0);
+                arrow(LOG_DEBUG, spaces, 9, pos0, rc, 2);
+                if (rc == 2) {
+                        if (!remote_target_id) {
+                                efi_error("Device is PHY is a remote target, but remote_target_id is NULL");
+                                return -1;
+                        }
+                        *remote_target_id = tosser1;
+                        sz += pos0;
+                        pos0 = 0;
+
+                        /*
+                         * if we have that, we should have a 3-part port next
+                         */
+                        debug("searching for port-2:0:2/");
+                        rc = sscanf(current+sz, "port-%d:%d:%d/%n", &tosser0, &tosser1, &tosser2, &pos0);
+                        debug("current:\"%s\" rc:%d pos0:%d\n", current+sz, rc, pos0);
+                        arrow(LOG_DEBUG, spaces, 9, pos0, rc, 3);
+                        if (rc != 3) {
+                                efi_error("Couldn't parse port expander port string");
+                                return -1;
+                        }
+                        sz += pos0;
+                }
+                pos0 = 0;
 
                 /* next:
                  *    /end_device-4:0
@@ -107,22 +184,24 @@ parse_scsi_link(const char *current, uint32_t *scsi_host,
                  * awesomely these are the exact same fields that go into port-blah,
                  * but we don't care for now about any of them anyway.
                  */
-                debug("searching for /end_device-4:0/ or /end_device-4:0:0/");
-                rc = sscanf(current + sz, "/end_device-%d:%d%n", &tosser0, &tosser1, &pos0);
+                debug("searching for end_device-4:0/ or end_device-4:0:0/");
+                rc = sscanf(current + sz, "end_device-%d:%d%n", &tosser0, &tosser1, &pos0);
                 debug("current:\"%s\" rc:%d pos0:%d\n", current+sz, rc, pos0);
-                arrow(LOG_DEBUG, spaces, 9, pos0, rc, 2);
                 if (rc != 2)
                         return -1;
-                sz += pos0;
-                pos0 = 0;
 
-                rc = sscanf(current + sz, ":%d%n", &tosser0, &pos0);
-                debug("current:\"%s\" rc:%d pos0:%d\n", current+sz, rc, pos0);
-                arrow(LOG_DEBUG, spaces, 9, pos0, rc, 2);
+                pos1 = 0;
+                rc = sscanf(current + sz + pos0, ":%d%n", &tosser2, &pos1);
+                arrow(LOG_DEBUG, spaces, 9, pos0, rc + 2, 2);
+                arrow(LOG_DEBUG, spaces, 9, pos0 + pos1, rc + 2, 3);
                 if (rc != 0 && rc != 1)
                         return -1;
-                sz += pos0;
-                pos0 = 0;
+                if (remote_port_id && rc == 1)
+                        *remote_port_id = tosser2;
+                if (local_port_id && rc == 0)
+                        *local_port_id = tosser1;
+                sz += pos0 + pos1;
+                pos0 = pos1 = 0;
 
                 if (current[sz] == '/')
                         sz += 1;
@@ -156,6 +235,7 @@ parse_scsi_link(const char *current, uint32_t *scsi_host,
                 return -1;
         sz += pos0;
 
+        debug("returning %d", sz);
         return sz;
 }
 
@@ -191,7 +271,8 @@ parse_scsi(struct device *dev, const char *current, const char *root UNUSED)
 
         sz = parse_scsi_link(current, &scsi_host,
                               &scsi_bus, &scsi_device,
-                              &scsi_target, &scsi_lun);
+                              &scsi_target, &scsi_lun,
+                              NULL, NULL, NULL);
         if (sz < 0)
                 return 0;
 

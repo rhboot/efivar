@@ -267,8 +267,10 @@ struct dev_probe {
 };
 
 extern ssize_t parse_scsi_link(const char *current, uint32_t *host,
-                                      uint32_t *bus, uint32_t *device,
-                                      uint32_t *target, uint64_t *lun);
+                               uint32_t *bus, uint32_t *device,
+                               uint32_t *target, uint64_t *lun,
+                               uint32_t *local_port_id, uint32_t *remote_port_id,
+                               uint32_t *remote_target_id);
 
 /* device support implementations */
 extern struct dev_probe pmem_parser;

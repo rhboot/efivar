@@ -114,7 +114,8 @@ parse_ata(struct device *dev, const char *current, const char *root UNUSED)
 
         pos = parse_scsi_link(host + 1, &scsi_host,
                               &scsi_bus, &scsi_device,
-                              &scsi_target, &scsi_lun);
+                              &scsi_target, &scsi_lun,
+                              NULL, NULL, NULL);
         if (pos < 0)
                 return -1;
 
