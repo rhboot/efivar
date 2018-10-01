@@ -87,9 +87,9 @@ static ssize_t
 dp_create_pci_root(struct device *dev UNUSED,
                    uint8_t *buf, ssize_t size, ssize_t off)
 {
+        ssize_t new = 0, sz = 0;
         debug("entry buf:%p size:%zd off:%zd", buf, size, off);
         debug("returning 0");
-#if 0
         if (dev->acpi_root.acpi_uid_str) {
                 debug("creating acpi_hid_ex dp hid:0x%08x uid:\"%s\"",
                       dev->acpi_root.acpi_hid,
@@ -120,9 +120,6 @@ dp_create_pci_root(struct device *dev UNUSED,
 
         debug("returning %zd", sz);
         return sz;
-#else
-        return 0;
-#endif
 }
 
 enum interface_type pci_root_iftypes[] = { pci_root, unknown };
