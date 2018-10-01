@@ -147,9 +147,18 @@ _format_acpi_dn(char *buf, size_t size, const_efidp dp)
 				format(buf, size, off, "PciRoot",
 				       "PciRoot(%s)", uidstr);
 				return off;
+			case EFIDP_ACPI_CONTAINER_0A05_HID:
+			case EFIDP_ACPI_CONTAINER_0A06_HID:
+				format(buf, size, off, "AcpiContainer",
+				       "AcpiContainer(%s)", uidstr);
+				break;
 			case EFIDP_ACPI_PCIE_ROOT_HID:
 				format(buf, size, off, "PcieRoot",
 				       "PcieRoot(%s)", uidstr);
+				return off;
+			case EFIDP_ACPI_EC_HID:
+				format(buf, size, off, "EmbeddedController",
+				       "EmbeddedController()");
 				return off;
 			default:
 				format_acpi_hid_ex(buf, size, off, dp,
@@ -166,10 +175,19 @@ _format_acpi_dn(char *buf, size_t size, const_efidp dp)
 			       "PciRoot(0x%"PRIx32")",
 			       dp->acpi_hid.uid);
 			break;
+		case EFIDP_ACPI_CONTAINER_0A05_HID:
+		case EFIDP_ACPI_CONTAINER_0A06_HID:
+			format(buf, size, off, "AcpiContainer",
+			       "AcpiContainer()");
+			break;
 		case EFIDP_ACPI_PCIE_ROOT_HID:
 			format(buf, size, off, "PcieRoot",
 			       "PcieRoot(0x%"PRIx32")",
 			       dp->acpi_hid.uid);
+			break;
+		case EFIDP_ACPI_EC_HID:
+			format(buf, size, off, "EmbeddedController",
+			       "EmbeddedController()");
 			break;
 		case EFIDP_ACPI_FLOPPY_HID:
 			format(buf, size, off, "Floppy",
