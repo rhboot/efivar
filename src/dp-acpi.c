@@ -157,7 +157,9 @@ _format_acpi_dn(char *buf, size_t size, const_efidp dp)
 				return off;
 			}
 		}
-	} else if (dp->subtype == EFIDP_ACPI_HID_EX) {
+	} else if (dp->subtype == EFIDP_ACPI_HID) {
+		debug("formatting ACPI HID 0x%08x", dp->acpi_hid.hid);
+
 		switch (dp->acpi_hid.hid) {
 		case EFIDP_ACPI_PCI_ROOT_HID:
 			format(buf, size, off, "PciRoot",
@@ -249,6 +251,9 @@ _format_acpi_dn(char *buf, size_t size, const_efidp dp)
 				return -1;
 			}
 		}
+	} else {
+		debug("Unknown ACPI device path type {0x%04hhx,0x%04hhx}",
+		      dp->type, dp->subtype);
 	}
 
 	return off;
