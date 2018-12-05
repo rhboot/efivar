@@ -70,7 +70,7 @@
     <typedef-decl name='__uint32_t' type-id='type-id-11' filepath='/usr/include/bits/types.h' line='41' column='1' id='type-id-12'/>
     <typedef-decl name='uint32_t' type-id='type-id-12' filepath='/usr/include/bits/stdint-uintn.h' line='26' column='1' id='type-id-4'/>
     <type-decl name='long int' size-in-bits='64' id='type-id-13'/>
-    <typedef-decl name='__ssize_t' type-id='type-id-13' filepath='/usr/include/bits/types.h' line='181' column='1' id='type-id-14'/>
+    <typedef-decl name='__ssize_t' type-id='type-id-13' filepath='/usr/include/bits/types.h' line='191' column='1' id='type-id-14'/>
     <typedef-decl name='ssize_t' type-id='type-id-14' filepath='/usr/include/unistd.h' line='220' column='1' id='type-id-15'/>
     <class-decl name='device' size-in-bits='2560' is-struct='yes' visibility='default' filepath='src/linux.h' line='101' column='1' id='type-id-16'>
       <data-member access='public' layout-offset-in-bits='0'>
@@ -194,16 +194,16 @@
       </data-member>
     </class-decl>
     <type-decl name='unsigned long int' size-in-bits='64' id='type-id-38'/>
-    <typedef-decl name='__dev_t' type-id='type-id-38' filepath='/usr/include/bits/types.h' line='133' column='1' id='type-id-27'/>
-    <typedef-decl name='__ino_t' type-id='type-id-38' filepath='/usr/include/bits/types.h' line='136' column='1' id='type-id-28'/>
-    <typedef-decl name='__nlink_t' type-id='type-id-38' filepath='/usr/include/bits/types.h' line='139' column='1' id='type-id-29'/>
-    <typedef-decl name='__mode_t' type-id='type-id-11' filepath='/usr/include/bits/types.h' line='138' column='1' id='type-id-30'/>
-    <typedef-decl name='__uid_t' type-id='type-id-11' filepath='/usr/include/bits/types.h' line='134' column='1' id='type-id-31'/>
-    <typedef-decl name='__gid_t' type-id='type-id-11' filepath='/usr/include/bits/types.h' line='135' column='1' id='type-id-32'/>
+    <typedef-decl name='__dev_t' type-id='type-id-38' filepath='/usr/include/bits/types.h' line='143' column='1' id='type-id-27'/>
+    <typedef-decl name='__ino_t' type-id='type-id-38' filepath='/usr/include/bits/types.h' line='146' column='1' id='type-id-28'/>
+    <typedef-decl name='__nlink_t' type-id='type-id-38' filepath='/usr/include/bits/types.h' line='149' column='1' id='type-id-29'/>
+    <typedef-decl name='__mode_t' type-id='type-id-11' filepath='/usr/include/bits/types.h' line='148' column='1' id='type-id-30'/>
+    <typedef-decl name='__uid_t' type-id='type-id-11' filepath='/usr/include/bits/types.h' line='144' column='1' id='type-id-31'/>
+    <typedef-decl name='__gid_t' type-id='type-id-11' filepath='/usr/include/bits/types.h' line='145' column='1' id='type-id-32'/>
     <type-decl name='int' size-in-bits='32' id='type-id-22'/>
-    <typedef-decl name='__off_t' type-id='type-id-13' filepath='/usr/include/bits/types.h' line='140' column='1' id='type-id-33'/>
-    <typedef-decl name='__blksize_t' type-id='type-id-13' filepath='/usr/include/bits/types.h' line='162' column='1' id='type-id-34'/>
-    <typedef-decl name='__blkcnt_t' type-id='type-id-13' filepath='/usr/include/bits/types.h' line='167' column='1' id='type-id-35'/>
+    <typedef-decl name='__off_t' type-id='type-id-13' filepath='/usr/include/bits/types.h' line='150' column='1' id='type-id-33'/>
+    <typedef-decl name='__blksize_t' type-id='type-id-13' filepath='/usr/include/bits/types.h' line='172' column='1' id='type-id-34'/>
+    <typedef-decl name='__blkcnt_t' type-id='type-id-13' filepath='/usr/include/bits/types.h' line='177' column='1' id='type-id-35'/>
     <class-decl name='timespec' size-in-bits='128' is-struct='yes' visibility='default' filepath='/usr/include/bits/types/struct_timespec.h' line='9' column='1' id='type-id-36'>
       <data-member access='public' layout-offset-in-bits='0'>
         <var-decl name='tv_sec' type-id='type-id-39' visibility='default' filepath='/usr/include/bits/types/struct_timespec.h' line='11' column='1'/>
@@ -212,8 +212,8 @@
         <var-decl name='tv_nsec' type-id='type-id-40' visibility='default' filepath='/usr/include/bits/types/struct_timespec.h' line='12' column='1'/>
       </data-member>
     </class-decl>
-    <typedef-decl name='__time_t' type-id='type-id-13' filepath='/usr/include/bits/types.h' line='148' column='1' id='type-id-39'/>
-    <typedef-decl name='__syscall_slong_t' type-id='type-id-13' filepath='/usr/include/bits/types.h' line='184' column='1' id='type-id-40'/>
+    <typedef-decl name='__time_t' type-id='type-id-13' filepath='/usr/include/bits/types.h' line='158' column='1' id='type-id-39'/>
+    <typedef-decl name='__syscall_slong_t' type-id='type-id-13' filepath='/usr/include/bits/types.h' line='194' column='1' id='type-id-40'/>
 
     <array-type-def dimensions='1' type-id='type-id-40' size-in-bits='192' id='type-id-37'>
       <subrange length='3' type-id='type-id-38' id='type-id-41'/>
@@ -437,9 +437,6 @@
   <abi-instr version='1.0' address-size='64' path='linux-virtblk.c' comp-dir-path='src' language='LANG_C99'>
     <var-decl name='virtblk_parser' type-id='type-id-1' visibility='default' filepath='src/linux.h' line='258' column='1'/>
   </abi-instr>
-  <abi-instr version='1.0' address-size='64' path='linux-ata.c' comp-dir-path='src' language='LANG_C99'>
-    <var-decl name='ata_parser' type-id='type-id-1' visibility='default' filepath='src/linux.h' line='261' column='1'/>
-  </abi-instr>
   <abi-instr version='1.0' address-size='64' path='linux-pmem.c' comp-dir-path='src' language='LANG_C99'>
     <var-decl name='pmem_parser' type-id='type-id-1' visibility='default' filepath='src/linux.h' line='253' column='1'/>
   </abi-instr>
@@ -454,6 +451,9 @@
   </abi-instr>
   <abi-instr version='1.0' address-size='64' path='linux-scsi.c' comp-dir-path='src' language='LANG_C99'>
     <var-decl name='scsi_parser' type-id='type-id-1' visibility='default' filepath='src/linux.h' line='260' column='1'/>
+  </abi-instr>
+  <abi-instr version='1.0' address-size='64' path='linux-ata.c' comp-dir-path='src' language='LANG_C99'>
+    <var-decl name='ata_parser' type-id='type-id-1' visibility='default' filepath='src/linux.h' line='261' column='1'/>
   </abi-instr>
   <abi-instr version='1.0' address-size='64' path='linux-i2o.c' comp-dir-path='src' language='LANG_C99'>
     <var-decl name='i2o_parser' type-id='type-id-1' visibility='default' filepath='src/linux.h' line='259' column='1'/>
