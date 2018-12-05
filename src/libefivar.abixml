@@ -870,9 +870,6 @@
       <parameter type-id='type-id-32' name='buf'/>
       <parameter type-id='type-id-61' name='size'/>
       <parameter type-id='type-id-46' name='filepath'/>
-      <parameter type-id='type-id-32' name='buf'/>
-      <parameter type-id='type-id-61' name='size'/>
-      <parameter type-id='type-id-46' name='filepath'/>
       <return type-id='type-id-61'/>
     </function-decl>
     <function-decl name='efidp_make_edd10' mangled-name='efidp_make_edd10' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='efidp_make_edd10@@libefivar.so.0'>
