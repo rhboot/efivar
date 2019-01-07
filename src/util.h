@@ -52,6 +52,15 @@
 #define PACKED __attribute__((__packed__))
 #define VERSION(sym, ver) __asm__(".symver " # sym "," # ver)
 
+#define __branch_check__(x, expect, is_constant) \
+	__builtin_expect(!!(x), expect)
+#ifndef likely
+#define likely(x) (__branch_check__(x, 1, __builtin_constant_p(x)))
+#endif
+#ifndef unlikely
+#define unlikely(x) (__branch_check__(x, 0, __builtin_constant_p(x)))
+#endif
+
 /*
  * I'm not actually sure when these appear, but they're present in the
  * version in front of me.
