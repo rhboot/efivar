@@ -115,7 +115,6 @@ dp_create_pci_root(struct device *dev UNUSED,
                         return new;
                 }
         }
-        off += new;
         sz += new;
 
         debug("returning %zd", sz);
