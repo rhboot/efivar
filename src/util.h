@@ -252,6 +252,17 @@ lcm(uint64_t x, uint64_t y)
         return (x / n) * y;
 }
 
+#ifndef strdupa
+#define strdupa(s)                                                      \
+       (__extension__ ({                                                \
+                const char *__in = (s);                                 \
+                size_t __len = strlen (__in);                           \
+                char *__out = (char *) alloca (__len + 1);              \
+                strcpy(__out, __in);                                    \
+                __out;                                                  \
+        }))
+#endif
+
 #ifndef strndupa
 #define strndupa(s, l)                                                  \
        (__extension__ ({                                                \
