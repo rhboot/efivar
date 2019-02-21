@@ -54,13 +54,6 @@ parse_nvme(struct device *dev, const char *current, const char *root UNUSED)
         int32_t tosser0, tosser1, tosser2, ctrl_id, ns_id, partition;
         uint8_t *filebuf = NULL;
         int pos0 = 0, pos1 = 0;
-        char *spaces;
-
-        pos0 = strlen(current);
-        spaces = alloca(pos0+1);
-        memset(spaces, ' ', pos0+1);
-        spaces[pos0] = '\0';
-        pos0 = 0;
 
         debug("entry");
 
@@ -69,8 +62,6 @@ parse_nvme(struct device *dev, const char *current, const char *root UNUSED)
                     &tosser0, &ctrl_id, &ns_id, &pos0,
                     &tosser1, &tosser2, &partition, &pos1);
         debug("current:\"%s\" rc:%d pos0:%d pos1:%d\n", current, rc, pos0, pos1);
-        arrow(LOG_DEBUG, spaces, 9, pos0, rc, 3);
-        arrow(LOG_DEBUG, spaces, 9, pos1, rc, 6);
         /*
          * If it isn't of that form, it's not one of our nvme devices.
          */

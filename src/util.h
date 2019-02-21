@@ -388,7 +388,6 @@ swizzle_guid_to_uuid(efi_guid_t *guid)
 #undef log
 #endif
 #define log(level, fmt, args...) log_(__FILE__, __LINE__, __func__, level, fmt, ## args)
-#define arrow(l,b,o,p,n,m) ({if(n==m){char c_=b[p+1]; b[o]='^'; b[p+o]='^';b[p+o+1]='\0';log(l,"%s",b);b[o]=' ';b[p+o]=' ';b[p+o+1]=c_;}})
 #define debug(fmt, args...) log(LOG_DEBUG, fmt, ## args)
 
 #endif /* EFIVAR_UTIL_H */

@@ -48,13 +48,6 @@ parse_pci(struct device *dev, const char *current, const char *root)
         int rc;
         int pos;
         const char *devpart = current;
-        char *spaces;
-
-        pos = strlen(current);
-        spaces = alloca(pos+1);
-        memset(spaces, ' ', pos+1);
-        spaces[pos] = '\0';
-        pos = 0;
 
         debug("entry");
 
@@ -75,7 +68,6 @@ parse_pci(struct device *dev, const char *current, const char *root)
                 rc = sscanf(devpart, "%hx:%hhx:%hhx.%hhx/%n",
                             &domain, &bus, &device, &function, &pos);
                 debug("current:\"%s\" rc:%d pos:%d", devpart, rc, pos);
-                arrow(LOG_DEBUG, spaces, 9, pos, rc, 3);
                 if (rc != 4)
                         break;
                 devpart += pos;

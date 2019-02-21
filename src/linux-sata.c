@@ -148,13 +148,6 @@ parse_sata(struct device *dev, const char *devlink, const char *root UNUSED)
         uint64_t scsi_lun, tosser3;
         int pos = 0;
         int rc;
-        char *spaces;
-
-        pos = strlen(current);
-        spaces = alloca(pos+1);
-        memset(spaces, ' ', pos+1);
-        spaces[pos] = '\0';
-        pos = 0;
 
         debug("entry");
         if (is_pata(dev)) {
@@ -169,7 +162,6 @@ parse_sata(struct device *dev, const char *devlink, const char *root UNUSED)
         debug("searching for ata1/");
         rc = sscanf(current, "ata%"PRIu32"/%n", &print_id, &pos);
         debug("current:\"%s\" rc:%d pos:%d\n", current, rc, pos);
-        arrow(LOG_DEBUG, spaces, 9, pos, rc, 1);
         /*
          * If we don't find this one, it isn't an ata device, so return 0 not
          * error.  Later errors mean it is an ata device, but we can't parse
@@ -183,7 +175,6 @@ parse_sata(struct device *dev, const char *devlink, const char *root UNUSED)
         debug("searching for host0/");
         rc = sscanf(current, "host%"PRIu32"/%n", &scsi_bus, &pos);
         debug("current:\"%s\" rc:%d pos:%d\n", current, rc, pos);
-        arrow(LOG_DEBUG, spaces, 9, pos, rc, 1);
         if (rc != 1)
                 return -1;
         current += pos;
@@ -193,7 +184,6 @@ parse_sata(struct device *dev, const char *devlink, const char *root UNUSED)
         rc = sscanf(current, "target%"PRIu32":%"PRIu32":%"PRIu64"/%n",
                     &scsi_device, &scsi_target, &scsi_lun, &pos);
         debug("current:\"%s\" rc:%d pos:%d\n", current, rc, pos);
-        arrow(LOG_DEBUG, spaces, 9, pos, rc, 3);
         if (rc != 3)
                 return -1;
         current += pos;
@@ -203,7 +193,6 @@ parse_sata(struct device *dev, const char *devlink, const char *root UNUSED)
         rc = sscanf(current, "%"PRIu32":%"PRIu32":%"PRIu32":%"PRIu64"/%n",
                     &tosser0, &tosser1, &tosser2, &tosser3, &pos);
         debug("current:\"%s\" rc:%d pos:%d\n", current, rc, pos);
-        arrow(LOG_DEBUG, spaces, 9, pos, rc, 4);
         if (rc != 4)
                 return -1;
         current += pos;

@@ -45,13 +45,6 @@ parse_scsi_link(const char *current, uint32_t *scsi_host,
         int rc;
         int sz = 0;
         int pos0 = 0, pos1 = 0;
-        char *spaces;
-
-        sz = strlen(current);
-        spaces = alloca(sz+1);
-        memset(spaces, ' ', sz+1);
-        spaces[sz] = '\0';
-        sz = 0;
 
         debug("entry");
         /*
@@ -108,7 +101,6 @@ parse_scsi_link(const char *current, uint32_t *scsi_host,
         debug("searching for host4/");
         rc = sscanf(current, "host%d/%n", scsi_host, &pos0);
         debug("current:\"%s\" rc:%d pos0:%d\n", current+sz, rc, pos0);
-        arrow(LOG_DEBUG, spaces, 9, pos0, rc, 1);
         if (rc != 1)
                 return -1;
         sz += pos0;
@@ -126,8 +118,6 @@ parse_scsi_link(const char *current, uint32_t *scsi_host,
         rc = sscanf(current+sz, "port-%d:%d%n:%d%n", &tosser0,
                     &tosser1, &pos0, &tosser2, &pos1);
         debug("current:\"%s\" rc:%d pos0:%d pos1:%d\n", current+sz, rc, pos0, pos1);
-        arrow(LOG_DEBUG, spaces, 9, pos0, rc, 2);
-        arrow(LOG_DEBUG, spaces, 9, pos1, rc, 3);
         if (rc == 2 || rc == 3) {
                 sz += pos0;
                 pos0 = 0;
@@ -153,7 +143,6 @@ parse_scsi_link(const char *current, uint32_t *scsi_host,
                 debug("searching for expander-4:0/");
                 rc = sscanf(current+sz, "expander-%d:%d/%n", &tosser0, &tosser1, &pos0);
                 debug("current:\"%s\" rc:%d pos0:%d\n", current+sz, rc, pos0);
-                arrow(LOG_DEBUG, spaces, 9, pos0, rc, 2);
                 if (rc == 2) {
                         if (!remote_target_id) {
                                 efi_error("Device is PHY is a remote target, but remote_target_id is NULL");
@@ -169,7 +158,6 @@ parse_scsi_link(const char *current, uint32_t *scsi_host,
                         debug("searching for port-2:0:2/");
                         rc = sscanf(current+sz, "port-%d:%d:%d/%n", &tosser0, &tosser1, &tosser2, &pos0);
                         debug("current:\"%s\" rc:%d pos0:%d\n", current+sz, rc, pos0);
-                        arrow(LOG_DEBUG, spaces, 9, pos0, rc, 3);
                         if (rc != 3) {
                                 efi_error("Couldn't parse port expander port string");
                                 return -1;
@@ -192,8 +180,6 @@ parse_scsi_link(const char *current, uint32_t *scsi_host,
 
                 pos1 = 0;
                 rc = sscanf(current + sz + pos0, ":%d%n", &tosser2, &pos1);
-                arrow(LOG_DEBUG, spaces, 9, pos0, rc + 2, 2);
-                arrow(LOG_DEBUG, spaces, 9, pos0 + pos1, rc + 2, 3);
                 if (rc != 0 && rc != 1)
                         return -1;
                 if (remote_port_id && rc == 1)
@@ -217,7 +203,6 @@ parse_scsi_link(const char *current, uint32_t *scsi_host,
         rc = sscanf(current + sz, "target%d:%d:%"PRIu64"/%n", &tosser0, &tosser1,
                     &tosser3, &pos0);
         debug("current:\"%s\" rc:%d pos0:%d\n", current+sz, rc, pos0);
-        arrow(LOG_DEBUG, spaces, 9, pos0, rc, 3);
         if (rc != 3)
                 return -1;
         sz += pos0;
@@ -230,7 +215,6 @@ parse_scsi_link(const char *current, uint32_t *scsi_host,
         rc = sscanf(current + sz, "%d:%d:%d:%"PRIu64"/%n",
                     scsi_bus, scsi_device, scsi_target, scsi_lun, &pos0);
         debug("current:\"%s\" rc:%d pos0:%d\n", current+sz, rc, pos0);
-        arrow(LOG_DEBUG, spaces, 9, pos0, rc, 4);
         if (rc != 4)
                 return -1;
         sz += pos0;
@@ -247,13 +231,6 @@ parse_scsi(struct device *dev, const char *current, const char *root UNUSED)
         ssize_t sz;
         int pos;
         int rc;
-        char *spaces;
-
-        pos = strlen(current);
-        spaces = alloca(pos+1);
-        memset(spaces, ' ', pos+1);
-        spaces[pos] = '\0';
-        pos = 0;
 
         debug("entry");
 
@@ -265,7 +242,6 @@ parse_scsi(struct device *dev, const char *current, const char *root UNUSED)
                     &dev->scsi_info.scsi_lun,
                     &pos);
         debug("current:\"%s\" rc:%d pos:%d\n", dev->device, rc, pos);
-        arrow(LOG_DEBUG, spaces, 9, pos, rc, 3);
         if (rc != 4)
                 return 0;
 

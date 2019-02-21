@@ -44,13 +44,6 @@ parse_md(struct device *dev, const char *current, const char *root UNUSED)
         int rc;
         int32_t md, tosser0, part;
         int pos0 = 0, pos1 = 0;
-        char *spaces;
-
-        pos0 = strlen(current);
-        spaces = alloca(pos0+1);
-        memset(spaces, ' ', pos0+1);
-        spaces[pos0] = '\0';
-        pos0 = 0;
 
         debug("entry");
 
@@ -58,7 +51,6 @@ parse_md(struct device *dev, const char *current, const char *root UNUSED)
         rc = sscanf(current, "md%d/%nmd%dp%d%n",
                     &md, &pos0, &tosser0, &part, &pos1);
         debug("current:\"%s\" rc:%d pos0:%d pos1:%d\n", current, rc, pos0, pos1);
-        arrow(LOG_DEBUG, spaces, 9, pos0, rc, 3);
         /*
          * If it isn't of that form, it's not one of our partitioned md devices.
          */

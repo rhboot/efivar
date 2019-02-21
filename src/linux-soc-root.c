@@ -43,13 +43,6 @@ parse_soc_root(struct device *dev UNUSED, const char *current, const char *root 
         int rc;
         int pos;
         const char *devpart = current;
-        char *spaces;
-
-        pos = strlen(current);
-        spaces = alloca(pos+1);
-        memset(spaces, ' ', pos+1);
-        spaces[pos] = '\0';
-        pos = 0;
 
         debug("entry");
 

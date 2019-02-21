@@ -51,13 +51,6 @@ parse_acpi_root(struct device *dev, const char *current, const char *root UNUSED
         char *colon;
 
         const char *devpart = current;
-        char *spaces;
-
-        pos = strlen(current);
-        spaces = alloca(pos+1);
-        memset(spaces, ' ', pos+1);
-        spaces[pos] = '\0';
-        pos = 0;
 
         debug("entry");
 
