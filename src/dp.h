@@ -71,13 +71,9 @@
 		int _rc;						\
 		char *_guidstr = NULL;					\
 		efi_guid_t _guid;					\
-		const efi_guid_t * const _guid_p =			\
-			likely(__alignof__(guid) == sizeof(guid))	\
-				? guid					\
-				: &_guid;				\
-								        \
-		if (unlikely(__alignof__(guid) == sizeof(guid)))	\
-			memmove(&_guid, guid, sizeof(_guid));		\
+		const efi_guid_t * const _guid_p = &_guid;		\
+									\
+		memmove(&_guid, guid, sizeof(_guid));			\
 		_rc = efi_guid_to_str(_guid_p, &_guidstr);		\
 		if (_rc < 0) {						\
 			efi_error("could not build %s GUID DP string",	\
@@ -86,7 +82,7 @@
 			_guidstr = onstack(_guidstr,			\
 					   strlen(_guidstr)+1);		\
 			_rc = format(buf, size, off, dp_type, "%s",	\
-				     _guidstr);	\
+				     _guidstr);				\
 		}							\
 		_rc;							\
 	})

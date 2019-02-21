@@ -31,7 +31,7 @@
 extern const efi_guid_t efi_guid_zero;
 
 int NONNULL(1, 2) PUBLIC
-efi_guid_cmp(const efi_guid_t *a, const efi_guid_t *b)
+efi_guid_cmp(const void * const a, const void * const b)
 {
 	return memcmp(a, b, sizeof (efi_guid_t));
 }

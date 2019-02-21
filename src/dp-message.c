@@ -620,11 +620,13 @@ _format_message_dn(char *buf, size_t size, const_efidp dp)
 			  ) / sizeof(efi_ip_addr_t);
 		format(buf, size, off, "Dns", "Dns(");
 		for (int i=0; i < end; i++) {
-			const efi_ip_addr_t *addr = &dp->dns.addrs[i];
+			efi_ip_addr_t addr;
+
+			memcpy(&addr, &dp->dns.addrs[i], sizeof(addr));
 			if (i != 0)
 				format(buf, size, off, "Dns", ",");
 			format_ip_addr(buf, size, off, "Dns",
-				       dp->dns.is_ipv6, addr);
+				       dp->dns.is_ipv6, &addr);
 		}
 		format(buf, size, off, "Dns", ")");
 		break;

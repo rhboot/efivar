@@ -128,7 +128,7 @@ extern int efi_symbol_to_guid(const char *symbol, efi_guid_t *guid)
 
 extern int efi_guid_is_zero(const efi_guid_t *guid);
 extern int efi_guid_is_empty(const efi_guid_t *guid);
-extern int efi_guid_cmp(const efi_guid_t *a, const efi_guid_t *b);
+extern int efi_guid_cmp(const void * const a, const void * const b);
 
 /* import / export functions */
 typedef struct efi_variable efi_variable_t;

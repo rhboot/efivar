@@ -23,16 +23,21 @@
 	(((val) & ((mask) << (shift))) >> (shift))
 
 static inline size_t UNUSED
-ucs2len(const uint16_t * const s, ssize_t limit)
+ucs2len(const void *vs, ssize_t limit)
 {
 	ssize_t i;
-	for (i = 0; i < (limit >= 0 ? limit : i+1) && s[i] != (uint16_t)0; i++)
+	const uint16_t *s = vs;
+	const uint8_t *s8 = vs;
+
+	for (i = 0;
+	     i < (limit >= 0 ? limit : i+1) && s8[0] != 0 && s8[1] != 0;
+	     i++, s8 += 2, s++)
 		;
 	return i;
 }
 
 static inline size_t UNUSED
-ucs2size(const uint16_t * const s, ssize_t limit)
+ucs2size(const void *s, ssize_t limit)
 {
 	size_t rc = ucs2len(s, limit);
 	rc *= sizeof (uint16_t);
@@ -69,10 +74,11 @@ utf8size(uint8_t *s, ssize_t limit)
 }
 
 static inline unsigned char * UNUSED
-ucs2_to_utf8(const uint16_t * const chars, ssize_t limit)
+ucs2_to_utf8(const void * const voidchars, ssize_t limit)
 {
 	ssize_t i, j;
 	unsigned char *ret;
+	const uint16_t * const chars = voidchars;
 
 	if (limit < 0)
 		limit = ucs2len(chars, -1);
@@ -124,10 +130,12 @@ ucs2_to_utf8(const uint16_t * const chars, ssize_t limit)
 }
 
 static inline ssize_t UNUSED NONNULL(4)
-utf8_to_ucs2(uint16_t *ucs2, ssize_t size, int terminate, uint8_t *utf8)
+utf8_to_ucs2(void *ucs2void, ssize_t size, int terminate, uint8_t *utf8)
 {
 	ssize_t req;
 	ssize_t i, j;
+	uint16_t *ucs2 = ucs2void;
+	uint16_t val16;
 
 	if (!ucs2 && size > 0) {
 		errno = EINVAL;
@@ -162,10 +170,13 @@ utf8_to_ucs2(uint16_t *ucs2, ssize_t size, int terminate, uint8_t *utf8)
 			val = utf8[i] & 0x7f;
 			i += 1;
 		}
-		ucs2[j] = val;
+		val16 = val;
+		ucs2[j] = val16;
 	}
-	if (terminate)
-		ucs2[j++] = (uint16_t)0;
+	if (terminate) {
+		val16 = 0;
+		ucs2[j++] = val16;
+	}
 	return j;
 };
 
