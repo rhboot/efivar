@@ -364,7 +364,7 @@ _format_message_dn(char *buf, size_t size, const_efidp dp)
 			       dp->infiniband.port_gid[1],
 			       dp->infiniband.port_gid[0]);
 			format_guid(buf, size, off, "Infiniband",
-				    (efi_guid_t *)&dp->infiniband.ioc_guid);
+				    &dp->infiniband.ioc_guid);
 			format(buf, size, off, "Infiniband",
 			       ",%"PRIu64",%"PRIu64")",
 			       dp->infiniband.target_port_id,
