@@ -46,8 +46,7 @@ _format_media_dn(char *buf, size_t size, const_efidp dp)
 			break;
 		case EFIDP_HD_SIGNATURE_GUID:
 			format(buf, size, off, "HD", "GPT,");
-			format_guid(buf, size, off, "HD",
-				    (efi_guid_t *)dp->hd.signature);
+			format_guid(buf, size, off, "HD", dp->hd.signature);
 			format(buf, size, off, "HD",
 			       ",0x%"PRIx64",0x%"PRIx64")",
 			       dp->hd.start, dp->hd.size);
