@@ -252,15 +252,6 @@ static struct dev_probe *dev_probes[] = {
         NULL
 };
 
-static inline bool
-supports_iface(struct dev_probe *probe, enum interface_type iftype)
-{
-        for (unsigned int i = 0; probe->iftypes[i] != unknown; i++)
-                if (probe->iftypes[i] == iftype)
-                        return true;
-        return false;
-}
-
 void HIDDEN
 device_free(struct device *dev)
 {
