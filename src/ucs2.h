@@ -29,7 +29,7 @@ ucs2len(const void *vs, ssize_t limit)
 	const uint8_t *s8 = vs;
 
 	for (i = 0;
-	     i < (limit >= 0 ? limit : i+1) && s8[0] != 0 && s8[1] != 0;
+	     i < (limit >= 0 ? limit : i+1) && !(s8[0] == 0 && s8[1] == 0);
 	     i++, s8 += 2)
 		;
 	return i;
