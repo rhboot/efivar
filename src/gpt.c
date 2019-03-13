@@ -72,24 +72,24 @@ efi_crc32(const void *buf, unsigned long len)
  *
  * Description: Returns 1 if PMBR is valid, 0 otherwise.
  * Validity depends on two things:
- *  1) MSDOS signature is in the last two bytes of the MBR
+ *  1) MSDOS magic is in the last two bytes of the MBR
  *  2) One partition of type 0xEE is found
  */
 static int
 is_pmbr_valid(legacy_mbr *mbr)
 {
-	int i, found = 0, signature = 0;
+	int i, found = 0, magic = 0;
 	if (!mbr)
 		return 0;
-	signature = (le16_to_cpu(mbr->signature) == MSDOS_MBR_SIGNATURE);
-	for (i = 0; signature && i < 4; i++) {
+	magic = (le16_to_cpu(mbr->magic) == MSDOS_MBR_MAGIC);
+	for (i = 0; magic && i < 4; i++) {
 		if (mbr->partition[i].os_type ==
 		    EFI_PMBR_OSTYPE_EFI_GPT) {
 			found = 1;
 			break;
 		}
 	}
-	return (signature && found);
+	return (magic && found);
 }
 
 /**
@@ -389,11 +389,11 @@ is_gpt_valid(int fd, uint64_t lba,
 	if (!(*gpt = alloc_read_gpt_header(fd, lba)))
 		return 0;
 
-	/* Check the GUID Partition Table signature */
-	if (le64_to_cpu((*gpt)->signature) != GPT_HEADER_SIGNATURE) {
-		efi_error("GUID Partition Table Header signature is wrong: %"PRIx64" != %"PRIx64,
-			  (uint64_t)le64_to_cpu((*gpt)->signature),
-			  GPT_HEADER_SIGNATURE);
+	/* Check the GUID Partition Table magic */
+	if (le64_to_cpu((*gpt)->magic) != GPT_HEADER_MAGIC) {
+		efi_error("GUID Partition Table Header magic is wrong: %"PRIx64" != %"PRIx64,
+			  (uint64_t)le64_to_cpu((*gpt)->magic),
+			  GPT_HEADER_MAGIC);
 		free(*gpt);
 		*gpt = NULL;
 		return rc;
@@ -673,7 +673,7 @@ find_valid_gpt(int fd, gpt_header ** gpt, gpt_entry ** ptes,
 
 	/* Would fail due to bad PMBR, but force GPT anyhow */
 	if ((good_pgpt || good_agpt) && !good_pmbr && ignore_pmbr_err) {
-		efi_error("  Warning: Disk has a valid GPT signature but invalid PMBR.\n"
+		efi_error("  Warning: Disk has a valid GPT magic but invalid PMBR.\n"
 			  "  Use GNU Parted to correct disk.\n"
 			  "  gpt option taken, disk treated as GPT.");
 	}

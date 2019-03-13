@@ -52,10 +52,11 @@ is_mbr_valid(legacy_mbr *mbr)
 	int ret;
 	if (!mbr)
 		return 0;
-	ret = (mbr->signature == MSDOS_MBR_SIGNATURE);
+	ret = (mbr->magic == MSDOS_MBR_MAGIC);
 	if (!ret) {
 		errno = ENOTTY;
-		efi_error("mbr signature is not MSDOS_MBR_SIGNATURE");
+		efi_error("mbr magic is 0x%04hx not MSDOS_MBR_MAGIC (0x%04hx)",
+			  mbr->magic, MSDOS_MBR_MAGIC);
 	}
 	return ret;
 }

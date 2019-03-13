@@ -29,10 +29,10 @@
 
 #define EFI_PMBR_OSTYPE_EFI 0xEF
 #define EFI_PMBR_OSTYPE_EFI_GPT 0xEE
-#define MSDOS_MBR_SIGNATURE 0xaa55
+#define MSDOS_MBR_MAGIC 0xaa55
 #define GPT_BLOCK_SIZE 512
 
-#define GPT_HEADER_SIGNATURE ((uint64_t)(0x5452415020494645ULL))
+#define GPT_HEADER_MAGIC ((uint64_t)(0x5452415020494645ULL))
 #define GPT_HEADER_REVISION_V1_02 0x00010200
 #define GPT_HEADER_REVISION_V1_00 0x00010000
 #define GPT_HEADER_REVISION_V0_99 0x00009900
@@ -61,7 +61,7 @@
                  0x23, 0x8f, 0x2a, 0x3d, 0xf9, 0x28)
 
 typedef struct _gpt_header {
-	uint64_t signature;
+	uint64_t magic;
 	uint32_t revision;
 	uint32_t header_size;
 	uint32_t header_crc32;
@@ -133,7 +133,7 @@ typedef struct _legacy_mbr {
 	uint32_t unique_mbr_signature;
 	uint16_t unknown;
 	partition_record partition[4];
-	uint16_t signature;
+	uint16_t magic;
 } PACKED legacy_mbr;
 
 #define EFI_GPT_PRIMARY_PARTITION_TABLE_LBA 1
