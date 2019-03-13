@@ -400,5 +400,15 @@ swizzle_guid_to_uuid(efi_guid_t *guid)
 #endif
 #define log(level, fmt, args...) log_(__FILE__, __LINE__, __func__, level, fmt, ## args)
 #define debug(fmt, args...) log(LOG_DEBUG, fmt, ## args)
+#define log_hex_(file, line, func, level, buf, size)                    \
+        ({                                                              \
+                if (efi_get_verbose() >= level) {                       \
+                        fhexdumpf(efi_get_logfile(), "%s:%d %s(): ",    \
+                                  (uint8_t *)buf, size,                 \
+                                  file, line, func);                    \
+                }                                                       \
+        })
+#define log_hex(level, buf, size) log_hex_(__FILE__, __LINE__, __func__, level, buf, size)
+#define debug_hex(buf, size) log_hex(LOG_DEBUG, buf, size)
 
 #endif /* EFIVAR_UTIL_H */

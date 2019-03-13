@@ -63,8 +63,12 @@ prepare_text(uint8_t *data, unsigned long size, char *buf)
 	buf[offset] = '\0';
 }
 
+/*
+ * variadic fhexdump formatted
+ * think of it as: fprintf(f, %s%s\n", vformat(fmt, ap), hexdump(data,size));
+ */
 static inline void UNUSED
-hexdump(uint8_t *data, unsigned long size)
+vfhexdumpf(FILE *f, const char * const fmt, uint8_t *data, unsigned long size, va_list ap)
 {
 	unsigned long display_offset = (unsigned long)data & 0xffffffff;
 	unsigned long offset = 0;
@@ -80,11 +84,33 @@ hexdump(uint8_t *data, unsigned long size)
 			return;
 
 		prepare_text(data+offset, size-offset, txtbuf);
-		printf("%016lx  %s  %s\n", display_offset, hexbuf, txtbuf);
+		vfprintf(f, fmt, ap);
+		fprintf(f, "%016lx  %s  %s\n", display_offset, hexbuf, txtbuf);
 
 		display_offset += sz;
 		offset += sz;
 	}
+	fflush(f);
+}
+
+/*
+ * fhexdump formatted
+ * think of it as: fprintf(f, %s%s\n", format(fmt, ...), hexdump(data,size));
+ */
+static inline void UNUSED
+fhexdumpf(FILE *f, const char * const fmt, uint8_t *data, unsigned long size, ...)
+{
+	va_list ap;
+
+	va_start(ap, size);
+	vfhexdumpf(f, fmt, data, size, ap);
+	va_end(ap);
+}
+
+static inline void UNUSED
+hexdump(uint8_t *data, unsigned long size)
+{
+	fhexdumpf(stdout, "", data, size);
 }
 
 #endif /* STATIC_HEXDUMP_H */
