@@ -511,3 +511,9 @@ efi_generate_ipv4_device_path(uint8_t *buf, ssize_t size,
 
 	return off;
 }
+
+uint32_t PUBLIC
+efi_get_libefiboot_version(void)
+{
+        return LIBEFIVAR_VERSION;
+}

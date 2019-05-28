@@ -46,8 +46,10 @@ LIBEFIVAR_SOURCES := \
 	lib.c \
 	vars.c
 
+include $(LOCAL_PATH)/../Make.version
+
 LOCAL_SRC_FILES := $(LIBEFIBOOT_SOURCES) $(LIBEFIVAR_SOURCES)
-LOCAL_CFLAGS := -D_FILE_OFFSET_BITS=64 -D_GNU_SOURCE -std=gnu11
+LOCAL_CFLAGS := -D_FILE_OFFSET_BITS=64 -D_GNU_SOURCE -std=gnu11 -DLIBEFIVAR_VERSION=$(VERSION)
 LOCAL_C_INCLUDES := $(LOCAL_PATH)/include
 LOCAL_EXPORT_C_INCLUDE_DIRS := $(LOCAL_C_INCLUDES) $(LOCAL_C_INCLUDES)/efivar $(local-generated-sources-dir)
 LIBEFIVAR_GUIDS_H := $(local-generated-sources-dir)/efivar/efivar-guids.h

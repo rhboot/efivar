@@ -33,3 +33,7 @@ LIBEFIBOOT_1.29 {
 
 LIBEFIBOOT_1.30 {
 } LIBEFIBOOT_1.29;
+
+LIBEFIBOOT_1.31 {
+	global:	efi_get_libefiboot_version;
+} LIBEFIBOOT_1.30;

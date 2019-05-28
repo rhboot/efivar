@@ -249,6 +249,9 @@ extern int efi_get_verbose(void)
 extern FILE * efi_get_logfile(void)
         __attribute__((__visibility__("default")));
 
+extern uint32_t efi_get_libefivar_version(void)
+        __attribute__((__visibility__("default")));
+
 #include <efivar/efivar-dp.h>
 
 #endif /* EFIVAR_H */

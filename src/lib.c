@@ -265,3 +265,9 @@ libefivar_init(void)
 		}
 	}
 }
+
+uint32_t PUBLIC
+efi_get_libefivar_version(void)
+{
+	return LIBEFIVAR_VERSION;
+}
