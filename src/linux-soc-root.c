@@ -41,7 +41,7 @@ static ssize_t
 parse_soc_root(struct device *dev UNUSED, const char *current, const char *root UNUSED)
 {
         int rc;
-        int pos;
+        int pos = 0;
         const char *devpart = current;
 
         debug("entry");

@@ -44,7 +44,7 @@ static ssize_t
 parse_acpi_root(struct device *dev, const char *current, const char *root UNUSED)
 {
         int rc;
-        int pos;
+        int pos = 0;
         uint16_t pad0;
         uint8_t pad1;
         char *acpi_header = NULL;

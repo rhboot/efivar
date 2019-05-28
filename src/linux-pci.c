@@ -46,7 +46,7 @@ static ssize_t
 parse_pci(struct device *dev, const char *current, const char *root)
 {
         int rc;
-        int pos;
+        int pos = 0;
         const char *devpart = current;
 
         debug("entry");

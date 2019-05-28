@@ -44,7 +44,7 @@ static ssize_t
 parse_pci_root(struct device *dev, const char *current, const char *root UNUSED)
 {
         int rc;
-        int pos;
+        int pos = 0;
         uint16_t root_domain;
         uint8_t root_bus;
         const char *devpart = current;

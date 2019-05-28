@@ -48,7 +48,7 @@ static ssize_t
 parse_virtblk(struct device *dev, const char *current, const char *root UNUSED)
 {
         uint32_t tosser;
-        int pos;
+        int pos = 0;
         int rc;
 
         debug("entry");
