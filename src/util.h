@@ -382,15 +382,14 @@ swizzle_guid_to_uuid(efi_guid_t *guid)
 
 #define log_(file, line, func, level, fmt, args...)                     \
         ({                                                              \
-                if (efi_get_verbose() >= level) {                       \
-                        FILE *logfile_ = efi_get_logfile();             \
-                        int len_ = strlen(fmt);                         \
-                        fprintf(logfile_, "%s:%d %s(): ",               \
-                                file, line, func);                      \
-                        fprintf(logfile_, fmt, ## args);                \
-                        if (!len_ || fmt[len_ - 1] != '\n')             \
-                                fprintf(logfile_, "\n");                \
-                }                                                       \
+                efi_stash_loglevel_(level);                             \
+                FILE *logfile_ = efi_get_logfile();                     \
+                int len_ = strlen(fmt);                                 \
+                fprintf(logfile_, "%s:%d %s(): ",                       \
+                        file, line, func);                              \
+                fprintf(logfile_, fmt, ## args);                        \
+                if (!len_ || fmt[len_ - 1] != '\n')                     \
+                        fprintf(logfile_, "\n");                        \
         })
 
 #define LOG_VERBOSE 0
@@ -402,11 +401,10 @@ swizzle_guid_to_uuid(efi_guid_t *guid)
 #define debug(fmt, args...) log(LOG_DEBUG, fmt, ## args)
 #define log_hex_(file, line, func, level, buf, size)                    \
         ({                                                              \
-                if (efi_get_verbose() >= level) {                       \
-                        fhexdumpf(efi_get_logfile(), "%s:%d %s(): ",    \
-                                  (uint8_t *)buf, size,                 \
-                                  file, line, func);                    \
-                }                                                       \
+                efi_stash_loglevel_(level);                             \
+                fhexdumpf(efi_get_logfile(), "%s:%d %s(): ",            \
+                          (uint8_t *)buf, size,                         \
+                          file, line, func);                            \
         })
 #define log_hex(level, buf, size) log_hex_(__FILE__, __LINE__, __func__, level, buf, size)
 #define debug_hex(buf, size) log_hex(LOG_DEBUG, buf, size)

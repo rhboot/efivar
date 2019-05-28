@@ -26,6 +26,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
+#include <sys/mman.h>
 #include <unistd.h>
 
 #include "efiboot.h"
@@ -162,7 +163,58 @@ efi_error_pop(void)
 	clear_error_entry(&error_table[current]);
 }
 
-void PUBLIC DESTRUCTOR
+static int efi_verbose;
+static FILE *efi_errlog, *efi_dbglog;
+static int efi_dbglog_fd = -1;
+static int stashed_log_level;
+static char efi_dbglog_buf[4096];
+
+void PUBLIC
+efi_stash_loglevel_(int level)
+{
+	stashed_log_level = level;
+}
+
+static ssize_t
+dbglog_write(void *cookie UNUSED, const char *buf, size_t size)
+{
+	FILE *log = efi_errlog ? efi_errlog : stderr;
+	ssize_t ret = size;
+
+	if (efi_get_verbose() >= stashed_log_level) {
+		ret = fwrite(buf, 1, size, log);
+	} else if (efi_dbglog_fd >= 0) {
+		lseek(efi_dbglog_fd, 0, SEEK_SET);
+		write(efi_dbglog_fd, buf, size);
+	}
+	return ret;
+}
+
+static int
+dbglog_seek(void *cookie UNUSED, off64_t *offset, int whence)
+{
+	FILE *log = efi_errlog ? efi_errlog : stderr;
+	return fseek(log, *offset, whence);
+}
+
+static int
+dbglog_close(void *cookie UNUSED)
+{
+	if (efi_dbglog_fd >= 0) {
+		close(efi_dbglog_fd);
+		efi_dbglog_fd = -1;
+	}
+	if (efi_errlog) {
+		int ret = fclose(efi_errlog);
+		efi_errlog = NULL;
+		return ret;
+	}
+
+	errno = EBADF;
+	return -1;
+}
+
+void PUBLIC
 efi_error_clear(void)
 {
 	if (error_table) {
@@ -177,15 +229,39 @@ efi_error_clear(void)
 	current = 0;
 }
 
-static int efi_verbose;
-static FILE *efi_errlog;
+void DESTRUCTOR
+efi_error_fini(void)
+{
+	efi_error_clear();
+	if (efi_dbglog) {
+		fclose(efi_dbglog);
+		efi_dbglog = NULL;
+	}
+}
+
+static void CONSTRUCTOR
+efi_error_init(void)
+{
+	cookie_io_functions_t io_funcs = {
+		.write = dbglog_write,
+		.seek = dbglog_seek,
+		.close = dbglog_close,
+	};
+
+	efi_dbglog_fd = memfd_create("efivar-debug.log", MFD_CLOEXEC);
+	if (efi_dbglog_fd == -1)
+		return;
+
+	efi_dbglog = fopencookie(NULL, "a", io_funcs);
+	if (efi_dbglog)
+		setvbuf(efi_dbglog, efi_dbglog_buf, _IOLBF,
+			sizeof(efi_dbglog_buf));
+}
 
 FILE PUBLIC *
 efi_get_logfile(void)
 {
-	if (efi_errlog)
-		return efi_errlog;
-	return stderr;
+	return efi_dbglog;
 }
 
 void PUBLIC
