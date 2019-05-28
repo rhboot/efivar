@@ -405,6 +405,8 @@ struct device HIDDEN
                                 rc = sysfs_readlink(&tmpbuf,
                                                     "block/%s/device/device/driver",
                                                     dev->disk_name);
+                                if (rc >= 0 && tmpbuf)
+                                        efi_error_pop();
                         }
                         if (rc < 0 || !tmpbuf) {
                                 efi_error("readlink of /sys/block/%s/device/driver failed",
@@ -626,3 +628,5 @@ get_sector_size(int filedes)
                 sector_size = 512;
         return sector_size;
 }
+
+// vim:fenc=utf-8:tw=75:et

@@ -187,6 +187,7 @@ extern int efi_error_set(const char *filename,
 			__attribute__((__nonnull__ (1, 2, 5)))
 			__attribute__((__format__ (printf, 5, 6)));
 extern void efi_error_clear(void);
+extern void efi_error_pop(void);
 #else
 static inline int
 __attribute__((__nonnull__ (2, 3, 4, 5, 6)))
@@ -218,6 +219,12 @@ efi_error_clear(void)
 {
 	return;
 }
+
+static inline void
+efi_error_pop(void)
+{
+	return;
+}
 #endif
 
 #define efi_error_real__(errval, file, function, line, fmt, args...) \
@@ -238,3 +245,5 @@ extern FILE * efi_get_logfile(void)
 #include <efivar/efivar-dp.h>
 
 #endif /* EFIVAR_H */
+
+// vim:fenc=utf-8:tw=75:noet

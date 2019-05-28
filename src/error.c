@@ -78,6 +78,22 @@ efi_error_get(unsigned int n,
 	return 1;
 }
 
+static inline UNUSED void
+clear_error_entry(error_table_entry *et)
+{
+	if (!et)
+		return;
+
+	if (et->filename)
+		free(et->filename);
+	if (et->function)
+		free(et->function);
+	if (et->message)
+		free(et->message);
+
+	memset(et, '\0', sizeof(*et));
+}
+
 int PUBLIC NONNULL(1, 2, 5) PRINTF(5, 6)
 efi_error_set(const char *filename,
 	      const char *function,
@@ -136,6 +152,16 @@ err:
 	return -1;
 }
 
+void PUBLIC
+efi_error_pop(void)
+{
+	if (current <= 0)
+		return;
+
+	current -= 1;
+	clear_error_entry(&error_table[current]);
+}
+
 void PUBLIC DESTRUCTOR
 efi_error_clear(void)
 {
@@ -143,14 +169,7 @@ efi_error_clear(void)
 		for (unsigned int i = 0; i < current; i++) {
 			error_table_entry *et = &error_table[i];
 
-			if (et->filename)
-				free(et->filename);
-			if (et->function)
-				free(et->function);
-			if (et->message)
-				free(et->message);
-
-			memset(et, '\0', sizeof(*et));
+			clear_error_entry(et);
 		}
 		free(error_table);
 	}
@@ -182,3 +201,5 @@ efi_get_verbose(void)
 {
 	return efi_verbose;
 }
+
+// vim:fenc=utf-8:tw=75:noet
