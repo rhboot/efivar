@@ -18,7 +18,7 @@ CCLD_FOR_BUILD	?= $(CC_FOR_BUILD)
 CCLD	:= $(if $(filter undefined,$(origin CCLD)),$(CC),$(CCLD))
 OPTIMIZE ?= -O2 -flto
 CFLAGS	?= $(OPTIMIZE) -g3
-CFLAGS	:= $(CFLAGS) -DLIBEFIVAR_VERSION=$(VERSION)
+CFLAGS	:= $(CFLAGS)
 LDFLAGS ?=
 LDFLAGS := $(LDFLAGS)
 AR	:= $(CROSS_COMPILE)$(COMPILER)-ar
@@ -28,6 +28,8 @@ ABIDW	:= abidw
 ABIDIFF := abidiff
 
 PKGS	=
+
+CPPFLAGS += -DLIBEFIVAR_VERSION=$(VERSION)
 
 clang_cflags = -D_GNU_SOURCE -std=gnu11 -Wno-address-of-packed-member
 gcc_cflags = -specs=$(TOPDIR)/gcc.specs
