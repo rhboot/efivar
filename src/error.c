@@ -194,7 +194,13 @@ static int
 dbglog_seek(void *cookie UNUSED, off64_t *offset, int whence)
 {
 	FILE *log = efi_errlog ? efi_errlog : stderr;
-	return fseek(log, *offset, whence);
+	int rc;
+
+	rc = fseek(log, *offset, whence);
+	if (rc < 0)
+		return rc;
+	*offset = ftell(log);
+	return 0;
 }
 
 static int
