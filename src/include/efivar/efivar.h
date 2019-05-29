@@ -188,7 +188,7 @@ extern int efi_error_set(const char *filename,
 			__attribute__((__format__ (printf, 5, 6)));
 extern void efi_error_clear(void);
 extern void efi_error_pop(void);
-extern void efi_stash_loglevel_(int level);
+extern void efi_set_loglevel(int level);
 #else
 static inline int
 __attribute__((__nonnull__ (2, 3, 4, 5, 6)))
@@ -228,7 +228,7 @@ efi_error_pop(void)
 }
 
 static inline void
-efi_stash_loglevel_(int level __attribute__((__unused__)))
+efi_set_loglevel(int level __attribute__((__unused__)))
 {
 	return;
 }

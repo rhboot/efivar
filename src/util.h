@@ -382,7 +382,7 @@ swizzle_guid_to_uuid(efi_guid_t *guid)
 
 #define log_(file, line, func, level, fmt, args...)                     \
         ({                                                              \
-                efi_stash_loglevel_(level);                             \
+                efi_set_loglevel(level);                                \
                 FILE *logfile_ = efi_get_logfile();                     \
                 int len_ = strlen(fmt);                                 \
                 fprintf(logfile_, "%s:%d %s(): ",                       \
@@ -401,7 +401,7 @@ swizzle_guid_to_uuid(efi_guid_t *guid)
 #define debug(fmt, args...) log(LOG_DEBUG, fmt, ## args)
 #define log_hex_(file, line, func, level, buf, size)                    \
         ({                                                              \
-                efi_stash_loglevel_(level);                             \
+                efi_set_loglevel(level);                                \
                 fhexdumpf(efi_get_logfile(), "%s:%d %s(): ",            \
                           (uint8_t *)buf, size,                         \
                           file, line, func);                            \

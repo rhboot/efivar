@@ -133,6 +133,6 @@ LIBEFIVAR_1.37 {
 
 LIBEFIVAR_1.38 {
 	global: efi_error_pop;
-		efi_stash_loglevel_;
+		efi_set_loglevel;
 		efi_get_libefivar_version;
 } LIBEFIVAR_1.37;

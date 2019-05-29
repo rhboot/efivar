@@ -166,13 +166,13 @@ efi_error_pop(void)
 static int efi_verbose;
 static FILE *efi_errlog, *efi_dbglog;
 static int efi_dbglog_fd = -1;
-static int stashed_log_level;
+static int log_level;
 static char efi_dbglog_buf[4096];
 
 void PUBLIC
-efi_stash_loglevel_(int level)
+efi_set_loglevel(int level)
 {
-	stashed_log_level = level;
+	log_level = level;
 }
 
 static ssize_t
@@ -181,7 +181,7 @@ dbglog_write(void *cookie UNUSED, const char *buf, size_t size)
 	FILE *log = efi_errlog ? efi_errlog : stderr;
 	ssize_t ret = size;
 
-	if (efi_get_verbose() >= stashed_log_level) {
+	if (efi_get_verbose() >= log_level) {
 		ret = fwrite(buf, 1, size, log);
 	} else if (efi_dbglog_fd >= 0) {
 		lseek(efi_dbglog_fd, 0, SEEK_SET);
