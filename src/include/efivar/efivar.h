@@ -37,7 +37,7 @@ typedef struct {
 	uint16_t	c;
 	uint16_t	d;
 	uint8_t		e[6];
-} efi_guid_t;
+} efi_guid_t __attribute__((__aligned__(1)));
 
 typedef struct {
 	uint8_t		addr[4];
@@ -128,7 +128,7 @@ extern int efi_symbol_to_guid(const char *symbol, efi_guid_t *guid)
 
 extern int efi_guid_is_zero(const efi_guid_t *guid);
 extern int efi_guid_is_empty(const efi_guid_t *guid);
-extern int efi_guid_cmp(const void * const a, const void * const b);
+extern int efi_guid_cmp(const efi_guid_t *a, const efi_guid_t *b);
 
 /* import / export functions */
 typedef struct efi_variable efi_variable_t;
