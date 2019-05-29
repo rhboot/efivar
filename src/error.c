@@ -185,7 +185,7 @@ dbglog_write(void *cookie UNUSED, const char *buf, size_t size)
 		ret = fwrite(buf, 1, size, log);
 	} else if (efi_dbglog_fd >= 0) {
 		lseek(efi_dbglog_fd, 0, SEEK_SET);
-		write(efi_dbglog_fd, buf, size);
+		ret = write(efi_dbglog_fd, buf, size);
 	}
 	return ret;
 }
