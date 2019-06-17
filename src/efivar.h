@@ -23,6 +23,7 @@
 #include <efivar/efivar.h>
 
 #include "util.h"
+#include "safemath.h"
 #include "efivar_endian.h"
 #include "lib.h"
 #include "guid.h"
