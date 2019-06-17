@@ -139,6 +139,9 @@ extern ssize_t efi_variable_import(uint8_t *data, size_t size,
 extern ssize_t efi_variable_export(efi_variable_t *var, uint8_t *data,
 				size_t size)
 			__attribute__((__nonnull__ (1)));
+extern ssize_t efi_variable_export_dmpstore(efi_variable_t *var, uint8_t *data,
+				size_t size)
+			__attribute__((__nonnull__ (1)));
 
 extern efi_variable_t *efi_variable_alloc(void)
 			__attribute__((__visibility__ ("default")));

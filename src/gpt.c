@@ -49,24 +49,6 @@ struct blkdev_ioctl_param {
 };
 
 /**
- * efi_crc32() - EFI version of crc32 function
- * @buf: buffer to calculate crc32 of
- * @len - length of buf
- *
- * Description: Returns EFI-style CRC32 value for @buf
- *
- * This function uses the little endian Ethernet polynomial
- * but seeds the function with ~0, and xor's with ~0 at the end.
- * Note, the EFI Specification, v1.02, has a reference to
- * Dr. Dobbs Journal, May 1994 (actually it's in May 1992).
- */
-static inline uint32_t
-efi_crc32(const void *buf, unsigned long len)
-{
-	return (crc32(buf, len, ~0L) ^ ~0L);
-}
-
-/**
  * is_pmbr_valid(): test Protective MBR for validity
  * @mbr: pointer to a legacy mbr structure
  *
