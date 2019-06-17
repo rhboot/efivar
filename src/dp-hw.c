@@ -120,3 +120,5 @@ efidp_make_edd10(uint8_t *buf, ssize_t size, uint32_t hardware_device)
 
 	return sz;
 }
+
+// vim:fenc=utf-8:tw=75:noet

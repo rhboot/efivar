@@ -41,55 +41,57 @@
 static ssize_t
 parse_md(struct device *dev, const char *current, const char *root UNUSED)
 {
-        int rc;
-        int32_t md, tosser0, part;
-        int pos0 = 0, pos1 = 0;
+	int rc;
+	int32_t md, tosser0, part;
+	int pos0 = 0, pos1 = 0;
 
-        debug("entry");
+	debug("entry");
 
-        debug("searching for mdM/mdMpN");
-        rc = sscanf(current, "md%d/%nmd%dp%d%n",
-                    &md, &pos0, &tosser0, &part, &pos1);
-        debug("current:\"%s\" rc:%d pos0:%d pos1:%d\n", current, rc, pos0, pos1);
-        /*
-         * If it isn't of that form, it's not one of our partitioned md devices.
-         */
-        if (rc != 3)
-                return 0;
+	debug("searching for mdM/mdMpN");
+	rc = sscanf(current, "md%d/%nmd%dp%d%n",
+	            &md, &pos0, &tosser0, &part, &pos1);
+	debug("current:\"%s\" rc:%d pos0:%d pos1:%d\n", current, rc, pos0, pos1);
+	/*
+	 * If it isn't of that form, it's not one of our partitioned md devices.
+	 */
+	if (rc != 3)
+	        return 0;
 
-        dev->interface_type = md;
+	dev->interface_type = md;
 
-        if (dev->part == -1)
-                dev->part = part;
+	if (dev->part == -1)
+	        dev->part = part;
 
-        return pos1;
+	return pos1;
 }
 
 
 static char *
 make_part_name(struct device *dev)
 {
-        char *ret = NULL;
-        ssize_t rc;
+	char *ret = NULL;
+	ssize_t rc;
 
-        if (dev->part < 1)
-                return NULL;
+	if (dev->part < 1)
+	        return NULL;
 
-        rc = asprintf(&ret, "%sp%d", dev->disk_name, dev->part);
-        if (rc < 0) {
-                efi_error("could not allocate memory");
-                return NULL;
-        }
+	rc = asprintf(&ret, "%sp%d", dev->disk_name, dev->part);
+	if (rc < 0) {
+	        efi_error("could not allocate memory");
+	        return NULL;
+	}
 
-        return ret;
+	return ret;
 }
 
 static enum interface_type md_iftypes[] = { md, unknown };
 
 struct dev_probe HIDDEN md_parser = {
-        .name = "md",
-        .iftypes = md_iftypes,
-        .flags = DEV_PROVIDES_HD,
-        .parse = parse_md,
-        .make_part_name = make_part_name,
+	.name = "md",
+	.iftypes = md_iftypes,
+	.flags = DEV_PROVIDES_HD,
+	.parse = parse_md,
+	.make_part_name = make_part_name,
 };
+
+// vim:fenc=utf-8:tw=75:noet

@@ -43,83 +43,85 @@
 static ssize_t
 parse_pci_root(struct device *dev, const char *current, const char *root UNUSED)
 {
-        int rc;
-        int pos = 0;
-        uint16_t root_domain;
-        uint8_t root_bus;
-        const char *devpart = current;
+	int rc;
+	int pos = 0;
+	uint16_t root_domain;
+	uint8_t root_bus;
+	const char *devpart = current;
 
-        debug("entry");
+	debug("entry");
 
-        /*
-         * find the pci root domain and port; they basically look like:
-         * pci0000:00/
-         *    ^d   ^p
-         */
-        rc = sscanf(devpart, "../../devices/pci%hx:%hhx/%n", &root_domain, &root_bus, &pos);
-        /*
-         * If we can't find that, it's not a PCI device.
-         */
-        if (rc != 2)
-                return 0;
-        devpart += pos;
+	/*
+	 * find the pci root domain and port; they basically look like:
+	 * pci0000:00/
+	 *    ^d   ^p
+	 */
+	rc = sscanf(devpart, "../../devices/pci%hx:%hhx/%n", &root_domain, &root_bus, &pos);
+	/*
+	 * If we can't find that, it's not a PCI device.
+	 */
+	if (rc != 2)
+	        return 0;
+	devpart += pos;
 
-        dev->pci_root.pci_domain = root_domain;
-        dev->pci_root.pci_bus = root_bus;
+	dev->pci_root.pci_domain = root_domain;
+	dev->pci_root.pci_bus = root_bus;
 
-        rc = parse_acpi_hid_uid(dev, "devices/pci%04hx:%02hhx",
-                                root_domain, root_bus);
-        if (rc < 0)
-                return -1;
+	rc = parse_acpi_hid_uid(dev, "devices/pci%04hx:%02hhx",
+	                        root_domain, root_bus);
+	if (rc < 0)
+	        return -1;
 
-        errno = 0;
-        return devpart - current;
+	errno = 0;
+	return devpart - current;
 }
 
 static ssize_t
 dp_create_pci_root(struct device *dev UNUSED,
-                   uint8_t *buf, ssize_t size, ssize_t off)
+	           uint8_t *buf, ssize_t size, ssize_t off)
 {
-        ssize_t new = 0, sz = 0;
-        debug("entry buf:%p size:%zd off:%zd", buf, size, off);
-        debug("returning 0");
-        if (dev->acpi_root.acpi_uid_str) {
-                debug("creating acpi_hid_ex dp hid:0x%08x uid:\"%s\"",
-                      dev->acpi_root.acpi_hid,
-                      dev->acpi_root.acpi_uid_str);
-                new = efidp_make_acpi_hid_ex(buf + off, size ? size - off : 0,
-                                            dev->acpi_root.acpi_hid,
-                                            0, 0, "",
-                                            dev->acpi_root.acpi_uid_str,
-                                            "");
-                if (new < 0) {
-                        efi_error("efidp_make_acpi_hid_ex() failed");
-                        return new;
-                }
-        } else {
-                debug("creating acpi_hid dp hid:0x%08x uid:0x%0"PRIx64,
-                      dev->acpi_root.acpi_hid,
-                      dev->acpi_root.acpi_uid);
-                new = efidp_make_acpi_hid(buf + off, size ? size - off : 0,
-                                         dev->acpi_root.acpi_hid,
-                                         dev->acpi_root.acpi_uid);
-                if (new < 0) {
-                        efi_error("efidp_make_acpi_hid() failed");
-                        return new;
-                }
-        }
-        sz += new;
+	ssize_t new = 0, sz = 0;
+	debug("entry buf:%p size:%zd off:%zd", buf, size, off);
+	debug("returning 0");
+	if (dev->acpi_root.acpi_uid_str) {
+	        debug("creating acpi_hid_ex dp hid:0x%08x uid:\"%s\"",
+	              dev->acpi_root.acpi_hid,
+	              dev->acpi_root.acpi_uid_str);
+	        new = efidp_make_acpi_hid_ex(buf + off, size ? size - off : 0,
+	                                    dev->acpi_root.acpi_hid,
+	                                    0, 0, "",
+	                                    dev->acpi_root.acpi_uid_str,
+	                                    "");
+	        if (new < 0) {
+	                efi_error("efidp_make_acpi_hid_ex() failed");
+	                return new;
+	        }
+	} else {
+	        debug("creating acpi_hid dp hid:0x%08x uid:0x%0"PRIx64,
+	              dev->acpi_root.acpi_hid,
+	              dev->acpi_root.acpi_uid);
+	        new = efidp_make_acpi_hid(buf + off, size ? size - off : 0,
+	                                 dev->acpi_root.acpi_hid,
+	                                 dev->acpi_root.acpi_uid);
+	        if (new < 0) {
+	                efi_error("efidp_make_acpi_hid() failed");
+	                return new;
+	        }
+	}
+	sz += new;
 
-        debug("returning %zd", sz);
-        return sz;
+	debug("returning %zd", sz);
+	return sz;
 }
 
 enum interface_type pci_root_iftypes[] = { pci_root, unknown };
 
 struct dev_probe HIDDEN pci_root_parser = {
-        .name = "pci_root",
-        .iftypes = pci_root_iftypes,
-        .flags = DEV_PROVIDES_ROOT,
-        .parse = parse_pci_root,
-        .create = dp_create_pci_root,
+	.name = "pci_root",
+	.iftypes = pci_root_iftypes,
+	.flags = DEV_PROVIDES_ROOT,
+	.parse = parse_pci_root,
+	.create = dp_create_pci_root,
 };
+
+// vim:fenc=utf-8:tw=75:noet

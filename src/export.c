@@ -335,3 +335,5 @@ efi_variable_realize(efi_variable_t *var)
 	return efi_set_variable(*var->guid, var->name, var->data,
 				var->data_size, attrs, 0600);
 }
+
+// vim:fenc=utf-8:tw=75:noet

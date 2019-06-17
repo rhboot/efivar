@@ -374,3 +374,5 @@ efi_loadopt_desc(efi_load_option *opt, ssize_t limit)
 	last_desc = ucs2_to_utf8(opt->description, limit);
 	return last_desc;
 }
+
+// vim:fenc=utf-8:tw=75:noet

@@ -47,33 +47,34 @@
 static ssize_t
 parse_virtblk(struct device *dev, const char *current, const char *root UNUSED)
 {
-        uint32_t tosser;
-        int pos = 0;
-        int rc;
+	uint32_t tosser;
+	int pos = 0;
+	int rc;
 
-        debug("entry");
+	debug("entry");
 
-        debug("searching for virtio0/");
-        rc = sscanf(current, "virtio%x/%n", &tosser, &pos);
-        debug("current:\"%s\" rc:%d pos:%d\n", current, rc, pos);
-        /*
-         * If we couldn't find virtioX/ then it isn't a virtio device.
-         */
-        if (rc < 1)
-                return 0;
+	debug("searching for virtio0/");
+	rc = sscanf(current, "virtio%x/%n", &tosser, &pos);
+	debug("current:\"%s\" rc:%d pos:%d\n", current, rc, pos);
+	/*
+	 * If we couldn't find virtioX/ then it isn't a virtio device.
+	 */
+	if (rc < 1)
+	        return 0;
 
-        dev->interface_type = virtblk;
+	dev->interface_type = virtblk;
 
-        return pos;
+	return pos;
 }
 
 enum interface_type virtblk_iftypes[] = { virtblk, unknown };
 
 struct dev_probe HIDDEN virtblk_parser = {
-        .name = "virtio block",
-        .iftypes = virtblk_iftypes,
-        .flags = DEV_PROVIDES_HD,
-        .parse = parse_virtblk,
-        .create = NULL,
+	.name = "virtio block",
+	.iftypes = virtblk_iftypes,
+	.flags = DEV_PROVIDES_HD,
+	.parse = parse_virtblk,
+	.create = NULL,
 };
 
+// vim:fenc=utf-8:tw=75:noet

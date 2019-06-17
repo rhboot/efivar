@@ -35,29 +35,31 @@
 static ssize_t
 parse_i2o(struct device *dev, const char *current UNUSED, const char *root UNUSED)
 {
-        debug("entry");
-        /* I2O disks can have up to 16 partitions, or 4 bits worth. */
-        if (dev->major >= 80 && dev->major <= 87) {
-                dev->interface_type = i2o;
-                dev->disknum = 16*(dev->major-80) + (dev->minor >> 4);
-                set_part(dev, dev->minor & 0xF);
-        } else {
-                /* If it isn't those majors, it's not an i2o dev */
-                return 0;
-        }
+	debug("entry");
+	/* I2O disks can have up to 16 partitions, or 4 bits worth. */
+	if (dev->major >= 80 && dev->major <= 87) {
+	        dev->interface_type = i2o;
+	        dev->disknum = 16*(dev->major-80) + (dev->minor >> 4);
+	        set_part(dev, dev->minor & 0xF);
+	} else {
+	        /* If it isn't those majors, it's not an i2o dev */
+	        return 0;
+	}
 
-        char *block = strstr(current, "/block/");
-        if (!block)
-                return -1;
-        return block + 1 - current;
+	char *block = strstr(current, "/block/");
+	if (!block)
+	        return -1;
+	return block + 1 - current;
 }
 
 enum interface_type i2o_iftypes[] = { i2o, unknown };
 
 struct dev_probe HIDDEN i2o_parser = {
-        .name = "i2o",
-        .iftypes = i2o_iftypes,
-        .flags = DEV_PROVIDES_HD,
-        .parse = parse_i2o,
-        .create = NULL,
+	.name = "i2o",
+	.iftypes = i2o_iftypes,
+	.flags = DEV_PROVIDES_HD,
+	.parse = parse_i2o,
+	.create = NULL,
 };
+
+// vim:fenc=utf-8:tw=75:noet

@@ -333,3 +333,5 @@ efidp_make_acpi_hid_ex(uint8_t *buf, ssize_t size,
 
 	return sz;
 }
+
+// vim:fenc=utf-8:tw=75:noet

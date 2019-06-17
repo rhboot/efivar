@@ -846,3 +846,5 @@ efidp_make_emmc(uint8_t *buf, ssize_t size, uint32_t slot_id)
 
 	return sz;
 }
+
+// vim:fenc=utf-8:tw=75:noet

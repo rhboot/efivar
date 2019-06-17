@@ -40,26 +40,28 @@
 static ssize_t
 parse_soc_root(struct device *dev UNUSED, const char *current, const char *root UNUSED)
 {
-        int rc;
-        int pos = 0;
-        const char *devpart = current;
+	int rc;
+	int pos = 0;
+	const char *devpart = current;
 
-        debug("entry");
+	debug("entry");
 
-        rc = sscanf(devpart, "../../devices/platform/soc/%*[^/]/%n", &pos);
-        if (rc != 0)
-                return 0;
-        devpart += pos;
-        debug("new position is \"%s\"", devpart);
+	rc = sscanf(devpart, "../../devices/platform/soc/%*[^/]/%n", &pos);
+	if (rc != 0)
+	        return 0;
+	devpart += pos;
+	debug("new position is \"%s\"", devpart);
 
-        return devpart - current;
+	return devpart - current;
 }
 
 enum interface_type soc_root_iftypes[] = { soc_root, unknown };
 
 struct dev_probe HIDDEN soc_root_parser = {
-        .name = "soc_root",
-        .iftypes = soc_root_iftypes,
-        .flags = DEV_ABBREV_ONLY|DEV_PROVIDES_ROOT,
-        .parse = parse_soc_root,
+	.name = "soc_root",
+	.iftypes = soc_root_iftypes,
+	.flags = DEV_ABBREV_ONLY|DEV_PROVIDES_ROOT,
+	.parse = parse_soc_root,
 };
+
+// vim:fenc=utf-8:tw=75:noet

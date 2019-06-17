@@ -781,3 +781,5 @@ gpt_disk_get_partition_info(int fd, uint32_t num, uint64_t * start,
  * tab-width: 8
  * End:
  */
+
+// vim:fenc=utf-8:tw=75:noet

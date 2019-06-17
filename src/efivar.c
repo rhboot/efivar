@@ -281,7 +281,7 @@ edit_variable(const char *guid_name, void *data, size_t data_size,
 	}
 
 	rc = efi_get_variable(guid, name, &old_data, &old_data_size,
-				&old_attributes);
+			      &old_attributes);
 	if (rc < 0 && edit_type != EDIT_WRITE) {
 		fprintf(stderr, "efivar: %m\n");
 		show_errors();
@@ -293,12 +293,14 @@ edit_variable(const char *guid_name, void *data, size_t data_size,
 
 	switch (edit_type){
 		case EDIT_APPEND:
-			rc = efi_append_variable(guid, name, data, data_size,
-					old_attributes);
+			rc = efi_append_variable(guid, name,
+						 data, data_size,
+						 old_attributes);
 			break;
 		case EDIT_WRITE:
-			rc = efi_set_variable(guid, name, data, data_size,
-					old_attributes, 0644);
+			rc = efi_set_variable(guid, name,
+					      data, data_size,
+					      old_attributes, 0644);
 			break;
 	}
 
@@ -509,3 +511,5 @@ int main(int argc, char *argv[])
 
 	return 0;
 }
+
+// vim:fenc=utf-8:tw=75:noet

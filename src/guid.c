@@ -44,7 +44,7 @@ efi_guid_is_zero(const efi_guid_t *guid)
 
 int
 efi_guid_is_empty(const efi_guid_t *guid)
-        NONNULL(1) PUBLIC ALIAS(efi_guid_is_zero);
+	NONNULL(1) PUBLIC ALIAS(efi_guid_is_zero);
 
 int NONNULL(1, 2) PUBLIC
 efi_str_to_guid(const char *s, efi_guid_t *guid)
@@ -286,4 +286,6 @@ efi_name_to_guid(const char *name, efi_guid_t *guid)
 
 int
 efi_id_guid_to_guid(const char *name, efi_guid_t *guid)
-        NONNULL(1, 2) PUBLIC ALIAS(efi_name_to_guid);
+	NONNULL(1, 2) PUBLIC ALIAS(efi_name_to_guid);
+
+// vim:fenc=utf-8:tw=75:noet

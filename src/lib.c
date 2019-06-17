@@ -83,7 +83,7 @@ VERSION(_efi_set_variable_mode,efi_set_variable@@LIBEFIVAR_0.24);
 int NONNULL(2, 3) PUBLIC
 efi_set_variable(efi_guid_t guid, const char *name, uint8_t *data,
 		 size_t data_size, uint32_t attributes, mode_t mode)
-        ALIAS(_efi_set_variable_mode);
+	ALIAS(_efi_set_variable_mode);
 
 int NONNULL(2, 3) PUBLIC
 efi_append_variable(efi_guid_t guid, const char *name, uint8_t *data,
@@ -238,12 +238,12 @@ libefivar_init(void)
 		NULL
 	};
 	char *ops_name = getenv("LIBEFIVAR_OPS");
-        if (ops_name && strcasestr(ops_name, "help")) {
-                printf("LIBEFIVAR_OPS operations available:\n");
-                for (int i = 0; ops_list[i] != NULL; i++)
-                        printf("\t%s\n", ops_list[i]->name);
-                exit(0);
-        }
+	if (ops_name && strcasestr(ops_name, "help")) {
+		printf("LIBEFIVAR_OPS operations available:\n");
+		for (int i = 0; ops_list[i] != NULL; i++)
+			printf("\t%s\n", ops_list[i]->name);
+		exit(0);
+	}
 
 	for (int i = 0; ops_list[i] != NULL; i++)
 	{
@@ -271,3 +271,5 @@ efi_get_libefivar_version(void)
 {
 	return LIBEFIVAR_VERSION;
 }
+
+// vim:fenc=utf-8:tw=75:noet

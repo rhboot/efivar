@@ -130,14 +130,19 @@ efivarfs_make_fd_mutable(int fd, unsigned long *orig_attrs)
 {
 	unsigned long mutable_attrs = 0;
 
-        *orig_attrs = 0;
+	*orig_attrs = 0;
+
 	if (ioctl(fd, FS_IOC_GETFLAGS, orig_attrs) == -1)
 		return -1;
+
 	if ((*orig_attrs & FS_IMMUTABLE_FL) == 0)
 		return 0;
-        mutable_attrs = *orig_attrs & ~(unsigned long)FS_IMMUTABLE_FL;
+
+	mutable_attrs = *orig_attrs & ~(unsigned long)FS_IMMUTABLE_FL;
+
 	if (ioctl(fd, FS_IOC_SETFLAGS, &mutable_attrs) == -1)
 		return -1;
+
 	return 0;
 }
 
@@ -448,10 +453,10 @@ err:
 
 	ioctl(restore_immutable_fd, FS_IOC_SETFLAGS, &orig_attrs);
 
-        if (wfd >= 0)
-                close(wfd);
-        if (rfd >= 0)
-                close(rfd);
+	if (wfd >= 0)
+		close(wfd);
+	if (rfd >= 0)
+		close(rfd);
 
 	free(buf);
 	free(path);
@@ -513,3 +518,5 @@ struct efi_var_operations efivarfs_ops = {
 	.get_next_variable_name = efivarfs_get_next_variable_name,
 	.chmod_variable = efivarfs_chmod_variable,
 };
+
+// vim:fenc=utf-8:tw=75:noet

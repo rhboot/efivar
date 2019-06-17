@@ -402,8 +402,7 @@ efidp_format_device_path(char *buf, size_t size, const_efidp dp, ssize_t limit)
 }
 
 ssize_t PUBLIC
-efidp_parse_device_node(char *path UNUSED, efidp out UNUSED,
-                        size_t size UNUSED)
+efidp_parse_device_node(char *path UNUSED, efidp out UNUSED, size_t size UNUSED)
 {
 	efi_error("not implented");
 	errno = -ENOSYS;
@@ -462,3 +461,5 @@ efidp_make_generic(uint8_t *buf, ssize_t size, uint8_t type, uint8_t subtype,
 	head->length = total_size;
 	return head->length;
 }
+
+// vim:fenc=utf-8:tw=75:noet

@@ -79,11 +79,11 @@ msdos_disk_get_extended_partition_info (int fd UNUSED,
 					uint64_t *start UNUSED,
 					uint64_t *size UNUSED)
 {
-        /* Until I can handle these... */
-        //fprintf(stderr, "Extended partition info not supported.\n");
+	/* Until I can handle these... */
+	//fprintf(stderr, "Extended partition info not supported.\n");
 	errno = ENOSYS;
 	efi_error("extended partition info is not supported");
-        return -1;
+	return -1;
 }
 
 /************************************************************
@@ -162,23 +162,23 @@ msdos_disk_get_partition_info (int fd, int write_signature,
 	}
 	*(uint32_t *)signature = mbr->unique_mbr_signature;
 
-        if (num > 4) {
+	if (num > 4) {
 		/* Extended partition */
-                rc = msdos_disk_get_extended_partition_info(fd, mbr, num,
+		rc = msdos_disk_get_extended_partition_info(fd, mbr, num,
 							    start, size);
 		if (rc < 0) {
 			efi_error("could not get extended partition info");
 			return rc;
 		}
-        } else if (num == 0) {
+	} else if (num == 0) {
 		/* Whole disk */
-                *start = 0;
+		*start = 0;
 		ioctl(fd, BLKGETSIZE, &disk_size);
-                *size = disk_size;
+		*size = disk_size;
 	} else if (num >= 1 && num <= 4) {
 		/* Primary partition */
-                *start = mbr->partition[num-1].starting_lba;
-                *size  = mbr->partition[num-1].size_in_lba;
+		*start = mbr->partition[num-1].starting_lba;
+		*size  = mbr->partition[num-1].size_in_lba;
 	}
 	return 0;
 }
@@ -259,7 +259,7 @@ is_partitioned(int fd)
 
 ssize_t HIDDEN
 make_hd_dn(uint8_t *buf, ssize_t size, int fd, int32_t partition,
-           uint32_t options)
+	   uint32_t options)
 {
 	uint64_t part_start=0, part_size = 0;
 	uint8_t signature[16]="", format=0, signature_type=0;
@@ -284,3 +284,5 @@ make_hd_dn(uint8_t *buf, ssize_t size, int fd, int32_t partition,
 		efi_error("could not make HD DP node");
 	return rc;
 }
+
+// vim:fenc=utf-8:tw=75:noet

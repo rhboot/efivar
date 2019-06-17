@@ -50,110 +50,111 @@
 static ssize_t
 parse_nvme(struct device *dev, const char *current, const char *root UNUSED)
 {
-        int rc;
-        int32_t tosser0, tosser1, tosser2, ctrl_id, ns_id, partition;
-        uint8_t *filebuf = NULL;
-        int pos0 = 0, pos1 = 0;
+	int rc;
+	int32_t tosser0, tosser1, tosser2, ctrl_id, ns_id, partition;
+	uint8_t *filebuf = NULL;
+	int pos0 = 0, pos1 = 0;
 
-        debug("entry");
+	debug("entry");
 
-        debug("searching for nvme/nvme0/nvme0n1 or nvme/nvme0/nvme0n1/nvme0n1p1");
-        rc = sscanf(current, "nvme/nvme%d/nvme%dn%d%n/nvme%dn%dp%d%n",
-                    &tosser0, &ctrl_id, &ns_id, &pos0,
-                    &tosser1, &tosser2, &partition, &pos1);
-        debug("current:\"%s\" rc:%d pos0:%d pos1:%d\n", current, rc, pos0, pos1);
-        /*
-         * If it isn't of that form, it's not one of our nvme devices.
-         */
-        if (rc != 3 && rc != 6)
-                return 0;
+	debug("searching for nvme/nvme0/nvme0n1 or nvme/nvme0/nvme0n1/nvme0n1p1");
+	rc = sscanf(current, "nvme/nvme%d/nvme%dn%d%n/nvme%dn%dp%d%n",
+	            &tosser0, &ctrl_id, &ns_id, &pos0,
+	            &tosser1, &tosser2, &partition, &pos1);
+	debug("current:\"%s\" rc:%d pos0:%d pos1:%d\n", current, rc, pos0, pos1);
+	/*
+	 * If it isn't of that form, it's not one of our nvme devices.
+	 */
+	if (rc != 3 && rc != 6)
+	        return 0;
 
-        dev->nvme_info.ctrl_id = ctrl_id;
-        dev->nvme_info.ns_id = ns_id;
-        dev->nvme_info.has_eui = 0;
-        dev->interface_type = nvme;
+	dev->nvme_info.ctrl_id = ctrl_id;
+	dev->nvme_info.ns_id = ns_id;
+	dev->nvme_info.has_eui = 0;
+	dev->interface_type = nvme;
 
-        if (rc == 6) {
-                if (dev->part == -1)
-                        dev->part = partition;
+	if (rc == 6) {
+	        if (dev->part == -1)
+	                dev->part = partition;
 
-                pos0 = pos1;
-        }
+	        pos0 = pos1;
+	}
 
-        /*
-         * now fish the eui out of sysfs is there is one...
-         */
-        rc = read_sysfs_file(&filebuf,
-                             "class/block/nvme%dn%d/eui",
-                             ctrl_id, ns_id);
-        if ((rc < 0 && errno == ENOENT) || filebuf == NULL) {
-                rc = read_sysfs_file(&filebuf,
-                             "class/block/nvme%dn%d/device/eui",
-                             ctrl_id, ns_id);
-        }
-        if (rc >= 0 && filebuf != NULL) {
-                uint8_t eui[8];
-                if (rc < 23) {
-                        errno = EINVAL;
-                        return -1;
-                }
-                rc = sscanf((char *)filebuf,
-                            "%02hhx %02hhx %02hhx %02hhx "
-                            "%02hhx %02hhx %02hhx %02hhx",
-                            &eui[0], &eui[1], &eui[2], &eui[3],
-                            &eui[4], &eui[5], &eui[6], &eui[7]);
-                if (rc < 8) {
-                        errno = EINVAL;
-                        return -1;
-                }
-                dev->nvme_info.has_eui = 1;
-                memcpy(dev->nvme_info.eui, eui, sizeof(eui));
-        }
+	/*
+	 * now fish the eui out of sysfs is there is one...
+	 */
+	rc = read_sysfs_file(&filebuf,
+	                     "class/block/nvme%dn%d/eui",
+	                     ctrl_id, ns_id);
+	if ((rc < 0 && errno == ENOENT) || filebuf == NULL) {
+	        rc = read_sysfs_file(&filebuf,
+	                     "class/block/nvme%dn%d/device/eui",
+	                     ctrl_id, ns_id);
+	}
+	if (rc >= 0 && filebuf != NULL) {
+	        uint8_t eui[8];
+	        if (rc < 23) {
+	                errno = EINVAL;
+	                return -1;
+	        }
+	        rc = sscanf((char *)filebuf,
+	                    "%02hhx %02hhx %02hhx %02hhx "
+	                    "%02hhx %02hhx %02hhx %02hhx",
+	                    &eui[0], &eui[1], &eui[2], &eui[3],
+	                    &eui[4], &eui[5], &eui[6], &eui[7]);
+	        if (rc < 8) {
+	                errno = EINVAL;
+	                return -1;
+	        }
+	        dev->nvme_info.has_eui = 1;
+	        memcpy(dev->nvme_info.eui, eui, sizeof(eui));
+	}
 
-        return pos0;
+	return pos0;
 }
 
 static ssize_t
 dp_create_nvme(struct device *dev,
-               uint8_t *buf,  ssize_t size, ssize_t off)
+	       uint8_t *buf,  ssize_t size, ssize_t off)
 {
-        ssize_t sz;
+	ssize_t sz;
 
-        debug("entry");
+	debug("entry");
 
-        sz = efidp_make_nvme(buf + off, size ? size - off : 0,
-                             dev->nvme_info.ns_id,
-                             dev->nvme_info.has_eui ? dev->nvme_info.eui
-                                                        : NULL);
-        return sz;
+	sz = efidp_make_nvme(buf + off, size ? size - off : 0,
+	                     dev->nvme_info.ns_id,
+	                     dev->nvme_info.has_eui ? dev->nvme_info.eui
+	                                                : NULL);
+	return sz;
 }
 
 static char *
 make_part_name(struct device *dev)
 {
-        char *ret = NULL;
-        ssize_t rc;
+	char *ret = NULL;
+	ssize_t rc;
 
-        if (dev->part < 1)
-                return NULL;
+	if (dev->part < 1)
+	        return NULL;
 
-        rc = asprintf(&ret, "%sp%d", dev->disk_name, dev->part);
-        if (rc < 0) {
-                efi_error("could not allocate memory");
-                return NULL;
-        }
+	rc = asprintf(&ret, "%sp%d", dev->disk_name, dev->part);
+	if (rc < 0) {
+	        efi_error("could not allocate memory");
+	        return NULL;
+	}
 
-        return ret;
+	return ret;
 }
 
 static enum interface_type nvme_iftypes[] = { nvme, unknown };
 
 struct dev_probe HIDDEN nvme_parser = {
-        .name = "nvme",
-        .iftypes = nvme_iftypes,
-        .flags = DEV_PROVIDES_HD,
-        .parse = parse_nvme,
-        .create = dp_create_nvme,
-        .make_part_name = make_part_name,
+	.name = "nvme",
+	.iftypes = nvme_iftypes,
+	.flags = DEV_PROVIDES_HD,
+	.parse = parse_nvme,
+	.create = dp_create_nvme,
+	.make_part_name = make_part_name,
 };
 
+// vim:fenc=utf-8:tw=75:noet

@@ -670,3 +670,5 @@ struct efi_var_operations vars_ops = {
 	.get_next_variable_name = vars_get_next_variable_name,
 	.chmod_variable = vars_chmod_variable,
 };
+
+// vim:fenc=utf-8:tw=75:noet

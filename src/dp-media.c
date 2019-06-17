@@ -207,3 +207,5 @@ efidp_make_hd(uint8_t *buf, ssize_t size, uint32_t num, uint64_t part_start,
 
 	return sz;
 }
+
+// vim:fenc=utf-8:tw=75:noet

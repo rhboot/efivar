@@ -72,120 +72,122 @@
 static ssize_t
 parse_pmem(struct device *dev, const char *current, const char *root UNUSED)
 {
-        uint8_t *filebuf = NULL;
-        uint8_t system, sysbus, acpi_id;
-        uint16_t pnp_id;
-        int ndbus, region, btt_region_id, btt_id, rc, pos;
-        char *namespace = NULL;
+	uint8_t *filebuf = NULL;
+	uint8_t system, sysbus, acpi_id;
+	uint16_t pnp_id;
+	int ndbus, region, btt_region_id, btt_id, rc, pos;
+	char *namespace = NULL;
 
-        debug("entry");
+	debug("entry");
 
-        if (!strcmp(dev->driver, "nd_pmem")) {
-                ;
+	if (!strcmp(dev->driver, "nd_pmem")) {
+	        ;
 #if 0 /* dunno */
-        } else if (!strcmp(dev->driver, "nd_blk")) {
-                /* dunno */
-                dev->inteface_type = scsi;
+	} else if (!strcmp(dev->driver, "nd_blk")) {
+	        /* dunno */
+	        dev->inteface_type = scsi;
 #endif
-        } else {
-                /*
-                 * not a pmem device
-                 */
-                return 0;
-        }
+	} else {
+	        /*
+	         * not a pmem device
+	         */
+	        return 0;
+	}
 
-        /*
-         * We're not actually using any of the values here except pos (our
-         * return value), but rather just being paranoid that this is the sort
-         * of device we care about.
-         *
-         * 259:0 -> ../../devices/LNXSYSTM:00/LNXSYBUS:00/ACPI0012:00/ndbus0/region12/btt12.1/block/pmem12s
-         */
-        rc = sscanf(current,
-                    "../../devices/LNXSYSTM:%hhx/LNXSYBUS:%hhx/ACPI%hx:%hhx/ndbus%d/region%d/btt%d.%d/%n",
-                    &system, &sysbus, &pnp_id, &acpi_id, &ndbus, &region,
-                    &btt_region_id, &btt_id, &pos);
-        if (rc < 8)
-                return 0;
+	/*
+	 * We're not actually using any of the values here except pos (our
+	 * return value), but rather just being paranoid that this is the sort
+	 * of device we care about.
+	 *
+	 * 259:0 -> ../../devices/LNXSYSTM:00/LNXSYBUS:00/ACPI0012:00/ndbus0/region12/btt12.1/block/pmem12s
+	 */
+	rc = sscanf(current,
+	            "../../devices/LNXSYSTM:%hhx/LNXSYBUS:%hhx/ACPI%hx:%hhx/ndbus%d/region%d/btt%d.%d/%n",
+	            &system, &sysbus, &pnp_id, &acpi_id, &ndbus, &region,
+	            &btt_region_id, &btt_id, &pos);
+	if (rc < 8)
+	        return 0;
 
-        /*
-         * but the UUID we really do need to have.
-         */
-        rc = read_sysfs_file(&filebuf,
-                             "class/block/%s/device/namespace", dev->disk_name);
-        if ((rc < 0 && errno == ENOENT) || filebuf == NULL)
-                return -1;
+	/*
+	 * but the UUID we really do need to have.
+	 */
+	rc = read_sysfs_file(&filebuf,
+	                     "class/block/%s/device/namespace", dev->disk_name);
+	if ((rc < 0 && errno == ENOENT) || filebuf == NULL)
+	        return -1;
 
-        rc = sscanf((char *)filebuf, "%ms[^\n]\n", &namespace);
-        if (rc != 1 || namespace == NULL)
-                return -1;
+	rc = sscanf((char *)filebuf, "%ms[^\n]\n", &namespace);
+	if (rc != 1 || namespace == NULL)
+	        return -1;
 
-        filebuf = NULL;
-        debug("nvdimm namespace is \"%s\"", namespace);
-        rc = read_sysfs_file(&filebuf, "bus/nd/devices/%s/uuid", namespace);
-        free(namespace);
-        if (rc < 0 || filebuf == NULL)
-                return -1;
+	filebuf = NULL;
+	debug("nvdimm namespace is \"%s\"", namespace);
+	rc = read_sysfs_file(&filebuf, "bus/nd/devices/%s/uuid", namespace);
+	free(namespace);
+	if (rc < 0 || filebuf == NULL)
+	        return -1;
 
-        rc = efi_str_to_guid((char *)filebuf,
-                             &dev->nvdimm_info.namespace_label);
-        if (rc < 0)
-                return -1;
+	rc = efi_str_to_guid((char *)filebuf,
+	                     &dev->nvdimm_info.namespace_label);
+	if (rc < 0)
+	        return -1;
 
-        filebuf = NULL;
-        rc = read_sysfs_file(&filebuf, "class/block/%s/device/uuid",
-                             dev->disk_name);
-        if (rc < 0 || filebuf == NULL)
-                return -1;
+	filebuf = NULL;
+	rc = read_sysfs_file(&filebuf, "class/block/%s/device/uuid",
+	                     dev->disk_name);
+	if (rc < 0 || filebuf == NULL)
+	        return -1;
 
-        rc = efi_str_to_guid((char *)filebuf,
-                             &dev->nvdimm_info.nvdimm_label);
-        if (rc < 0)
-                return -1;
+	rc = efi_str_to_guid((char *)filebuf,
+	                     &dev->nvdimm_info.nvdimm_label);
+	if (rc < 0)
+	        return -1;
 
-        /*
-         * Right now it's not clear what encoding NVDIMM($uuid) gets in the
-         * binary format, so this will be in the mixed endian format EFI GUIDs
-         * are in (33221100-1100-1100-0011-223344556677) unless you set this
-         * variable.
-         */
-        if (getenv("LIBEFIBOOT_SWIZZLE_PMEM_UUID") != NULL) {
-                swizzle_guid_to_uuid(&dev->nvdimm_info.namespace_label);
-                swizzle_guid_to_uuid(&dev->nvdimm_info.nvdimm_label);
-        }
+	/*
+	 * Right now it's not clear what encoding NVDIMM($uuid) gets in the
+	 * binary format, so this will be in the mixed endian format EFI GUIDs
+	 * are in (33221100-1100-1100-0011-223344556677) unless you set this
+	 * variable.
+	 */
+	if (getenv("LIBEFIBOOT_SWIZZLE_PMEM_UUID") != NULL) {
+	        swizzle_guid_to_uuid(&dev->nvdimm_info.namespace_label);
+	        swizzle_guid_to_uuid(&dev->nvdimm_info.nvdimm_label);
+	}
 
-        dev->interface_type = nd_pmem;
+	dev->interface_type = nd_pmem;
 
-        return pos;
+	return pos;
 }
 
 static ssize_t
 dp_create_pmem(struct device *dev,
-               uint8_t *buf, ssize_t size, ssize_t off)
+	       uint8_t *buf, ssize_t size, ssize_t off)
 {
-        ssize_t sz, sz1;
+	ssize_t sz, sz1;
 
-        debug("entry");
+	debug("entry");
 
-        sz = efidp_make_nvdimm(buf + off, size ? size - off : 0,
-                               &dev->nvdimm_info.namespace_label);
-        if (sz < 0)
-                return sz;
-        off += sz;
-        sz1 = efidp_make_nvdimm(buf + off, size ? size - off : 0,
-                                &dev->nvdimm_info.nvdimm_label);
-        if (sz1 < 0)
-                return sz1;
+	sz = efidp_make_nvdimm(buf + off, size ? size - off : 0,
+	                       &dev->nvdimm_info.namespace_label);
+	if (sz < 0)
+	        return sz;
+	off += sz;
+	sz1 = efidp_make_nvdimm(buf + off, size ? size - off : 0,
+	                        &dev->nvdimm_info.nvdimm_label);
+	if (sz1 < 0)
+	        return sz1;
 
-        return sz + sz1;
+	return sz + sz1;
 }
 
 enum interface_type pmem_iftypes[] = { nd_pmem, unknown };
 
 struct dev_probe HIDDEN pmem_parser = {
-        .name = "pmem",
-        .iftypes = pmem_iftypes,
-        .flags = DEV_PROVIDES_ROOT|DEV_PROVIDES_HD,
-        .parse = parse_pmem,
-        .create = dp_create_pmem,
+	.name = "pmem",
+	.iftypes = pmem_iftypes,
+	.flags = DEV_PROVIDES_ROOT|DEV_PROVIDES_HD,
+	.parse = parse_pmem,
+	.create = dp_create_pmem,
 };
+
+// vim:fenc=utf-8:tw=75:noet
