@@ -2,13 +2,13 @@
 + -D_GNU_SOURCE
 
 *efivar_cpp_options:
- -Werror -Wall -std=gnu11 -Wextra
+ -Wall -Wno-nonnull-compare -Werror -Wno-error=cpp -std=gnu11 -Wextra -funsigned-char
 
 *cpp_options:
 + %(efivar_cpp_options)
 
 *cc1_options:
-+ %(efivar_cpp_options) -Wmaybe-uninitialized -fno-merge-constants -fvisibility=hidden %{!r:%{!fpie:%{!fPIE:%{!fpic:%{!fPIC:%{!fno-pic:-fPIE}}}}}} -grecord-gcc-switches
++ %(efivar_cpp_options) -Wmaybe-uninitialized -fno-merge-constants -funsigned-char -fvisibility=hidden %{!r:%{!fpie:%{!fPIE:%{!fpic:%{!fPIC:%{!fno-pic:-fPIE}}}}}} -grecord-gcc-switches
 
 *self_spec:
 + %{!shared:%{!static:%{!r:-pie}}} %{static:-Wl,-no-fatal-warnings -Wl,-static -static -Wl,-z,relro,-z,now} -grecord-gcc-switches

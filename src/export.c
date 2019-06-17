@@ -35,7 +35,7 @@
 struct efi_variable {
 	uint64_t attrs;
 	efi_guid_t *guid;
-	char *name;
+	unsigned char *name;
 	uint8_t *data;
 	size_t data_size;
 };
@@ -149,7 +149,7 @@ efi_variable_import(uint8_t *data, size_t size, efi_variable_t **var_out)
 ssize_t NONNULL(1) PUBLIC
 efi_variable_export(efi_variable_t *var, uint8_t *data, size_t size)
 {
-	size_t name_len = strlen(var->name);
+	size_t name_len = strlen((char *)var->name);
 
 	size_t needed = sizeof (uint32_t)		/* magic */
 		      + sizeof (uint32_t)		/* version */
@@ -233,13 +233,13 @@ efi_variable_free(efi_variable_t *var, int free_data)
 }
 
 int NONNULL(1, 2) PUBLIC
-efi_variable_set_name(efi_variable_t *var, char *name)
+efi_variable_set_name(efi_variable_t *var, unsigned char *name)
 {
 	var->name = name;
 	return 0;
 }
 
-char PUBLIC NONNULL(1) *
+unsigned char PUBLIC NONNULL(1) *
 efi_variable_get_name(efi_variable_t *var)
 {
 	if (!var->name) {
@@ -329,10 +329,10 @@ efi_variable_realize(efi_variable_t *var)
 	}
 	uint32_t attrs = var->attrs & ATTRS_MASK;
 	if (attrs & EFI_VARIABLE_APPEND_WRITE) {
-		return efi_append_variable(*var->guid, var->name,
+		return efi_append_variable(*var->guid, (char *)var->name,
 					var->data, var->data_size, attrs);
 	}
-	return efi_set_variable(*var->guid, var->name, var->data,
+	return efi_set_variable(*var->guid, (char *)var->name, var->data,
 				var->data_size, attrs, 0600);
 }
 

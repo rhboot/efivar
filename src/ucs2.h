@@ -47,7 +47,7 @@ ucs2size(const void *s, ssize_t limit)
 }
 
 static inline size_t UNUSED NONNULL(1)
-utf8len(uint8_t *s, ssize_t limit)
+utf8len(const unsigned char *s, ssize_t limit)
 {
 	ssize_t i, j;
 	for (i = 0, j = 0; i < (limit >= 0 ? limit : i+1) && s[i] != '\0';
@@ -64,7 +64,7 @@ utf8len(uint8_t *s, ssize_t limit)
 }
 
 static inline size_t UNUSED NONNULL(1)
-utf8size(uint8_t *s, ssize_t limit)
+utf8size(const unsigned char *s, ssize_t limit)
 {
 	size_t ret = utf8len(s,limit);
 	if (ret < (limit >= 0 ? (size_t)limit : ret+1))
@@ -129,7 +129,7 @@ ucs2_to_utf8(const void * const voidchars, ssize_t limit)
 }
 
 static inline ssize_t UNUSED NONNULL(4)
-utf8_to_ucs2(void *ucs2void, ssize_t size, int terminate, uint8_t *utf8)
+utf8_to_ucs2(void *ucs2void, ssize_t size, int terminate, const unsigned char *utf8)
 {
 	ssize_t req;
 	ssize_t i, j;

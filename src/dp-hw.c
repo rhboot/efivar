@@ -26,7 +26,8 @@
 #include "efivar.h"
 
 ssize_t
-format_edd10_guid(char *buf, size_t size, const char *dp_type, const_efidp dp)
+format_edd10_guid(unsigned char *buf, size_t size,
+		  const char *dp_type, const_efidp dp)
 {
 	ssize_t off = 0;
 	efidp_edd10 const *edd_dp = (efidp_edd10 *)dp;
@@ -36,7 +37,7 @@ format_edd10_guid(char *buf, size_t size, const char *dp_type, const_efidp dp)
 }
 
 ssize_t
-_format_hw_dn(char *buf, size_t size, const_efidp dp)
+_format_hw_dn(unsigned char *buf, size_t size, const_efidp dp)
 {
 	efi_guid_t edd10_guid = EDD10_HARDWARE_VENDOR_PATH_GUID;
 	ssize_t off = 0;

@@ -28,7 +28,7 @@
 #include "efivar.h"
 
 ssize_t
-_format_media_dn(char *buf, size_t size, const_efidp dp)
+_format_media_dn(unsigned char *buf, size_t size, const_efidp dp)
 {
 	ssize_t off = 0;
 	switch (dp->subtype) {

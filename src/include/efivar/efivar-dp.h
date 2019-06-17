@@ -1240,10 +1240,12 @@ efidp_is_valid(const_efidp dp, ssize_t limit)
 #endif
 
 /* and now, printing and parsing */
-extern ssize_t efidp_parse_device_node(char *path, efidp out, size_t size);
-extern ssize_t efidp_parse_device_path(char *path, efidp out, size_t size);
-extern ssize_t efidp_format_device_path(char *buf, size_t size, const_efidp dp,
-				       ssize_t limit);
+extern ssize_t efidp_parse_device_node(unsigned char *path,
+				       efidp out, size_t size);
+extern ssize_t efidp_parse_device_path(unsigned char *path,
+				       efidp out, size_t size);
+extern ssize_t efidp_format_device_path(unsigned char *buf, size_t size,
+					const_efidp dp, ssize_t limit);
 extern ssize_t efidp_make_vendor(uint8_t *buf, ssize_t size, uint8_t type,
 				 uint8_t subtype,  efi_guid_t vendor_guid,
 				 void *data, size_t data_size);

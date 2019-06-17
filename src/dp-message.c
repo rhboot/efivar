@@ -28,7 +28,7 @@
 #include "efivar.h"
 
 static ssize_t
-format_ipv4_addr_helper(char *buf, size_t size, const char *dp_type,
+format_ipv4_addr_helper(unsigned char *buf, size_t size, const char *dp_type,
 			const uint8_t *ipaddr, int32_t port)
 {
 	ssize_t off = 0;
@@ -40,7 +40,7 @@ format_ipv4_addr_helper(char *buf, size_t size, const char *dp_type,
 }
 
 static ssize_t
-format_ipv6_addr_helper(char *buf, size_t size, const char *dp_type,
+format_ipv6_addr_helper(unsigned char *buf, size_t size, const char *dp_type,
 			const uint8_t *ipaddr, int32_t port)
 {
 	uint16_t *ip = (uint16_t *)ipaddr;
@@ -123,7 +123,7 @@ format_ipv6_addr_helper(char *buf, size_t size, const char *dp_type,
 		      "IPv6", addr, port)
 
 static ssize_t
-format_ip_addr_helper(char *buf, size_t size,
+format_ip_addr_helper(unsigned char *buf, size_t size,
 		      const char *dp_type UNUSED,
 		      int is_ipv6, const efi_ip_addr_t *addr)
 {
@@ -142,7 +142,7 @@ format_ip_addr_helper(char *buf, size_t size,
 		      dp_type, is_ipv6, addr)
 
 static ssize_t
-format_uart(char *buf, size_t size,
+format_uart(unsigned char *buf, size_t size,
 	    const char *dp_type UNUSED,
 	    const_efidp dp)
 {
@@ -162,7 +162,7 @@ format_uart(char *buf, size_t size,
 }
 
 static ssize_t
-format_sas(char *buf, size_t size,
+format_sas(unsigned char *buf, size_t size,
 	   const char *dp_type UNUSED,
 	   const_efidp dp)
 {
@@ -232,7 +232,7 @@ format_sas(char *buf, size_t size,
 	       dp->usb_class.device_protocol)
 
 static ssize_t
-format_usb_class(char *buf, size_t size,
+format_usb_class(unsigned char *buf, size_t size,
 		 const char *dp_type UNUSED,
 		 const_efidp dp)
 {
@@ -312,7 +312,7 @@ format_usb_class(char *buf, size_t size,
 }
 
 ssize_t
-_format_message_dn(char *buf, size_t size, const_efidp dp)
+_format_message_dn(unsigned char *buf, size_t size, const_efidp dp)
 {
 	ssize_t off = 0;
 	switch (dp->subtype) {
@@ -393,7 +393,7 @@ _format_message_dn(char *buf, size_t size, const_efidp dp)
 		struct {
 			efi_guid_t guid;
 			char label[40];
-			ssize_t (*formatter)(char *buf, size_t size,
+			ssize_t (*formatter)(unsigned char *buf, size_t size,
 				const char *dp_type UNUSED,
 				const_efidp dp);
 		} subtypes[] = {
@@ -417,7 +417,7 @@ _format_message_dn(char *buf, size_t size, const_efidp dp)
 			  .label = "" }
 		};
 		char *label = NULL;
-		ssize_t (*formatter)(char *buf, size_t size,
+		ssize_t (*formatter)(unsigned char *buf, size_t size,
 			const char *dp_type UNUSED,
 			const_efidp dp) = NULL;
 
@@ -455,8 +455,8 @@ _format_message_dn(char *buf, size_t size, const_efidp dp)
 			       }
 	case EFIDP_MSG_IPv6: {
 		efidp_ipv6_addr const *a = &dp->ipv6_addr;
-		char *addr0 = NULL;
-		char *addr1 = NULL;
+		unsigned char *addr0 = NULL;
+		unsigned char *addr1 = NULL;
 		ssize_t tmpoff = 0;
 		ssize_t sz;
 

@@ -28,7 +28,7 @@
 #include "efivar.h"
 
 static ssize_t
-_format_acpi_adr(char *buf, size_t size,
+_format_acpi_adr(unsigned char *buf, size_t size,
 		 const char *dp_type UNUSED,
 		 const_efidp dp)
 {
@@ -45,9 +45,10 @@ _format_acpi_adr(char *buf, size_t size,
 	format_helper(_format_acpi_adr, buf, size, off, "AcpiAdr", dp)
 
 static ssize_t
-_format_acpi_hid_ex(char *buf, size_t size, const char *dp_type UNUSED,
-		    const_efidp dp,
-		    const char *hidstr, const char *cidstr, const char *uidstr)
+_format_acpi_hid_ex(unsigned char *buf, size_t size,
+		    const char *dp_type UNUSED, const_efidp dp,
+		    const char *hidstr, const char *cidstr,
+		    const char *uidstr)
 {
 	ssize_t off = 0;
 
@@ -98,7 +99,7 @@ _format_acpi_hid_ex(char *buf, size_t size, const char *dp_type UNUSED,
 		      hidstr, cidstr, uidstr)
 
 ssize_t
-_format_acpi_dn(char *buf, size_t size, const_efidp dp)
+_format_acpi_dn(unsigned char *buf, size_t size, const_efidp dp)
 {
 	ssize_t off = 0;
 	const char *hidstr = NULL;

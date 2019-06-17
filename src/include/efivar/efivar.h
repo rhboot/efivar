@@ -144,9 +144,9 @@ extern efi_variable_t *efi_variable_alloc(void)
 			__attribute__((__visibility__ ("default")));
 extern void efi_variable_free(efi_variable_t *var, int free_data);
 
-extern int efi_variable_set_name(efi_variable_t *var, char *name)
+extern int efi_variable_set_name(efi_variable_t *var, unsigned char *name)
 			__attribute__((__nonnull__ (1, 2)));
-extern char *efi_variable_get_name(efi_variable_t *var)
+extern unsigned char *efi_variable_get_name(efi_variable_t *var)
 			__attribute__((__visibility__ ("default")))
 			__attribute__((__nonnull__ (1)));
 

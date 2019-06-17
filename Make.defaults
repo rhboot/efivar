@@ -31,7 +31,9 @@ PKGS	=
 
 CPPFLAGS += -DLIBEFIVAR_VERSION=$(VERSION)
 
-clang_cflags = -D_GNU_SOURCE -std=gnu11 -Wno-address-of-packed-member
+clang_cflags = -D_GNU_SOURCE -std=gnu11 -Wno-address-of-packed-member \
+	       -funsigned-char -Wall -Wno-nonnull-compare \
+	       -Werror -Wno-error=cpp
 gcc_cflags = -specs=$(TOPDIR)/gcc.specs
 cflags	= $(CFLAGS) -I${TOPDIR}/src/include/ \
 	$(if $(findstring clang,$(CC)),$(clang_cflags),) \

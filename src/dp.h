@@ -88,8 +88,9 @@
 	})
 
 static inline ssize_t UNUSED
-format_hex_helper(char *buf, size_t size, const char *dp_type, char *separator,
-		  int stride, const void * const addr, const size_t len)
+format_hex_helper(unsigned char *buf, size_t size, const char *dp_type,
+		  char *separator, int stride, const void * const addr,
+		  const size_t len)
 {
 	ssize_t off = 0;
 	for (size_t i = 0; i < len; i++) {
@@ -110,7 +111,8 @@ format_hex_helper(char *buf, size_t size, const char *dp_type, char *separator,
 		      addr, len)
 
 static inline ssize_t UNUSED
-format_vendor_helper(char *buf, size_t size, char *label, const_efidp dp)
+format_vendor_helper(unsigned char *buf, size_t size, char *label,
+		     const_efidp dp)
 {
 	ssize_t off = 0;
 	ssize_t bytes = efidp_node_size(dp)
@@ -157,11 +159,11 @@ format_vendor_helper(char *buf, size_t size, char *label, const_efidp dp)
 		off;							\
 	})
 
-extern ssize_t _format_hw_dn(char *buf, size_t size, const_efidp dp);
-extern ssize_t _format_acpi_dn(char *buf, size_t size, const_efidp dp);
-extern ssize_t _format_message_dn(char *buf, size_t size, const_efidp dp);
-extern ssize_t _format_media_dn(char *buf, size_t size, const_efidp dp);
-extern ssize_t _format_bios_boot_dn(char *buf, size_t size, const_efidp dp);
+extern ssize_t _format_hw_dn(unsigned char *buf, size_t size, const_efidp dp);
+extern ssize_t _format_acpi_dn(unsigned char *buf, size_t size, const_efidp dp);
+extern ssize_t _format_message_dn(unsigned char *buf, size_t size, const_efidp dp);
+extern ssize_t _format_media_dn(unsigned char *buf, size_t size, const_efidp dp);
+extern ssize_t _format_bios_boot_dn(unsigned char *buf, size_t size, const_efidp dp);
 
 #define format_helper_2(name, buf, size, off, dp) ({			\
 		ssize_t _sz;						\

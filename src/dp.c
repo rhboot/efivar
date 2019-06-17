@@ -298,7 +298,8 @@ efidp_append_instance(const_efidp dp, const_efidp dpi, efidp *out)
 }
 
 ssize_t PUBLIC
-efidp_format_device_path(char *buf, size_t size, const_efidp dp, ssize_t limit)
+efidp_format_device_path(unsigned char *buf, size_t size, const_efidp dp,
+			 ssize_t limit)
 {
 	ssize_t off = 0;
 	int first = 1;
@@ -402,7 +403,8 @@ efidp_format_device_path(char *buf, size_t size, const_efidp dp, ssize_t limit)
 }
 
 ssize_t PUBLIC
-efidp_parse_device_node(char *path UNUSED, efidp out UNUSED, size_t size UNUSED)
+efidp_parse_device_node(unsigned char *path UNUSED,
+			efidp out UNUSED, size_t size UNUSED)
 {
 	efi_error("not implented");
 	errno = -ENOSYS;
@@ -410,7 +412,7 @@ efidp_parse_device_node(char *path UNUSED, efidp out UNUSED, size_t size UNUSED)
 }
 
 ssize_t PUBLIC
-efidp_parse_device_path(char *path UNUSED, efidp out UNUSED,
+efidp_parse_device_path(unsigned char *path UNUSED, efidp out UNUSED,
 			size_t size UNUSED)
 {
 	efi_error("not implented");
