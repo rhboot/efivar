@@ -51,3 +51,5 @@ extern struct efi_var_operations vars_ops;
 extern struct efi_var_operations efivarfs_ops;
 
 #endif /* LIBEFIVAR_LIB_H */
+
+// vim:fenc=utf-8:tw=75:noet

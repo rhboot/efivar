@@ -114,3 +114,5 @@ hexdump(uint8_t *data, unsigned long size)
 }
 
 #endif /* STATIC_HEXDUMP_H */
+
+// vim:fenc=utf-8:tw=75:noet

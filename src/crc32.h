@@ -30,3 +30,5 @@
 extern uint32_t crc32 (const void *buf, unsigned long len, uint32_t seed);
 
 #endif /* _CRC32_H */
+
+// vim:fenc=utf-8:tw=75:noet

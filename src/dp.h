@@ -187,3 +187,5 @@ extern ssize_t _format_bios_boot_dn(char *buf, size_t size, const_efidp dp);
 	format_helper_2(_format_bios_boot_dn, buf, size, off, dp)
 
 #endif /* _EFIVAR_INTERNAL_DP_H */
+
+// vim:fenc=utf-8:tw=75:noet

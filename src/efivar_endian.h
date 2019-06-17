@@ -51,3 +51,5 @@
 #endif
 
 #endif /* _EFIVAR_ENDIAN_H */
+
+// vim:fenc=utf-8:tw=75:noet

@@ -36,4 +36,5 @@
 #include "path-helpers.h"
 
 #endif /* !PRIVATE_EFIVAR_H_ */
-// vim:fenc=utf-8:tw=75:et
+
+// vim:fenc=utf-8:tw=75:noet

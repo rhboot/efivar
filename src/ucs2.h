@@ -180,3 +180,5 @@ utf8_to_ucs2(void *ucs2void, ssize_t size, int terminate, uint8_t *utf8)
 };
 
 #endif /* _EFIVAR_UCS2_H */
+
+// vim:fenc=utf-8:tw=75:noet

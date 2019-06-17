@@ -22,8 +22,8 @@
  *
  * In glibc's headers, bits/floatn.h has:
  *
- * #if (defined __x86_64__                                              \
- *   ? __GNUC_PREREQ (4, 3)                                             \
+ * #if (defined __x86_64__						\
+ *   ? __GNUC_PREREQ (4, 3)						\
  *   : (defined __GNU__ ? __GNUC_PREREQ (4, 5) : __GNUC_PREREQ (4, 4)))
  * # define __HAVE_FLOAT128 1
  * #else
@@ -35,24 +35,21 @@
  * #if __HAVE_FLOAT128 && __GLIBC_USE (IEC_60559_TYPES_EXT)
  * slash* Likewise for the '_Float128' format  *slash
  * extern _Float128 strtof128 (const char *__restrict __nptr,
- *                       char **__restrict __endptr)
- *      __THROW __nonnull ((1));
+ *			       char **__restrict __endptr)
+ *	__THROW __nonnull ((1));
  * #endif
  *
  * Which then causes cov-emit to lose its shit:
  *
- * "/usr/include/stdlib.h", line 133: error #20: identifier "_Float128" is
- *           undefined
+ * "/usr/include/stdlib.h", line 133: error #20: identifier "_Float128" is undefined
  *   extern _Float128 strtof128 (const char *__restrict __nptr,
- *          ^
- * "/usr/include/stdlib.h", line 190: error #20: identifier "_Float128" is
- *           undefined
- *                         _Float128 __f)
- *                         ^
- * "/usr/include/stdlib.h", line 236: error #20: identifier "_Float128" is
- *           undefined
+ *	    ^
+ * "/usr/include/stdlib.h", line 190: error #20: identifier "_Float128" is undefined
+ *			 _Float128 __f)
+ *			 ^
+ * "/usr/include/stdlib.h", line 236: error #20: identifier "_Float128" is undefined
  *   extern _Float128 strtof128_l (const char *__restrict __nptr,
- *          ^
+ *	    ^
  *
  * And then you'll notice something like this later on:
  * [WARNING] Emitted 0 C/C++ compilation units (0%) successfully
@@ -91,4 +88,5 @@ typedef _Complex float __cfloat128 __attribute__ ((__mode__ (__TC__)));
 #endif
 
 #endif /* !FIX_COVERITY_H */
-// vim:fenc=utf-8:tw=75
+
+// vim:fenc=utf-8:tw=75:noet

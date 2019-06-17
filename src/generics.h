@@ -184,3 +184,5 @@ generic_append_variable(efi_guid_t guid, const char *name,
 
 #endif /* LIBEFIVAR_GENERIC_NEXT_VARIABLE_NAME_H */
 #endif /* EFIVAR_BUILD_ENVIRONMENT */
+
+// vim:fenc=utf-8:tw=75:noet

@@ -75,322 +75,322 @@
 #endif
 #endif
 #ifndef int_add
-#define int_add(a, b, c) ({                                             \
-                const int _limit = INT_MAX;                             \
-                int _ret;                                               \
-                _ret = _limit - ((unsigned long long)a) >               \
-                          ((unsigned long long)b);                      \
-                if (!_ret)                                              \
-                        *(c) = ((a) + (b));                             \
-                _ret;                                                   \
-        })
+#define int_add(a, b, c) ({					\
+		const int _limit = INT_MAX;			\
+		int _ret;					\
+		_ret = _limit - ((unsigned long long)a) >	\
+			  ((unsigned long long)b);		\
+		if (!_ret)					\
+			*(c) = ((a) + (b));			\
+		_ret;						\
+	})
 #endif
 #ifndef long_add
-#define long_add(a, b, c) ({                                            \
-                const long _limit = LONG_MAX;                           \
-                int _ret;                                               \
-                _ret = _limit - ((unsigned long long)a) >               \
-                           ((unsigned long long)b);                     \
-                if (!_ret)                                              \
-                        *(c) = ((a) + (b));                             \
-                _ret;                                                   \
-        })
+#define long_add(a, b, c) ({					\
+		const long _limit = LONG_MAX;			\
+		int _ret;					\
+		_ret = _limit - ((unsigned long long)a) >	\
+			   ((unsigned long long)b);		\
+		if (!_ret)					\
+			*(c) = ((a) + (b));			\
+		_ret;						\
+	})
 #endif
 #ifndef long_mult
-#define long_mult(a, b, c) ({                                           \
-                const long _limit = LONG_MAX;                           \
-                int _ret = 1;                                           \
-                if ((a) == 0 || (b) == 0)                               \
-                        _ret = 0;                                       \
-                else                                                    \
-                        _ret = _limit / (a) < (b);                      \
-                if (!_ret)                                              \
-                        *(c) = ((a) * (b));                             \
-                _ret;                                                   \
-        })
+#define long_mult(a, b, c) ({					\
+		const long _limit = LONG_MAX;			\
+		int _ret = 1;					\
+		if ((a) == 0 || (b) == 0)			\
+			_ret = 0;				\
+		else						\
+			_ret = _limit / (a) < (b);		\
+		if (!_ret)					\
+			*(c) = ((a) * (b));			\
+		_ret;						\
+	})
 #endif
 #ifndef ulong_add
-#define ulong_add(a, b, c) ({                                           \
-                const unsigned long _limit = ULONG_MAX;                 \
-                int _ret;                                               \
-                _ret = _limit - ((unsigned long long)a) >               \
-                            ((unsigned long long)b);                    \
-                if (!_ret)                                              \
-                        *(c) = ((a) + (b));                             \
-                _ret;                                                   \
-        })
+#define ulong_add(a, b, c) ({					\
+		const unsigned long _limit = ULONG_MAX;		\
+		int _ret;					\
+		_ret = _limit - ((unsigned long long)a) >	\
+			    ((unsigned long long)b);		\
+		if (!_ret)					\
+			*(c) = ((a) + (b));			\
+		_ret;						\
+	})
 #endif
 #ifndef ulong_mult
-#define ulong_mult(a, b, c) ({                                          \
-                const unsigned long _limit = ULONG_MAX;                 \
-                int _ret = 1;                                           \
-                if ((a) == 0 || (b) == 0)                               \
-                        _ret = 0;                                       \
-                else                                                    \
-                        _ret = _limit / (a) < (b);                      \
-                if (!_ret)                                              \
-                        *(c) = ((a) * (b));                             \
-                _ret;                                                   \
-        })
+#define ulong_mult(a, b, c) ({					\
+		const unsigned long _limit = ULONG_MAX;		\
+		int _ret = 1;					\
+		if ((a) == 0 || (b) == 0)			\
+			_ret = 0;				\
+		else						\
+			_ret = _limit / (a) < (b);		\
+		if (!_ret)					\
+			*(c) = ((a) * (b));			\
+		_ret;						\
+	})
 #endif
 
 #if defined(__GNUC__) && defined(__GNUC_MINOR__)
 #if __GNUC__ >= 5 && __GNUC_MINOR__ >= 1
-#define add(a, b, c) _Generic((c),                                      \
-                              int *: int_add(a,b,c),                    \
-                              long *: long_add(a,b,c),                  \
-                              unsigned long *: ulong_add(a,b,c))
-#define mult(a, b, c) _Generic((c),                                     \
-                              long *: long_mult(a,b,c),                 \
-                              unsigned long *: ulong_mult(a,b,c))
+#define add(a, b, c) _Generic((c),				\
+			      int *: int_add(a,b,c),		\
+			      long *: long_add(a,b,c),		\
+			      unsigned long *: ulong_add(a,b,c))
+#define mult(a, b, c) _Generic((c),				\
+			      long *: long_mult(a,b,c),		\
+			      unsigned long *: ulong_mult(a,b,c))
 #endif
 #endif
 
 #ifndef add
-#define add(a, b, c) ({                                                 \
-                (*(c)) = ((a) + (b));                                   \
-                })
+#define add(a, b, c) ({						\
+		(*(c)) = ((a) + (b));				\
+		})
 #endif
 #ifndef mult
-#define mult(a, b, c) ({                                                \
-                (*(c)) = ((a) * (b));                                   \
-                })
+#define mult(a, b, c) ({					\
+		(*(c)) = ((a) * (b));				\
+		})
 #endif
 
 static inline int UNUSED
 read_file(int fd, uint8_t **result, size_t *bufsize)
 {
-        uint8_t *p;
-        size_t size = 4096;
-        size_t filesize = 0;
-        ssize_t s = 0;
-        uint8_t *buf, *newbuf;
+	uint8_t *p;
+	size_t size = 4096;
+	size_t filesize = 0;
+	ssize_t s = 0;
+	uint8_t *buf, *newbuf;
 
-        if (!(newbuf = calloc(size, sizeof (uint8_t)))) {
-                efi_error("could not allocate memory");
-                *result = buf = NULL;
-                *bufsize = 0;
-                return -1;
-        }
-        buf = newbuf;
+	if (!(newbuf = calloc(size, sizeof (uint8_t)))) {
+		efi_error("could not allocate memory");
+		*result = buf = NULL;
+		*bufsize = 0;
+		return -1;
+	}
+	buf = newbuf;
 
-        do {
-                p = buf + filesize;
-                /* size - filesize shouldn't exceed SSIZE_MAX because we're
-                 * only allocating 4096 bytes at a time and we're checking that
-                 * before doing so. */
-                s = read(fd, p, size - filesize);
-                if (s < 0 && errno == EAGAIN) {
-                        /*
-                         * if we got EAGAIN, there's a good chance we've hit
-                         * the kernel rate limiter.  Doing more reads is just
-                         * going to make it worse, so instead, give it a rest.
-                         */
-                        sched_yield();
-                        continue;
-                } else if (s < 0) {
-                        int saved_errno = errno;
-                        free(buf);
-                        *result = buf = NULL;
-                        *bufsize = 0;
-                        errno = saved_errno;
-                        efi_error("could not read from file");
-                        return -1;
-                }
-                filesize += s;
-                /* only exit for empty reads */
-                if (s == 0)
-                        break;
-                if (filesize >= size) {
-                        /* See if we're going to overrun and return an error
-                         * instead. */
-                        if (size > (size_t)-1 - 4096) {
-                                free(buf);
-                                *result = buf = NULL;
-                                *bufsize = 0;
-                                errno = ENOMEM;
-                                efi_error("could not read from file");
-                                return -1;
-                        }
-                        newbuf = realloc(buf, size + 4096);
-                        if (newbuf == NULL) {
-                                int saved_errno = errno;
-                                free(buf);
-                                *result = buf = NULL;
-                                *bufsize = 0;
-                                errno = saved_errno;
-                                efi_error("could not allocate memory");
-                                return -1;
-                        }
-                        buf = newbuf;
-                        memset(buf + size, '\0', 4096);
-                        size += 4096;
-                }
-        } while (1);
+	do {
+		p = buf + filesize;
+		/* size - filesize shouldn't exceed SSIZE_MAX because we're
+		 * only allocating 4096 bytes at a time and we're checking that
+		 * before doing so. */
+		s = read(fd, p, size - filesize);
+		if (s < 0 && errno == EAGAIN) {
+			/*
+			 * if we got EAGAIN, there's a good chance we've hit
+			 * the kernel rate limiter.  Doing more reads is just
+			 * going to make it worse, so instead, give it a rest.
+			 */
+			sched_yield();
+			continue;
+		} else if (s < 0) {
+			int saved_errno = errno;
+			free(buf);
+			*result = buf = NULL;
+			*bufsize = 0;
+			errno = saved_errno;
+			efi_error("could not read from file");
+			return -1;
+		}
+		filesize += s;
+		/* only exit for empty reads */
+		if (s == 0)
+			break;
+		if (filesize >= size) {
+			/* See if we're going to overrun and return an error
+			 * instead. */
+			if (size > (size_t)-1 - 4096) {
+				free(buf);
+				*result = buf = NULL;
+				*bufsize = 0;
+				errno = ENOMEM;
+				efi_error("could not read from file");
+				return -1;
+			}
+			newbuf = realloc(buf, size + 4096);
+			if (newbuf == NULL) {
+				int saved_errno = errno;
+				free(buf);
+				*result = buf = NULL;
+				*bufsize = 0;
+				errno = saved_errno;
+				efi_error("could not allocate memory");
+				return -1;
+			}
+			buf = newbuf;
+			memset(buf + size, '\0', 4096);
+			size += 4096;
+		}
+	} while (1);
 
-        newbuf = realloc(buf, filesize+1);
-        if (!newbuf) {
-                free(buf);
-                *result = buf = NULL;
-                efi_error("could not allocate memory");
-                return -1;
-        }
-        newbuf[filesize] = '\0';
-        *result = newbuf;
-        *bufsize = filesize+1;
-        return 0;
+	newbuf = realloc(buf, filesize+1);
+	if (!newbuf) {
+		free(buf);
+		*result = buf = NULL;
+		efi_error("could not allocate memory");
+		return -1;
+	}
+	newbuf[filesize] = '\0';
+	*result = newbuf;
+	*bufsize = filesize+1;
+	return 0;
 }
 
 static inline uint64_t UNUSED
 lcm(uint64_t x, uint64_t y)
 {
-        uint64_t m = x, n = y, o;
-        while ((o = m % n)) {
-                m = n;
-                n = o;
-        }
-        return (x / n) * y;
+	uint64_t m = x, n = y, o;
+	while ((o = m % n)) {
+		m = n;
+		n = o;
+	}
+	return (x / n) * y;
 }
 
 #ifndef strdupa
-#define strdupa(s)                                                      \
-       (__extension__ ({                                                \
-                const char *__in = (s);                                 \
-                size_t __len = strlen (__in);                           \
-                char *__out = (char *) alloca (__len + 1);              \
-                strcpy(__out, __in);                                    \
-                __out;                                                  \
-        }))
+#define strdupa(s)						      \
+       (__extension__ ({						\
+		const char *__in = (s);				 \
+		size_t __len = strlen (__in);			   \
+		char *__out = (char *) alloca (__len + 1);	      \
+		strcpy(__out, __in);				    \
+		__out;						  \
+	}))
 #endif
 
 #ifndef strndupa
-#define strndupa(s, l)                                                  \
-       (__extension__ ({                                                \
-                const char *__in = (s);                                 \
-                size_t __len = strnlen (__in, (l));                     \
-                char *__out = (char *) alloca (__len + 1);              \
-                strncpy(__out, __in, __len);                            \
-                __out[__len] = '\0';                                    \
-                __out;                                                  \
-        }))
+#define strndupa(s, l)						  \
+       (__extension__ ({						\
+		const char *__in = (s);				 \
+		size_t __len = strnlen (__in, (l));		     \
+		char *__out = (char *) alloca (__len + 1);	      \
+		strncpy(__out, __in, __len);			    \
+		__out[__len] = '\0';				    \
+		__out;						  \
+	}))
 #endif
 
-#define asprintfa(str, fmt, args...)                                    \
-        ({                                                              \
-                char *_tmp = NULL;                                      \
-                int _rc;                                                \
-                *(str) = NULL;                                          \
-                _rc = asprintf((str), (fmt), ## args);                  \
-                if (_rc > 0) {                                          \
-                        _tmp = strdupa(*(str));                         \
-                        if (!_tmp) {                                    \
-                                _rc = -1;                               \
-                        } else {                                        \
-                                free(*(str));                           \
-                                *(str) = _tmp;                          \
-                        }                                               \
-                } else {                                                \
-                        _rc = -1;                                       \
-                }                                                       \
-                _rc;                                                    \
-        })
+#define asprintfa(str, fmt, args...)				    \
+	({							      \
+		char *_tmp = NULL;				      \
+		int _rc;						\
+		*(str) = NULL;					  \
+		_rc = asprintf((str), (fmt), ## args);		  \
+		if (_rc > 0) {					  \
+			_tmp = strdupa(*(str));			 \
+			if (!_tmp) {				    \
+				_rc = -1;			       \
+			} else {					\
+				free(*(str));			   \
+				*(str) = _tmp;			  \
+			}					       \
+		} else {						\
+			_rc = -1;				       \
+		}						       \
+		_rc;						    \
+	})
 
-#define vasprintfa(str, fmt, ap)                                        \
-        ({                                                              \
-                char *_tmp = NULL;                                      \
-                int _rc;                                                \
-                *(str) = NULL;                                          \
-                _rc = vasprintf((str), (fmt), (ap));                    \
-                if (_rc > 0) {                                          \
-                        _tmp = strdupa(*(str));                         \
-                        if (!_tmp) {                                    \
-                                _rc = -1;                               \
-                        } else {                                        \
-                                free(*(str));                           \
-                                *(str) = _tmp;                          \
-                        }                                               \
-                } else {                                                \
-                        _rc = -1;                                       \
-                }                                                       \
-                _rc;                                                    \
-        })
+#define vasprintfa(str, fmt, ap)					\
+	({							      \
+		char *_tmp = NULL;				      \
+		int _rc;						\
+		*(str) = NULL;					  \
+		_rc = vasprintf((str), (fmt), (ap));		    \
+		if (_rc > 0) {					  \
+			_tmp = strdupa(*(str));			 \
+			if (!_tmp) {				    \
+				_rc = -1;			       \
+			} else {					\
+				free(*(str));			   \
+				*(str) = _tmp;			  \
+			}					       \
+		} else {						\
+			_rc = -1;				       \
+		}						       \
+		_rc;						    \
+	})
 
 static inline ssize_t
 get_file(uint8_t **result, const char * const fmt, ...)
 {
-        char *path;
-        uint8_t *buf = NULL;
-        size_t bufsize = 0;
-        ssize_t rc;
-        va_list ap;
-        int error;
-        int fd;
+	char *path;
+	uint8_t *buf = NULL;
+	size_t bufsize = 0;
+	ssize_t rc;
+	va_list ap;
+	int error;
+	int fd;
 
-        if (result == NULL) {
-                efi_error("invalid parameter 'result'");
-                return -1;
-        }
+	if (result == NULL) {
+		efi_error("invalid parameter 'result'");
+		return -1;
+	}
 
-        va_start(ap, fmt);
-        rc = vasprintfa(&path, fmt, ap);
-        va_end(ap);
-        if (rc < 0) {
-                efi_error("could not allocate memory");
-                return -1;
-        }
+	va_start(ap, fmt);
+	rc = vasprintfa(&path, fmt, ap);
+	va_end(ap);
+	if (rc < 0) {
+		efi_error("could not allocate memory");
+		return -1;
+	}
 
-        fd = open(path, O_RDONLY);
-        if (fd < 0) {
-                efi_error("could not open file \"%s\" for reading",
-                          path);
-                return -1;
-        }
+	fd = open(path, O_RDONLY);
+	if (fd < 0) {
+		efi_error("could not open file \"%s\" for reading",
+			  path);
+		return -1;
+	}
 
-        rc = read_file(fd, &buf, &bufsize);
-        error = errno;
-        close(fd);
-        errno = error;
+	rc = read_file(fd, &buf, &bufsize);
+	error = errno;
+	close(fd);
+	errno = error;
 
-        if (rc < 0 || bufsize < 1) {
-                /*
-                 * I don't think this can happen, but I can't convince
-                 * cov-scan
-                 */
-                if (buf)
-                        free(buf);
-                *result = NULL;
-                efi_error("could not read file \"%s\"", path);
-                return -1;
-        }
+	if (rc < 0 || bufsize < 1) {
+		/*
+		 * I don't think this can happen, but I can't convince
+		 * cov-scan
+		 */
+		if (buf)
+			free(buf);
+		*result = NULL;
+		efi_error("could not read file \"%s\"", path);
+		return -1;
+	}
 
-        *result = buf;
-        return bufsize;
+	*result = buf;
+	return bufsize;
 }
 
 static inline void UNUSED
 swizzle_guid_to_uuid(efi_guid_t *guid)
 {
-        uint32_t *u32;
-        uint16_t *u16;
+	uint32_t *u32;
+	uint16_t *u16;
 
-        u32 = (uint32_t *)guid;
-        u32[0] = __builtin_bswap32(u32[0]);
-        u16 = (uint16_t *)&u32[1];
-        u16[0] = __builtin_bswap16(u16[0]);
-        u16[1] = __builtin_bswap16(u16[1]);
+	u32 = (uint32_t *)guid;
+	u32[0] = __builtin_bswap32(u32[0]);
+	u16 = (uint16_t *)&u32[1];
+	u16[0] = __builtin_bswap16(u16[0]);
+	u16[1] = __builtin_bswap16(u16[1]);
 }
 
-#define log_(file, line, func, level, fmt, args...)                     \
-        ({                                                              \
-                efi_set_loglevel(level);                                \
-                FILE *logfile_ = efi_get_logfile();                     \
-                int len_ = strlen(fmt);                                 \
-                fprintf(logfile_, "%s:%d %s(): ",                       \
-                        file, line, func);                              \
-                fprintf(logfile_, fmt, ## args);                        \
-                if (!len_ || fmt[len_ - 1] != '\n')                     \
-                        fprintf(logfile_, "\n");                        \
-        })
+#define log_(file, line, func, level, fmt, args...)			\
+	({								\
+		efi_set_loglevel(level);				\
+		FILE *logfile_ = efi_get_logfile();			\
+		int len_ = strlen(fmt);					\
+		fprintf(logfile_, "%s:%d %s(): ",			\
+			file, line, func);				\
+		fprintf(logfile_, fmt, ## args);			\
+		if (!len_ || fmt[len_ - 1] != '\n')			\
+			fprintf(logfile_, "\n");			\
+	})
 
 #define LOG_VERBOSE 0
 #define LOG_DEBUG 1
@@ -399,14 +399,16 @@ swizzle_guid_to_uuid(efi_guid_t *guid)
 #endif
 #define log(level, fmt, args...) log_(__FILE__, __LINE__, __func__, level, fmt, ## args)
 #define debug(fmt, args...) log(LOG_DEBUG, fmt, ## args)
-#define log_hex_(file, line, func, level, buf, size)                    \
-        ({                                                              \
-                efi_set_loglevel(level);                                \
-                fhexdumpf(efi_get_logfile(), "%s:%d %s(): ",            \
-                          (uint8_t *)buf, size,                         \
-                          file, line, func);                            \
-        })
+#define log_hex_(file, line, func, level, buf, size)			\
+	({								\
+		efi_set_loglevel(level);				\
+		fhexdumpf(efi_get_logfile(), "%s:%d %s(): ",		\
+			  (uint8_t *)buf, size,				\
+			  file, line, func);				\
+	})
 #define log_hex(level, buf, size) log_hex_(__FILE__, __LINE__, __func__, level, buf, size)
 #define debug_hex(buf, size) log_hex(LOG_DEBUG, buf, size)
 
 #endif /* EFIVAR_UTIL_H */
+
+// vim:fenc=utf-8:tw=75:noet

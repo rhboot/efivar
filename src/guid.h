@@ -110,7 +110,7 @@ text_to_guid(const char *text, efi_guid_t *guid)
 	guid->a = cpu_to_le32(guid->a);
 
 	/* 84be9c3e-8a32-42c0-891c-4cd3b072becc
-	 *          ^ */
+	 *	  ^ */
 	strncpy(fourbytes, text+9, 4);
 	if (check_segment_sanity(fourbytes, 4) < 0)
 		return -1;
@@ -118,7 +118,7 @@ text_to_guid(const char *text, efi_guid_t *guid)
 	guid->b = cpu_to_le16(guid->b);
 
 	/* 84be9c3e-8a32-42c0-891c-4cd3b072becc
-	 *               ^ */
+	 *	       ^ */
 	strncpy(fourbytes, text+14, 4);
 	if (check_segment_sanity(fourbytes, 4) < 0)
 		return -1;
@@ -126,7 +126,7 @@ text_to_guid(const char *text, efi_guid_t *guid)
 	guid->c = cpu_to_le16(guid->c);
 
 	/* 84be9c3e-8a32-42c0-891c-4cd3b072becc
-	 *                    ^ */
+	 *		    ^ */
 	strncpy(fourbytes, text+19, 4);
 	if (check_segment_sanity(fourbytes, 4) < 0)
 		return -1;
@@ -134,42 +134,42 @@ text_to_guid(const char *text, efi_guid_t *guid)
 	guid->d = cpu_to_be16(guid->d);
 
 	/* 84be9c3e-8a32-42c0-891c-4cd3b072becc
-	 *                         ^ */
+	 *			 ^ */
 	strncpy(twobytes, text+24, 2);
 	if (check_segment_sanity(twobytes, 2) < 0)
 		return -1;
 	guid->e[0] = (uint8_t)strtoul(twobytes, NULL, 16);
 
 	/* 84be9c3e-8a32-42c0-891c-4cd3b072becc
-	 *                           ^ */
+	 *			   ^ */
 	strncpy(twobytes, text+26, 2);
 	if (check_segment_sanity(twobytes, 2) < 0)
 		return -1;
 	guid->e[1] = (uint8_t)strtoul(twobytes, NULL, 16);
 
 	/* 84be9c3e-8a32-42c0-891c-4cd3b072becc
-	 *                             ^ */
+	 *			     ^ */
 	strncpy(twobytes, text+28, 2);
 	if (check_segment_sanity(twobytes, 2) < 0)
 		return -1;
 	guid->e[2] = (uint8_t)strtoul(twobytes, NULL, 16);
 
 	/* 84be9c3e-8a32-42c0-891c-4cd3b072becc
-	 *                               ^ */
+	 *			       ^ */
 	strncpy(twobytes, text+30, 2);
 	if (check_segment_sanity(twobytes, 2) < 0)
 		return -1;
 	guid->e[3] = (uint8_t)strtoul(twobytes, NULL, 16);
 
 	/* 84be9c3e-8a32-42c0-891c-4cd3b072becc
-	 *                                 ^ */
+	 *				 ^ */
 	strncpy(twobytes, text+32, 2);
 	if (check_segment_sanity(twobytes, 2) < 0)
 		return -1;
 	guid->e[4] = (uint8_t)strtoul(twobytes, NULL, 16);
 
 	/* 84be9c3e-8a32-42c0-891c-4cd3b072becc
-	 *                                   ^ */
+	 *				   ^ */
 	strncpy(twobytes, text+34, 2);
 	if (check_segment_sanity(twobytes, 2) < 0)
 		return -1;
@@ -185,3 +185,5 @@ struct guidname {
 };
 
 #endif /* LIBEFIVAR_GUID */
+
+// vim:fenc=utf-8:tw=75:noet

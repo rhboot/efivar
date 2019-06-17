@@ -24,4 +24,5 @@
 #include <efivar/efiboot.h>
 
 #endif /* !PRIVATE_EFIBOOT_H_ */
-// vim:fenc=utf-8:tw=75:et
+
+// vim:fenc=utf-8:tw=75:noet
