@@ -243,14 +243,14 @@ efi_set_loglevel(int level __attribute__((__unused__)))
 	efi_error_real__(errval, __FILE__, __func__, __LINE__, (fmt), ## args)
 
 extern void efi_set_verbose(int verbosity, FILE *errlog)
-        __attribute__((__visibility__("default")));
+	__attribute__((__visibility__("default")));
 extern int efi_get_verbose(void)
-        __attribute__((__visibility__("default")));
+	__attribute__((__visibility__("default")));
 extern FILE * efi_get_logfile(void)
-        __attribute__((__visibility__("default")));
+	__attribute__((__visibility__("default")));
 
 extern uint32_t efi_get_libefivar_version(void)
-        __attribute__((__visibility__("default")));
+	__attribute__((__visibility__("default")));
 
 #include <efivar/efivar-dp.h>
 

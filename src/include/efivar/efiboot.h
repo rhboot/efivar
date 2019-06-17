@@ -36,6 +36,8 @@
 #include <efivar/efiboot-loadopt.h>
 
 extern uint32_t efi_get_libefiboot_version(void)
-        __attribute__((__visibility__("default")));
+	__attribute__((__visibility__("default")));
 
 #endif /* EFIBOOT_H */
+
+// vim:fenc=utf-8:tw=75:noet

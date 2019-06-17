@@ -58,3 +58,5 @@ extern ssize_t efi_generate_ipv4_device_path(uint8_t *buf, ssize_t size,
 	__attribute__((__visibility__ ("default")));
 
 #endif /* _EFIBOOT_CREATOR_H */
+
+// vim:fenc=utf-8:tw=75:noet

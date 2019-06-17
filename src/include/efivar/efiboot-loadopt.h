@@ -74,3 +74,5 @@ extern int efi_loadopt_is_valid(efi_load_option *opt, size_t size)
 	__attribute__((__visibility__ ("default")));
 
 #endif /* _EFIBOOT_LOADOPT_H */
+
+// vim:fenc=utf-8:tw=75:noet

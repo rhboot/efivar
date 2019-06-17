@@ -135,9 +135,9 @@ typedef struct {
 } EFIVAR_PACKED efidp_acpi_hid_ex;
 extern ssize_t
 efidp_make_acpi_hid_ex(uint8_t *buf, ssize_t size,
-                       uint32_t hid, uint32_t uid, uint32_t cid,
-                       const char *hidstr, const char *uidstr,
-                       const char *cidstr);
+		       uint32_t hid, uint32_t uid, uint32_t cid,
+		       const char *hidstr, const char *uidstr,
+		       const char *cidstr);
 
 #define EFIDP_PNP_EISA_ID_CONST		0x41d0
 #define EFIDP_PNP_ACPI_ID_CONST		0x8e09
@@ -1257,3 +1257,5 @@ extern ssize_t efidp_make_generic(uint8_t *buf, ssize_t size, uint8_t type,
 			   EFIDP_END_INSTANCE, sizeof (efidp_header));
 
 #endif /* _EFIVAR_DP_H */
+
+// vim:fenc=utf-8:tw=75:noet
