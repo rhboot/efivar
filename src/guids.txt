@@ -21,6 +21,7 @@
 826ca512-cf10-4ac9-b187-be01496631bd	sha1	SHA-1
 82988420-7467-4490-9059-feb448dd1963	lenovo_me_config	Lenovo ME Configuration Menu
 8be4df61-93ca-11d2-aa0d-00e098032b8c	global	EFI Global Variable
+91376aff-cba6-42be-949d-06fde81128e8	grub	GRUB
 a5c059a1-94e4-4aa7-87b5-ab155c2bf072	x509_cert	X.509 Certificate
 a7717414-c616-4977-9420-844712a735bf	rsa2048_sha256_cert	RSA 2048 with SHA-256 Certificate
 a7d8d9a6-6ab0-4aeb-ad9d-163e59a7a380	lenovo_diag_splash	Lenovo Diagnostic Splash Screen

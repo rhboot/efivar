@@ -135,4 +135,7 @@ LIBEFIVAR_1.38 {
 	global: efi_error_pop;
 		efi_set_loglevel;
 		efi_get_libefivar_version;
+		efi_guid_grub;
+		efi_variable_alloc;
+		efi_variable_export_dmpstore;
 } LIBEFIVAR_1.37;
