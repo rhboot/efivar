@@ -39,10 +39,11 @@ extern int optind, opterr, optopt;
 
 #include "efivar.h"
 
-#define ACTION_LIST		0x1
-#define ACTION_PRINT		0x2
-#define ACTION_APPEND		0x4
-#define ACTION_LIST_GUIDS	0x8
+#define ACTION_USAGE		0x00
+#define ACTION_LIST		0x01
+#define ACTION_PRINT		0x02
+#define ACTION_APPEND		0x04
+#define ACTION_LIST_GUIDS	0x08
 #define ACTION_WRITE		0x10
 #define ACTION_PRINT_DEC	0x20
 
@@ -326,7 +327,7 @@ validate_name(const char *name)
 }
 
 static void
-prepare_data(const char *filename, void **data, size_t *data_size)
+prepare_data(const char *filename, uint8_t **data, size_t *data_size)
 {
 	int fd = -1;
 	void *buf;
@@ -365,25 +366,29 @@ err:
 	exit(1);
 }
 
-static void
-usage(const char *progname)
+static void __attribute__((__noreturn__))
+usage(int ret)
 {
-	printf("Usage: %s [OPTION...]\n", basename(progname));
-	printf("  -l, --list                        list current variables\n");
-	printf("  -p, --print                       print variable specified by --name\n");
-	printf("  -d, --print-decimal               print variable in decimal values specified\n");
-	printf("                                    by --name\n");
-	printf("  -n, --name=<guid-name>            variable to manipulate, in the form\n");
-	printf("                                    8be4df61-93ca-11d2-aa0d-00e098032b8c-Boot0000\n");
-	printf("  -a, --append                      append to variable specified by --name\n");
-	printf("  -f, --fromfile=<file>             use data from <file>\n");
-	printf("  -t, --attributes=<attributes>     attributes to use on append\n");
-	printf("  -L, --list-guids                  show internal guid list\n");
-	printf("  -w, --write                       write to variable specified by --name\n\n");
-	printf("Help options:\n");
-	printf("  -?, --help                        Show this help message\n");
-	printf("      --usage                       Display brief usage message\n");
-	return;
+	FILE *out = ret == 0 ? stdout : stderr;
+	fprintf(out,
+		"Usage: %s [OPTION...]\n"
+		"  -l, --list                        list current variables\n"
+		"  -p, --print                       print variable specified by --name\n"
+		"  -d, --print-decimal               print variable in decimal values specified\n"
+		"                                    by --name\n"
+		"  -n, --name=<guid-name>            variable to manipulate, in the form\n"
+		"                                    8be4df61-93ca-11d2-aa0d-00e098032b8c-Boot0000\n"
+		"  -a, --append                      append to variable specified by --name\n"
+		"  -e, --export=<file>               export variable to <file>\n"
+		"  -f, --fromfile=<file>             use data from <file>\n"
+		"  -t, --attributes=<attributes>     attributes to use on append\n"
+		"  -L, --list-guids                  show internal guid list\n"
+		"  -w, --write                       write to variable specified by --name\n\n"
+		"Help options:\n"
+		"  -?, --help                        Show this help message\n"
+		"      --usage                       Display brief usage message\n",
+		program_invocation_short_name);
+	exit(ret);
 }
 
 int main(int argc, char *argv[])
@@ -391,7 +396,7 @@ int main(int argc, char *argv[])
 	int c = 0;
 	int i = 0;
 	int action = 0;
-	void *data = NULL;
+	uint8_t *data = NULL;
 	size_t data_size = 0;
 	char *name = NULL;
 	char *file = NULL;
@@ -434,10 +439,10 @@ int main(int argc, char *argv[])
 				break;
 			case 't':
 				attributes = strtoul(optarg, NULL, 10);
-				if (errno == ERANGE || errno == EINVAL) {
-					fprintf(stderr, "invalid argument for -t: %s: %s\n", optarg, strerror(errno));
-					return EXIT_FAILURE;
-				}
+				if (errno == ERANGE || errno == EINVAL)
+					err(1,
+					    "invalid argument for -t: %s: %m\n",
+					    optarg);
 				break;
 			case 'L':
 				action |= ACTION_LIST_GUIDS;
@@ -446,13 +451,11 @@ int main(int argc, char *argv[])
 				action |= ACTION_WRITE;
 				break;
 			case '?':
-				usage(argv[0]);
-				return EXIT_SUCCESS;
+				usage(EXIT_SUCCESS);
+				break;
 			case 0:
-				if (strcmp(lopts[i].name, "usage")) {
-					usage(argv[0]);
-					return EXIT_SUCCESS;
-				}
+				if (strcmp(lopts[i].name, "usage"))
+					usage(EXIT_SUCCESS);
 				break;
 		}
 	}
@@ -506,6 +509,9 @@ int main(int argc, char *argv[])
 					guid[i].symbol + strlen("efi_guid_"),
 					guid[i].symbol, guid[i].name);
 			}
+		case ACTION_USAGE:
+		default:
+			usage(EXIT_FAILURE);
 		}
 	};
 
