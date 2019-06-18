@@ -49,7 +49,7 @@ clean :
 	@set -e ; for x in $(SUBDIRS) ; do \
 		$(MAKE) -C $$x $@ ; \
 	done
-	@rm -vf efivar.spec
+	@rm -vf efivar.spec vgcore.* core.*
 
 test-archive: abicheck efivar.spec
 	@rm -rf /tmp/efivar-$(GITTAG) /tmp/efivar-$(GITTAG)-tmp
