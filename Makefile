@@ -51,6 +51,9 @@ clean :
 	done
 	@rm -vf efivar.spec vgcore.* core.*
 
+test : all
+	@$(MAKE) -C tests
+
 test-archive: abicheck efivar.spec
 	@rm -rf /tmp/efivar-$(GITTAG) /tmp/efivar-$(GITTAG)-tmp
 	@mkdir -p /tmp/efivar-$(GITTAG)-tmp
