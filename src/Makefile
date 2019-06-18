@@ -84,7 +84,7 @@ libefiboot.so : LIBS=efivar
 libefiboot.so : MAP=libefiboot.map
 
 deps : $(ALL_SOURCES)
-	$(MAKE) -f $(SRCDIR)/Make.deps deps SOURCES="$(ALL_SOURCES)"
+	@$(MAKE) -f $(SRCDIR)/Make.deps deps SOURCES="$(ALL_SOURCES)"
 
 clean : 
 	@rm -rfv *~ *.o *.a *.E *.so *.so.* *.pc *.bin .*.d *.map \
