@@ -95,6 +95,34 @@ show_errors(void)
 	}
 }
 
+static inline void
+validate_name(const char *name)
+{
+	if (name == NULL) {
+err:
+		warnx("Invalid variable name \"%s\"",
+		      (name == NULL) ? "(null)" : name);
+		show_errors();
+		exit(1);
+	}
+	if (name[0] == '{') {
+		const char *next = strchr(name+1, '}');
+		if (!next)
+			goto err;
+		if (next[1] != '-')
+			goto err;
+		if (next[2] == '\000')
+			goto err;
+	} else {
+		if (strlen(name) < 38)
+			goto err;
+		if (name[8] != '-' || name[13] != '-' ||
+		    name[18] != '-' || name[23] != '-' ||
+		    name[36] != '-')
+			goto err;
+	}
+}
+
 static void
 list_all_variables(void)
 {
@@ -123,6 +151,8 @@ parse_name(const char *guid_name, char **name, efi_guid_t *guid)
 	off_t name_pos = 0;
 
 	const char *left, *right;
+
+	validate_name(guid_name);
 
 	left = strchr(guid_name, '{');
 	right = strchr(guid_name, '}');
@@ -409,16 +439,6 @@ edit_variable(const char *guid_name, void *data, size_t data_size,
 }
 
 static void
-validate_name(const char *name)
-{
-	if (name == NULL) {
-		fprintf(stderr, "Invalid variable name\n");
-		show_errors();
-		exit(1);
-	}
-}
-
-static void
 prepare_data(const char *filename, uint8_t **data, size_t *data_size)
 {
 	int fd = -1;
@@ -588,21 +608,17 @@ int main(int argc, char *argv[])
 			list_all_variables();
 			break;
 		case ACTION_PRINT:
-			validate_name(guid_name);
 			show_variable(guid_name, SHOW_VERBOSE);
 			break;
 		case ACTION_PRINT_DEC | ACTION_PRINT:
-			validate_name(guid_name);
 			show_variable(guid_name, SHOW_DECIMAL);
 			break;
 		case ACTION_APPEND | ACTION_PRINT:
-			validate_name(guid_name);
 			prepare_data(infile, &data, &data_size);
 			edit_variable(guid_name, data, data_size, attributes,
 				      EDIT_APPEND);
 			break;
 		case ACTION_WRITE | ACTION_PRINT:
-			validate_name(guid_name);
 			prepare_data(infile, &data, &data_size);
 			edit_variable(guid_name, data, data_size, attributes,
 				      EDIT_WRITE);
@@ -653,7 +669,6 @@ int main(int argc, char *argv[])
 
 				efi_variable_free(var, false);
 			} else {
-				validate_name(guid_name);
 				save_variable(guid_name, outfile, dmpstore);
 			}
 			break;
