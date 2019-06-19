@@ -12,10 +12,9 @@ scan-build : | scan-test
 scan-build : clean
 	scan-build -o scan-results make $(DASHJ) CC=clang all
 
-scan-build-all : | scan-test
-scan-build-all : clean
-	scan-build -o scan-results make $(DASHJ) CC=clang all
+scan-build-all: | scan-build
+scan : | scan-build
 
-.PHONY : scan-build scan-clean
+.PHONY : scan-build scan-clean scan-build-all scan
 
 # vim:ft=make
