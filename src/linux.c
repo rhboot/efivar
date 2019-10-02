@@ -170,16 +170,17 @@ int HIDDEN
 set_disk_and_part_name(struct device *dev)
 {
 	int rc = -1;
-
-	/*
-	 * results are like such:
-	 * maj:min -> ../../devices/pci$PCI_STUFF/$BLOCKDEV_STUFF/block/$DISK/$PART
-	 */
-
 	char *ultimate = pathseg(dev->link, -1);
 	char *penultimate = pathseg(dev->link, -2);
 	char *approximate = pathseg(dev->link, -3);
 	char *proximate = pathseg(dev->link, -4);
+	char *psl5 = pathseg(dev->link, -5);
+
+
+	/*
+	 * devlinks look something like:
+	 * maj:min -> ../../devices/pci$PCI_STUFF/$BLOCKDEV_STUFF/block/$DISK/$PART
+	 */
 
 	errno = 0;
 	debug("dev->disk_name:%p dev->part_name:%p", dev->disk_name, dev->part_name);
@@ -188,6 +189,7 @@ set_disk_and_part_name(struct device *dev)
 	debug("penultimate:'%s'", penultimate ? : "");
 	debug("approximate:'%s'", approximate ? : "");
 	debug("proximate:'%s'", proximate ? : "");
+	debug("psl5:'%s'", psl5 ? : "");
 
 	if (ultimate && penultimate &&
 	    ((proximate && !strcmp(proximate, "nvme")) ||
@@ -232,6 +234,34 @@ set_disk_and_part_name(struct device *dev)
 	        set_disk_name(dev, "%s", ultimate);
 	        debug("disk:%s", ultimate);
 		rc = 0;
+	} else if ((proximate && ultimate && !strcmp(proximate, "nvme-fabrics")) ||
+		    (approximate && ultimate && !strcmp(approximate, "nvme-subsystem"))) {
+		/*
+		 * 259:0 ->../../devices/virtual/nvme-fabrics/ctl/nvme0/nvme0n1
+		 *				 ^ proximate            ^ ultimate
+		 * or
+		 * 259:5 -> ../../devices/virtual/nvme-subsystem/nvme-subsys0/nvme0n1
+		 *                                ^ approximate  ^ penultimate
+		 *                                                   ultimate ^
+		 */
+		set_disk_name(dev, "%s", ultimate);
+		debug("disk:%s", ultimate);
+		rc = 0;
+	} else if ((psl5 && penultimate && ultimate && !strcmp(psl5, "nvme-fabrics")) ||
+		   (proximate && penultimate && ultimate && !strcmp(proximate, "nvme-subsystem"))) {
+		/*
+		 * 259:1 -> ../../devices/virtual/nvme-fabrics/ctl/nvme0/nvme0n1/nvme0n1p1
+		 *                                ^psl5                  ^ penultimate
+		 *                                                      ultimate ^
+		 * or
+		 * 259:6 -> ../../devices/virtual/nvme-subsystem/nvme-subsys0/nvme0n1/nvme0n1p1
+		 *                                ^ proximate                 ^ penultimate
+		 *                                                           ultimate ^
+		 */
+		set_disk_name(dev, "%s", penultimate);
+		set_part_name(dev, "%s", ultimate);
+		debug("disk:%s part:%s", penultimate, ultimate);
+		rc = 0;
 	}
 
 	if (rc < 0)
@@ -248,6 +278,7 @@ static struct dev_probe *dev_probes[] = {
 	&acpi_root_parser,
 	&pci_root_parser,
 	&soc_root_parser,
+	&virtual_root_parser,
 	&pci_parser,
 	&virtblk_parser,
 	&sas_parser,
