@@ -15,7 +15,6 @@
  * You should have received a copy of the GNU Lesser General Public
  * License along with this library; if not, see
  * <http://www.gnu.org/licenses/>.
- *
  */
 
 #include "fix_coverity.h"
@@ -35,6 +34,12 @@
  * /sys/dev/block/$major:$minor looks like:
  * 259:0 -> ../../devices/pci0000:00/0000:00:1d.0/0000:05:00.0/nvme/nvme0/nvme0n1
  * 259:1 -> ../../devices/pci0000:00/0000:00:1d.0/0000:05:00.0/nvme/nvme0/nvme0n1/nvme0n1p1
+ * or:
+ * 259:0 ->../../devices/virtual/nvme-fabrics/ctl/nvme0/nvme0n1
+ * 259:1 ->../../devices/virtual/nvme-fabrics/ctl/nvme0/nvme0n1/nvme0n1p1
+ * or:
+ * 259:5 -> ../../devices/virtual/nvme-subsystem/nvme-subsys0/nvme0n1
+ * 259:6 -> ../../devices/virtual/nvme-subsystem/nvme-subsys0/nvme0n1/nvme0n1p1
  *
  * /sys/dev/block/259:0/device looks like:
  * device -> ../../nvme0
@@ -56,14 +61,42 @@ parse_nvme(struct device *dev, const char *path, const char *root UNUSED)
 	int32_t tosser0, tosser1, tosser2, ctrl_id, ns_id, partition;
 	uint8_t *filebuf = NULL;
 	int pos0 = -1, pos1 = -1, pos2 = -1;
+	ssize_t sz = 0;
+	struct subdir {
+		const char * const name;
+		const char * const fmt;
+		int *pos0, *pos1;
+	} subdirs[] = {
+		{"nvme-subsysN/", "%nnvme-subsys%d/%n", &pos0, &pos2},
+		{"ctl/", "%nctl/%n%n", &pos0, &pos1},
+		{"nvme/", "%nnvme/%n%n", &pos0, &pos1},
+		{NULL, }
+	};
 
 	debug("entry");
 
-	debug("searching for nvme/nvme0/nvme0n1 or nvme/nvme0/nvme0n1/nvme0n1p1");
-	rc = sscanf(current, "%nnvme/nvme%d/nvme%dn%d%n/nvme%dn%dp%d%n",
-	            &pos0, &tosser0, &ctrl_id, &ns_id,
-		    &pos1, &tosser1, &tosser2, &partition, &pos2);
-	debug("current:\"%s\" rc:%d pos0:%d pos1:%d pos2:%d\n", current, rc, pos0, pos1, pos2);
+	/*
+	 * in this case, *any* of these is okay.
+	 */
+	for (int i = 0; subdirs[i].name; i++) {
+		debug("searching for %s", subdirs[i].name);
+		pos0 = tosser0 = pos1 = -1;
+		rc = sscanf(current, subdirs[i].fmt, &pos0, &pos1, &pos2);
+		debug("current:'%s' rc:%d pos0:%d pos1:%d\n", current, rc,
+		      *subdirs[i].pos0, *subdirs[i].pos1);
+		dbgmk("         ", *subdirs[i].pos0, *subdirs[i].pos1);
+		if (*subdirs[i].pos0 >= 0 && *subdirs[i].pos1 >= *subdirs[i].pos0) {
+			sz += *subdirs[i].pos1;
+			current += *subdirs[i].pos1;
+			break;
+		}
+	}
+
+	debug("searching for nvme0/nvme0n1 or nvme0/nvme0n1/nvme0n1p1");
+	rc = sscanf(current, "%nnvme%d/nvme%dn%d%n/nvme%dn%dp%d%n",
+	            &pos0, &tosser0, &ctrl_id, &ns_id, &pos1,
+	            &tosser1, &tosser2, &partition, &pos2);
+	debug("current:'%s' rc:%d pos0:%d pos1:%d pos2:%d\n", current, rc, pos0, pos1, pos2);
 	dbgmk("         ", pos0, MAX(pos1,pos2));
 	/*
 	 * If it isn't of that form, it's not one of our nvme devices.
@@ -82,13 +115,15 @@ parse_nvme(struct device *dev, const char *path, const char *root UNUSED)
 	        if (dev->part == -1)
 	                dev->part = partition;
 
-	        pos1 = pos2;
+		pos1 = pos2;
 	}
+
 	current += pos1;
 
 	/*
 	 * now fish the eui out of sysfs is there is one...
 	 */
+	debug("looking for the eui");
 	char *euipath = NULL;
 	rc = read_sysfs_file(&filebuf, "class/block/nvme%dn%d/eui", ctrl_id, ns_id);
 	if (rc < 0 && (errno == ENOENT || errno == ENOTDIR)) {
@@ -111,6 +146,9 @@ parse_nvme(struct device *dev, const char *path, const char *root UNUSED)
 	                errno = EINVAL;
 	                return -1;
 	        }
+		debug("eui is %02hhx:%02hhx:%02hhx:%02hhx:%02hhx:%02hhx:%02hhx:%02hhx",
+		      eui[0], eui[1], eui[2], eui[3],
+		      eui[4], eui[5], eui[6], eui[7]);
 	        dev->nvme_info.has_eui = 1;
 	        memcpy(dev->nvme_info.eui, eui, sizeof(eui));
 	}
