@@ -1,6 +1,6 @@
 /*
  * libefiboot - library for the manipulation of EFI boot variables
- * Copyright 2012-2018 Red Hat, Inc.
+ * Copyright 2012-2019 Red Hat, Inc.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public License as
@@ -101,6 +101,7 @@ parse_scsi_link(const char *current, uint32_t *scsi_host,
 	debug("searching for host4/");
 	rc = sscanf(current, "host%d/%n", scsi_host, &pos0);
 	debug("current:\"%s\" rc:%d pos0:%d\n", current+sz, rc, pos0);
+	dbgmk("         ", pos0);
 	if (rc != 1)
 	        return -1;
 	sz += pos0;
@@ -118,6 +119,7 @@ parse_scsi_link(const char *current, uint32_t *scsi_host,
 	rc = sscanf(current+sz, "port-%d:%d%n:%d%n", &tosser0,
 	            &tosser1, &pos0, &tosser2, &pos1);
 	debug("current:\"%s\" rc:%d pos0:%d pos1:%d\n", current+sz, rc, pos0, pos1);
+	dbgmk("         ", pos0, pos1);
 	if (rc == 2 || rc == 3) {
 	        sz += pos0;
 	        pos0 = 0;
@@ -143,6 +145,7 @@ parse_scsi_link(const char *current, uint32_t *scsi_host,
 	        debug("searching for expander-4:0/");
 	        rc = sscanf(current+sz, "expander-%d:%d/%n", &tosser0, &tosser1, &pos0);
 	        debug("current:\"%s\" rc:%d pos0:%d\n", current+sz, rc, pos0);
+		dbgmk("         ", pos0);
 	        if (rc == 2) {
 	                if (!remote_target_id) {
 	                        efi_error("Device is PHY is a remote target, but remote_target_id is NULL");
@@ -158,6 +161,7 @@ parse_scsi_link(const char *current, uint32_t *scsi_host,
 	                debug("searching for port-2:0:2/");
 	                rc = sscanf(current+sz, "port-%d:%d:%d/%n", &tosser0, &tosser1, &tosser2, &pos0);
 	                debug("current:\"%s\" rc:%d pos0:%d\n", current+sz, rc, pos0);
+			dbgmk("         ", pos0);
 	                if (rc != 3) {
 	                        efi_error("Couldn't parse port expander port string");
 	                        return -1;
@@ -182,6 +186,7 @@ parse_scsi_link(const char *current, uint32_t *scsi_host,
 	        rc = sscanf(current + sz + pos0, ":%d%n", &tosser2, &pos1);
 	        if (rc != 0 && rc != 1)
 	                return -1;
+		dbgmk("         ", pos0, pos0+pos1);
 	        if (remote_port_id && rc == 1)
 	                *remote_port_id = tosser2;
 	        if (local_port_id && rc == 0)
@@ -203,6 +208,7 @@ parse_scsi_link(const char *current, uint32_t *scsi_host,
 	rc = sscanf(current + sz, "target%d:%d:%"PRIu64"/%n", &tosser0, &tosser1,
 	            &tosser3, &pos0);
 	debug("current:\"%s\" rc:%d pos0:%d\n", current+sz, rc, pos0);
+	dbgmk("         ", pos0);
 	if (rc != 3)
 	        return -1;
 	sz += pos0;
@@ -215,6 +221,7 @@ parse_scsi_link(const char *current, uint32_t *scsi_host,
 	rc = sscanf(current + sz, "%d:%d:%d:%"PRIu64"/%n",
 	            scsi_bus, scsi_device, scsi_target, scsi_lun, &pos0);
 	debug("current:\"%s\" rc:%d pos0:%d\n", current+sz, rc, pos0);
+	dbgmk("         ", pos0);
 	if (rc != 4)
 	        return -1;
 	sz += pos0;
@@ -242,6 +249,7 @@ parse_scsi(struct device *dev, const char *current, const char *root UNUSED)
 	            &dev->scsi_info.scsi_lun,
 	            &pos);
 	debug("current:\"%s\" rc:%d pos:%d\n", dev->device, rc, pos);
+	dbgmk("         ", pos);
 	if (rc != 4)
 	        return 0;
 

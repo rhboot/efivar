@@ -1,6 +1,6 @@
 /*
  * libefiboot - library for the manipulation of EFI boot variables
- * Copyright 2012-2018 Red Hat, Inc.
+ * Copyright 2012-2019 Red Hat, Inc.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public License as
@@ -51,6 +51,7 @@ parse_md(struct device *dev, const char *current, const char *root UNUSED)
 	rc = sscanf(current, "md%d/%nmd%dp%d%n",
 	            &md, &pos0, &tosser0, &part, &pos1);
 	debug("current:\"%s\" rc:%d pos0:%d pos1:%d\n", current, rc, pos0, pos1);
+	dbgmk("         ", pos0, pos1);
 	/*
 	 * If it isn't of that form, it's not one of our partitioned md devices.
 	 */

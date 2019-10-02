@@ -1,6 +1,6 @@
 /*
  * libefiboot - library for the manipulation of EFI boot variables
- * Copyright 2012-2018 Red Hat, Inc.
+ * Copyright 2012-2019 Red Hat, Inc.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public License as
@@ -56,6 +56,7 @@ parse_virtblk(struct device *dev, const char *current, const char *root UNUSED)
 	debug("searching for virtio0/");
 	rc = sscanf(current, "virtio%x/%n", &tosser, &pos);
 	debug("current:\"%s\" rc:%d pos:%d\n", current, rc, pos);
+	dbgmk("         ", pos);
 	/*
 	 * If we couldn't find virtioX/ then it isn't a virtio device.
 	 */

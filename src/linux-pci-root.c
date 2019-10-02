@@ -1,6 +1,6 @@
 /*
  * libefiboot - library for the manipulation of EFI boot variables
- * Copyright 2012-2018 Red Hat, Inc.
+ * Copyright 2012-2019 Red Hat, Inc.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public License as
@@ -57,6 +57,8 @@ parse_pci_root(struct device *dev, const char *current, const char *root UNUSED)
 	 *    ^d   ^p
 	 */
 	rc = sscanf(devpart, "../../devices/pci%hx:%hhx/%n", &root_domain, &root_bus, &pos);
+	debug("current:\"%s\" rc:%d pos:%d", devpart, rc, pos);
+	dbgmk("         ", pos);
 	/*
 	 * If we can't find that, it's not a PCI device.
 	 */
