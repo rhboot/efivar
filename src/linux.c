@@ -1,6 +1,6 @@
 /*
  * libefiboot - library for the manipulation of EFI boot variables
- * Copyright 2012-2015 Red Hat, Inc.
+ * Copyright 2012-2019 Red Hat, Inc.
  * Copyright (C) 2001 Dell Computer Corporation <Matt_Domsch@dell.com>
  *
  * This library is free software; you can redistribute it and/or
@@ -169,6 +169,8 @@ set_disk_name(struct device *dev, const char * const fmt, ...)
 int HIDDEN
 set_disk_and_part_name(struct device *dev)
 {
+	int rc = -1;
+
 	/*
 	 * results are like such:
 	 * maj:min -> ../../devices/pci$PCI_STUFF/$BLOCKDEV_STUFF/block/$DISK/$PART
@@ -200,6 +202,7 @@ set_disk_and_part_name(struct device *dev)
 	        set_disk_name(dev, "%s", penultimate);
 	        set_part_name(dev, "%s", ultimate);
 	        debug("disk:%s part:%s", penultimate, ultimate);
+		rc = 0;
 	} else if (ultimate && approximate && !strcmp(approximate, "nvme")) {
 	        /*
 	         * 259:0 -> ../../devices/pci0000:00/0000:00:1d.0/0000:05:00.0/nvme/nvme0/nvme0n1
@@ -207,6 +210,7 @@ set_disk_and_part_name(struct device *dev)
 	        set_disk_name(dev, "%s", ultimate);
 	        set_part_name(dev, "%sp%d", ultimate, dev->part);
 	        debug("disk:%s part:%sp%d", ultimate, ultimate, dev->part);
+		rc = 0;
 	} else if (ultimate && penultimate && !strcmp(penultimate, "block")) {
 	        /*
 	         * 253:0 -> ../../devices/virtual/block/dm-0 (... I guess)
@@ -220,15 +224,19 @@ set_disk_and_part_name(struct device *dev)
 	        set_disk_name(dev, "%s", ultimate);
 	        set_part_name(dev, "%s%d", ultimate, dev->part);
 	        debug("disk:%s part:%s%d", ultimate, ultimate, dev->part);
+		rc = 0;
 	} else if (ultimate && approximate && !strcmp(approximate, "mtd")) {
 	        /*
 	         * 31:0 -> ../../devices/platform/1e000000.palmbus/1e000b00.spi/spi_master/spi32766/spi32766.0/mtd/mtd0/mtdblock0
 	         */
 	        set_disk_name(dev, "%s", ultimate);
 	        debug("disk:%s", ultimate);
+		rc = 0;
 	}
 
-	return 0;
+	if (rc < 0)
+		efi_error("Could not parse disk name:\"%s\"", dev->link);
+	return rc;
 }
 
 static struct dev_probe *dev_probes[] = {
