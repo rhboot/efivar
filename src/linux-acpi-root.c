@@ -1,6 +1,6 @@
 /*
  * libefiboot - library for the manipulation of EFI boot variables
- * Copyright 2012-2018 Red Hat, Inc.
+ * Copyright 2012-2019 Red Hat, Inc.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public License as
@@ -63,6 +63,7 @@ parse_acpi_root(struct device *dev, const char *current, const char *root UNUSED
 	 */
 	rc = sscanf(devpart, "../../devices/platform/%n", &pos);
 	debug("devpart:\"%s\" rc:%d pos:%d", devpart, rc, pos);
+	dbgmk("         ", pos);
 	if (rc != 0 || pos < 1)
 		return 0;
 	devpart += pos;
@@ -97,6 +98,7 @@ parse_acpi_root(struct device *dev, const char *current, const char *root UNUSED
 
 	pos -= 4;
 	debug("devpart:\"%s\" rc:%d pos:%d", devpart, rc, pos);
+	dbgmk("         ", pos);
 	acpi_header = strndupa(devpart, pos);
 	if (!acpi_header)
 		return 0;
@@ -114,6 +116,7 @@ parse_acpi_root(struct device *dev, const char *current, const char *root UNUSED
 	}
 	debug("devpart:\"%s\" parsed:%04hx:%02hhx pos:%d rc:%d",
 	      devpart, pad0, pad1, pos, rc);
+	dbgmk("         ", pos);
 
 	devpart += pos;
 

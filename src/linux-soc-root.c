@@ -1,6 +1,6 @@
 /*
  * libefiboot - library for the manipulation of EFI boot variables
- * Copyright 2012-2018 Red Hat, Inc.
+ * Copyright 2012-2019 Red Hat, Inc.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public License as
@@ -49,6 +49,8 @@ parse_soc_root(struct device *dev UNUSED, const char *current, const char *root 
 	rc = sscanf(devpart, "../../devices/platform/soc/%*[^/]/%n", &pos);
 	if (rc != 0)
 	        return 0;
+	debug("current:\"%s\" rc:%d pos:%d", current, rc, pos);
+	dbgmk("         ", pos);
 	devpart += pos;
 	debug("new position is \"%s\"", devpart);
 

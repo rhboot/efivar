@@ -284,6 +284,40 @@ swizzle_guid_to_uuid(efi_guid_t *guid)
 	u16[1] = __builtin_bswap16(u16[1]);
 }
 
+static inline void UNUSED
+debug_markers_(const char * const file, int line,
+	       const char * const func, int level,
+	       const char * const prefix, ...)
+{
+	FILE *logfile;
+	va_list ap;
+	int pos;
+	int n = 0;
+	bool on = false;
+
+	va_start(ap, prefix);
+	for (n = 0, pos = va_arg(ap, int); pos >= 0; pos = va_arg(ap, int), n++)
+		;
+	va_end(ap);
+	if (n < 2)
+		return;
+	n = 0;
+
+	efi_set_loglevel(level);
+	logfile = efi_get_logfile();
+	fprintf(logfile, "%s:%d %s(): %s", file, line, func, prefix ? prefix : "");
+	va_start(ap, prefix);
+	while ((pos = va_arg(ap, int)) >= 0) {
+		for (; n <= pos; n++) {
+			if (n == pos)
+				on = !on;
+			fprintf(logfile, "%c", on ? '^' : ' ');
+		}
+	}
+	fprintf(logfile, "\n");
+	va_end(ap);
+}
+
 #define log_(file, line, func, level, fmt, args...)			\
 	({								\
 		efi_set_loglevel(level);				\
@@ -312,6 +346,7 @@ swizzle_guid_to_uuid(efi_guid_t *guid)
 	})
 #define log_hex(level, buf, size) log_hex_(__FILE__, __LINE__, __func__, level, buf, size)
 #define debug_hex(buf, size) log_hex(LOG_DEBUG, buf, size)
+#define dbgmk(prefix, args...) debug_markers_(__FILE__, __LINE__, __func__, LOG_DEBUG, prefix, ## args, -1)
 
 #endif /* EFIVAR_UTIL_H */
 

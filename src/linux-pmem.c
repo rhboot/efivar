@@ -1,6 +1,6 @@
 /*
  * libefiboot - library for the manipulation of EFI boot variables
- * Copyright 2012-2018 Red Hat, Inc.
+ * Copyright 2012-2019 Red Hat, Inc.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public License as
@@ -105,6 +105,8 @@ parse_pmem(struct device *dev, const char *current, const char *root UNUSED)
 	            "../../devices/LNXSYSTM:%hhx/LNXSYBUS:%hhx/ACPI%hx:%hhx/ndbus%d/region%d/btt%d.%d/%n",
 	            &system, &sysbus, &pnp_id, &acpi_id, &ndbus, &region,
 	            &btt_region_id, &btt_id, &pos);
+	debug("current:\"%s\" rc:%d pos:%d", current, rc, pos);
+	dbgmk("         ", pos);
 	if (rc < 8)
 	        return 0;
 

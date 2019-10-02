@@ -1,6 +1,6 @@
 /*
  * libefiboot - library for the manipulation of EFI boot variables
- * Copyright 2012-2018 Red Hat, Inc.
+ * Copyright 2012-2019 Red Hat, Inc.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public License as
@@ -68,6 +68,7 @@ parse_pci(struct device *dev, const char *current, const char *root)
 	        rc = sscanf(devpart, "%hx:%hhx:%hhx.%hhx/%n",
 	                    &domain, &bus, &device, &function, &pos);
 	        debug("current:\"%s\" rc:%d pos:%d", devpart, rc, pos);
+		dbgmk("         ", pos);
 	        if (rc != 4)
 	                break;
 	        devpart += pos;
