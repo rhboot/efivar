@@ -1,11 +1,10 @@
 SRCDIR = $(realpath .)
-TOPDIR = $(realpath ..)
 
 all : deps
 
-include $(TOPDIR)/Make.version
-include $(TOPDIR)/Make.rules
-include $(TOPDIR)/Make.defaults
+include $(TOPDIR)/src/include/version.mk
+include $(TOPDIR)/src/include/rules.mk
+include $(TOPDIR)/src/include/defaults.mk
 
 .%.d : %.c
 	$(CC) $(cflags) $(CPPFLAGS) -MM -MG -MF $@ $^

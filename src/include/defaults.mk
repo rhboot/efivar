@@ -34,7 +34,7 @@ CPPFLAGS += -DLIBEFIVAR_VERSION=$(VERSION)
 clang_cflags = -D_GNU_SOURCE -std=gnu11 -Wno-address-of-packed-member \
 	       -funsigned-char -Wall -Wno-nonnull-compare \
 	       -Werror -Wno-error=cpp
-gcc_cflags = -specs=$(TOPDIR)/gcc.specs
+gcc_cflags = -specs=$(TOPDIR)/src/include/gcc.specs
 cflags	= $(CFLAGS) -I${TOPDIR}/src/include/ \
 	$(if $(findstring clang,$(CC)),$(clang_cflags),) \
 	$(if $(findstring ccc-analyzer,$(CC)),$(clang_cflags),) \

@@ -6,8 +6,7 @@
 all: clean test0 test1 test2 test3 test4
 
 GRUB_PREFIX ?= grub2
-TOPDIR ?= ..
-EFIVAR ?= ../src/efivar
+EFIVAR ?= $(TOPDIR)/src/efivar
 
 clean:
 	@rm -f *.result.env *.result.var

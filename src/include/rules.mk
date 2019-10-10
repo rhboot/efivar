@@ -2,7 +2,7 @@ default : all
 
 .PHONY: default all clean install test
 
-include $(TOPDIR)/Make.version
+include $(TOPDIR)/src/include/version.mk
 
 %.a :
 	$(AR) -cvqs $@ $^
