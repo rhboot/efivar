@@ -8,19 +8,63 @@ BINDIR	?= $(EXEC_PREFIX)/bin
 PCDIR	?= $(LIBDIR)/pkgconfig
 DESTDIR	?=
 
-INSTALL ?= install
 CROSS_COMPILE	?=
 COMPILER ?= gcc
-PKG_CONFIG = $(shell if [ -e "$$(env $(CROSS_COMPILE)pkg-config 2>&1)" ]; then echo $(CROSS_COMPILE)pkg-config ; else echo pkg-config ; fi)
-CC_FOR_BUILD	?= cc
-CC	:= $(if $(filter default,$(origin CC)),$(CROSS_COMPILE)$(COMPILER),$(CC))
-CCLD_FOR_BUILD	?= $(CC_FOR_BUILD)
-CCLD	:= $(if $(filter undefined,$(origin CCLD)),$(CC),$(CCLD))
+$(call set-if-undefined,CC,$(CROSS_COMPILE)$(COMPILER))
+$(call set-if-undefined,CCLD,$(CC))
+$(call set-if-undefined,HOSTCC,$(COMPILER))
+$(call set-if-undefined,HOSTCCLD,$(HOSTCC))
+
 OPTIMIZE ?= -O2 -flto
-CFLAGS	?= $(OPTIMIZE) -g3
-CFLAGS	:= $(CFLAGS)
+DEBUGINFO ?= -g3
+WARNINGS_GCC ?= -Wmaybe-uninitialized \
+		-Wno-nonnull-compare
+WARNINGS_CCC_ANALYZER ?= $(WARNINGS_GCC)
+WARNINGS ?= -Wall -Wextra \
+	    -Wno-address-of-packed-member \
+	    $(call family,WARNINGS)
+ERRORS ?= -Werror -Wno-error=cpp $(call family,ERRORS)
+CPPFLAGS ?=
+override _CPPFLAGS := $(CPPFLAGS)
+override CPPFLAGS = $(_CPPFLAGS) -DLIBEFIVAR_VERSION=$(VERSION) \
+	    -D_GNU_SOURCE \
+	    -I$(TOPDIR)/src/include/
+CFLAGS ?= $(OPTIMIZE) $(DEBUGINFO) $(WARNINGS) $(ERRORS)
+CFLAGS_GCC ?= -specs=$(TOPDIR)/src/include/gcc.specs \
+	      -fno-merge-constants
+override _CFLAGS := $(CFLAGS)
+override CFLAGS = $(_CFLAGS) \
+		  -std=gnu11 \
+		  -funsigned-char \
+		  -fvisibility=hidden \
+		  $(call family,CFLAGS) \
+		  $(call pkg-config-cflags)
+LDFLAGS_CLANG ?= --fatal-warnings -pie -z relro
 LDFLAGS ?=
-LDFLAGS := $(LDFLAGS)
+override _LDFLAGS := $(LDFLAGS)
+override LDFLAGS = $(_LDFLAGS) \
+		   --add-needed \
+		   --build-id \
+		   --no-allow-shlib-undefined \
+		   --no-undefined-version \
+		   -z now \
+		   -z muldefs \
+		   $(call family,LDFLAGS)
+CCLDFLAGS ?=
+override _CCLDFLAGS := $(CCLDFLAGS)
+override CCLDFLAGS = $(CFLAGS) -L. $(_CCLDFLAGS) \
+		     $(call add-prefix,-Wl,$(LDFLAGS)) \
+		     $(call pkg-config-ccldflags)
+HOST_CPPFLAGS ?= $(CPPFLAGS)
+override _HOST_CPPFLAGS := $(HOST_CPPFLAGS)
+override HOST_CPPFLAGS = $(_HOST_CPPFLAGS) \
+			 -DEFIVAR_BUILD_ENVIRONMENT -march=native
+HOST_CFLAGS ?= $(CFLAGS)
+override _HOST_CFLAGS := $(HOST_CFLAGS)
+override HOST_CFLAGS = $(_HOST_CFLAGS)
+
+PKG_CONFIG = $(shell if [ -e "$$(env $(CROSS_COMPILE)pkg-config 2>&1)" ]; then echo $(CROSS_COMPILE)pkg-config ; else echo pkg-config ; fi)
+INSTALL ?= install
 AR	:= $(CROSS_COMPILE)$(COMPILER)-ar
 NM	:= $(CROSS_COMPILE)$(COMPILER)-nm
 RANLIB	:= $(CROSS_COMPILE)$(COMPILER)-ranlib
@@ -29,26 +73,7 @@ ABIDIFF := abidiff
 
 PKGS	=
 
-CPPFLAGS += -DLIBEFIVAR_VERSION=$(VERSION)
-
-clang_cflags = -D_GNU_SOURCE -std=gnu11 -Wno-address-of-packed-member \
-	       -funsigned-char -Wall -Wno-nonnull-compare \
-	       -Werror -Wno-error=cpp
-gcc_cflags = -specs=$(TOPDIR)/src/include/gcc.specs
-cflags	= $(CFLAGS) -I${TOPDIR}/src/include/ \
-	$(if $(findstring clang,$(CC)),$(clang_cflags),) \
-	$(if $(findstring ccc-analyzer,$(CC)),$(clang_cflags),) \
-	$(if $(findstring gcc,$(CC)),$(gcc_cflags),) \
-	$(call pkg-config-cflags)
-clang_ccldflags =
-gcc_ccldflags =
-ccldflags = $(cflags) -L. $(CCLDFLAGS) $(LDFLAGS) \
-	-Wl,-z,muldefs \
-	$(if $(findstring clang,$(CCLD)),$(clang_ccldflags),) \
-	$(if $(findstring ccc-analyzer,$(CCLD)),$(clang_ccldflags),) \
-	$(if $(findstring gcc,$(CCLD)),$(gcc_ccldflags),) \
-	$(call pkg-config-ldflags)
-SOFLAGS=-shared
+SOFLAGS=-shared $(call family,SOFLAGS)
 LDLIBS=$(foreach lib,$(LIBS),-l$(lib)) $(call pkg-config-ldlibs)
 
 COMMIT_ID=$(shell git log -1 --pretty=%H 2>/dev/null || echo master)
