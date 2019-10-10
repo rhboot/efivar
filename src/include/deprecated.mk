@@ -38,5 +38,15 @@ ifneq ($(origin bindir),undefined)
     override BINDIR = $(bindir)
   endif
 endif
+ifneq ($(origin CC_FOR_BUILD),undefined)
+  ifeq ($(origin HOSTCC),file)
+    override HOSTCC = $(CC_FOR_BUILD)
+  endif
+endif
+ifneq ($(origin CCLD_FOR_BUILD),undefined)
+  ifeq ($(origin HOSTCCLD),file)
+    override HOSTCCLD = $(CCLD_FOR_BUILD)
+  endif
+endif
 
 # vim:ft=make
