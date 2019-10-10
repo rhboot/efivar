@@ -3,7 +3,7 @@ SRCDIR = $(realpath .)
 include $(TOPDIR)/src/include/defaults.mk
 include $(TOPDIR)/src/include/version.mk
 
-ccldflags += -L$(TOPDIR)/src/ -Wl,-rpath=$(TOPDIR)/src/
+CCLDFLAGS += -L$(TOPDIR)/src/ -Wl,-rpath=$(TOPDIR)/src/
 LIBS=efivar
 
 all : tester

@@ -4,20 +4,32 @@ default : all
 
 include $(TOPDIR)/src/include/version.mk
 
+comma:= ,
+empty:=
+space:= $(empty) $(empty)
+
+set-if-undefined = $(call eval,$(1) := $(if $(filter default undefined,$(origin $(1))),$(2),$($(1))))
+add-prefix = $(subst $(space),$(empty),$(1)$(foreach x,$(2),$(comma)$(x)))
+
+FAMILY_SUFFIXES = $(if $(findstring clang,$(CC)),CLANG,) \
+		  $(if $(findstring ccc-analyzer,$(CC)),CCC_ANALYZER,) \
+		  $(if $(findstring gcc,$(CC)),GCC,)
+family = $(foreach FAMILY_SUFFIX,$(FAMILY_SUFFIXES),$($(1)_$(FAMILY_SUFFIX)))
+
 %.a :
 	$(AR) -cvqs $@ $^
 
 % : %.c
 
 % : %.c
-	$(CCLD) $(ccldflags) $(CPPFLAGS) -o $@ $^ $(LDLIBS)
+	$(CCLD) $(CCLDFLAGS) $(CPPFLAGS) -o $@ $^ $(LDLIBS)
 
-%-static : ccldflags+=-static
+%-static : CCLDFLAGS+=-static
 %-static : %.c
-	$(CCLD) $(ccldflags) $(CPPFLAGS) -o $@ $^ $(LDLIBS)
+	$(CCLD) $(CCLDFLAGS) $(CPPFLAGS) -o $@ $^ $(LDLIBS)
 
 %.so :
-	$(CCLD) $(ccldflags) $(CPPFLAGS) $(SOFLAGS) \
+	$(CCLD) $(CCLDFLAGS) $(CPPFLAGS) $(SOFLAGS) \
 	  -Wl,-soname,$@.1 \
 	  -Wl,--version-script=$(MAP) \
 	  -o $@ $^ $(LDLIBS)
@@ -35,22 +47,22 @@ include $(TOPDIR)/src/include/version.mk
 		$<
 
 %.o : %.c
-	$(CC) $(cflags) -fPIC $(CPPFLAGS) -c -o $@ $(filter %.c %.o %.S,$^)
+	$(CC) $(CFLAGS) -fPIC $(CPPFLAGS) -c -o $@ $(filter %.c %.o %.S,$^)
 
 %.static.o : %.c
-	$(CC) $(cflags) -fPIE $(CPPFLAGS) -c -o $@ $(filter %.c %.o %.S,$^)
+	$(CC) $(CFLAGS) -fPIE $(CPPFLAGS) -c -o $@ $(filter %.c %.o %.S,$^)
 
 %.o : %.S
-	$(CC) $(cflags) -fPIC $(CPPFLAGS) -c -o $@ $(filter %.c %.o %.S,$^)
+	$(CC) $(CFLAGS) -fPIC $(CPPFLAGS) -c -o $@ $(filter %.c %.o %.S,$^)
 
 %.static.o : %.S
-	$(CC) $(cflags) -fPIE $(CPPFLAGS) -c -o $@ $(filter %.c %.o %.S,$^)
+	$(CC) $(CFLAGS) -fPIE $(CPPFLAGS) -c -o $@ $(filter %.c %.o %.S,$^)
 
 %.S: %.c
-	$(CC) $(cflags) $(CPPFLAGS) -S $< -o $@
+	$(CC) $(CFLAGS) $(CPPFLAGS) -S $< -o $@
 
 %.E: %.c
-	$(CC) $(cflags) $(CPPFLAGS) -E $< -o $@
+	$(CC) $(CFLAGS) $(CPPFLAGS) -E $< -o $@
 
 %.c : %.h
 
@@ -71,20 +83,13 @@ endef
 %.map : %.map.in
 	@$(call substitute-version,$<,$@)
 
-pkg-config-cflags = \
-	$(shell if [ -n "$(PKGS)" ]; then $(PKG_CONFIG) --cflags $(PKGS); fi)
-pkg-config-ldflags = \
-	$(shell if [ -n "$(PKGS)" ]; then $(PKG_CONFIG) --libs-only-L --libs-only-other $(PKGS) ; fi)
-pkg-config-ldlibs = \
-	$(shell if [ -n "$(PKGS)" ]; then $(PKG_CONFIG) --libs-only-l $(PKGS) ; fi)
+pkg-config-cflags = $(if $(PKGS),$(shell $(PKG_CONFIG) --cflags $(PKGS)))
+pkg-config-ccldflags = $(if $(PKGS),$(shell $(PKG_CONFIG) --libs-only-L --libs-only-other $(PKGS)))
+pkg-config-ldlibs = $(if $(PKGS),$(shell $(PKG_CONFIG) --libs-only-l $(PKGS)))
 
-define deps-of
-	$(foreach src,$(filter %.c,$(1)),$(patsubst %.c,.%.d,$(src))) \
-	$(foreach src,$(filter %.S,$(1)),$(patsubst %.S,.%.d,$(src)))
-endef
+deps-of = $(foreach src,$(filter %.c,$(1)),$(patsubst %.c,.%.d,$(src))) \
+	  $(foreach src,$(filter %.S,$(1)),$(patsubst %.S,.%.d,$(src)))
 
-define get-config
-$(shell git config --local --get "efivar.$(1)")
-endef
+get-config = $(shell git config --local --get "efivar.$(1)")
 
 # vim:ft=make
