@@ -1,15 +1,15 @@
-TOPDIR = $(shell echo $$PWD)
+export TOPDIR = $(realpath $(dir $(firstword $(MAKEFILE_LIST))))
 
-include $(TOPDIR)/Make.deprecated
-include $(TOPDIR)/Make.version
-include $(TOPDIR)/Make.rules
-include $(TOPDIR)/Make.defaults
-include $(TOPDIR)/Make.coverity
-include $(TOPDIR)/Make.scan-build
+include $(TOPDIR)/src/include/deprecated.mk
+include $(TOPDIR)/src/include/version.mk
+include $(TOPDIR)/src/include/rules.mk
+include $(TOPDIR)/src/include/defaults.mk
+include $(TOPDIR)/src/include/coverity.mk
+include $(TOPDIR)/src/include/scan-build.mk
 
 SUBDIRS := src docs
 
-all : | efivar.spec Make.version
+all : | efivar.spec src/include/version.mk
 all :
 	@set -e ; for x in $(SUBDIRS) ; do \
 		$(MAKE) -C $$x $@ ; \
@@ -43,7 +43,7 @@ a :
 
 GITTAG = $(shell bash -c "echo $$(($(VERSION) + 1))")
 
-efivar.spec : | Makefile Make.version
+efivar.spec : | Makefile src/include/version.mk
 
 clean :
 	@set -e ; for x in $(SUBDIRS) ; do \
@@ -66,8 +66,8 @@ test-archive: abicheck efivar.spec
 	@echo "The archive is in efivar-$(GITTAG).tar.bz2"
 
 bumpver :
-	@echo VERSION=$(GITTAG) > Make.version
-	@git add Make.version
+	@echo VERSION=$(GITTAG) > src/include/version.mk
+	@git add src/include/version.mk
 	git commit -m "Bump version to $(GITTAG)" -s
 
 tag:

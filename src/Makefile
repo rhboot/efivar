@@ -1,10 +1,9 @@
 SRCDIR = $(realpath .)
-TOPDIR = $(realpath ..)
 
-include $(TOPDIR)/Make.deprecated
-include $(TOPDIR)/Make.version
-include $(TOPDIR)/Make.rules
-include $(TOPDIR)/Make.defaults
+include $(TOPDIR)/src/include/deprecated.mk
+include $(TOPDIR)/src/include/version.mk
+include $(TOPDIR)/src/include/rules.mk
+include $(TOPDIR)/src/include/defaults.mk
 
 LIBTARGETS=libefivar.so libefiboot.so
 STATICLIBTARGETS=libefivar.a libefiboot.a
@@ -84,7 +83,7 @@ libefiboot.so : LIBS=efivar
 libefiboot.so : MAP=libefiboot.map
 
 deps : $(ALL_SOURCES)
-	@$(MAKE) -f $(SRCDIR)/Make.deps deps SOURCES="$(ALL_SOURCES)"
+	@$(MAKE) -f $(SRCDIR)/include/deps.mk deps SOURCES="$(ALL_SOURCES)"
 
 clean : 
 	@rm -rfv *~ *.o *.a *.E *.so *.so.* *.pc *.bin .*.d *.map \

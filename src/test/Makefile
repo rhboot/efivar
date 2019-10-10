@@ -1,8 +1,7 @@
 SRCDIR = $(realpath .)
-TOPDIR = $(realpath $(SRCDIR)/../..)
 
-include $(TOPDIR)/Make.defaults
-include $(TOPDIR)/Make.version
+include $(TOPDIR)/src/include/defaults.mk
+include $(TOPDIR)/src/include/version.mk
 
 ccldflags += -L$(TOPDIR)/src/ -Wl,-rpath=$(TOPDIR)/src/
 LIBS=efivar
@@ -22,4 +21,4 @@ tester :: tester.o
 
 .PHONY: all clean install test
 
-include $(TOPDIR)/Make.rules
+include $(TOPDIR)/src/include/rules.mk

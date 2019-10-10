@@ -1,10 +1,9 @@
 SRCDIR = $(realpath .)
-TOPDIR = $(realpath ..)
 
-include $(TOPDIR)/Make.deprecated
-include $(TOPDIR)/Make.version
-include $(TOPDIR)/Make.rules
-include $(TOPDIR)/Make.defaults
+include $(TOPDIR)/src/include/deprecated.mk
+include $(TOPDIR)/src/include/version.mk
+include $(TOPDIR)/src/include/rules.mk
+include $(TOPDIR)/src/include/defaults.mk
 
 MAN1TARGETS = efivar.1
 MAN3TARGETS = efi_append_variable.3 \
@@ -51,4 +50,4 @@ install :
 
 .PHONY: all clean install
 
-include $(TOPDIR)/Make.rules
+include $(TOPDIR)/src/include/rules.mk
