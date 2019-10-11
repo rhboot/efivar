@@ -83,4 +83,4 @@ archive: abicheck bumpver abidw tag efivar.spec
 	@rm -rf /tmp/efivar-$(GITTAG)
 	@echo "The archive is in efivar-$(GITTAG).tar.bz2"
 
-
+.NOTPARALLEL:
