@@ -18,6 +18,7 @@
 721c8b66-426c-4e86-8e99-3457c46ab0b9	lenovo_setup	Lenovo Firmware Setup
 77fa9abd-0359-4d32-bd60-28f4e78f784b	microsoft	Microsoft
 7FACC7B6-127F-4E9C-9C5D-080F98994345	lenovo_2	Lenovo
+8108ac4e-9f11-4d59-850e-e21a522c59b2	auto_created_boot_option	Automatically Created Boot Option
 826ca512-cf10-4ac9-b187-be01496631bd	sha1	SHA-1
 82988420-7467-4490-9059-feb448dd1963	lenovo_me_config	Lenovo ME Configuration Menu
 8be4df61-93ca-11d2-aa0d-00e098032b8c	global	EFI Global Variable
