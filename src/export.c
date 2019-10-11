@@ -149,7 +149,7 @@ overflow:
 	}
 
 	crc = efi_crc32(data, size - sizeof(uint32_t));
-	debug("efi_crc32(%p, %lu) -> 0x%"PRIx32", expected 0x%"PRIx32,
+	debug("efi_crc32(%p, %zu) -> 0x%"PRIx32", expected 0x%"PRIx32,
 	      data, size - sizeof(uint32_t), crc,
 	      *(uint32_t*)(data + size - sizeof(uint32_t)));
 
@@ -282,7 +282,7 @@ efi_variable_import_efivar(uint8_t *data, size_t datasz, efi_variable_t **var_ou
 		}
 
 		crc = efi_crc32(data, datasz - sizeof(uint32_t));
-		debug("efi_crc32(%p, %lu) -> 0x%"PRIx32", expected 0x%"PRIx32,
+		debug("efi_crc32(%p, %zu) -> 0x%"PRIx32", expected 0x%"PRIx32,
 		      data, datasz - sizeof(uint32_t), crc,
 		      *(uint32_t*)(data + datasz - sizeof(uint32_t)));
 
@@ -473,7 +473,7 @@ overflow:
 	ptr += var->data_size;
 
 	crc = efi_crc32(data, needed - sizeof(uint32_t));
-	debug("efi_crc32(%p, %lu) -> 0x%"PRIx32,
+	debug("efi_crc32(%p, %zu) -> 0x%"PRIx32,
 	      data, needed - sizeof(uint32_t), crc);
 	*(uint32_t *)ptr = crc;
 
@@ -611,7 +611,7 @@ overflow:
 	ptr += var->data_size;
 
 	crc = efi_crc32(data, needed - sizeof(uint32_t));
-	debug("efi_crc32(%p, %lu) -> 0x%"PRIx32,
+	debug("efi_crc32(%p, %zu) -> 0x%"PRIx32,
 	      data, needed - sizeof(uint32_t), crc);
 	*(uint32_t *)ptr = crc;
 
