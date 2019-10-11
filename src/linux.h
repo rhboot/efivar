@@ -1,6 +1,6 @@
 /*
  * libefiboot - library for the manipulation of EFI boot variables
- * Copyright 2012-2015 Red Hat, Inc.
+ * Copyright 2012-2019 Red Hat, Inc.
  * Copyright (C) 2001 Dell Computer Corporation <Matt_Domsch@dell.com>
  *
  * This library is free software; you can redistribute it and/or
@@ -218,6 +218,22 @@ extern ssize_t HIDDEN make_mac_path(uint8_t *buf, ssize_t size,
 		_rc;							\
 	})
 
+#define sysfs_access(mode, fmt, args...)				\
+	({								\
+		int rc_;						\
+		char *pn_;						\
+									\
+		rc_ = asprintfa(&pn_, "/sys/" fmt, ## args);		\
+		if (rc_ >= 0) {						\
+			rc_ = access(pn_, mode);			\
+			if (rc_ < 0)					\
+				efi_error("could not access %s", pn_);  \
+		} else {						\
+			efi_error("could not allocate memory");		\
+		}							\
+		rc_;							\
+	})
+
 #define sysfs_stat(statbuf, fmt, args...)				\
 	({								\
 		int rc_;						\
@@ -249,6 +265,59 @@ extern ssize_t HIDDEN make_mac_path(uint8_t *buf, ssize_t size,
 			efi_error("could not allocate memory");		\
 		}							\
 		dir_;							\
+	})
+
+/*
+ * Iterate a /sys/block directory looking for device/foo, device/device/foo,
+ * etc.  I'm not proud of this method.
+ */
+#define find_device_file(result, name, fmt, args...)				\
+	({									\
+		int rc_ = 0;							\
+		debug("searching for %s from in %s", name, dev->disk_name);	\
+		for (unsigned int try_ = 0; true; try_++) {			\
+			char slashdev_[sizeof("device")				\
+				       + try_ * strlen("/device")];		\
+										\
+			char *nul_ = stpcpy(slashdev_, "device");		\
+			for (unsigned int i_ = 0; i_ < try_; i_++)		\
+				nul_ = stpcpy(nul_, "/device");			\
+										\
+			debug("trying /sys/" fmt "/%s/%s",			\
+			      ## args, slashdev_, name);			\
+										\
+			rc_ = sysfs_access(F_OK, fmt "/%s", ## args, slashdev_);\
+			if (rc_ < 0) {						\
+				if (errno == ENOENT) {				\
+					efi_error_pop();			\
+					break;					\
+				}						\
+				efi_error("cannot access /sys/"fmt"/%s: %m",	\
+					  ## args, slashdev_);			\
+				goto find_device_link_err_;			\
+			}							\
+										\
+			rc_ = sysfs_access(F_OK, fmt "/%s/%s",			\
+					   ## args, slashdev_, name);		\
+			if (rc_ < 0) {						\
+				if (errno == ENOENT) {				\
+					efi_error_pop();			\
+					break;					\
+				}						\
+				efi_error("cannot access /sys/"fmt"/%s/%s: %m",	\
+					  ## args, slashdev_, name);		\
+				goto find_device_link_err_;			\
+			}							\
+										\
+			rc_ = asprintfa(result, fmt "/%s/%s",			\
+					## args, slashdev_, name);		\
+			if (rc_ < 0) {						\
+				efi_error("cannot allocate memory: %m");	\
+				goto find_device_link_err_;			\
+			}							\
+		}								\
+find_device_link_err_:								\
+		rc_;								\
 	})
 
 #define DEV_PROVIDES_ROOT       1

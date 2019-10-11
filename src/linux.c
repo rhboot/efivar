@@ -401,26 +401,32 @@ struct device HIDDEN
 	        goto err;
 	}
 
-	if (dev->device[0] != 0) {
-	        rc = sysfs_readlink(&tmpbuf, "block/%s/device/driver", dev->disk_name);
+	/*
+	 * So, on a normal disk, you get something like:
+	 * /sys/block/sda/device -> ../../0:0:0:0
+	 * /sys/block/sda/device/driver -> ../../../../../../../bus/scsi/drivers/sd
+	 *
+	 * On a directly attached nvme device you get:
+	 * /sys/block/nvme0n1/device -> ../../nvme0
+	 * /sys/block/nvme0n1/device/device -> ../../../0000:6e:00.0
+	 * /sys/block/nvme0n1/device/device/driver -> ../../../../bus/pci/drivers/nvme
+	 *
+	 * On a fabric-attached nvme device, you get something like:
+	 * /sys/block/nvme0n1/device -> ../../nvme0
+	 * /sys/block/nvme0n1/device/device -> ../../ctl
+	 * /sys/block/nvme0n1/device/device/device -> ../../../../../0000:6e:00.0
+	 * /sys/block/nvme0n1/device/device/device/driver -> ../../../../../../bus/pci/drivers/nvme-fabrics
+	 *
+	 * ... I think?  I don't have one in front of me.
+	 */
+
+	char *filepath = NULL;
+	rc = find_device_file(&filepath, "driver", "block/%s", dev->disk_name);
+	if (rc >= 0) {
+		rc = sysfs_readlink(&tmpbuf, "%s", filepath);
 	        if (rc < 0 || !tmpbuf) {
-	                if (errno == ENOENT) {
-	                        /*
-	                         * nvme, for example, will have nvme0n1/device point
-	                         * at nvme0, and we need to look for device/driver
-	                         * there.
-	                         */
-	                        rc = sysfs_readlink(&tmpbuf,
-	                                            "block/%s/device/device/driver",
-	                                            dev->disk_name);
-	                        if (rc >= 0 && tmpbuf)
-	                                efi_error_pop();
-	                }
-	                if (rc < 0 || !tmpbuf) {
-	                        efi_error("readlink of /sys/block/%s/device/driver failed",
-	                                  dev->disk_name);
-	                        goto err;
-	                }
+			efi_error("readlink of /sys/%s failed", filepath);
+	                goto err;
 	        }
 
 	        linkbuf = pathseg(tmpbuf, -1);
@@ -431,7 +437,7 @@ struct device HIDDEN
 
 	        dev->driver = strdup(linkbuf);
 	} else {
-	        dev->driver = strdup("");
+		dev->driver = strdup("");
 	}
 
 	if (!dev->driver) {

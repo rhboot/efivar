@@ -89,13 +89,12 @@ parse_nvme(struct device *dev, const char *path, const char *root UNUSED)
 	/*
 	 * now fish the eui out of sysfs is there is one...
 	 */
-	rc = read_sysfs_file(&filebuf,
-	                     "class/block/nvme%dn%d/eui",
-	                     ctrl_id, ns_id);
-	if ((rc < 0 && errno == ENOENT) || filebuf == NULL) {
-	        rc = read_sysfs_file(&filebuf,
-	                     "class/block/nvme%dn%d/device/eui",
-	                     ctrl_id, ns_id);
+	char *euipath = NULL;
+	rc = read_sysfs_file(&filebuf, "class/block/nvme%dn%d/eui", ctrl_id, ns_id);
+	if (rc < 0 && (errno == ENOENT || errno == ENOTDIR)) {
+		rc = find_device_file(&euipath, "eui", "class/block/nvme%dn%d", ctrl_id, ns_id);
+		if (rc >= 0 && euipath != NULL)
+			rc = read_sysfs_file(&filebuf, "%s", euipath);
 	}
 	if (rc >= 0 && filebuf != NULL) {
 	        uint8_t eui[8];
