@@ -1,6 +1,6 @@
 /*
  * libefiboot - library for the manipulation of EFI boot variables
- * Copyright 2012-2018 Red Hat, Inc.
+ * Copyright 2012-2019 Red Hat, Inc.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public License as
@@ -58,7 +58,7 @@ is_pata(struct device *dev)
  * 11:0 -> ../../devices/pci0000:00/0000:00:11.5/ata3/host2/target2:0:0/2:0:0:0/block/sr0
  */
 static ssize_t
-parse_ata(struct device *dev, const char *current, const char *root UNUSED)
+parse_ata(struct device *dev, const char *path, const char *root UNUSED)
 {
 	uint32_t scsi_host, scsi_bus, scsi_device, scsi_target;
 	uint64_t scsi_lun;
@@ -108,7 +108,7 @@ parse_ata(struct device *dev, const char *current, const char *root UNUSED)
 		return 0;
 	}
 
-	char *host = strstr(current, "/host");
+	char *host = strstr(path, "/host");
 	if (!host)
 		return -1;
 
@@ -125,10 +125,10 @@ parse_ata(struct device *dev, const char *current, const char *root UNUSED)
 	dev->ata_info.scsi_target = scsi_target;
 	dev->ata_info.scsi_lun = scsi_lun;
 
-	char *block = strstr(current, "/block/");
+	char *block = strstr(path, "/block/");
 	if (!block)
 		return -1;
-	return block + 1 - current;
+	return block + 1 - path;
 }
 
 static ssize_t

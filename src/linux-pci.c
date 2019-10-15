@@ -43,11 +43,10 @@
  *
  */
 static ssize_t
-parse_pci(struct device *dev, const char *current, const char *root)
+parse_pci(struct device *dev, const char *path, const char *root)
 {
+	const char *current = path;
 	int rc;
-	int pos = 0;
-	const char *devpart = current;
 
 	debug("entry");
 
@@ -55,23 +54,22 @@ parse_pci(struct device *dev, const char *current, const char *root)
 	 * 0000:00:01.0/0000:01:00.0/
 	 *              ^d   ^b ^d ^f (of the last one in the series)
 	 */
-	while (*devpart) {
+	while (*current) {
 	        uint16_t domain;
 	        uint8_t bus, device, function;
 	        struct pci_dev_info *pci_dev;
 	        unsigned int i = dev->n_pci_devs;
 	        struct stat statbuf;
+		int pos0 = -1, pos1 = -1;
 
-	        debug("devpart is \"%s\"", devpart);
-	        pos = 0;
 	        debug("searching for 0000:00:00.0/");
-	        rc = sscanf(devpart, "%hx:%hhx:%hhx.%hhx/%n",
-	                    &domain, &bus, &device, &function, &pos);
-	        debug("current:\"%s\" rc:%d pos:%d", devpart, rc, pos);
-		dbgmk("         ", pos);
+	        rc = sscanf(current, "%n%hx:%hhx:%hhx.%hhx/%n",
+	                    &pos0, &domain, &bus, &device, &function, &pos1);
+	        debug("current:'%s' rc:%d pos0:%d pos1:%d", current, rc, pos0, pos1);
+		dbgmk("         ", pos0, pos1);
 	        if (rc != 4)
 	                break;
-	        devpart += pos;
+	        current += pos1;
 
 	        debug("found pci domain %04hx:%02hhx:%02hhx.%02hhx",
 	              domain, bus, device, function);
@@ -88,13 +86,13 @@ parse_pci(struct device *dev, const char *current, const char *root)
 	        dev->pci_dev[i].pci_bus = bus;
 	        dev->pci_dev[i].pci_device = device;
 	        dev->pci_dev[i].pci_function = function;
-	        char *tmp = strndup(root, devpart-root+1);
+	        char *tmp = strndup(root, current-root+1);
 	        char *linkbuf = NULL;
 	        if (!tmp) {
 	                efi_error("could not allocate memory");
 	                return -1;
 	        }
-	        tmp[devpart - root] = '\0';
+	        tmp[current - root] = '\0';
 	        rc = sysfs_stat(&statbuf, "class/block/%s/driver", tmp);
 	        if (rc < 0 && errno == ENOENT) {
 	                debug("No driver link for /sys/class/block/%s", tmp);
@@ -115,8 +113,8 @@ parse_pci(struct device *dev, const char *current, const char *root)
 	        dev->n_pci_devs += 1;
 	}
 
-	debug("next:\"%s\"", devpart);
-	return devpart - current;
+	debug("current:'%s' sz:%zd\n", current, current - path);
+	return current - path;
 }
 
 static ssize_t

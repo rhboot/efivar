@@ -24,6 +24,7 @@
 #include <fcntl.h>
 #include <inttypes.h>
 #include <stdint.h>
+#include <sys/param.h>
 #include <unistd.h>
 
 #include "efiboot.h"
@@ -45,20 +46,21 @@
  */
 
 static ssize_t
-parse_emmc(struct device *dev, const char *current, const char *root UNUSED)
+parse_emmc(struct device *dev, const char *path, const char *root UNUSED)
 {
+	const char * current = path;
 	int rc;
 	int32_t tosser0, tosser1, tosser2, tosser3, slot_id, partition;
-	int pos0 = 0, pos1 = 0;
+	int pos0 = -1, pos1 = -1, pos2 = -1;
 
 	debug("entry");
 
 	debug("searching for mmc_host/mmc0/mmc0:0001/block/mmcblk0 or mmc_host/mmc0/mmc0:0001/block/mmcblk0/mmcblk0p1");
-	rc = sscanf(current, "mmc_host/mmc%d/mmc%d:%d/block/mmcblk%d%n/mmcblk%dp%d%n",
-	            &tosser0, &tosser1, &tosser2, &slot_id,
-	            &pos0, &tosser3, &partition, &pos1);
-	debug("current:\"%s\" rc:%d pos0:%d pos1:%d\n", current, rc, pos0, pos1);
-	dbgmk("         ", pos0, pos1);
+	rc = sscanf(current, "%nmmc_host/mmc%d/mmc%d:%d/block/mmcblk%d%n/mmcblk%dp%d%n",
+	            &pos0, &tosser0, &tosser1, &tosser2, &slot_id,
+	            &pos1, &tosser3, &partition, &pos2);
+	debug("current:\"%s\" rc:%d pos0:%d pos1:%d pos2:%d\n", current, rc, pos0, pos1, pos2);
+	dbgmk("         ", pos0, MAX(pos1,pos2));
 	/*
 	 * If it isn't of that form, it's not one of our emmc devices.
 	 */
@@ -72,10 +74,12 @@ parse_emmc(struct device *dev, const char *current, const char *root UNUSED)
 	        if (dev->part == -1)
 	                dev->part = partition;
 
-	        pos0 = pos1;
+	        pos2 = pos1;
 	}
+	current += pos2;
 
-	return pos0;
+	debug("current:'%s' sz:%zd", current, current - path);
+	return current - path;
 }
 
 static ssize_t

@@ -41,13 +41,13 @@
  *
  */
 static ssize_t
-parse_pci_root(struct device *dev, const char *current, const char *root UNUSED)
+parse_pci_root(struct device *dev, const char *path, const char *root UNUSED)
 {
+	const char * current = path;
 	int rc;
-	int pos = 0;
+	int pos0 = -1, pos1 = -1;
 	uint16_t root_domain;
 	uint8_t root_bus;
-	const char *devpart = current;
 
 	debug("entry");
 
@@ -56,15 +56,15 @@ parse_pci_root(struct device *dev, const char *current, const char *root UNUSED)
 	 * pci0000:00/
 	 *    ^d   ^p
 	 */
-	rc = sscanf(devpart, "../../devices/pci%hx:%hhx/%n", &root_domain, &root_bus, &pos);
-	debug("current:\"%s\" rc:%d pos:%d", devpart, rc, pos);
-	dbgmk("         ", pos);
+	rc = sscanf(current, "%n../../devices/pci%hx:%hhx/%n", &pos0, &root_domain, &root_bus, &pos1);
+	debug("current:'%s' rc:%d pos0:%d pos1:%d", current, rc, pos0, pos1);
+	dbgmk("         ", pos0, pos1);
 	/*
 	 * If we can't find that, it's not a PCI device.
 	 */
 	if (rc != 2)
 	        return 0;
-	devpart += pos;
+	current += pos1;
 
 	dev->pci_root.pci_domain = root_domain;
 	dev->pci_root.pci_bus = root_bus;
@@ -75,7 +75,8 @@ parse_pci_root(struct device *dev, const char *current, const char *root UNUSED)
 	        return -1;
 
 	errno = 0;
-	return devpart - current;
+	debug("current:'%s' sz:%zd\n", current, current - path);
+	return current - path;
 }
 
 static ssize_t

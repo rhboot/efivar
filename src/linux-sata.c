@@ -138,15 +138,15 @@ sysfs_sata_get_port_info(uint32_t print_id, struct device *dev)
 }
 
 static ssize_t
-parse_sata(struct device *dev, const char *devlink, const char *root UNUSED)
+parse_sata(struct device *dev, const char *path, const char *root UNUSED)
 {
-	const char *current = devlink;
+	const char *current = path;
 	uint32_t print_id;
 	uint32_t scsi_bus, tosser0;
 	uint32_t scsi_device, tosser1;
 	uint32_t scsi_target, tosser2;
 	uint64_t scsi_lun, tosser3;
-	int pos = 0;
+	int pos0 = -1, pos1 = -1;
 	int rc;
 
 	debug("entry");
@@ -160,9 +160,9 @@ parse_sata(struct device *dev, const char *devlink, const char *root UNUSED)
 	 *    ^dev  ^host   x y z
 	 */
 	debug("searching for ata1/");
-	rc = sscanf(current, "ata%"PRIu32"/%n", &print_id, &pos);
-	debug("current:\"%s\" rc:%d pos:%d\n", current, rc, pos);
-	dbgmk("         ", pos);
+	rc = sscanf(current, "%nata%"PRIu32"/%n", &pos0, &print_id, &pos1);
+	debug("current:'%s' rc:%d pos0:%d pos1:%d\n", current, rc, pos0, pos1);
+	dbgmk("         ", pos0, pos1);
 	/*
 	 * If we don't find this one, it isn't an ata device, so return 0 not
 	 * error.  Later errors mean it is an ata device, but we can't parse
@@ -170,36 +170,36 @@ parse_sata(struct device *dev, const char *devlink, const char *root UNUSED)
 	 */
 	if (rc != 1)
 	        return 0;
-	current += pos;
-	pos = 0;
+	current += pos1;
+	pos0 = pos1 = -1;
 
 	debug("searching for host0/");
-	rc = sscanf(current, "host%"PRIu32"/%n", &scsi_bus, &pos);
-	debug("current:\"%s\" rc:%d pos:%d\n", current, rc, pos);
-	dbgmk("         ", pos);
+	rc = sscanf(current, "%nhost%"PRIu32"/%n", &pos0, &scsi_bus, &pos1);
+	debug("current:'%s' rc:%d pos0:%d pos1:%d\n", current, rc, pos0, pos1);
+	dbgmk("         ", pos0, pos1);
 	if (rc != 1)
 	        return -1;
-	current += pos;
-	pos = 0;
+	current += pos1;
+	pos0 = pos1 = -1;
 
 	debug("searching for target0:0:0:0/");
-	rc = sscanf(current, "target%"PRIu32":%"PRIu32":%"PRIu64"/%n",
-	            &scsi_device, &scsi_target, &scsi_lun, &pos);
-	debug("current:\"%s\" rc:%d pos:%d\n", current, rc, pos);
-	dbgmk("         ", pos);
+	rc = sscanf(current, "%ntarget%"PRIu32":%"PRIu32":%"PRIu64"/%n",
+	            &pos0, &scsi_device, &scsi_target, &scsi_lun, &pos1);
+	debug("current:'%s' rc:%d pos0:%d pos1:%d\n", current, rc, pos0, pos1);
+	dbgmk("         ", pos0, pos1);
 	if (rc != 3)
 	        return -1;
-	current += pos;
-	pos = 0;
+	current += pos1;
+	pos0 = pos1 = -1;
 
 	debug("searching for 0:0:0:0/");
-	rc = sscanf(current, "%"PRIu32":%"PRIu32":%"PRIu32":%"PRIu64"/%n",
-	            &tosser0, &tosser1, &tosser2, &tosser3, &pos);
-	debug("current:\"%s\" rc:%d pos:%d\n", current, rc, pos);
-	dbgmk("         ", pos);
+	rc = sscanf(current, "%n%"PRIu32":%"PRIu32":%"PRIu32":%"PRIu64"/%n",
+	            &pos0, &tosser0, &tosser1, &tosser2, &tosser3, &pos1);
+	debug("current:'%s' rc:%d pos0:%d pos1:%d\n", current, rc, pos0, pos1);
+	dbgmk("         ", pos0, pos1);
 	if (rc != 4)
 	        return -1;
-	current += pos;
+	current += pos1;
 
 	rc = sysfs_sata_get_port_info(print_id, dev);
 	if (rc < 0)
@@ -213,7 +213,8 @@ parse_sata(struct device *dev, const char *devlink, const char *root UNUSED)
 	if (dev->interface_type == unknown)
 	        dev->interface_type = sata;
 
-	return current - devlink;
+	debug("current:'%s' sz:%zd\n", current, current - path);
+	return current - path;
 }
 
 static ssize_t

@@ -24,6 +24,7 @@
 #include <fcntl.h>
 #include <inttypes.h>
 #include <stdint.h>
+#include <sys/param.h>
 #include <unistd.h>
 
 #include "efiboot.h"
@@ -48,26 +49,29 @@
  */
 
 static ssize_t
-parse_nvme(struct device *dev, const char *current, const char *root UNUSED)
+parse_nvme(struct device *dev, const char *path, const char *root UNUSED)
 {
+	const char *current = path;
 	int rc;
 	int32_t tosser0, tosser1, tosser2, ctrl_id, ns_id, partition;
 	uint8_t *filebuf = NULL;
-	int pos0 = 0, pos1 = 0;
+	int pos0 = -1, pos1 = -1, pos2 = -1;
 
 	debug("entry");
 
 	debug("searching for nvme/nvme0/nvme0n1 or nvme/nvme0/nvme0n1/nvme0n1p1");
-	rc = sscanf(current, "nvme/nvme%d/nvme%dn%d%n/nvme%dn%dp%d%n",
-	            &tosser0, &ctrl_id, &ns_id, &pos0,
-	            &tosser1, &tosser2, &partition, &pos1);
-	debug("current:\"%s\" rc:%d pos0:%d pos1:%d\n", current, rc, pos0, pos1);
-	dbgmk("         ", pos0, pos1);
+	rc = sscanf(current, "%nnvme/nvme%d/nvme%dn%d%n/nvme%dn%dp%d%n",
+	            &pos0, &tosser0, &ctrl_id, &ns_id,
+		    &pos1, &tosser1, &tosser2, &partition, &pos2);
+	debug("current:\"%s\" rc:%d pos0:%d pos1:%d pos2:%d\n", current, rc, pos0, pos1, pos2);
+	dbgmk("         ", pos0, MAX(pos1,pos2));
 	/*
 	 * If it isn't of that form, it's not one of our nvme devices.
 	 */
 	if (rc != 3 && rc != 6)
 	        return 0;
+	if (rc == 3)
+		pos2 = pos1;
 
 	dev->nvme_info.ctrl_id = ctrl_id;
 	dev->nvme_info.ns_id = ns_id;
@@ -78,8 +82,9 @@ parse_nvme(struct device *dev, const char *current, const char *root UNUSED)
 	        if (dev->part == -1)
 	                dev->part = partition;
 
-	        pos0 = pos1;
+	        pos1 = pos2;
 	}
+	current += pos1;
 
 	/*
 	 * now fish the eui out of sysfs is there is one...
@@ -111,7 +116,8 @@ parse_nvme(struct device *dev, const char *current, const char *root UNUSED)
 	        memcpy(dev->nvme_info.eui, eui, sizeof(eui));
 	}
 
-	return pos0;
+	debug("current:'%s' sz:%zd", current, current - path);
+	return current - path;
 }
 
 static ssize_t

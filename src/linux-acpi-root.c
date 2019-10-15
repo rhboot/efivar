@@ -41,16 +41,15 @@
  *			    ^ root hub ^pci dev      ^pci dev     ^ blockdev stuff
  */
 static ssize_t
-parse_acpi_root(struct device *dev, const char *current, const char *root UNUSED)
+parse_acpi_root(struct device *dev, const char *path, const char *root UNUSED)
 {
+	const char *current = path;
 	int rc;
-	int pos = 0;
+	int pos0 = -1, pos1 = -1, pos2 = -1;
 	uint16_t pad0;
 	uint8_t pad1;
 	char *acpi_header = NULL;
 	char *colon;
-
-	const char *devpart = current;
 
 	debug("entry");
 
@@ -61,23 +60,25 @@ parse_acpi_root(struct device *dev, const char *current, const char *root UNUSED
 	 * This is annoying because "/%04ms%h:%hhx/" won't bind from the right
 	 * side in sscanf.
 	 */
-	rc = sscanf(devpart, "../../devices/platform/%n", &pos);
-	debug("devpart:\"%s\" rc:%d pos:%d", devpart, rc, pos);
-	dbgmk("         ", pos);
-	if (rc != 0 || pos < 1)
+	rc = sscanf(current, "../../devices/%nplatform/%n", &pos0, &pos1);
+	debug("current:'%s' rc:%d pos0:%d pos1:%d", current, rc, pos0, pos1);
+	dbgmk("         ", pos0, pos1);
+	if (rc != 0 || pos0 == -1 || pos1 == -1)
 		return 0;
-	devpart += pos;
+	current += pos1;
 
+	debug("searching for an ACPI string like A0000:00 or ACPI0000:00");
+	pos0 = 0;
 	/*
 	 * If it's too short to be A0000:00, it's not an ACPI string
 	 */
-	if (strlen(devpart) < 8)
+	if (strlen(current) < 8)
 		return 0;
 
-	colon = strchr(devpart, ':');
+	colon = strchr(current, ':');
 	if (!colon)
 		return 0;
-	pos = colon - devpart;
+	pos1 = colon - current;
 
 	/*
 	 * If colon doesn't point at something between one of these:
@@ -85,61 +86,71 @@ parse_acpi_root(struct device *dev, const char *current, const char *root UNUSED
 	 *	^ 5	    ^ 8
 	 * Then it's not an ACPI string.
 	 */
-	if (pos < 5 || pos > 8)
+	if (pos1 < 5 || pos1 > 8)
 		return 0;
 
-	dev->acpi_root.acpi_hid_str = strndup(devpart, pos + 1);
+	debug("current:'%s' rc:%d pos0:%d pos1:%d", current, rc, pos0, pos1);
+	dbgmk("         ", pos0, pos1);
+
+	dev->acpi_root.acpi_hid_str = strndup(current, pos1 + 1);
 	if (!dev->acpi_root.acpi_hid_str) {
 		efi_error("Could not allocate memory");
 		return -1;
 	}
-	dev->acpi_root.acpi_hid_str[pos] = 0;
-	debug("acpi_hid_str:\"%s\"", dev->acpi_root.acpi_hid_str);
+	dev->acpi_root.acpi_hid_str[pos1] = 0;
+	debug("acpi_hid_str:'%s'", dev->acpi_root.acpi_hid_str);
 
-	pos -= 4;
-	debug("devpart:\"%s\" rc:%d pos:%d", devpart, rc, pos);
-	dbgmk("         ", pos);
-	acpi_header = strndupa(devpart, pos);
+	/*
+	 * The string is like ACPI0000:00.
+	 *                    ^^^^
+	 * Here we're saying only this bit has been parsed, though we've
+	 * partially parsed up to the colon.
+	 */
+	pos1 -= 4;
+	acpi_header = strndupa(current, pos1);
 	if (!acpi_header)
 		return 0;
-	acpi_header[pos] = 0;
-	debug("devpart:\"%s\" acpi_header:\"%s\"", devpart, acpi_header);
-	devpart += pos;
+	acpi_header[pos1] = 0;
+	debug("acpi_header:'%s'", acpi_header);
 
 	/*
 	 * If we can't find these numbers, it's not an ACPI string
 	 */
-	rc = sscanf(devpart, "%hx:%hhx/%n", &pad0, &pad1, &pos);
+	rc = sscanf(current+pos1, "%hx:%hhx/%n", &pad0, &pad1, &pos2);
 	if (rc != 2) {
-		efi_error("Could not parse ACPI path \"%s\"", devpart);
+		efi_error("Could not parse ACPI path \"%s\"", current);
 		return 0;
 	}
-	debug("devpart:\"%s\" parsed:%04hx:%02hhx pos:%d rc:%d",
-	      devpart, pad0, pad1, pos, rc);
-	dbgmk("         ", pos);
+	debug("current:'%s' rc:%d pos0:%d pos1:%d pos2:%d",
+	      current, rc, pos0, pos1, pos2);
+	dbgmk("         ", pos0, pos2);
+	current += pos2;
 
-	devpart += pos;
+	const char * const formats[] = {
+		"devices/platform/%s%04hX:%02hhX",
+		"devices/platform/%s%04hx:%02hhx",
+		NULL
+	};
 
-	rc = parse_acpi_hid_uid(dev, "devices/platform/%s%04hX:%02hhX",
-				acpi_header, pad0, pad1);
-	debug("rc:%d acpi_header:%s pad0:%04hX pad1:%02hhX",
-	      rc, acpi_header, pad0, pad1);
-	if (rc < 0 && errno == ENOENT) {
-		rc = parse_acpi_hid_uid(dev, "devices/platform/%s%04hx:%02hhx",
-				acpi_header, pad0, pad1);
+	for (unsigned int i = 0; formats[i]; i++) {
+		rc = parse_acpi_hid_uid(dev, formats[i],
+					acpi_header, pad0, pad1);
 		debug("rc:%d acpi_header:%s pad0:%04hx pad1:%02hhx",
 		      rc, acpi_header, pad0, pad1);
-	}
-	if (rc < 0) {
-		efi_error("Could not parse hid/uid");
-		return rc;
+		if (rc >= 0)
+			break;
+		if (errno != ENOENT) {
+			efi_error("Could not parse hid/uid");
+			return rc;
+		}
 	}
 	debug("Parsed HID:0x%08x UID:0x%"PRIx64" uidstr:\"%s\" path:\"%s\"",
 	      dev->acpi_root.acpi_hid, dev->acpi_root.acpi_uid,
 	      dev->acpi_root.acpi_uid_str,
 	      dev->acpi_root.acpi_cid_str);
 
-	return devpart - current;
+	debug("current:'%s' sz:%zd", current, current - path);
+	return current - path;
 }
 
 static ssize_t
