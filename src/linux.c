@@ -184,10 +184,10 @@ set_disk_and_part_name(struct device *dev)
 	errno = 0;
 	debug("dev->disk_name:%p dev->part_name:%p", dev->disk_name, dev->part_name);
 	debug("dev->part:%d", dev->part);
-	debug("ultimate:\"%s\"", ultimate ? : "");
-	debug("penultimate:\"%s\"", penultimate ? : "");
-	debug("approximate:\"%s\"", approximate ? : "");
-	debug("proximate:\"%s\"", proximate ? : "");
+	debug("ultimate:'%s'", ultimate ? : "");
+	debug("penultimate:'%s'", penultimate ? : "");
+	debug("approximate:'%s'", approximate ? : "");
+	debug("proximate:'%s'", proximate ? : "");
 
 	if (ultimate && penultimate &&
 	    ((proximate && !strcmp(proximate, "nvme")) ||
@@ -463,7 +463,11 @@ struct device HIDDEN
 	                efi_error("parsing %s failed", probe->name);
 	                goto err;
 	        } else if (pos > 0) {
-	                debug("%s matched %s", probe->name, current);
+			char match[pos+1];
+
+			strncpy(match, current, pos);
+			match[pos] = '\0';
+	                debug("%s matched '%s'", probe->name, match);
 	                dev->flags |= probe->flags;
 
 	                if (probe->flags & DEV_PROVIDES_HD ||
@@ -473,7 +477,10 @@ struct device HIDDEN
 
 	                dev->probes[n++] = dev_probes[i];
 	                current += pos;
-	                debug("current:%s", current);
+			if (current[0] == '\0')
+				debug("finished");
+			else
+				debug("current:'%s'", current);
 	                last_successful_probe = i;
 
 	                if (!*current || !strncmp(current, "block/", 6))
@@ -482,8 +489,8 @@ struct device HIDDEN
 	                continue;
 	        }
 
-	        debug("dev_probes[i+1]: %p dev->interface_type: %d\n",
-	              dev_probes[i+1], dev->interface_type);
+	        debug("dev_probes[%d]: %p dev->interface_type: %d\n",
+	              i+1, dev_probes[i+1], dev->interface_type);
 	        if (dev_probes[i+1] == NULL && dev->interface_type == unknown) {
 	                pos = 0;
 	                rc = sscanf(current, "%*[^/]/%n", &pos);
@@ -499,8 +506,8 @@ slash_err:
 	                if (!current[pos])
 	                        goto slash_err;
 
-	                debug("Cannot parse device link segment \"%s\"", current);
-	                debug("Skipping to \"%s\"", current + pos);
+	                debug("Cannot parse device link segment '%s'", current);
+	                debug("Skipping to '%s'", current + pos);
 	                debug("This means we can only create abbreviated paths");
 	                dev->flags |= DEV_ABBREV_ONLY;
 	                i = last_successful_probe;

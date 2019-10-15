@@ -50,7 +50,7 @@ parse_md(struct device *dev, const char *current, const char *root UNUSED)
 	debug("searching for mdM/mdMpN");
 	rc = sscanf(current, "md%d/%nmd%dp%d%n",
 	            &md, &pos0, &tosser0, &part, &pos1);
-	debug("current:\"%s\" rc:%d pos0:%d pos1:%d\n", current, rc, pos0, pos1);
+	debug("current:'%s' rc:%d pos0:%d pos1:%d\n", current, rc, pos0, pos1);
 	dbgmk("         ", pos0, pos1);
 	/*
 	 * If it isn't of that form, it's not one of our partitioned md devices.
@@ -63,9 +63,9 @@ parse_md(struct device *dev, const char *current, const char *root UNUSED)
 	if (dev->part == -1)
 	        dev->part = part;
 
+	debug("current:'%s' sz:%d\n", current, pos1);
 	return pos1;
 }
-
 
 static char *
 make_part_name(struct device *dev)
