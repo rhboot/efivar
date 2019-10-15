@@ -1,6 +1,6 @@
 /*
  * libefiboot - library for the manipulation of EFI boot variables
- * Copyright 2012-2015 Red Hat, Inc.
+ * Copyright 2012-2019 Red Hat, Inc.
  * Copyright (C) 2000-2001 Dell Computer Corporation <Matt_Domsch@dell.com>
  *
  * This library is free software; you can redistribute it and/or
@@ -27,6 +27,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <sys/mman.h>
+#include <sys/random.h>
 #include <unistd.h>
 
 #include "efiboot.h"
@@ -166,6 +167,7 @@ efi_error_pop(void)
 static int efi_verbose;
 static FILE *efi_errlog, *efi_dbglog;
 static int efi_dbglog_fd = -1;
+static intptr_t efi_dbglog_cookie;
 static int log_level;
 static char efi_dbglog_buf[4096];
 
@@ -176,7 +178,7 @@ efi_set_loglevel(int level)
 }
 
 static ssize_t
-dbglog_write(void *cookie UNUSED, const char *buf, size_t size)
+dbglog_write(void *cookie, const char *buf, size_t size)
 {
 	FILE *log = efi_errlog ? efi_errlog : stderr;
 	ssize_t ret = size;
@@ -185,6 +187,11 @@ dbglog_write(void *cookie UNUSED, const char *buf, size_t size)
 		ret = fwrite(buf, 1, size, log);
 	} else if (efi_dbglog_fd >= 0) {
 		lseek(efi_dbglog_fd, 0, SEEK_SET);
+		if ((intptr_t)cookie != 0 &&
+		    (intptr_t)cookie == efi_dbglog_cookie &&
+		    size > 0 &&
+		    buf[size-1] == '\n')
+			size -= 1;
 		ret = write(efi_dbglog_fd, buf, size);
 	}
 	return ret;
@@ -248,6 +255,7 @@ efi_error_fini(void)
 static void CONSTRUCTOR
 efi_error_init(void)
 {
+	ssize_t bytes;
 	cookie_io_functions_t io_funcs = {
 		.write = dbglog_write,
 		.seek = dbglog_seek,
@@ -258,7 +266,11 @@ efi_error_init(void)
 	if (efi_dbglog_fd == -1)
 		return;
 
-	efi_dbglog = fopencookie(NULL, "a", io_funcs);
+	bytes = getrandom(&efi_dbglog_cookie, sizeof(efi_dbglog_cookie), 0);
+	if (bytes < (ssize_t)sizeof(efi_dbglog_cookie))
+		efi_dbglog_cookie = 0;
+
+	efi_dbglog = fopencookie((void *)efi_dbglog_cookie, "a", io_funcs);
 	if (efi_dbglog)
 		setvbuf(efi_dbglog, efi_dbglog_buf, _IOLBF,
 			sizeof(efi_dbglog_buf));
