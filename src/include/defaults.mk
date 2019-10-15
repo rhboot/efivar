@@ -22,6 +22,7 @@ WARNINGS_GCC ?= -Wmaybe-uninitialized \
 WARNINGS_CCC_ANALYZER ?= $(WARNINGS_GCC)
 WARNINGS ?= -Wall -Wextra \
 	    -Wno-address-of-packed-member \
+	    -Wno-missing-field-initializers \
 	    $(call family,WARNINGS)
 ERRORS ?= -Werror -Wno-error=cpp $(call family,ERRORS)
 CPPFLAGS ?=
