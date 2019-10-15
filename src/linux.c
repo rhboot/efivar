@@ -336,6 +336,44 @@ device_free(struct device *dev)
 	free(dev);
 }
 
+static void
+print_dev_dp_node(struct device *dev, struct dev_probe *probe)
+{
+	ssize_t dpsz;
+	uint8_t *dp;
+	ssize_t bufsz;
+	uint8_t *buf;
+
+	dpsz = probe->create(dev, NULL, 0, 0);
+	if (dpsz <= 0)
+		return;
+
+	dp = alloca(dpsz + 4);
+	if (!dp)
+		return;
+
+	dpsz = probe->create(dev, dp, dpsz, 0);
+	if (dpsz <= 0)
+		return;
+
+	efidp_make_end_entire(dp + dpsz, 4);
+	bufsz = efidp_format_device_path(NULL, 0,
+					 (const_efidp)dp, dpsz + 4);
+	if (bufsz <= 0)
+		return;
+
+	buf = alloca(bufsz);
+	if (!buf)
+		return;
+
+	bufsz = efidp_format_device_path(buf, bufsz,
+			(const_efidp)dp, dpsz + 4);
+	if (bufsz <= 0)
+		return;
+
+	debug("Device path node is %s", buf);
+}
+
 struct device HIDDEN
 *device_get(int fd, int partition)
 {
@@ -511,6 +549,9 @@ struct device HIDDEN
 	                    probe->flags & DEV_PROVIDES_ROOT ||
 	                    probe->flags & DEV_ABBREV_ONLY)
 	                        needs_root = false;
+
+			if (probe->create)
+				print_dev_dp_node(dev, probe);
 
 	                dev->probes[n++] = dev_probes[i];
 	                current += pos;
