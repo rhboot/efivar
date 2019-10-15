@@ -1,6 +1,6 @@
 /*
  * libefiboot - library for the manipulation of EFI boot variables
- * Copyright 2012-2018 Red Hat, Inc.
+ * Copyright 2012-2019 Red Hat, Inc.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public License as
@@ -54,7 +54,7 @@ parse_acpi_hid_uid(struct device *dev, const char *fmt, ...)
 		if (l > 1) {
 			fbuf[l-1] = 0;
 			dev->acpi_root.acpi_cid_str = strdup(fbuf);
-			debug("Setting ACPI root path to \"%s\"", fbuf);
+			debug("Setting ACPI root path to '%s'", fbuf);
 		}
 	}
 
@@ -111,7 +111,7 @@ hid_err:
 			}
 		}
 	}
-	debug("acpi root UID:0x%"PRIx64" uidstr:\"%s\"",
+	debug("acpi root UID:0x%"PRIx64" uidstr:'%s'",
 	      dev->acpi_root.acpi_uid, dev->acpi_root.acpi_uid_str);
 
 	errno = 0;

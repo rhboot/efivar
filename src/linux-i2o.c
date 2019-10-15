@@ -1,6 +1,6 @@
 /*
  * libefiboot - library for the manipulation of EFI boot variables
- * Copyright 2012-2018 Red Hat, Inc.
+ * Copyright 2012-2019 Red Hat, Inc.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public License as
@@ -33,7 +33,7 @@
  * ... probably doesn't work.
  */
 static ssize_t
-parse_i2o(struct device *dev, const char *current UNUSED, const char *root UNUSED)
+parse_i2o(struct device *dev, const char *current, const char *root UNUSED)
 {
 	debug("entry");
 	/* I2O disks can have up to 16 partitions, or 4 bits worth. */
@@ -47,9 +47,9 @@ parse_i2o(struct device *dev, const char *current UNUSED, const char *root UNUSE
 	}
 
 	char *block = strstr(current, "/block/");
-	if (!block)
-	        return -1;
-	return block + 1 - current;
+	ssize_t sz = block ? block + 1 - current : -1;
+	debug("current:'%s' sz:%zd", current, sz);
+	return sz;
 }
 
 enum interface_type i2o_iftypes[] = { i2o, unknown };

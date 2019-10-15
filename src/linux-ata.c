@@ -60,6 +60,7 @@ is_pata(struct device *dev)
 static ssize_t
 parse_ata(struct device *dev, const char *path, const char *root UNUSED)
 {
+	const char *current = path;
 	uint32_t scsi_host, scsi_bus, scsi_device, scsi_target;
 	uint64_t scsi_lun;
 	int pos;
@@ -118,6 +119,7 @@ parse_ata(struct device *dev, const char *path, const char *root UNUSED)
 			      NULL, NULL, NULL);
 	if (pos < 0)
 		return -1;
+	current += pos;
 
 	dev->ata_info.scsi_host = scsi_host;
 	dev->ata_info.scsi_bus = scsi_bus;
@@ -125,10 +127,11 @@ parse_ata(struct device *dev, const char *path, const char *root UNUSED)
 	dev->ata_info.scsi_target = scsi_target;
 	dev->ata_info.scsi_lun = scsi_lun;
 
-	char *block = strstr(path, "/block/");
-	if (!block)
-		return -1;
-	return block + 1 - path;
+	char *block = strstr(current, "/block/");
+	if (block)
+		current += block + 1 - current;
+	debug("current:'%s' sz:%zd", current, current - path);
+	return current - path;
 }
 
 static ssize_t

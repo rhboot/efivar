@@ -87,7 +87,7 @@ dp_create_pci_root(struct device *dev UNUSED,
 	debug("entry buf:%p size:%zd off:%zd", buf, size, off);
 	debug("returning 0");
 	if (dev->acpi_root.acpi_uid_str) {
-	        debug("creating acpi_hid_ex dp hid:0x%08x uid:\"%s\"",
+	        debug("creating acpi_hid_ex dp hid:0x%08x uid:'%s'",
 	              dev->acpi_root.acpi_hid,
 	              dev->acpi_root.acpi_uid_str);
 	        new = efidp_make_acpi_hid_ex(buf + off, size ? size - off : 0,

@@ -103,11 +103,12 @@ parse_pmem(struct device *dev, const char *path, const char *root UNUSED)
 	 *
 	 * 259:0 -> ../../devices/LNXSYSTM:00/LNXSYBUS:00/ACPI0012:00/ndbus0/region12/btt12.1/block/pmem12s
 	 */
+	pos0 = pos1 = -1;
 	rc = sscanf(current,
 	            "../../devices/%nLNXSYSTM:%hhx/LNXSYBUS:%hhx/ACPI%hx:%hhx/ndbus%d/region%d/btt%d.%d/%n",
 	            &pos0, &system, &sysbus, &pnp_id, &acpi_id, &ndbus,
 		    &region, &btt_region_id, &btt_id, &pos1);
-	debug("current:\"%s\" rc:%d pos0:%d pos1:%d", current, rc, pos0, pos1);
+	debug("current:'%s' rc:%d pos0:%d pos1:%d", current, rc, pos0, pos1);
 	dbgmk("         ", pos0, pos1);
 	if (rc < 8)
 	        return 0;
@@ -126,7 +127,7 @@ parse_pmem(struct device *dev, const char *path, const char *root UNUSED)
 	        return -1;
 
 	filebuf = NULL;
-	debug("nvdimm namespace is \"%s\"", namespace);
+	debug("nvdimm namespace is '%s'", namespace);
 	rc = read_sysfs_file(&filebuf, "bus/nd/devices/%s/uuid", namespace);
 	free(namespace);
 	if (rc < 0 || filebuf == NULL)

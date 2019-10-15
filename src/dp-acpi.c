@@ -1,6 +1,6 @@
 /*
  * libefivar - library for the manipulation of EFI variables
- * Copyright 2012-2015 Red Hat, Inc.
+ * Copyright 2012-2019 Red Hat, Inc.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public License as
@@ -52,9 +52,9 @@ _format_acpi_hid_ex(unsigned char *buf, size_t size,
 {
 	ssize_t off = 0;
 
-	debug("hid:0x%08x hidstr:\"%s\"", dp->acpi_hid_ex.hid, hidstr);
-	debug("cid:0x%08x cidstr:\"%s\"", dp->acpi_hid_ex.cid, cidstr);
-	debug("uid:0x%08x uidstr:\"%s\"", dp->acpi_hid_ex.uid, uidstr);
+	debug("hid:0x%08x hidstr:'%s'", dp->acpi_hid_ex.hid, hidstr);
+	debug("cid:0x%08x cidstr:'%s'", dp->acpi_hid_ex.cid, cidstr);
+	debug("uid:0x%08x uidstr:'%s'", dp->acpi_hid_ex.uid, uidstr);
 
 	if (!hidstr && !cidstr && (uidstr || dp->acpi_hid_ex.uid)) {
 		format(buf, size, off, "AcpiExp",

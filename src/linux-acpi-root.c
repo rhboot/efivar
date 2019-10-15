@@ -144,7 +144,7 @@ parse_acpi_root(struct device *dev, const char *path, const char *root UNUSED)
 			return rc;
 		}
 	}
-	debug("Parsed HID:0x%08x UID:0x%"PRIx64" uidstr:\"%s\" path:\"%s\"",
+	debug("Parsed HID:0x%08x UID:0x%"PRIx64" uidstr:'%s' path:'%s'",
 	      dev->acpi_root.acpi_hid, dev->acpi_root.acpi_uid,
 	      dev->acpi_root.acpi_uid_str,
 	      dev->acpi_root.acpi_cid_str);
@@ -162,7 +162,7 @@ dp_create_acpi_root(struct device *dev,
 	debug("entry buf:%p size:%zd off:%zd", buf, size, off);
 
 	if (dev->acpi_root.acpi_uid_str || dev->acpi_root.acpi_cid_str) {
-		debug("creating acpi_hid_ex dp hid:0x%08x uid:0x%"PRIx64" uidstr:\"%s\" cidstr:\"%s\"",
+		debug("creating acpi_hid_ex dp hid:0x%08x uid:0x%"PRIx64" uidstr:'%s' cidstr:'%s'",
 		      dev->acpi_root.acpi_hid, dev->acpi_root.acpi_uid,
 		      dev->acpi_root.acpi_uid_str, dev->acpi_root.acpi_cid_str);
 		new = efidp_make_acpi_hid_ex(buf + off, size ? size - off : 0,
