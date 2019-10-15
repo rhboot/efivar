@@ -148,8 +148,9 @@ get_local_sas_address(uint64_t *sas_address, struct device *dev)
  * anywhere.
  */
 static ssize_t
-parse_sas(struct device *dev, const char *current, const char *root UNUSED)
+parse_sas(struct device *dev, const char *path, const char *root UNUSED)
 {
+	const char *current = path;
 	struct stat statbuf = { 0, };
 	int rc;
 	uint32_t scsi_host, scsi_bus, scsi_device, scsi_target;
@@ -172,6 +173,7 @@ parse_sas(struct device *dev, const char *current, const char *root UNUSED)
 	 */
 	if (pos < 0)
 	        return 0;
+	current += pos;
 
 	/*
 	 * Make sure it has the actual /SAS/ bits before we continue
@@ -236,7 +238,9 @@ parse_sas(struct device *dev, const char *current, const char *root UNUSED)
 	dev->scsi_info.scsi_target = scsi_target;
 	dev->scsi_info.scsi_lun = scsi_lun;
 	dev->interface_type = sas;
-	return pos;
+
+	debug("current:'%s' sz:%zd", current, current - path);
+	return current - path;
 }
 
 static ssize_t

@@ -45,18 +45,19 @@
  * But usually we just write the HD() entry, of course.
  */
 static ssize_t
-parse_virtblk(struct device *dev, const char *current, const char *root UNUSED)
+parse_virtblk(struct device *dev, const char *path, const char *root UNUSED)
 {
+	const char *current = path;
 	uint32_t tosser;
-	int pos = 0;
+	int pos0 = -1, pos1 = -1;
 	int rc;
 
 	debug("entry");
 
 	debug("searching for virtio0/");
-	rc = sscanf(current, "virtio%x/%n", &tosser, &pos);
-	debug("current:\"%s\" rc:%d pos:%d\n", current, rc, pos);
-	dbgmk("         ", pos);
+	rc = sscanf(current, "%nvirtio%x/%n", &pos0, &tosser, &pos1);
+	debug("current:'%s' rc:%d pos0:%d pos1:%d\n", current, rc, pos0, pos1);
+	dbgmk("         ", pos0, pos1);
 	/*
 	 * If we couldn't find virtioX/ then it isn't a virtio device.
 	 */
@@ -64,8 +65,10 @@ parse_virtblk(struct device *dev, const char *current, const char *root UNUSED)
 	        return 0;
 
 	dev->interface_type = virtblk;
+	current += pos1;
 
-	return pos;
+	debug("current:'%s' sz:%zd\n", current, current - path);
+	return current - path;
 }
 
 enum interface_type virtblk_iftypes[] = { virtblk, unknown };

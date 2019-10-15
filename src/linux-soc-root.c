@@ -38,23 +38,23 @@
  * I don't *think* the devicetree nodes stack.
  */
 static ssize_t
-parse_soc_root(struct device *dev UNUSED, const char *current, const char *root UNUSED)
+parse_soc_root(struct device *dev UNUSED, const char *path, const char *root UNUSED)
 {
+	const char *current = path;
 	int rc;
-	int pos = 0;
-	const char *devpart = current;
+	int pos0 = -1, pos1 = -1;
 
 	debug("entry");
 
-	rc = sscanf(devpart, "../../devices/platform/soc/%*[^/]/%n", &pos);
-	if (rc != 0)
+	rc = sscanf(current, "../../devices/%nplatform/soc/%*[^/]/%n", &pos0, &pos1);
+	if (rc != 0 || pos0 == -1 || pos1 == -1)
 	        return 0;
-	debug("current:\"%s\" rc:%d pos:%d", current, rc, pos);
-	dbgmk("         ", pos);
-	devpart += pos;
-	debug("new position is \"%s\"", devpart);
+	debug("current:'%s' rc:%d pos0:%d pos1:%d", current, rc, pos0, pos1);
+	dbgmk("         ", pos0, pos1);
+	current += pos1;
 
-	return devpart - current;
+	debug("current:'%s' sz:%zd\n", current, current - path);
+	return current - path;
 }
 
 enum interface_type soc_root_iftypes[] = { soc_root, unknown };

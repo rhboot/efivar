@@ -70,12 +70,14 @@
  */
 
 static ssize_t
-parse_pmem(struct device *dev, const char *current, const char *root UNUSED)
+parse_pmem(struct device *dev, const char *path, const char *root UNUSED)
 {
+	const char *current = path;
 	uint8_t *filebuf = NULL;
 	uint8_t system, sysbus, acpi_id;
 	uint16_t pnp_id;
-	int ndbus, region, btt_region_id, btt_id, rc, pos;
+	int ndbus, region, btt_region_id, btt_id, rc;
+	int pos0 = -1, pos1 = -1;
 	char *namespace = NULL;
 
 	debug("entry");
@@ -95,20 +97,21 @@ parse_pmem(struct device *dev, const char *current, const char *root UNUSED)
 	}
 
 	/*
-	 * We're not actually using any of the values here except pos (our
+	 * We're not actually using any of the values here except pos1 (our
 	 * return value), but rather just being paranoid that this is the sort
 	 * of device we care about.
 	 *
 	 * 259:0 -> ../../devices/LNXSYSTM:00/LNXSYBUS:00/ACPI0012:00/ndbus0/region12/btt12.1/block/pmem12s
 	 */
 	rc = sscanf(current,
-	            "../../devices/LNXSYSTM:%hhx/LNXSYBUS:%hhx/ACPI%hx:%hhx/ndbus%d/region%d/btt%d.%d/%n",
-	            &system, &sysbus, &pnp_id, &acpi_id, &ndbus, &region,
-	            &btt_region_id, &btt_id, &pos);
-	debug("current:\"%s\" rc:%d pos:%d", current, rc, pos);
-	dbgmk("         ", pos);
+	            "../../devices/%nLNXSYSTM:%hhx/LNXSYBUS:%hhx/ACPI%hx:%hhx/ndbus%d/region%d/btt%d.%d/%n",
+	            &pos0, &system, &sysbus, &pnp_id, &acpi_id, &ndbus,
+		    &region, &btt_region_id, &btt_id, &pos1);
+	debug("current:\"%s\" rc:%d pos0:%d pos1:%d", current, rc, pos0, pos1);
+	dbgmk("         ", pos0, pos1);
 	if (rc < 8)
 	        return 0;
+	current += pos1;
 
 	/*
 	 * but the UUID we really do need to have.
@@ -158,7 +161,8 @@ parse_pmem(struct device *dev, const char *current, const char *root UNUSED)
 
 	dev->interface_type = nd_pmem;
 
-	return pos;
+	debug("current:'%s' sz:%zd", current, current - path);
+	return current - path;
 }
 
 static ssize_t
