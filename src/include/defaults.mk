@@ -40,21 +40,21 @@ override CFLAGS = $(_CFLAGS) \
 		  -fvisibility=hidden \
 		  $(call family,CFLAGS) \
 		  $(call pkg-config-cflags)
-LDFLAGS_CLANG ?= --fatal-warnings -pie -z relro
+LDFLAGS_CLANG ?= -Wl,--fatal-warnings,-pie,-z,relro
 LDFLAGS ?=
 override _LDFLAGS := $(LDFLAGS)
 override LDFLAGS = $(_LDFLAGS) \
-		   --add-needed \
-		   --build-id \
-		   --no-allow-shlib-undefined \
-		   --no-undefined-version \
-		   -z now \
-		   -z muldefs \
+		   -Wl,--add-needed \
+		   -Wl,--build-id \
+		   -Wl,--no-allow-shlib-undefined \
+		   -Wl,--no-undefined-version \
+		   -Wl,-z,now \
+		   -Wl,-z,muldefs \
 		   $(call family,LDFLAGS)
 CCLDFLAGS ?=
 override _CCLDFLAGS := $(CCLDFLAGS)
 override CCLDFLAGS = $(CFLAGS) -L. $(_CCLDFLAGS) \
-		     $(call add-prefix,-Wl,$(LDFLAGS)) \
+		     $(LDFLAGS) \
 		     $(call pkg-config-ccldflags)
 HOST_ARCH=$(shell uname -m)
 ifneq ($(HOST_ARCH),ia64)
