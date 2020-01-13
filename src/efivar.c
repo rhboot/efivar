@@ -614,12 +614,12 @@ int main(int argc, char *argv[])
 			show_variable(guid_name, SHOW_DECIMAL);
 			break;
 		case ACTION_APPEND | ACTION_PRINT:
-			prepare_data(infile, &data, &data_size);
+			prepare_data(datafile, &data, &data_size);
 			edit_variable(guid_name, data, data_size, attributes,
 				      EDIT_APPEND);
 			break;
 		case ACTION_WRITE | ACTION_PRINT:
-			prepare_data(infile, &data, &data_size);
+			prepare_data(datafile, &data, &data_size);
 			edit_variable(guid_name, data, data_size, attributes,
 				      EDIT_WRITE);
 			break;
