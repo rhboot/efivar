@@ -1577,13 +1577,13 @@
     <function-decl name='__builtin_memcpy' mangled-name='memcpy' visibility='default' binding='global' size-in-bits='64'>
       <return type-id='type-id-168'/>
     </function-decl>
-    <function-decl name='free' mangled-name='free' filepath='/usr/include/stdlib.h' line='563' column='1' visibility='default' binding='global' size-in-bits='64'>
+    <function-decl name='free' mangled-name='free' filepath='/usr/include/stdlib.h' line='565' column='1' visibility='default' binding='global' size-in-bits='64'>
       <return type-id='type-id-168'/>
     </function-decl>
-    <function-decl name='calloc' mangled-name='calloc' filepath='/usr/include/stdlib.h' line='541' column='1' visibility='default' binding='global' size-in-bits='64'>
+    <function-decl name='calloc' mangled-name='calloc' filepath='/usr/include/stdlib.h' line='542' column='1' visibility='default' binding='global' size-in-bits='64'>
       <return type-id='type-id-168'/>
     </function-decl>
-    <function-decl name='realloc' mangled-name='realloc' filepath='/usr/include/stdlib.h' line='549' column='1' visibility='default' binding='global' size-in-bits='64'>
+    <function-decl name='realloc' mangled-name='realloc' filepath='/usr/include/stdlib.h' line='550' column='1' visibility='default' binding='global' size-in-bits='64'>
       <return type-id='type-id-168'/>
     </function-decl>
     <function-decl name='read' mangled-name='read' filepath='/usr/include/unistd.h' line='360' column='1' visibility='default' binding='global' size-in-bits='64'>
@@ -1685,7 +1685,7 @@
     <function-decl name='efi_str_to_guid' mangled-name='efi_str_to_guid' filepath='src/include/efivar/efivar.h' line='112' column='1' visibility='default' binding='global' size-in-bits='64'>
       <return type-id='type-id-168'/>
     </function-decl>
-    <function-decl name='getenv' mangled-name='getenv' filepath='/usr/include/stdlib.h' line='631' column='1' visibility='default' binding='global' size-in-bits='64'>
+    <function-decl name='getenv' mangled-name='getenv' filepath='/usr/include/stdlib.h' line='634' column='1' visibility='default' binding='global' size-in-bits='64'>
       <return type-id='type-id-168'/>
     </function-decl>
     <function-decl name='efidp_make_sas' mangled-name='efidp_make_sas' filepath='src/include/efivar/efivar-dp.h' line='579' column='1' visibility='default' binding='global' size-in-bits='64'>
@@ -1709,7 +1709,7 @@
     <function-decl name='strerror' mangled-name='strerror' filepath='/usr/include/string.h' line='396' column='1' visibility='default' binding='global' size-in-bits='64'>
       <return type-id='type-id-168'/>
     </function-decl>
-    <function-decl name='posix_memalign' mangled-name='posix_memalign' filepath='/usr/include/stdlib.h' line='577' column='1' visibility='default' binding='global' size-in-bits='64'>
+    <function-decl name='posix_memalign' mangled-name='posix_memalign' filepath='/usr/include/stdlib.h' line='580' column='1' visibility='default' binding='global' size-in-bits='64'>
       <return type-id='type-id-168'/>
     </function-decl>
     <function-decl name='lseek' mangled-name='lseek' filepath='/usr/include/unistd.h' line='334' column='1' visibility='default' binding='global' size-in-bits='64'>
