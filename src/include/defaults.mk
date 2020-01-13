@@ -56,10 +56,16 @@ override _CCLDFLAGS := $(CCLDFLAGS)
 override CCLDFLAGS = $(CFLAGS) -L. $(_CCLDFLAGS) \
 		     $(call add-prefix,-Wl,$(LDFLAGS)) \
 		     $(call pkg-config-ccldflags)
+HOST_ARCH=$(shell uname -m)
+ifneq ($(HOST_ARCH),ia64)
+	HOST_MARCH=-march=native
+else
+	HOST_MARCH=
+endif
 HOST_CPPFLAGS ?= $(CPPFLAGS)
 override _HOST_CPPFLAGS := $(HOST_CPPFLAGS)
 override HOST_CPPFLAGS = $(_HOST_CPPFLAGS) \
-			 -DEFIVAR_BUILD_ENVIRONMENT -march=native
+			 -DEFIVAR_BUILD_ENVIRONMENT $(HOST_MARCH)
 HOST_CFLAGS ?= $(CFLAGS)
 override _HOST_CFLAGS := $(HOST_CFLAGS)
 override HOST_CFLAGS = $(_HOST_CFLAGS)
