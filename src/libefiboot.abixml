@@ -7,6 +7,7 @@
     <elf-symbol name='efi_generate_file_device_path' version='libefiboot.so.0' is-default-version='yes' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes'/>
     <elf-symbol name='efi_generate_file_device_path_from_esp' version='libefiboot.so.0' is-default-version='yes' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes'/>
     <elf-symbol name='efi_generate_ipv4_device_path' version='libefiboot.so.0' is-default-version='yes' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes'/>
+    <elf-symbol name='efi_get_libefiboot_version' version='LIBEFIBOOT_1.31' is-default-version='yes' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes'/>
     <elf-symbol name='efi_loadopt_args_as_ucs2' version='libefiboot.so.0' is-default-version='yes' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes'/>
     <elf-symbol name='efi_loadopt_args_as_utf8' version='libefiboot.so.0' is-default-version='yes' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes'/>
     <elf-symbol name='efi_loadopt_args_from_file' version='libefiboot.so.0' is-default-version='yes' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes'/>
@@ -1157,22 +1158,23 @@
       <enumerator name='acpi_root' value='2'/>
       <enumerator name='pci_root' value='3'/>
       <enumerator name='soc_root' value='4'/>
-      <enumerator name='pci' value='5'/>
-      <enumerator name='network' value='6'/>
-      <enumerator name='ata' value='7'/>
-      <enumerator name='atapi' value='8'/>
-      <enumerator name='scsi' value='9'/>
-      <enumerator name='sata' value='10'/>
-      <enumerator name='sas' value='11'/>
-      <enumerator name='usb' value='12'/>
-      <enumerator name='i1394' value='13'/>
-      <enumerator name='fibre' value='14'/>
-      <enumerator name='i2o' value='15'/>
-      <enumerator name='md' value='16'/>
-      <enumerator name='virtblk' value='17'/>
-      <enumerator name='nvme' value='18'/>
-      <enumerator name='nd_pmem' value='19'/>
-      <enumerator name='emmc' value='20'/>
+      <enumerator name='virtual_root' value='5'/>
+      <enumerator name='pci' value='6'/>
+      <enumerator name='network' value='7'/>
+      <enumerator name='ata' value='8'/>
+      <enumerator name='atapi' value='9'/>
+      <enumerator name='scsi' value='10'/>
+      <enumerator name='sata' value='11'/>
+      <enumerator name='sas' value='12'/>
+      <enumerator name='usb' value='13'/>
+      <enumerator name='i1394' value='14'/>
+      <enumerator name='fibre' value='15'/>
+      <enumerator name='i2o' value='16'/>
+      <enumerator name='md' value='17'/>
+      <enumerator name='virtblk' value='18'/>
+      <enumerator name='nvme' value='19'/>
+      <enumerator name='nd_pmem' value='20'/>
+      <enumerator name='emmc' value='21'/>
     </enum-decl>
 
     <array-type-def dimensions='1' type-id='type-id-170' size-in-bits='64' alignment-in-bits='32' id='type-id-171'>
@@ -1180,62 +1182,62 @@
 
     </array-type-def>
     <var-decl name='i2o_iftypes' type-id='type-id-171' visibility='default' filepath='src/linux-i2o.c' line='55' column='1'/>
-    <var-decl name='scsi_iftypes' type-id='type-id-171' visibility='default' filepath='src/linux-scsi.c' line='320' column='1'/>
+    <var-decl name='scsi_iftypes' type-id='type-id-171' visibility='default' filepath='src/linux-scsi.c' line='311' column='1'/>
 
     <array-type-def dimensions='1' type-id='type-id-170' size-in-bits='96' alignment-in-bits='32' id='type-id-172'>
       <subrange length='3' type-id='type-id-12' id='type-id-173'/>
 
     </array-type-def>
-    <var-decl name='ata_iftypes' type-id='type-id-172' visibility='default' filepath='src/linux-ata.c' line='152' column='1'/>
-    <var-decl name='sata_iftypes' type-id='type-id-171' visibility='default' filepath='src/linux-sata.c' line='255' column='1'/>
-    <var-decl name='sas_iftypes' type-id='type-id-171' visibility='default' filepath='src/linux-sas.c' line='256' column='1'/>
-    <var-decl name='virtblk_iftypes' type-id='type-id-171' visibility='default' filepath='src/linux-virtblk.c' line='78' column='1'/>
-    <var-decl name='soc_root_iftypes' type-id='type-id-171' visibility='default' filepath='src/linux-soc-root.c' line='65' column='1'/>
-    <var-decl name='pci_root_iftypes' type-id='type-id-171' visibility='default' filepath='src/linux-pci-root.c' line='125' column='1'/>
-    <var-decl name='acpi_root_iftypes' type-id='type-id-171' visibility='default' filepath='src/linux-acpi-root.c' line='190' column='1'/>
-    <var-decl name='pmem_iftypes' type-id='type-id-171' visibility='default' filepath='src/linux-pmem.c' line='183' column='1'/>
-    <class-decl name='dev_probe' size-in-bits='384' is-struct='yes' visibility='default' filepath='src/linux.h' line='258' column='1' id='type-id-174'>
+    <var-decl name='ata_iftypes' type-id='type-id-172' visibility='default' filepath='src/linux-ata.c' line='155' column='1'/>
+    <var-decl name='sata_iftypes' type-id='type-id-171' visibility='default' filepath='src/linux-sata.c' line='249' column='1'/>
+    <var-decl name='sas_iftypes' type-id='type-id-171' visibility='default' filepath='src/linux-sas.c' line='260' column='1'/>
+    <var-decl name='virtblk_iftypes' type-id='type-id-171' visibility='default' filepath='src/linux-virtblk.c' line='74' column='1'/>
+    <var-decl name='soc_root_iftypes' type-id='type-id-171' visibility='default' filepath='src/linux-soc-root.c' line='60' column='1'/>
+    <var-decl name='pci_root_iftypes' type-id='type-id-171' visibility='default' filepath='src/linux-pci-root.c' line='120' column='1'/>
+    <var-decl name='acpi_root_iftypes' type-id='type-id-171' visibility='default' filepath='src/linux-acpi-root.c' line='197' column='1'/>
+    <var-decl name='pmem_iftypes' type-id='type-id-171' visibility='default' filepath='src/linux-pmem.c' line='190' column='1'/>
+    <class-decl name='dev_probe' size-in-bits='384' is-struct='yes' visibility='default' filepath='src/linux.h' line='328' column='1' id='type-id-174'>
       <data-member access='public' layout-offset-in-bits='0'>
-        <var-decl name='name' type-id='type-id-24' visibility='default' filepath='src/linux.h' line='259' column='1'/>
+        <var-decl name='name' type-id='type-id-24' visibility='default' filepath='src/linux.h' line='329' column='1'/>
       </data-member>
       <data-member access='public' layout-offset-in-bits='64'>
-        <var-decl name='iftypes' type-id='type-id-175' visibility='default' filepath='src/linux.h' line='260' column='1'/>
+        <var-decl name='iftypes' type-id='type-id-175' visibility='default' filepath='src/linux.h' line='330' column='1'/>
       </data-member>
       <data-member access='public' layout-offset-in-bits='128'>
-        <var-decl name='flags' type-id='type-id-5' visibility='default' filepath='src/linux.h' line='261' column='1'/>
+        <var-decl name='flags' type-id='type-id-5' visibility='default' filepath='src/linux.h' line='331' column='1'/>
       </data-member>
       <data-member access='public' layout-offset-in-bits='192'>
-        <var-decl name='parse' type-id='type-id-176' visibility='default' filepath='src/linux.h' line='262' column='1'/>
+        <var-decl name='parse' type-id='type-id-176' visibility='default' filepath='src/linux.h' line='332' column='1'/>
       </data-member>
       <data-member access='public' layout-offset-in-bits='256'>
-        <var-decl name='create' type-id='type-id-177' visibility='default' filepath='src/linux.h' line='264' column='1'/>
+        <var-decl name='create' type-id='type-id-177' visibility='default' filepath='src/linux.h' line='334' column='1'/>
       </data-member>
       <data-member access='public' layout-offset-in-bits='320'>
-        <var-decl name='make_part_name' type-id='type-id-178' visibility='default' filepath='src/linux.h' line='266' column='1'/>
+        <var-decl name='make_part_name' type-id='type-id-178' visibility='default' filepath='src/linux.h' line='336' column='1'/>
       </data-member>
     </class-decl>
     <pointer-type-def type-id='type-id-170' size-in-bits='64' id='type-id-175'/>
-    <class-decl name='device' size-in-bits='2752' is-struct='yes' visibility='default' filepath='src/linux.h' line='112' column='1' id='type-id-179'>
+    <class-decl name='device' size-in-bits='2752' is-struct='yes' visibility='default' filepath='src/linux.h' line='113' column='1' id='type-id-179'>
       <data-member access='public' layout-offset-in-bits='0'>
-        <var-decl name='interface_type' type-id='type-id-170' visibility='default' filepath='src/linux.h' line='113' column='1'/>
+        <var-decl name='interface_type' type-id='type-id-170' visibility='default' filepath='src/linux.h' line='114' column='1'/>
       </data-member>
       <data-member access='public' layout-offset-in-bits='32'>
-        <var-decl name='flags' type-id='type-id-5' visibility='default' filepath='src/linux.h' line='114' column='1'/>
+        <var-decl name='flags' type-id='type-id-5' visibility='default' filepath='src/linux.h' line='115' column='1'/>
       </data-member>
       <data-member access='public' layout-offset-in-bits='64'>
-        <var-decl name='link' type-id='type-id-24' visibility='default' filepath='src/linux.h' line='115' column='1'/>
+        <var-decl name='link' type-id='type-id-24' visibility='default' filepath='src/linux.h' line='116' column='1'/>
       </data-member>
       <data-member access='public' layout-offset-in-bits='128'>
-        <var-decl name='device' type-id='type-id-24' visibility='default' filepath='src/linux.h' line='116' column='1'/>
+        <var-decl name='device' type-id='type-id-24' visibility='default' filepath='src/linux.h' line='117' column='1'/>
       </data-member>
       <data-member access='public' layout-offset-in-bits='192'>
-        <var-decl name='driver' type-id='type-id-24' visibility='default' filepath='src/linux.h' line='117' column='1'/>
+        <var-decl name='driver' type-id='type-id-24' visibility='default' filepath='src/linux.h' line='118' column='1'/>
       </data-member>
       <data-member access='public' layout-offset-in-bits='256'>
-        <var-decl name='probes' type-id='type-id-180' visibility='default' filepath='src/linux.h' line='119' column='1'/>
+        <var-decl name='probes' type-id='type-id-180' visibility='default' filepath='src/linux.h' line='120' column='1'/>
       </data-member>
       <data-member access='public' layout-offset-in-bits='320'>
-        <var-decl name='n_probes' type-id='type-id-8' visibility='default' filepath='src/linux.h' line='120' column='1'/>
+        <var-decl name='n_probes' type-id='type-id-8' visibility='default' filepath='src/linux.h' line='121' column='1'/>
       </data-member>
       <data-member access='public' layout-offset-in-bits='384'>
         <var-decl name='' type-id='type-id-181' visibility='default'/>
@@ -1243,53 +1245,53 @@
     </class-decl>
     <pointer-type-def type-id='type-id-174' size-in-bits='64' id='type-id-182'/>
     <pointer-type-def type-id='type-id-182' size-in-bits='64' id='type-id-180'/>
-    <union-decl name='__anonymous_union__' size-in-bits='2368' is-anonymous='yes' visibility='default' filepath='src/linux.h' line='122' column='1' id='type-id-181'>
+    <union-decl name='__anonymous_union__' size-in-bits='2368' is-anonymous='yes' visibility='default' filepath='src/linux.h' line='123' column='1' id='type-id-181'>
       <data-member access='private'>
         <var-decl name='' type-id='type-id-183' visibility='default'/>
       </data-member>
       <data-member access='private'>
-        <var-decl name='ifname' type-id='type-id-24' visibility='default' filepath='src/linux.h' line='151' column='1'/>
+        <var-decl name='ifname' type-id='type-id-24' visibility='default' filepath='src/linux.h' line='152' column='1'/>
       </data-member>
     </union-decl>
-    <class-decl name='__anonymous_struct__' size-in-bits='2368' is-struct='yes' is-anonymous='yes' visibility='default' filepath='src/linux.h' line='123' column='1' id='type-id-183'>
+    <class-decl name='__anonymous_struct__' size-in-bits='2368' is-struct='yes' is-anonymous='yes' visibility='default' filepath='src/linux.h' line='124' column='1' id='type-id-183'>
       <data-member access='public' layout-offset-in-bits='0'>
-        <var-decl name='stat' type-id='type-id-184' visibility='default' filepath='src/linux.h' line='124' column='1'/>
+        <var-decl name='stat' type-id='type-id-184' visibility='default' filepath='src/linux.h' line='125' column='1'/>
       </data-member>
       <data-member access='public' layout-offset-in-bits='1152'>
-        <var-decl name='controllernum' type-id='type-id-8' visibility='default' filepath='src/linux.h' line='126' column='1'/>
+        <var-decl name='controllernum' type-id='type-id-8' visibility='default' filepath='src/linux.h' line='127' column='1'/>
       </data-member>
       <data-member access='public' layout-offset-in-bits='1184'>
-        <var-decl name='disknum' type-id='type-id-8' visibility='default' filepath='src/linux.h' line='127' column='1'/>
+        <var-decl name='disknum' type-id='type-id-8' visibility='default' filepath='src/linux.h' line='128' column='1'/>
       </data-member>
       <data-member access='public' layout-offset-in-bits='1216'>
-        <var-decl name='part' type-id='type-id-25' visibility='default' filepath='src/linux.h' line='128' column='1'/>
+        <var-decl name='part' type-id='type-id-25' visibility='default' filepath='src/linux.h' line='129' column='1'/>
       </data-member>
       <data-member access='public' layout-offset-in-bits='1280'>
-        <var-decl name='major' type-id='type-id-88' visibility='default' filepath='src/linux.h' line='129' column='1'/>
+        <var-decl name='major' type-id='type-id-88' visibility='default' filepath='src/linux.h' line='130' column='1'/>
       </data-member>
       <data-member access='public' layout-offset-in-bits='1344'>
-        <var-decl name='minor' type-id='type-id-5' visibility='default' filepath='src/linux.h' line='130' column='1'/>
+        <var-decl name='minor' type-id='type-id-5' visibility='default' filepath='src/linux.h' line='131' column='1'/>
       </data-member>
       <data-member access='public' layout-offset-in-bits='1376'>
-        <var-decl name='edd10_devicenum' type-id='type-id-5' visibility='default' filepath='src/linux.h' line='131' column='1'/>
+        <var-decl name='edd10_devicenum' type-id='type-id-5' visibility='default' filepath='src/linux.h' line='132' column='1'/>
       </data-member>
       <data-member access='public' layout-offset-in-bits='1408'>
-        <var-decl name='disk_name' type-id='type-id-24' visibility='default' filepath='src/linux.h' line='133' column='1'/>
+        <var-decl name='disk_name' type-id='type-id-24' visibility='default' filepath='src/linux.h' line='134' column='1'/>
       </data-member>
       <data-member access='public' layout-offset-in-bits='1472'>
-        <var-decl name='part_name' type-id='type-id-24' visibility='default' filepath='src/linux.h' line='134' column='1'/>
+        <var-decl name='part_name' type-id='type-id-24' visibility='default' filepath='src/linux.h' line='135' column='1'/>
       </data-member>
       <data-member access='public' layout-offset-in-bits='1536'>
-        <var-decl name='acpi_root' type-id='type-id-185' visibility='default' filepath='src/linux.h' line='136' column='1'/>
+        <var-decl name='acpi_root' type-id='type-id-185' visibility='default' filepath='src/linux.h' line='137' column='1'/>
       </data-member>
       <data-member access='public' layout-offset-in-bits='1920'>
-        <var-decl name='pci_root' type-id='type-id-186' visibility='default' filepath='src/linux.h' line='137' column='1'/>
+        <var-decl name='pci_root' type-id='type-id-186' visibility='default' filepath='src/linux.h' line='138' column='1'/>
       </data-member>
       <data-member access='public' layout-offset-in-bits='1952'>
-        <var-decl name='n_pci_devs' type-id='type-id-8' visibility='default' filepath='src/linux.h' line='138' column='1'/>
+        <var-decl name='n_pci_devs' type-id='type-id-8' visibility='default' filepath='src/linux.h' line='139' column='1'/>
       </data-member>
       <data-member access='public' layout-offset-in-bits='1984'>
-        <var-decl name='pci_dev' type-id='type-id-187' visibility='default' filepath='src/linux.h' line='139' column='1'/>
+        <var-decl name='pci_dev' type-id='type-id-187' visibility='default' filepath='src/linux.h' line='140' column='1'/>
       </data-member>
       <data-member access='public' layout-offset-in-bits='2048'>
         <var-decl name='' type-id='type-id-188' visibility='default'/>
@@ -1412,27 +1414,27 @@
       </data-member>
     </class-decl>
     <pointer-type-def type-id='type-id-202' size-in-bits='64' id='type-id-187'/>
-    <union-decl name='__anonymous_union__' size-in-bits='320' is-anonymous='yes' visibility='default' filepath='src/linux.h' line='141' column='1' id='type-id-188'>
+    <union-decl name='__anonymous_union__' size-in-bits='320' is-anonymous='yes' visibility='default' filepath='src/linux.h' line='142' column='1' id='type-id-188'>
       <data-member access='private'>
-        <var-decl name='scsi_info' type-id='type-id-203' visibility='default' filepath='src/linux.h' line='142' column='1'/>
+        <var-decl name='scsi_info' type-id='type-id-203' visibility='default' filepath='src/linux.h' line='143' column='1'/>
       </data-member>
       <data-member access='private'>
-        <var-decl name='sas_info' type-id='type-id-204' visibility='default' filepath='src/linux.h' line='143' column='1'/>
+        <var-decl name='sas_info' type-id='type-id-204' visibility='default' filepath='src/linux.h' line='144' column='1'/>
       </data-member>
       <data-member access='private'>
-        <var-decl name='sata_info' type-id='type-id-205' visibility='default' filepath='src/linux.h' line='144' column='1'/>
+        <var-decl name='sata_info' type-id='type-id-205' visibility='default' filepath='src/linux.h' line='145' column='1'/>
       </data-member>
       <data-member access='private'>
-        <var-decl name='ata_info' type-id='type-id-206' visibility='default' filepath='src/linux.h' line='145' column='1'/>
+        <var-decl name='ata_info' type-id='type-id-206' visibility='default' filepath='src/linux.h' line='146' column='1'/>
       </data-member>
       <data-member access='private'>
-        <var-decl name='nvme_info' type-id='type-id-207' visibility='default' filepath='src/linux.h' line='146' column='1'/>
+        <var-decl name='nvme_info' type-id='type-id-207' visibility='default' filepath='src/linux.h' line='147' column='1'/>
       </data-member>
       <data-member access='private'>
-        <var-decl name='emmc_info' type-id='type-id-208' visibility='default' filepath='src/linux.h' line='147' column='1'/>
+        <var-decl name='emmc_info' type-id='type-id-208' visibility='default' filepath='src/linux.h' line='148' column='1'/>
       </data-member>
       <data-member access='private'>
-        <var-decl name='nvdimm_info' type-id='type-id-209' visibility='default' filepath='src/linux.h' line='148' column='1'/>
+        <var-decl name='nvdimm_info' type-id='type-id-209' visibility='default' filepath='src/linux.h' line='149' column='1'/>
       </data-member>
     </union-decl>
     <class-decl name='scsi_info' size-in-bits='192' is-struct='yes' visibility='default' filepath='src/linux.h' line='46' column='1' id='type-id-203'>
@@ -1545,30 +1547,31 @@
     <pointer-type-def type-id='type-id-216' size-in-bits='64' id='type-id-176'/>
     <pointer-type-def type-id='type-id-217' size-in-bits='64' id='type-id-177'/>
     <pointer-type-def type-id='type-id-218' size-in-bits='64' id='type-id-178'/>
-    <var-decl name='emmc_parser' type-id='type-id-174' visibility='default' filepath='src/linux.h' line='288' column='1'/>
-    <var-decl name='i2o_parser' type-id='type-id-174' visibility='default' filepath='src/linux.h' line='285' column='1'/>
-    <var-decl name='scsi_parser' type-id='type-id-174' visibility='default' filepath='src/linux.h' line='286' column='1'/>
-    <var-decl name='ata_parser' type-id='type-id-174' visibility='default' filepath='src/linux.h' line='287' column='1'/>
-    <var-decl name='nvme_parser' type-id='type-id-174' visibility='default' filepath='src/linux.h' line='283' column='1'/>
-    <var-decl name='sata_parser' type-id='type-id-174' visibility='default' filepath='src/linux.h' line='282' column='1'/>
-    <var-decl name='sas_parser' type-id='type-id-174' visibility='default' filepath='src/linux.h' line='281' column='1'/>
-    <var-decl name='virtblk_parser' type-id='type-id-174' visibility='default' filepath='src/linux.h' line='284' column='1'/>
-    <var-decl name='soc_root_parser' type-id='type-id-174' visibility='default' filepath='src/linux.h' line='279' column='1'/>
-    <var-decl name='pci_root_parser' type-id='type-id-174' visibility='default' filepath='src/linux.h' line='277' column='1'/>
-    <var-decl name='acpi_root_parser' type-id='type-id-174' visibility='default' filepath='src/linux.h' line='278' column='1'/>
-    <var-decl name='pmem_parser' type-id='type-id-174' visibility='default' filepath='src/linux.h' line='276' column='1'/>
-    <var-decl name='pci_iftypes' type-id='type-id-171' visibility='default' filepath='src/linux-pci.c' line='155' column='1'/>
-    <var-decl name='pci_parser' type-id='type-id-174' visibility='default' filepath='src/linux.h' line='280' column='1'/>
-    <function-decl name='strcspn' mangled-name='strcspn' filepath='/usr/include/string.h' line='272' column='1' visibility='default' binding='global' size-in-bits='64'>
+    <var-decl name='emmc_parser' type-id='type-id-174' visibility='default' filepath='src/linux.h' line='359' column='1'/>
+    <var-decl name='i2o_parser' type-id='type-id-174' visibility='default' filepath='src/linux.h' line='356' column='1'/>
+    <var-decl name='scsi_parser' type-id='type-id-174' visibility='default' filepath='src/linux.h' line='357' column='1'/>
+    <var-decl name='ata_parser' type-id='type-id-174' visibility='default' filepath='src/linux.h' line='358' column='1'/>
+    <var-decl name='nvme_parser' type-id='type-id-174' visibility='default' filepath='src/linux.h' line='354' column='1'/>
+    <var-decl name='sata_parser' type-id='type-id-174' visibility='default' filepath='src/linux.h' line='353' column='1'/>
+    <var-decl name='sas_parser' type-id='type-id-174' visibility='default' filepath='src/linux.h' line='352' column='1'/>
+    <var-decl name='virtblk_parser' type-id='type-id-174' visibility='default' filepath='src/linux.h' line='355' column='1'/>
+    <var-decl name='virtual_root_parser' type-id='type-id-174' visibility='default' filepath='src/linux.h' line='350' column='1'/>
+    <var-decl name='soc_root_parser' type-id='type-id-174' visibility='default' filepath='src/linux.h' line='349' column='1'/>
+    <var-decl name='pci_root_parser' type-id='type-id-174' visibility='default' filepath='src/linux.h' line='347' column='1'/>
+    <var-decl name='acpi_root_parser' type-id='type-id-174' visibility='default' filepath='src/linux.h' line='348' column='1'/>
+    <var-decl name='pmem_parser' type-id='type-id-174' visibility='default' filepath='src/linux.h' line='346' column='1'/>
+    <var-decl name='pci_iftypes' type-id='type-id-171' visibility='default' filepath='src/linux-pci.c' line='146' column='1'/>
+    <var-decl name='pci_parser' type-id='type-id-174' visibility='default' filepath='src/linux.h' line='351' column='1'/>
+    <function-decl name='vasprintf' mangled-name='vasprintf' filepath='/usr/include/stdio.h' line='366' column='1' visibility='default' binding='global' size-in-bits='64'>
       <return type-id='type-id-168'/>
     </function-decl>
     <function-decl name='__errno_location' mangled-name='__errno_location' filepath='/usr/include/errno.h' line='37' column='1' visibility='default' binding='global' size-in-bits='64'>
       <return type-id='type-id-168'/>
     </function-decl>
-    <function-decl name='vasprintf' mangled-name='vasprintf' filepath='/usr/include/stdio.h' line='366' column='1' visibility='default' binding='global' size-in-bits='64'>
+    <function-decl name='efi_error_set' mangled-name='efi_error_set' filepath='src/include/efivar/efivar.h' line='184' column='1' visibility='default' binding='global' size-in-bits='64'>
       <return type-id='type-id-168'/>
     </function-decl>
-    <function-decl name='efi_error_set' mangled-name='efi_error_set' filepath='src/include/efivar/efivar.h' line='181' column='1' visibility='default' binding='global' size-in-bits='64'>
+    <function-decl name='strcspn' mangled-name='strcspn' filepath='/usr/include/string.h' line='272' column='1' visibility='default' binding='global' size-in-bits='64'>
       <return type-id='type-id-168'/>
     </function-decl>
     <function-decl name='strlen' mangled-name='strlen' filepath='/usr/include/string.h' line='384' column='1' visibility='default' binding='global' size-in-bits='64'>
@@ -1598,22 +1601,22 @@
     <function-decl name='close' mangled-name='close' filepath='/usr/include/unistd.h' line='353' column='1' visibility='default' binding='global' size-in-bits='64'>
       <return type-id='type-id-168'/>
     </function-decl>
-    <function-decl name='efi_get_logfile' mangled-name='efi_get_logfile' filepath='src/include/efivar/efivar.h' line='235' column='1' visibility='default' binding='global' size-in-bits='64'>
+    <function-decl name='__ctype_b_loc' mangled-name='__ctype_b_loc' filepath='/usr/include/ctype.h' line='79' column='1' visibility='default' binding='global' size-in-bits='64'>
       <return type-id='type-id-168'/>
     </function-decl>
     <function-decl name='fprintf' mangled-name='fprintf' filepath='/usr/include/stdio.h' line='326' column='1' visibility='default' binding='global' size-in-bits='64'>
       <return type-id='type-id-168'/>
     </function-decl>
+    <function-decl name='fflush' mangled-name='fflush' filepath='/usr/include/stdio.h' line='218' column='1' visibility='default' binding='global' size-in-bits='64'>
+      <return type-id='type-id-168'/>
+    </function-decl>
+    <function-decl name='efi_set_loglevel' mangled-name='efi_set_loglevel' filepath='src/include/efivar/efivar.h' line='194' column='1' visibility='default' binding='global' size-in-bits='64'>
+      <return type-id='type-id-168'/>
+    </function-decl>
+    <function-decl name='efi_get_logfile' mangled-name='efi_get_logfile' filepath='src/include/efivar/efivar.h' line='252' column='1' visibility='default' binding='global' size-in-bits='64'>
+      <return type-id='type-id-168'/>
+    </function-decl>
     <function-decl name='__builtin_fputc' mangled-name='fputc' visibility='default' binding='global' size-in-bits='64'>
-      <return type-id='type-id-168'/>
-    </function-decl>
-    <function-decl name='efi_get_verbose' mangled-name='efi_get_verbose' filepath='src/include/efivar/efivar.h' line='233' column='1' visibility='default' binding='global' size-in-bits='64'>
-      <return type-id='type-id-168'/>
-    </function-decl>
-    <function-decl name='efidp_make_acpi_hid_ex' mangled-name='efidp_make_acpi_hid_ex' filepath='src/include/efivar/efivar-dp.h' line='137' column='1' visibility='default' binding='global' size-in-bits='64'>
-      <return type-id='type-id-168'/>
-    </function-decl>
-    <function-decl name='efidp_make_acpi_hid' mangled-name='efidp_make_acpi_hid' filepath='src/include/efivar/efivar-dp.h' line='124' column='1' visibility='default' binding='global' size-in-bits='64'>
       <return type-id='type-id-168'/>
     </function-decl>
     <function-decl name='sscanf' mangled-name='__isoc99_sscanf' filepath='/usr/include/stdio.h' line='412' column='1' visibility='default' binding='global' size-in-bits='64'>
@@ -1622,52 +1625,19 @@
     <function-decl name='__builtin_fwrite' mangled-name='fwrite' visibility='default' binding='global' size-in-bits='64'>
       <return type-id='type-id-168'/>
     </function-decl>
-    <function-decl name='memset' mangled-name='memset' filepath='/usr/include/string.h' line='60' column='1' visibility='default' binding='global' size-in-bits='64'>
-      <return type-id='type-id-168'/>
-    </function-decl>
     <function-decl name='strdup' mangled-name='strdup' filepath='/usr/include/string.h' line='166' column='1' visibility='default' binding='global' size-in-bits='64'>
-      <return type-id='type-id-168'/>
-    </function-decl>
-    <function-decl name='strnlen' mangled-name='strnlen' filepath='/usr/include/string.h' line='390' column='1' visibility='default' binding='global' size-in-bits='64'>
-      <return type-id='type-id-168'/>
-    </function-decl>
-    <function-decl name='strchr' mangled-name='strchr' filepath='/usr/include/string.h' line='225' column='1' visibility='default' binding='global' size-in-bits='64'>
-      <return type-id='type-id-168'/>
-    </function-decl>
-    <function-decl name='strndup' mangled-name='strndup' filepath='/usr/include/string.h' line='174' column='1' visibility='default' binding='global' size-in-bits='64'>
-      <return type-id='type-id-168'/>
-    </function-decl>
-    <function-decl name='efidp_make_atapi' mangled-name='efidp_make_atapi' filepath='src/include/efivar/efivar-dp.h' line='336' column='1' visibility='default' binding='global' size-in-bits='64'>
-      <return type-id='type-id-168'/>
-    </function-decl>
-    <function-decl name='strrchr' mangled-name='strrchr' filepath='/usr/include/string.h' line='252' column='1' visibility='default' binding='global' size-in-bits='64'>
       <return type-id='type-id-168'/>
     </function-decl>
     <function-decl name='efidp_make_scsi' mangled-name='efidp_make_scsi' filepath='src/include/efivar/efivar-dp.h' line='345' column='1' visibility='default' binding='global' size-in-bits='64'>
       <return type-id='type-id-168'/>
     </function-decl>
-    <function-decl name='__builtin_fputs' mangled-name='fputs' visibility='default' binding='global' size-in-bits='64'>
+    <function-decl name='efidp_make_sata' mangled-name='efidp_make_sata' filepath='src/include/efivar/efivar-dp.h' line='428' column='1' visibility='default' binding='global' size-in-bits='64'>
+      <return type-id='type-id-168'/>
+    </function-decl>
+    <function-decl name='efidp_make_atapi' mangled-name='efidp_make_atapi' filepath='src/include/efivar/efivar-dp.h' line='336' column='1' visibility='default' binding='global' size-in-bits='64'>
       <return type-id='type-id-168'/>
     </function-decl>
     <function-decl name='asprintf' mangled-name='asprintf' filepath='/usr/include/stdio.h' line='372' column='1' visibility='default' binding='global' size-in-bits='64'>
-      <return type-id='type-id-168'/>
-    </function-decl>
-    <function-decl name='__xstat' mangled-name='__xstat' filepath='/usr/include/sys/stat.h' line='397' column='1' visibility='default' binding='global' size-in-bits='64'>
-      <return type-id='type-id-168'/>
-    </function-decl>
-    <function-decl name='readlink' mangled-name='readlink' filepath='/usr/include/unistd.h' line='808' column='1' visibility='default' binding='global' size-in-bits='64'>
-      <return type-id='type-id-168'/>
-    </function-decl>
-    <function-decl name='efidp_make_nvme' mangled-name='efidp_make_nvme' filepath='src/include/efivar/efivar-dp.h' line='655' column='1' visibility='default' binding='global' size-in-bits='64'>
-      <return type-id='type-id-168'/>
-    </function-decl>
-    <function-decl name='efidp_make_pci' mangled-name='efidp_make_pci' filepath='src/include/efivar/efivar-dp.h' line='60' column='1' visibility='default' binding='global' size-in-bits='64'>
-      <return type-id='type-id-168'/>
-    </function-decl>
-    <function-decl name='efidp_make_emmc' mangled-name='efidp_make_emmc' filepath='src/include/efivar/efivar-dp.h' line='695' column='1' visibility='default' binding='global' size-in-bits='64'>
-      <return type-id='type-id-168'/>
-    </function-decl>
-    <function-decl name='efidp_make_sata' mangled-name='efidp_make_sata' filepath='src/include/efivar/efivar-dp.h' line='428' column='1' visibility='default' binding='global' size-in-bits='64'>
       <return type-id='type-id-168'/>
     </function-decl>
     <function-decl name='opendir' mangled-name='opendir' filepath='/usr/include/dirent.h' line='134' column='1' visibility='default' binding='global' size-in-bits='64'>
@@ -1679,6 +1649,12 @@
     <function-decl name='readdir' mangled-name='readdir' filepath='/usr/include/dirent.h' line='162' column='1' visibility='default' binding='global' size-in-bits='64'>
       <return type-id='type-id-168'/>
     </function-decl>
+    <function-decl name='__xstat' mangled-name='__xstat' filepath='/usr/include/sys/stat.h' line='397' column='1' visibility='default' binding='global' size-in-bits='64'>
+      <return type-id='type-id-168'/>
+    </function-decl>
+    <function-decl name='efidp_make_sas' mangled-name='efidp_make_sas' filepath='src/include/efivar/efivar-dp.h' line='579' column='1' visibility='default' binding='global' size-in-bits='64'>
+      <return type-id='type-id-168'/>
+    </function-decl>
     <function-decl name='efidp_make_nvdimm' mangled-name='efidp_make_nvdimm' filepath='src/include/efivar/efivar-dp.h' line='719' column='1' visibility='default' binding='global' size-in-bits='64'>
       <return type-id='type-id-168'/>
     </function-decl>
@@ -1688,16 +1664,49 @@
     <function-decl name='getenv' mangled-name='getenv' filepath='/usr/include/stdlib.h' line='634' column='1' visibility='default' binding='global' size-in-bits='64'>
       <return type-id='type-id-168'/>
     </function-decl>
-    <function-decl name='efidp_make_sas' mangled-name='efidp_make_sas' filepath='src/include/efivar/efivar-dp.h' line='579' column='1' visibility='default' binding='global' size-in-bits='64'>
+    <function-decl name='efidp_make_pci' mangled-name='efidp_make_pci' filepath='src/include/efivar/efivar-dp.h' line='60' column='1' visibility='default' binding='global' size-in-bits='64'>
+      <return type-id='type-id-168'/>
+    </function-decl>
+    <function-decl name='readlink' mangled-name='readlink' filepath='/usr/include/unistd.h' line='808' column='1' visibility='default' binding='global' size-in-bits='64'>
+      <return type-id='type-id-168'/>
+    </function-decl>
+    <function-decl name='strndup' mangled-name='strndup' filepath='/usr/include/string.h' line='174' column='1' visibility='default' binding='global' size-in-bits='64'>
+      <return type-id='type-id-168'/>
+    </function-decl>
+    <function-decl name='efidp_make_acpi_hid_ex' mangled-name='efidp_make_acpi_hid_ex' filepath='src/include/efivar/efivar-dp.h' line='137' column='1' visibility='default' binding='global' size-in-bits='64'>
+      <return type-id='type-id-168'/>
+    </function-decl>
+    <function-decl name='efidp_make_acpi_hid' mangled-name='efidp_make_acpi_hid' filepath='src/include/efivar/efivar-dp.h' line='124' column='1' visibility='default' binding='global' size-in-bits='64'>
+      <return type-id='type-id-168'/>
+    </function-decl>
+    <function-decl name='efidp_make_nvme' mangled-name='efidp_make_nvme' filepath='src/include/efivar/efivar-dp.h' line='655' column='1' visibility='default' binding='global' size-in-bits='64'>
+      <return type-id='type-id-168'/>
+    </function-decl>
+    <function-decl name='access' mangled-name='access' filepath='/usr/include/unistd.h' line='287' column='1' visibility='default' binding='global' size-in-bits='64'>
+      <return type-id='type-id-168'/>
+    </function-decl>
+    <function-decl name='efi_error_pop' mangled-name='efi_error_pop' filepath='src/include/efivar/efivar.h' line='193' column='1' visibility='default' binding='global' size-in-bits='64'>
+      <return type-id='type-id-168'/>
+    </function-decl>
+    <function-decl name='efidp_make_emmc' mangled-name='efidp_make_emmc' filepath='src/include/efivar/efivar-dp.h' line='695' column='1' visibility='default' binding='global' size-in-bits='64'>
+      <return type-id='type-id-168'/>
+    </function-decl>
+    <function-decl name='strrchr' mangled-name='strrchr' filepath='/usr/include/string.h' line='252' column='1' visibility='default' binding='global' size-in-bits='64'>
+      <return type-id='type-id-168'/>
+    </function-decl>
+    <function-decl name='strnlen' mangled-name='strnlen' filepath='/usr/include/string.h' line='390' column='1' visibility='default' binding='global' size-in-bits='64'>
+      <return type-id='type-id-168'/>
+    </function-decl>
+    <function-decl name='strchr' mangled-name='strchr' filepath='/usr/include/string.h' line='225' column='1' visibility='default' binding='global' size-in-bits='64'>
+      <return type-id='type-id-168'/>
+    </function-decl>
+    <function-decl name='efidp_make_generic' mangled-name='efidp_make_generic' filepath='src/include/efivar/efivar-dp.h' line='1252' column='1' visibility='default' binding='global' size-in-bits='64'>
+      <return type-id='type-id-168'/>
+    </function-decl>
+    <function-decl name='efidp_format_device_path' mangled-name='efidp_format_device_path' filepath='src/include/efivar/efivar-dp.h' line='1247' column='1' visibility='default' binding='global' size-in-bits='64'>
       <return type-id='type-id-168'/>
     </function-decl>
     <function-decl name='ioctl' mangled-name='ioctl' filepath='/usr/include/sys/ioctl.h' line='41' column='1' visibility='default' binding='global' size-in-bits='64'>
-      <return type-id='type-id-168'/>
-    </function-decl>
-    <function-decl name='__ctype_b_loc' mangled-name='__ctype_b_loc' filepath='/usr/include/ctype.h' line='79' column='1' visibility='default' binding='global' size-in-bits='64'>
-      <return type-id='type-id-168'/>
-    </function-decl>
-    <function-decl name='printf' mangled-name='printf' filepath='/usr/include/stdio.h' line='332' column='1' visibility='default' binding='global' size-in-bits='64'>
       <return type-id='type-id-168'/>
     </function-decl>
     <function-decl name='__fxstat' mangled-name='__fxstat' filepath='/usr/include/sys/stat.h' line='395' column='1' visibility='default' binding='global' size-in-bits='64'>
@@ -1710,6 +1719,9 @@
       <return type-id='type-id-168'/>
     </function-decl>
     <function-decl name='posix_memalign' mangled-name='posix_memalign' filepath='/usr/include/stdlib.h' line='580' column='1' visibility='default' binding='global' size-in-bits='64'>
+      <return type-id='type-id-168'/>
+    </function-decl>
+    <function-decl name='__builtin_memset' mangled-name='memset' visibility='default' binding='global' size-in-bits='64'>
       <return type-id='type-id-168'/>
     </function-decl>
     <function-decl name='lseek' mangled-name='lseek' filepath='/usr/include/unistd.h' line='334' column='1' visibility='default' binding='global' size-in-bits='64'>
@@ -1754,14 +1766,20 @@
     <function-decl name='fread' mangled-name='fread' filepath='/usr/include/stdio.h' line='646' column='1' visibility='default' binding='global' size-in-bits='64'>
       <return type-id='type-id-168'/>
     </function-decl>
+    <function-decl name='efi_get_verbose' mangled-name='efi_get_verbose' filepath='src/include/efivar/efivar.h' line='250' column='1' visibility='default' binding='global' size-in-bits='64'>
+      <return type-id='type-id-168'/>
+    </function-decl>
     <function-decl name='gettimeofday' mangled-name='gettimeofday' filepath='/usr/include/sys/time.h' line='68' column='1' visibility='default' binding='global' size-in-bits='64'>
       <return type-id='type-id-168'/>
     </function-decl>
     <function-decl name='write' mangled-name='write' filepath='/usr/include/unistd.h' line='366' column='1' visibility='default' binding='global' size-in-bits='64'>
       <return type-id='type-id-168'/>
     </function-decl>
-    <function-decl name='efi_error_clear' mangled-name='efi_error_clear' filepath='src/include/efivar/efivar.h' line='189' column='1' visibility='default' binding='global' size-in-bits='64'>
+    <function-decl name='efi_error_clear' mangled-name='efi_error_clear' filepath='src/include/efivar/efivar.h' line='192' column='1' visibility='default' binding='global' size-in-bits='64'>
       <return type-id='type-id-168'/>
+    </function-decl>
+    <function-decl name='efi_get_libefiboot_version' mangled-name='efi_get_libefiboot_version' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='efi_get_libefiboot_version@@LIBEFIBOOT_1.31'>
+      <return type-id='type-id-5'/>
     </function-decl>
     <function-decl name='efi_generate_ipv4_device_path' mangled-name='efi_generate_ipv4_device_path' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='efi_generate_ipv4_device_path@@libefiboot.so.0'>
       <parameter type-id='type-id-22' name='buf'/>
@@ -1797,9 +1815,6 @@
       <return type-id='type-id-168'/>
     </function-decl>
     <function-decl name='efidp_make_file' mangled-name='efidp_make_file' filepath='src/include/efivar/efivar-dp.h' line='771' column='1' visibility='default' binding='global' size-in-bits='64'>
-      <return type-id='type-id-168'/>
-    </function-decl>
-    <function-decl name='efidp_make_generic' mangled-name='efidp_make_generic' filepath='src/include/efivar/efivar-dp.h' line='1250' column='1' visibility='default' binding='global' size-in-bits='64'>
       <return type-id='type-id-168'/>
     </function-decl>
     <function-decl name='efidp_make_edd10' mangled-name='efidp_make_edd10' filepath='src/include/efivar/efivar-dp.h' line='95' column='1' visibility='default' binding='global' size-in-bits='64'>
