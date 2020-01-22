@@ -42,7 +42,7 @@ static ssize_t
 parse_virtual_root(struct device *dev UNUSED, const char *current, const char *root UNUSED)
 {
 	int rc;
-	ssize_t sz;
+	ssize_t sz = 0;
 	int pos0 = 0, pos1 = 0;
 	struct subdir {
 		const char * const name;
