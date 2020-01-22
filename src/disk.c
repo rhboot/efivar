@@ -55,7 +55,7 @@ is_mbr_valid(legacy_mbr *mbr)
 	ret = (mbr->magic == MSDOS_MBR_MAGIC);
 	if (!ret) {
 		errno = ENOTTY;
-		efi_error("mbr magic is 0x%04hx not MSDOS_MBR_MAGIC (0x%04hx)",
+		efi_error("mbr magic is 0x%04hx not MSDOS_MBR_MAGIC (0x%04x)",
 			  mbr->magic, MSDOS_MBR_MAGIC);
 	}
 	return ret;
