@@ -53,8 +53,11 @@ include/efivar/efivar-guids.h : makeguids guids.txt
 
 makeguids : CPPFLAGS=$(HOST_CPPFLAGS)
 makeguids : LIBS=dl
+makeguids : CC=$(HOSTCC)
 makeguids : CCLD=$(HOSTCCLD)
 makeguids : CFLAGS=$(HOST_CFLAGS)
+makeguids : LDFLAGS=$(HOST_LDFLAGS)
+makeguids : CCLDFLAGS=$(HOST_CCLDFLAGS)
 makeguids : $(MAKEGUIDS_SOURCES)
 
 guids.o : guids.S | guids.bin names.bin

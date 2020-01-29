@@ -7,10 +7,10 @@ include $(TOPDIR)/src/include/rules.mk
 include $(TOPDIR)/src/include/defaults.mk
 
 .%.d : %.c
-	$(CC) $(cflags) $(CPPFLAGS) -MM -MG -MF $@ $^
+	$(CC) $(CFLAGS) $(CPPFLAGS) -MM -MG -MF $@ $^
 
 .%.d : %.S
-	$(CC) $(cflags) $(CPPFLAGS) -MM -MG -MF $@ $^
+	$(CC) $(CFLAGS) $(CPPFLAGS) -MM -MG -MF $@ $^
 
 SOURCES ?=
 

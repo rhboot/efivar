@@ -30,8 +30,6 @@ family = $(foreach FAMILY_SUFFIX,$(FAMILY_SUFFIXES),$($(1)_$(FAMILY_SUFFIX)))
 
 %.so :
 	$(CCLD) $(CCLDFLAGS) $(CPPFLAGS) $(SOFLAGS) \
-	  -Wl,-soname,$@.1 \
-	  -Wl,--version-script=$(MAP) \
 	  -o $@ $^ $(LDLIBS)
 	ln -vfs $@ $@.1
 

@@ -9,13 +9,18 @@ PCDIR	?= $(LIBDIR)/pkgconfig
 DESTDIR	?=
 
 CROSS_COMPILE	?=
-COMPILER ?= gcc
+COMPILER 	?= gcc
+ifeq ($(origin CC),command line)
+override COMPILER := $(CC)
+override CC := $(CROSS_COMPILE)$(COMPILER)
+endif
 $(call set-if-undefined,CC,$(CROSS_COMPILE)$(COMPILER))
 $(call set-if-undefined,CCLD,$(CC))
 $(call set-if-undefined,HOSTCC,$(COMPILER))
 $(call set-if-undefined,HOSTCCLD,$(HOSTCC))
 
-OPTIMIZE ?= -O2 -flto
+OPTIMIZE_GCC = -flto
+OPTIMIZE ?= -O2 $(call family,OPTIMIZE)
 DEBUGINFO ?= -g3
 WARNINGS_GCC ?= -Wmaybe-uninitialized \
 		-Wno-nonnull-compare
@@ -30,7 +35,7 @@ override _CPPFLAGS := $(CPPFLAGS)
 override CPPFLAGS = $(_CPPFLAGS) -DLIBEFIVAR_VERSION=$(VERSION) \
 	    -D_GNU_SOURCE \
 	    -I$(TOPDIR)/src/include/
-CFLAGS ?= $(OPTIMIZE) $(DEBUGINFO) $(WARNINGS) $(ERRORS)
+CFLAGS ?= $(FULL_OPTIMIZE) $(DEBUGINFO) $(WARNINGS) $(ERRORS)
 CFLAGS_GCC ?= -specs=$(TOPDIR)/src/include/gcc.specs \
 	      -fno-merge-constants
 override _CFLAGS := $(CFLAGS)
@@ -40,22 +45,32 @@ override CFLAGS = $(_CFLAGS) \
 		  -fvisibility=hidden \
 		  $(call family,CFLAGS) \
 		  $(call pkg-config-cflags)
-LDFLAGS_CLANG ?= -Wl,--fatal-warnings,-pie,-z,relro
+LDFLAGS_CLANG ?= -rtlib=compiler-rt
+CCLDFLAGS ?=
 LDFLAGS ?=
+override _CCLDFLAGS := $(CCLDFLAGS)
 override _LDFLAGS := $(LDFLAGS)
-override LDFLAGS = $(_LDFLAGS) \
+override LDFLAGS = $(CFLAGS) -L. $(_LDFLAGS) $(_CCLDFLAGS) \
 		   -Wl,--add-needed \
 		   -Wl,--build-id \
 		   -Wl,--no-allow-shlib-undefined \
 		   -Wl,--no-undefined-version \
 		   -Wl,-z,now \
 		   -Wl,-z,muldefs \
-		   $(call family,LDFLAGS)
-CCLDFLAGS ?=
-override _CCLDFLAGS := $(CCLDFLAGS)
-override CCLDFLAGS = $(CFLAGS) -L. $(_CCLDFLAGS) \
-		     $(LDFLAGS) \
-		     $(call pkg-config-ccldflags)
+		   -Wl,-z,relro \
+		   -Wl,--fatal-warnings \
+		   $(call family,LDFLAGS) $(call family,CCLDFLAGS) \
+		   $(call pkg-config-ccldflags)
+override CCLDFLAGS = $(LDFLAGS)
+SOFLAGS_GCC =
+SOFLAGS_CLANG =
+SOFLAGS ?=
+override _SOFLAGS := $(SOFLAGS)
+override SOFLAGS = $(_SOFLAGS) \
+		   -shared -Wl,-soname,$@.1 \
+		   -Wl,--version-script=$(MAP) \
+		   $(call family,SOFLAGS)
+
 HOST_ARCH=$(shell uname -m)
 ifneq ($(HOST_ARCH),ia64)
 	HOST_MARCH=-march=native
@@ -66,9 +81,27 @@ HOST_CPPFLAGS ?= $(CPPFLAGS)
 override _HOST_CPPFLAGS := $(HOST_CPPFLAGS)
 override HOST_CPPFLAGS = $(_HOST_CPPFLAGS) \
 			 -DEFIVAR_BUILD_ENVIRONMENT $(HOST_MARCH)
-HOST_CFLAGS ?= $(CFLAGS)
+HOST_CFLAGS_CLANG ?=
+HOST_CFLAGS ?= $(CFLAGS) $(call family,HOST_CFLAGS)
 override _HOST_CFLAGS := $(HOST_CFLAGS)
 override HOST_CFLAGS = $(_HOST_CFLAGS)
+HOST_LDFLAGS_CLANG ?= -Wl,--fatal-warnings,-z,relro -rtlib=compiler-rt
+HOST_LDFLAGS_GCC ?= -Wl,--no-undefined-version
+HOST_LDFLAGS ?=
+HOST_CCLDFLAGS ?=
+override _HOST_LDFLAGS := $(HOST_LDFLAGS)
+override _HOST_CCLDFLAGS := $(HOST_CCLDFLAGS)
+override HOST_LDFLAGS = $(HOST_CFLAGS) -L. \
+			$(_HOST_LDFLAGS) $(_HOST_CCLDFLAGS) \
+			-Wl,--add-needed \
+			-Wl,--build-id \
+			-Wl,--no-allow-shlib-undefined \
+			-Wl,-z,now \
+			-Wl,-z,muldefs \
+			$(call family,HOST_LDFLAGS) \
+			$(call family,HOST_CCLDFLAGS) \
+			$(call pkg-config-ccldflags)
+override HOST_CCLDFLAGS = $(HOST_LDFLAGS)
 
 PKG_CONFIG = $(shell if [ -e "$$(env $(CROSS_COMPILE)pkg-config 2>&1)" ]; then echo $(CROSS_COMPILE)pkg-config ; else echo pkg-config ; fi)
 INSTALL ?= install
@@ -80,7 +113,6 @@ ABIDIFF := abidiff
 
 PKGS	=
 
-SOFLAGS=-shared $(call family,SOFLAGS)
 LDLIBS=$(foreach lib,$(LIBS),-l$(lib)) $(call pkg-config-ldlibs)
 
 COMMIT_ID=$(shell git log -1 --pretty=%H 2>/dev/null || echo master)
