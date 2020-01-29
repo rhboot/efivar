@@ -27,9 +27,9 @@
 
 #include <inttypes.h>
 
-#define EFI_PMBR_OSTYPE_EFI 0xEF
-#define EFI_PMBR_OSTYPE_EFI_GPT 0xEE
-#define MSDOS_MBR_MAGIC 0xaa55
+#define EFI_PMBR_OSTYPE_EFI ((uint8_t)0xEF)
+#define EFI_PMBR_OSTYPE_EFI_GPT ((uint8_t)0xEE)
+#define MSDOS_MBR_MAGIC ((uint16_t)0xaa55)
 #define GPT_BLOCK_SIZE 512
 
 #define GPT_HEADER_MAGIC ((uint64_t)(0x5452415020494645ULL))
