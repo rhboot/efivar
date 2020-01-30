@@ -144,66 +144,66 @@ lcm(uint64_t x, uint64_t y)
 }
 
 #ifndef strdupa
-#define strdupa(s)						      \
-       (__extension__ ({						\
-		const char *__in = (s);				 \
-		size_t __len = strlen (__in);			   \
-		char *__out = (char *) alloca (__len + 1);	      \
-		strcpy(__out, __in);				    \
-		__out;						  \
+#define strdupa(s)						\
+       (__extension__ ({					\
+		const char *__in = (s);				\
+		size_t __len = strlen (__in);			\
+		char *__out = (char *) alloca (__len + 1);	\
+		strcpy(__out, __in);				\
+		__out;						\
 	}))
 #endif
 
 #ifndef strndupa
-#define strndupa(s, l)						  \
-       (__extension__ ({						\
-		const char *__in = (s);				 \
-		size_t __len = strnlen (__in, (l));		     \
-		char *__out = (char *) alloca (__len + 1);	      \
-		strncpy(__out, __in, __len);			    \
-		__out[__len] = '\0';				    \
-		__out;						  \
+#define strndupa(s, l)						\
+       (__extension__ ({					\
+		const char *__in = (s);				\
+		size_t __len = strnlen (__in, (l));		\
+		char *__out = (char *) alloca (__len + 1);	\
+		strncpy(__out, __in, __len);			\
+		__out[__len] = '\0';				\
+		__out;						\
 	}))
 #endif
 
-#define asprintfa(str, fmt, args...)				    \
-	({							      \
-		char *_tmp = NULL;				      \
-		int _rc;						\
-		*(str) = NULL;					  \
-		_rc = asprintf((str), (fmt), ## args);		  \
-		if (_rc > 0) {					  \
-			_tmp = strdupa(*(str));			 \
-			if (!_tmp) {				    \
-				_rc = -1;			       \
-			} else {					\
-				free(*(str));			   \
-				*(str) = _tmp;			  \
-			}					       \
-		} else {						\
-			_rc = -1;				       \
-		}						       \
-		_rc;						    \
+#define asprintfa(str, fmt, args...)				\
+	({							\
+		char *_tmp = NULL;				\
+		int _rc;					\
+		*(str) = NULL;					\
+		_rc = asprintf((str), (fmt), ## args);		\
+		if (_rc > 0) {					\
+			_tmp = strdupa(*(str));			\
+			if (!_tmp) {				\
+				_rc = -1;			\
+			} else {				\
+				free(*(str));			\
+				*(str) = _tmp;			\
+			}					\
+		} else {					\
+			_rc = -1;				\
+		}						\
+		_rc;						\
 	})
 
-#define vasprintfa(str, fmt, ap)					\
-	({							      \
-		char *_tmp = NULL;				      \
-		int _rc;						\
-		*(str) = NULL;					  \
-		_rc = vasprintf((str), (fmt), (ap));		    \
-		if (_rc > 0) {					  \
-			_tmp = strdupa(*(str));			 \
-			if (!_tmp) {				    \
-				_rc = -1;			       \
-			} else {					\
-				free(*(str));			   \
-				*(str) = _tmp;			  \
-			}					       \
-		} else {						\
-			_rc = -1;				       \
-		}						       \
-		_rc;						    \
+#define vasprintfa(str, fmt, ap)				\
+	({							\
+		char *_tmp = NULL;				\
+		int _rc;					\
+		*(str) = NULL;					\
+		_rc = vasprintf((str), (fmt), (ap));		\
+		if (_rc > 0) {					\
+			_tmp = strdupa(*(str));			\
+			if (!_tmp) {				\
+				_rc = -1;			\
+			} else {				\
+				free(*(str));			\
+				*(str) = _tmp;			\
+			}					\
+		} else {					\
+			_rc = -1;				\
+		}						\
+		_rc;						\
 	})
 
 static inline ssize_t
