@@ -147,9 +147,13 @@ lcm(uint64_t x, uint64_t y)
 #define strdupa(s)						\
        (__extension__ ({					\
 		const char *__in = (s);				\
-		size_t __len = strlen (__in);			\
-		char *__out = (char *) alloca (__len + 1);	\
-		strcpy(__out, __in);				\
+		size_t __len;					\
+		char *__out = NULL;				\
+		if (__in) {					\
+			__len = strlen (__in);			\
+			__out = (char *) alloca (__len + 1);	\
+			strcpy(__out, __in);			\
+		}						\
 		__out;						\
 	}))
 #endif
@@ -158,10 +162,14 @@ lcm(uint64_t x, uint64_t y)
 #define strndupa(s, l)						\
        (__extension__ ({					\
 		const char *__in = (s);				\
-		size_t __len = strnlen (__in, (l));		\
-		char *__out = (char *) alloca (__len + 1);	\
-		strncpy(__out, __in, __len);			\
-		__out[__len] = '\0';				\
+		size_t __len;					\
+		char *__out = NULL;				\
+		if (__in) {					\
+			__len = strnlen (__in, (l));		\
+			__out = (char *) alloca (__len + 1);	\
+			strncpy(__out, __in, __len);		\
+			__out[__len] = '\0';			\
+		}						\
 		__out;						\
 	}))
 #endif
