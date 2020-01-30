@@ -61,7 +61,6 @@ parse_nvme(struct device *dev, const char *path, const char *root UNUSED)
 	int32_t tosser0, tosser1, tosser2, ctrl_id, ns_id, partition;
 	uint8_t *filebuf = NULL;
 	int pos0 = -1, pos1 = -1, pos2 = -1;
-	ssize_t sz = 0;
 	struct subdir {
 		const char * const name;
 		const char * const fmt;
@@ -86,7 +85,6 @@ parse_nvme(struct device *dev, const char *path, const char *root UNUSED)
 		      *subdirs[i].pos0, *subdirs[i].pos1);
 		dbgmk("         ", *subdirs[i].pos0, *subdirs[i].pos1);
 		if (*subdirs[i].pos0 >= 0 && *subdirs[i].pos1 >= *subdirs[i].pos0) {
-			sz += *subdirs[i].pos1;
 			current += *subdirs[i].pos1;
 			break;
 		}
