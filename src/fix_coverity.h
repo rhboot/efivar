@@ -1,8 +1,8 @@
+// SPDX-License-Identifier: LGPL-2.1-or-later
 /*
  * fix_coverity.h
  * Copyright 2017 Peter Jones <pjones@redhat.com>
  *
- * Distributed under terms of the GPLv3 license.
  */
 
 #ifndef FIX_COVERITY_H

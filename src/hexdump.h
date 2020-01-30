@@ -1,3 +1,8 @@
+// SPDX-License-Identifier: LGPL-2.1-or-later
+/*
+ * libefivar - library for the manipulation of EFI variables
+ * Copyright 2018-2020 Peter M. Jones <pjones@redhat.com>
+ */
 #ifndef STATIC_HEXDUMP_H
 #define STATIC_HEXDUMP_H
 

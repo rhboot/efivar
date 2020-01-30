@@ -1,25 +1,13 @@
+// SPDX-License-Identifier: LGPL-2.1-or-later
 /*
  * gpt.[ch]
  * Copyright (C) 2000-2001 Dell Computer Corporation <Matt_Domsch@dell.com>
+ * Copyright 2015-2020 Red Hat, Inc.
+ * Copyright 2015-2020 Peter M. Jones <pjones@redhat.com>
  *
  * EFI GUID Partition Table handling
  * Per Intel EFI Specification v1.02
  * http://developer.intel.com/technology/efi/efi.htm
- *
- * This library is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Lesser General Public License as
- * published by the Free Software Foundation; either version 2.1 of the
- * License, or (at your option) any later version.
- *
- * This library is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Lesser General Public License for more details.
- *
- * You should have received a copy of the GNU Lesser General Public
- * License along with this library; if not, see
- * <http://www.gnu.org/licenses/>.
- *
  */
 
 #ifndef _EFIBOOT_GPT_H
