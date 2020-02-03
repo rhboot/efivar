@@ -670,7 +670,7 @@
       <parameter type-id='type-id-89'/>
       <return type-id='type-id-89'/>
     </function-decl>
-    <function-decl name='efi_error_set' filepath='src/include/efivar/efivar.h' line='128' column='1' visibility='default' binding='global' size-in-bits='64'>
+    <function-decl name='efi_error_set' filepath='src/include/efivar/efivar.h' line='129' column='1' visibility='default' binding='global' size-in-bits='64'>
       <parameter type-id='type-id-98'/>
       <parameter type-id='type-id-98'/>
       <parameter type-id='type-id-15'/>
@@ -679,14 +679,14 @@
       <parameter is-variadic='yes'/>
       <return type-id='type-id-15'/>
     </function-decl>
-    <function-decl name='efi_error_clear' filepath='src/include/efivar/efivar.h' line='136' column='1' visibility='default' binding='global' size-in-bits='64'>
+    <function-decl name='efi_error_clear' filepath='src/include/efivar/efivar.h' line='137' column='1' visibility='default' binding='global' size-in-bits='64'>
       <return type-id='type-id-28'/>
     </function-decl>
-    <function-decl name='efi_set_loglevel' filepath='src/include/efivar/efivar.h' line='138' column='1' visibility='default' binding='global' size-in-bits='64'>
+    <function-decl name='efi_set_loglevel' filepath='src/include/efivar/efivar.h' line='139' column='1' visibility='default' binding='global' size-in-bits='64'>
       <parameter type-id='type-id-15'/>
       <return type-id='type-id-28'/>
     </function-decl>
-    <function-decl name='efi_get_logfile' filepath='src/include/efivar/efivar.h' line='196' column='1' visibility='default' binding='global' size-in-bits='64'>
+    <function-decl name='efi_get_logfile' filepath='src/include/efivar/efivar.h' line='197' column='1' visibility='default' binding='global' size-in-bits='64'>
       <return type-id='type-id-91'/>
     </function-decl>
     <function-decl name='device_get' filepath='src/linux.h' line='142' column='1' visibility='default' binding='global' size-in-bits='64'>
@@ -1082,7 +1082,7 @@
       <parameter type-id='type-id-122'/>
       <return type-id='type-id-89'/>
     </function-decl>
-    <function-decl name='efi_str_to_guid' filepath='src/include/efivar/efivar.h' line='56' column='1' visibility='default' binding='global' size-in-bits='64'>
+    <function-decl name='efi_str_to_guid' filepath='src/include/efivar/efivar.h' line='57' column='1' visibility='default' binding='global' size-in-bits='64'>
       <parameter type-id='type-id-98'/>
       <parameter type-id='type-id-122'/>
       <return type-id='type-id-15'/>
@@ -1191,7 +1191,7 @@
       <parameter type-id='type-id-89'/>
       <return type-id='type-id-89'/>
     </function-decl>
-    <function-decl name='efi_error_pop' filepath='src/include/efivar/efivar.h' line='137' column='1' visibility='default' binding='global' size-in-bits='64'>
+    <function-decl name='efi_error_pop' filepath='src/include/efivar/efivar.h' line='138' column='1' visibility='default' binding='global' size-in-bits='64'>
       <return type-id='type-id-28'/>
     </function-decl>
     <function-decl name='find_path_segment' filepath='src/path-helpers.h' line='12' column='1' visibility='default' binding='global' size-in-bits='64'>
@@ -2240,7 +2240,7 @@
     <pointer-type-def type-id='type-id-32' size-in-bits='64' id='type-id-281'/>
     <pointer-type-def type-id='type-id-24' size-in-bits='64' id='type-id-138'/>
     <pointer-type-def type-id='type-id-138' size-in-bits='64' id='type-id-282'/>
-    <function-decl name='efi_get_verbose' filepath='src/include/efivar/efivar.h' line='194' column='1' visibility='default' binding='global' size-in-bits='64'>
+    <function-decl name='efi_get_verbose' filepath='src/include/efivar/efivar.h' line='195' column='1' visibility='default' binding='global' size-in-bits='64'>
       <return type-id='type-id-15'/>
     </function-decl>
     <function-decl name='efi_loadopt_create' mangled-name='efi_loadopt_create' filepath='src/loadopt.c' line='26' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='efi_loadopt_create@@libefiboot.so.0'>

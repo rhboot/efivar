@@ -51,6 +51,41 @@ typedef uint16_t efi_char16_t;
 typedef unsigned long uintn_t;
 typedef long intn_t;
 
+#if !defined(EFIVAR_NO_EFI_TIME_T) || EFIVAR_NO_EFI_TIME_T
+#define EFIVAR_HAVE_EFI_TIME_T 1
+
+/*
+ * This can never be correct, as defined, in the face of leap seconds.
+ * Because seconds here are defined with a range of [0,59], we can't
+ * express leap seconds correctly there.  Because TimeZone is specified in
+ * minutes West of UTC, rather than seconds (like struct tm), it can't be
+ * used to correct when we cross a leap second boundary condition.  As a
+ * result, EFI_TIME can only express UT1, rather than UTC, and there's no
+ * way when converting to know wether the error has been taken into
+ * account, nor if it should be.
+ *
+ * As I write this, there is a 37 second error.
+ */
+typedef struct {
+	uint16_t	year;		// 1900 - 9999
+	uint8_t		month;		// 1 - 12
+	uint8_t		day;		// 1 - 31
+	uint8_t		hour;		// 0 - 23
+	uint8_t		minute;		// 0 - 59
+	uint8_t		second;		// 0 - 59 // ha ha only serious
+	uint8_t		pad1;		// 0
+	uint32_t	nanosecond;	// 0 - 999,999,999
+	int16_t		timezone;	// minutes from UTC or EFI_UNSPECIFIED_TIMEZONE
+	uint8_t		daylight;	// bitfield
+	uint8_t		pad2;		// 0
+} efi_time_t __attribute__((__aligned__(1)));
+
+#define EFI_TIME_ADJUST_DAYLIGHT        ((uint8_t)0x01)
+#define EFI_TIME_IN_DAYLIGHT            ((uint8_t)0x02)
+
+#define EFI_UNSPECIFIED_TIMEZONE        ((uint16_t)0x07ff)
+#endif /* !defined(EFIVAR_NO_EFI_TIME_T) || EFIVAR_NO_EFI_TIME_T */
+
 #define EFI_VARIABLE_NON_VOLATILE				((uint64_t)0x0000000000000001)
 #define EFI_VARIABLE_BOOTSERVICE_ACCESS				((uint64_t)0x0000000000000002)
 #define EFI_VARIABLE_RUNTIME_ACCESS				((uint64_t)0x0000000000000004)

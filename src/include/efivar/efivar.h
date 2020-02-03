@@ -14,6 +14,7 @@
 #include <stdio.h>
 #include <sys/stat.h>
 #include <sys/types.h>
+#include <time.h>
 #include <unistd.h>
 #include <byteswap.h>
 
@@ -200,6 +201,7 @@ extern uint32_t efi_get_libefivar_version(void)
 	__attribute__((__visibility__("default")));
 
 #include <efivar/efivar-dp.h>
+#include <efivar/efivar-time.h>
 
 #endif /* EFIVAR_H */
 
