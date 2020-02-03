@@ -8,6 +8,8 @@
 #define PRIVATE_EFISEC_H_
 
 #include "efivar.h"
+#include "x509.h"
+
 #include <efivar/efisec.h>
 
 #endif /* !PRIVATE_EFISEC_H_ */
