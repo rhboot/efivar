@@ -12,6 +12,14 @@
 
 #define GUID_FORMAT "%08x-%04x-%04x-%04x-%02x%02x%02x%02x%02x%02x"
 
+struct efi_variable {
+	uint64_t attrs;
+	efi_guid_t *guid;
+	unsigned char *name;
+	uint8_t *data;
+	size_t data_size;
+};
+
 struct efi_var_operations {
 	char name[NAME_MAX];
 	int (*probe)(void);

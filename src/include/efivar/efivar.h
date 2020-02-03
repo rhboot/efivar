@@ -17,53 +17,11 @@
 #include <unistd.h>
 #include <byteswap.h>
 
-typedef struct {
-	uint32_t	a;
-	uint16_t	b;
-	uint16_t	c;
-	uint16_t	d;
-	uint8_t		e[6];
-} efi_guid_t __attribute__((__aligned__(1)));
-
-typedef struct {
-	uint8_t		addr[4];
-} efi_ipv4_addr_t;
-
-typedef struct {
-	uint8_t		addr[16];
-} efi_ipv6_addr_t;
-
-typedef union {
-	uint32_t	addr[4];
-	efi_ipv4_addr_t	v4;
-	efi_ipv6_addr_t	v6;
-} efi_ip_addr_t;
-
-typedef struct {
-	uint8_t		addr[32];
-} efi_mac_addr_t;
+#include <efivar/efivar-types.h>
 
 #ifndef EFIVAR_BUILD_ENVIRONMENT
 #include <efivar/efivar-guids.h>
 #endif
-
-#if BYTE_ORDER == LITTLE_ENDIAN
-#define EFI_GUID(a,b,c,d,e0,e1,e2,e3,e4,e5) \
-((efi_guid_t) {(a), (b), (c), __builtin_bswap16(d), { (e0), (e1), (e2), (e3), (e4), (e5) }})
-#else
-#define EFI_GUID(a,b,c,d,e0,e1,e2,e3,e4,e5) \
-((efi_guid_t) {(a), (b), (c), (d), { (e0), (e1), (e2), (e3), (e4), (e5) }})
-#endif
-
-#define EFI_GLOBAL_GUID EFI_GUID(0x8be4df61,0x93ca,0x11d2,0xaa0d,0x00,0xe0,0x98,0x03,0x2b,0x8c)
-
-#define EFI_VARIABLE_NON_VOLATILE	0x0000000000000001
-#define EFI_VARIABLE_BOOTSERVICE_ACCESS	0x0000000000000002
-#define EFI_VARIABLE_RUNTIME_ACCESS	0x0000000000000004
-#define EFI_VARIABLE_HARDWARE_ERROR_RECORD	0x0000000000000008
-#define EFI_VARIABLE_AUTHENTICATED_WRITE_ACCESS	0x0000000000000010
-#define EFI_VARIABLE_TIME_BASED_AUTHENTICATED_WRITE_ACCESS 0x0000000000000020
-#define EFI_VARIABLE_APPEND_WRITE	0x0000000000000040
 
 #define EFI_VARIABLE_HAS_AUTH_HEADER	0x0000000100000000
 #define EFI_VARIABLE_HAS_SIGNATURE	0x0000000200000000

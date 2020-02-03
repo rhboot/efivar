@@ -249,11 +249,11 @@
       <parameter type-id='type-id-30' name='cidstr' filepath='src/dp-acpi.c' line='291' column='1'/>
       <return type-id='type-id-33'/>
     </function-decl>
-    <function-decl name='efi_set_loglevel' mangled-name='efi_set_loglevel' filepath='src/include/efivar/efivar.h' line='180' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='efi_set_loglevel@@LIBEFIVAR_1.38'>
+    <function-decl name='efi_set_loglevel' mangled-name='efi_set_loglevel' filepath='src/include/efivar/efivar.h' line='138' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='efi_set_loglevel@@LIBEFIVAR_1.38'>
       <parameter type-id='type-id-18'/>
       <return type-id='type-id-16'/>
     </function-decl>
-    <function-decl name='efi_get_logfile' mangled-name='efi_get_logfile' filepath='src/include/efivar/efivar.h' line='238' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='efi_get_logfile@@LIBEFIVAR_1.36'>
+    <function-decl name='efi_get_logfile' mangled-name='efi_get_logfile' filepath='src/include/efivar/efivar.h' line='196' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='efi_get_logfile@@LIBEFIVAR_1.36'>
       <return type-id='type-id-28'/>
     </function-decl>
     <function-decl name='fprintf' filepath='/usr/include/stdio.h' line='344' column='1' visibility='default' binding='global' size-in-bits='64'>
@@ -296,12 +296,12 @@
       <parameter type-id='type-id-34' name='hardware_device' filepath='src/dp-hw.c' line='92' column='1'/>
       <return type-id='type-id-33'/>
     </function-decl>
-    <function-decl name='efi_guid_to_str' mangled-name='efi_guid_to_str' filepath='src/include/efivar/efivar.h' line='100' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='efi_guid_to_str@@libefivar.so.0'>
+    <function-decl name='efi_guid_to_str' mangled-name='efi_guid_to_str' filepath='src/include/efivar/efivar.h' line='58' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='efi_guid_to_str@@libefivar.so.0'>
       <parameter type-id='type-id-38'/>
       <parameter type-id='type-id-35'/>
       <return type-id='type-id-18'/>
     </function-decl>
-    <function-decl name='efi_guid_cmp' mangled-name='efi_guid_cmp' filepath='src/include/efivar/efivar.h' line='117' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='efi_guid_cmp@@LIBEFIVAR_0.24'>
+    <function-decl name='efi_guid_cmp' mangled-name='efi_guid_cmp' filepath='src/include/efivar/efivar.h' line='75' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='efi_guid_cmp@@LIBEFIVAR_0.24'>
       <parameter type-id='type-id-38'/>
       <parameter type-id='type-id-38'/>
       <return type-id='type-id-18'/>
@@ -329,7 +329,7 @@
       <parameter type-id='type-id-39' name='signature_type' filepath='src/dp-media.c' line='172' column='1'/>
       <return type-id='type-id-33'/>
     </function-decl>
-    <function-decl name='efi_guid_is_zero' mangled-name='efi_guid_is_empty' filepath='src/include/efivar/efivar.h' line='115' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='efi_guid_is_empty@@libefivar.so.0'>
+    <function-decl name='efi_guid_is_zero' mangled-name='efi_guid_is_empty' filepath='src/include/efivar/efivar.h' line='73' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='efi_guid_is_empty@@libefivar.so.0'>
       <parameter type-id='type-id-38'/>
       <return type-id='type-id-18'/>
     </function-decl>
@@ -1374,48 +1374,48 @@
     <typedef-decl name='efidp_data' type-id='type-id-180' filepath='src/include/efivar/efivar-dp.h' line='883' column='1' id='type-id-179'/>
     <typedef-decl name='efidp' type-id='type-id-182' filepath='src/include/efivar/efivar-dp.h' line='884' column='1' id='type-id-183'/>
     <typedef-decl name='const_efidp' type-id='type-id-184' filepath='src/include/efivar/efivar-dp.h' line='885' column='1' id='type-id-185'/>
-    <class-decl name='efi_guid_t' size-in-bits='128' is-struct='yes' naming-typedef-id='type-id-36' visibility='default' filepath='src/include/efivar/efivar.h' line='20' column='1' id='type-id-186'>
+    <class-decl name='efi_guid_t' size-in-bits='128' is-struct='yes' naming-typedef-id='type-id-36' visibility='default' filepath='src/include/efivar/efivar-types.h' line='13' column='1' id='type-id-186'>
       <data-member access='public' layout-offset-in-bits='0'>
-        <var-decl name='a' type-id='type-id-34' visibility='default' filepath='src/include/efivar/efivar.h' line='21' column='1'/>
+        <var-decl name='a' type-id='type-id-34' visibility='default' filepath='src/include/efivar/efivar-types.h' line='14' column='1'/>
       </data-member>
       <data-member access='public' layout-offset-in-bits='32'>
-        <var-decl name='b' type-id='type-id-48' visibility='default' filepath='src/include/efivar/efivar.h' line='22' column='1'/>
+        <var-decl name='b' type-id='type-id-48' visibility='default' filepath='src/include/efivar/efivar-types.h' line='15' column='1'/>
       </data-member>
       <data-member access='public' layout-offset-in-bits='48'>
-        <var-decl name='c' type-id='type-id-48' visibility='default' filepath='src/include/efivar/efivar.h' line='23' column='1'/>
+        <var-decl name='c' type-id='type-id-48' visibility='default' filepath='src/include/efivar/efivar-types.h' line='16' column='1'/>
       </data-member>
       <data-member access='public' layout-offset-in-bits='64'>
-        <var-decl name='d' type-id='type-id-48' visibility='default' filepath='src/include/efivar/efivar.h' line='24' column='1'/>
+        <var-decl name='d' type-id='type-id-48' visibility='default' filepath='src/include/efivar/efivar-types.h' line='17' column='1'/>
       </data-member>
       <data-member access='public' layout-offset-in-bits='80'>
-        <var-decl name='e' type-id='type-id-65' visibility='default' filepath='src/include/efivar/efivar.h' line='25' column='1'/>
+        <var-decl name='e' type-id='type-id-65' visibility='default' filepath='src/include/efivar/efivar-types.h' line='18' column='1'/>
       </data-member>
     </class-decl>
-    <typedef-decl name='efi_guid_t' type-id='type-id-186' filepath='src/include/efivar/efivar.h' line='26' column='1' id='type-id-36'/>
-    <class-decl name='efi_ipv4_addr_t' size-in-bits='32' is-struct='yes' naming-typedef-id='type-id-187' visibility='default' filepath='src/include/efivar/efivar.h' line='28' column='1' id='type-id-188'>
+    <typedef-decl name='efi_guid_t' type-id='type-id-186' filepath='src/include/efivar/efivar-types.h' line='19' column='1' id='type-id-36'/>
+    <class-decl name='efi_ipv4_addr_t' size-in-bits='32' is-struct='yes' naming-typedef-id='type-id-187' visibility='default' filepath='src/include/efivar/efivar-types.h' line='31' column='1' id='type-id-188'>
       <data-member access='public' layout-offset-in-bits='0'>
-        <var-decl name='addr' type-id='type-id-64' visibility='default' filepath='src/include/efivar/efivar.h' line='29' column='1'/>
+        <var-decl name='addr' type-id='type-id-64' visibility='default' filepath='src/include/efivar/efivar-types.h' line='32' column='1'/>
       </data-member>
     </class-decl>
-    <typedef-decl name='efi_ipv4_addr_t' type-id='type-id-188' filepath='src/include/efivar/efivar.h' line='30' column='1' id='type-id-187'/>
-    <class-decl name='efi_ipv6_addr_t' size-in-bits='128' is-struct='yes' naming-typedef-id='type-id-189' visibility='default' filepath='src/include/efivar/efivar.h' line='32' column='1' id='type-id-190'>
+    <typedef-decl name='efi_ipv4_addr_t' type-id='type-id-188' filepath='src/include/efivar/efivar-types.h' line='33' column='1' id='type-id-187'/>
+    <class-decl name='efi_ipv6_addr_t' size-in-bits='128' is-struct='yes' naming-typedef-id='type-id-189' visibility='default' filepath='src/include/efivar/efivar-types.h' line='35' column='1' id='type-id-190'>
       <data-member access='public' layout-offset-in-bits='0'>
-        <var-decl name='addr' type-id='type-id-60' visibility='default' filepath='src/include/efivar/efivar.h' line='33' column='1'/>
+        <var-decl name='addr' type-id='type-id-60' visibility='default' filepath='src/include/efivar/efivar-types.h' line='36' column='1'/>
       </data-member>
     </class-decl>
-    <typedef-decl name='efi_ipv6_addr_t' type-id='type-id-190' filepath='src/include/efivar/efivar.h' line='34' column='1' id='type-id-189'/>
-    <union-decl name='efi_ip_addr_t' size-in-bits='128' naming-typedef-id='type-id-52' visibility='default' filepath='src/include/efivar/efivar.h' line='36' column='1' id='type-id-191'>
+    <typedef-decl name='efi_ipv6_addr_t' type-id='type-id-190' filepath='src/include/efivar/efivar-types.h' line='37' column='1' id='type-id-189'/>
+    <union-decl name='efi_ip_addr_t' size-in-bits='128' naming-typedef-id='type-id-52' visibility='default' filepath='src/include/efivar/efivar-types.h' line='39' column='1' id='type-id-191'>
       <data-member access='public'>
-        <var-decl name='addr' type-id='type-id-55' visibility='default' filepath='src/include/efivar/efivar.h' line='37' column='1'/>
+        <var-decl name='addr' type-id='type-id-55' visibility='default' filepath='src/include/efivar/efivar-types.h' line='40' column='1'/>
       </data-member>
       <data-member access='public'>
-        <var-decl name='v4' type-id='type-id-187' visibility='default' filepath='src/include/efivar/efivar.h' line='38' column='1'/>
+        <var-decl name='v4' type-id='type-id-187' visibility='default' filepath='src/include/efivar/efivar-types.h' line='41' column='1'/>
       </data-member>
       <data-member access='public'>
-        <var-decl name='v6' type-id='type-id-189' visibility='default' filepath='src/include/efivar/efivar.h' line='39' column='1'/>
+        <var-decl name='v6' type-id='type-id-189' visibility='default' filepath='src/include/efivar/efivar-types.h' line='42' column='1'/>
       </data-member>
     </union-decl>
-    <typedef-decl name='efi_ip_addr_t' type-id='type-id-191' filepath='src/include/efivar/efivar.h' line='40' column='1' id='type-id-52'/>
+    <typedef-decl name='efi_ip_addr_t' type-id='type-id-191' filepath='src/include/efivar/efivar-types.h' line='43' column='1' id='type-id-52'/>
     <typedef-decl name='uint8_t' type-id='type-id-192' filepath='/usr/include/bits/stdint-uintn.h' line='24' column='1' id='type-id-39'/>
     <typedef-decl name='uint16_t' type-id='type-id-193' filepath='/usr/include/bits/stdint-uintn.h' line='25' column='1' id='type-id-48'/>
     <typedef-decl name='uint32_t' type-id='type-id-194' filepath='/usr/include/bits/stdint-uintn.h' line='26' column='1' id='type-id-34'/>
@@ -1531,7 +1531,7 @@
       <parameter type-id='type-id-185'/>
       <return type-id='type-id-33'/>
     </function-decl>
-    <function-decl name='efi_error_set' mangled-name='efi_error_set' filepath='src/include/efivar/efivar.h' line='170' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='efi_error_set@@LIBEFIVAR_1.30'>
+    <function-decl name='efi_error_set' mangled-name='efi_error_set' filepath='src/include/efivar/efivar.h' line='128' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='efi_error_set@@LIBEFIVAR_1.30'>
       <parameter type-id='type-id-30'/>
       <parameter type-id='type-id-30'/>
       <parameter type-id='type-id-18'/>
@@ -1592,36 +1592,36 @@
     <array-type-def dimensions='1' type-id='type-id-18' size-in-bits='64' id='type-id-213'>
       <subrange length='2' type-id='type-id-3' id='type-id-59'/>
     </array-type-def>
-    <class-decl name='efi_var_operations' size-in-bits='2624' is-struct='yes' visibility='default' filepath='src/lib.h' line='15' column='1' id='type-id-214'>
+    <class-decl name='efi_var_operations' size-in-bits='2624' is-struct='yes' visibility='default' filepath='src/lib.h' line='23' column='1' id='type-id-214'>
       <data-member access='public' layout-offset-in-bits='0'>
-        <var-decl name='name' type-id='type-id-209' visibility='default' filepath='src/lib.h' line='16' column='1'/>
+        <var-decl name='name' type-id='type-id-209' visibility='default' filepath='src/lib.h' line='24' column='1'/>
       </data-member>
       <data-member access='public' layout-offset-in-bits='2048'>
-        <var-decl name='probe' type-id='type-id-215' visibility='default' filepath='src/lib.h' line='17' column='1'/>
+        <var-decl name='probe' type-id='type-id-215' visibility='default' filepath='src/lib.h' line='25' column='1'/>
       </data-member>
       <data-member access='public' layout-offset-in-bits='2112'>
-        <var-decl name='set_variable' type-id='type-id-216' visibility='default' filepath='src/lib.h' line='18' column='1'/>
+        <var-decl name='set_variable' type-id='type-id-216' visibility='default' filepath='src/lib.h' line='26' column='1'/>
       </data-member>
       <data-member access='public' layout-offset-in-bits='2176'>
-        <var-decl name='del_variable' type-id='type-id-217' visibility='default' filepath='src/lib.h' line='20' column='1'/>
+        <var-decl name='del_variable' type-id='type-id-217' visibility='default' filepath='src/lib.h' line='28' column='1'/>
       </data-member>
       <data-member access='public' layout-offset-in-bits='2240'>
-        <var-decl name='get_variable' type-id='type-id-218' visibility='default' filepath='src/lib.h' line='21' column='1'/>
+        <var-decl name='get_variable' type-id='type-id-218' visibility='default' filepath='src/lib.h' line='29' column='1'/>
       </data-member>
       <data-member access='public' layout-offset-in-bits='2304'>
-        <var-decl name='get_variable_attributes' type-id='type-id-219' visibility='default' filepath='src/lib.h' line='23' column='1'/>
+        <var-decl name='get_variable_attributes' type-id='type-id-219' visibility='default' filepath='src/lib.h' line='31' column='1'/>
       </data-member>
       <data-member access='public' layout-offset-in-bits='2368'>
-        <var-decl name='get_variable_size' type-id='type-id-220' visibility='default' filepath='src/lib.h' line='25' column='1'/>
+        <var-decl name='get_variable_size' type-id='type-id-220' visibility='default' filepath='src/lib.h' line='33' column='1'/>
       </data-member>
       <data-member access='public' layout-offset-in-bits='2432'>
-        <var-decl name='get_next_variable_name' type-id='type-id-221' visibility='default' filepath='src/lib.h' line='27' column='1'/>
+        <var-decl name='get_next_variable_name' type-id='type-id-221' visibility='default' filepath='src/lib.h' line='35' column='1'/>
       </data-member>
       <data-member access='public' layout-offset-in-bits='2496'>
-        <var-decl name='append_variable' type-id='type-id-222' visibility='default' filepath='src/lib.h' line='28' column='1'/>
+        <var-decl name='append_variable' type-id='type-id-222' visibility='default' filepath='src/lib.h' line='36' column='1'/>
       </data-member>
       <data-member access='public' layout-offset-in-bits='2560'>
-        <var-decl name='chmod_variable' type-id='type-id-223' visibility='default' filepath='src/lib.h' line='31' column='1'/>
+        <var-decl name='chmod_variable' type-id='type-id-223' visibility='default' filepath='src/lib.h' line='39' column='1'/>
       </data-member>
     </class-decl>
     <class-decl name='dirent' size-in-bits='2240' is-struct='yes' visibility='default' filepath='/usr/include/bits/dirent.h' line='22' column='1' id='type-id-224'>
@@ -1773,7 +1773,7 @@
     <pointer-type-def type-id='type-id-226' size-in-bits='64' id='type-id-258'/>
     <pointer-type-def type-id='type-id-34' size-in-bits='64' id='type-id-259'/>
     <pointer-type-def type-id='type-id-32' size-in-bits='64' id='type-id-260'/>
-    <function-decl name='efi_get_variable' mangled-name='efi_get_variable' filepath='src/include/efivar/efivar.h' line='80' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='efi_get_variable@@libefivar.so.0'>
+    <function-decl name='efi_get_variable' mangled-name='efi_get_variable' filepath='src/include/efivar/efivar.h' line='38' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='efi_get_variable@@libefivar.so.0'>
       <parameter type-id='type-id-36'/>
       <parameter type-id='type-id-30'/>
       <parameter type-id='type-id-260'/>
@@ -1781,10 +1781,10 @@
       <parameter type-id='type-id-259'/>
       <return type-id='type-id-18'/>
     </function-decl>
-    <function-decl name='efi_error_clear' mangled-name='efi_error_clear' filepath='src/include/efivar/efivar.h' line='178' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='efi_error_clear@@LIBEFIVAR_1.30'>
+    <function-decl name='efi_error_clear' mangled-name='efi_error_clear' filepath='src/include/efivar/efivar.h' line='136' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='efi_error_clear@@LIBEFIVAR_1.30'>
       <return type-id='type-id-16'/>
     </function-decl>
-    <var-decl name='efivarfs_ops' type-id='type-id-214' visibility='default' filepath='src/lib.h' line='37' column='1'/>
+    <var-decl name='efivarfs_ops' type-id='type-id-214' visibility='default' filepath='src/lib.h' line='45' column='1'/>
     <function-decl name='opendir' filepath='/usr/include/dirent.h' line='134' column='1' visibility='default' binding='global' size-in-bits='64'>
       <parameter type-id='type-id-30'/>
       <return type-id='type-id-198'/>
@@ -2126,24 +2126,24 @@
     </function-type>
   </abi-instr>
   <abi-instr address-size='64' path='export.c' comp-dir-path='src' language='LANG_C11'>
-    <class-decl name='efi_variable' size-in-bits='320' is-struct='yes' visibility='default' filepath='src/export.c' line='21' column='1' id='type-id-281'>
+    <typedef-decl name='efi_variable_t' type-id='type-id-281' filepath='src/include/efivar/efivar.h' line='78' column='1' id='type-id-282'/>
+    <class-decl name='efi_variable' size-in-bits='320' is-struct='yes' visibility='default' filepath='src/lib.h' line='15' column='1' id='type-id-281'>
       <data-member access='public' layout-offset-in-bits='0'>
-        <var-decl name='attrs' type-id='type-id-40' visibility='default' filepath='src/export.c' line='22' column='1'/>
+        <var-decl name='attrs' type-id='type-id-40' visibility='default' filepath='src/lib.h' line='16' column='1'/>
       </data-member>
       <data-member access='public' layout-offset-in-bits='64'>
-        <var-decl name='guid' type-id='type-id-47' visibility='default' filepath='src/export.c' line='23' column='1'/>
+        <var-decl name='guid' type-id='type-id-47' visibility='default' filepath='src/lib.h' line='17' column='1'/>
       </data-member>
       <data-member access='public' layout-offset-in-bits='128'>
-        <var-decl name='name' type-id='type-id-203' visibility='default' filepath='src/export.c' line='24' column='1'/>
+        <var-decl name='name' type-id='type-id-203' visibility='default' filepath='src/lib.h' line='18' column='1'/>
       </data-member>
       <data-member access='public' layout-offset-in-bits='192'>
-        <var-decl name='data' type-id='type-id-32' visibility='default' filepath='src/export.c' line='25' column='1'/>
+        <var-decl name='data' type-id='type-id-32' visibility='default' filepath='src/lib.h' line='19' column='1'/>
       </data-member>
       <data-member access='public' layout-offset-in-bits='256'>
-        <var-decl name='data_size' type-id='type-id-27' visibility='default' filepath='src/export.c' line='26' column='1'/>
+        <var-decl name='data_size' type-id='type-id-27' visibility='default' filepath='src/lib.h' line='20' column='1'/>
       </data-member>
     </class-decl>
-    <typedef-decl name='efi_variable_t' type-id='type-id-281' filepath='src/include/efivar/efivar.h' line='120' column='1' id='type-id-282'/>
     <pointer-type-def type-id='type-id-282' size-in-bits='64' id='type-id-283'/>
     <pointer-type-def type-id='type-id-283' size-in-bits='64' id='type-id-284'/>
     <pointer-type-def type-id='type-id-40' size-in-bits='64' id='type-id-285'/>
@@ -2153,78 +2153,78 @@
       <parameter type-id='type-id-34'/>
       <return type-id='type-id-34'/>
     </function-decl>
-    <function-decl name='efi_variable_import' mangled-name='efi_variable_import' filepath='src/export.c' line='327' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='efi_variable_import@@libefivar.so.0'>
-      <parameter type-id='type-id-32' name='data' filepath='src/export.c' line='327' column='1'/>
-      <parameter type-id='type-id-27' name='size' filepath='src/export.c' line='327' column='1'/>
-      <parameter type-id='type-id-284' name='var_out' filepath='src/export.c' line='327' column='1'/>
+    <function-decl name='efi_variable_import' mangled-name='efi_variable_import' filepath='src/export.c' line='319' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='efi_variable_import@@libefivar.so.0'>
+      <parameter type-id='type-id-32' name='data' filepath='src/export.c' line='319' column='1'/>
+      <parameter type-id='type-id-27' name='size' filepath='src/export.c' line='319' column='1'/>
+      <parameter type-id='type-id-284' name='var_out' filepath='src/export.c' line='319' column='1'/>
       <return type-id='type-id-33'/>
     </function-decl>
-    <function-decl name='efi_variable_export_dmpstore' mangled-name='efi_variable_export_dmpstore' filepath='src/export.c' line='340' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='efi_variable_export_dmpstore@@LIBEFIVAR_1.38'>
-      <parameter type-id='type-id-283' name='var' filepath='src/export.c' line='340' column='1'/>
-      <parameter type-id='type-id-32' name='data' filepath='src/export.c' line='340' column='1'/>
-      <parameter type-id='type-id-27' name='datasz' filepath='src/export.c' line='340' column='1'/>
+    <function-decl name='efi_variable_export_dmpstore' mangled-name='efi_variable_export_dmpstore' filepath='src/export.c' line='332' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='efi_variable_export_dmpstore@@LIBEFIVAR_1.38'>
+      <parameter type-id='type-id-283' name='var' filepath='src/export.c' line='332' column='1'/>
+      <parameter type-id='type-id-32' name='data' filepath='src/export.c' line='332' column='1'/>
+      <parameter type-id='type-id-27' name='datasz' filepath='src/export.c' line='332' column='1'/>
       <return type-id='type-id-33'/>
     </function-decl>
-    <function-decl name='efi_variable_export' mangled-name='efi_variable_export' filepath='src/export.c' line='470' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='efi_variable_export@@libefivar.so.0'>
-      <parameter type-id='type-id-283' name='var' filepath='src/export.c' line='470' column='1'/>
-      <parameter type-id='type-id-32' name='data' filepath='src/export.c' line='470' column='1'/>
-      <parameter type-id='type-id-27' name='datasz' filepath='src/export.c' line='470' column='1'/>
+    <function-decl name='efi_variable_export' mangled-name='efi_variable_export' filepath='src/export.c' line='462' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='efi_variable_export@@libefivar.so.0'>
+      <parameter type-id='type-id-283' name='var' filepath='src/export.c' line='462' column='1'/>
+      <parameter type-id='type-id-32' name='data' filepath='src/export.c' line='462' column='1'/>
+      <parameter type-id='type-id-27' name='datasz' filepath='src/export.c' line='462' column='1'/>
       <return type-id='type-id-33'/>
     </function-decl>
-    <function-decl name='efi_variable_alloc' mangled-name='efi_variable_alloc' filepath='src/export.c' line='608' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='efi_variable_alloc@@LIBEFIVAR_1.38'>
+    <function-decl name='efi_variable_alloc' mangled-name='efi_variable_alloc' filepath='src/export.c' line='600' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='efi_variable_alloc@@LIBEFIVAR_1.38'>
       <return type-id='type-id-283'/>
     </function-decl>
-    <function-decl name='efi_variable_free' mangled-name='efi_variable_free' filepath='src/export.c' line='619' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='efi_variable_free@@libefivar.so.0'>
-      <parameter type-id='type-id-283' name='var' filepath='src/export.c' line='619' column='1'/>
-      <parameter type-id='type-id-18' name='free_data' filepath='src/export.c' line='619' column='1'/>
+    <function-decl name='efi_variable_free' mangled-name='efi_variable_free' filepath='src/export.c' line='611' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='efi_variable_free@@libefivar.so.0'>
+      <parameter type-id='type-id-283' name='var' filepath='src/export.c' line='611' column='1'/>
+      <parameter type-id='type-id-18' name='free_data' filepath='src/export.c' line='611' column='1'/>
       <return type-id='type-id-16'/>
     </function-decl>
-    <function-decl name='efi_variable_set_name' mangled-name='efi_variable_set_name' filepath='src/export.c' line='640' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='efi_variable_set_name@@libefivar.so.0'>
-      <parameter type-id='type-id-283' name='var' filepath='src/export.c' line='640' column='1'/>
-      <parameter type-id='type-id-203' name='name' filepath='src/export.c' line='640' column='1'/>
+    <function-decl name='efi_variable_set_name' mangled-name='efi_variable_set_name' filepath='src/export.c' line='632' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='efi_variable_set_name@@libefivar.so.0'>
+      <parameter type-id='type-id-283' name='var' filepath='src/export.c' line='632' column='1'/>
+      <parameter type-id='type-id-203' name='name' filepath='src/export.c' line='632' column='1'/>
       <return type-id='type-id-18'/>
     </function-decl>
-    <function-decl name='efi_variable_get_name' mangled-name='efi_variable_get_name' filepath='src/export.c' line='647' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='efi_variable_get_name@@libefivar.so.0'>
-      <parameter type-id='type-id-283' name='var' filepath='src/export.c' line='647' column='1'/>
+    <function-decl name='efi_variable_get_name' mangled-name='efi_variable_get_name' filepath='src/export.c' line='639' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='efi_variable_get_name@@libefivar.so.0'>
+      <parameter type-id='type-id-283' name='var' filepath='src/export.c' line='639' column='1'/>
       <return type-id='type-id-203'/>
     </function-decl>
-    <function-decl name='efi_variable_set_guid' mangled-name='efi_variable_set_guid' filepath='src/export.c' line='658' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='efi_variable_set_guid@@libefivar.so.0'>
-      <parameter type-id='type-id-283' name='var' filepath='src/export.c' line='658' column='1'/>
-      <parameter type-id='type-id-47' name='guid' filepath='src/export.c' line='658' column='1'/>
+    <function-decl name='efi_variable_set_guid' mangled-name='efi_variable_set_guid' filepath='src/export.c' line='650' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='efi_variable_set_guid@@libefivar.so.0'>
+      <parameter type-id='type-id-283' name='var' filepath='src/export.c' line='650' column='1'/>
+      <parameter type-id='type-id-47' name='guid' filepath='src/export.c' line='650' column='1'/>
       <return type-id='type-id-18'/>
     </function-decl>
-    <function-decl name='efi_variable_get_guid' mangled-name='efi_variable_get_guid' filepath='src/export.c' line='665' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='efi_variable_get_guid@@libefivar.so.0'>
-      <parameter type-id='type-id-283' name='var' filepath='src/export.c' line='665' column='1'/>
-      <parameter type-id='type-id-245' name='guid' filepath='src/export.c' line='665' column='1'/>
+    <function-decl name='efi_variable_get_guid' mangled-name='efi_variable_get_guid' filepath='src/export.c' line='657' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='efi_variable_get_guid@@libefivar.so.0'>
+      <parameter type-id='type-id-283' name='var' filepath='src/export.c' line='657' column='1'/>
+      <parameter type-id='type-id-245' name='guid' filepath='src/export.c' line='657' column='1'/>
       <return type-id='type-id-18'/>
     </function-decl>
-    <function-decl name='efi_variable_set_data' mangled-name='efi_variable_set_data' filepath='src/export.c' line='677' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='efi_variable_set_data@@libefivar.so.0'>
-      <parameter type-id='type-id-283' name='var' filepath='src/export.c' line='677' column='1'/>
-      <parameter type-id='type-id-32' name='data' filepath='src/export.c' line='677' column='1'/>
-      <parameter type-id='type-id-27' name='size' filepath='src/export.c' line='677' column='1'/>
+    <function-decl name='efi_variable_set_data' mangled-name='efi_variable_set_data' filepath='src/export.c' line='669' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='efi_variable_set_data@@libefivar.so.0'>
+      <parameter type-id='type-id-283' name='var' filepath='src/export.c' line='669' column='1'/>
+      <parameter type-id='type-id-32' name='data' filepath='src/export.c' line='669' column='1'/>
+      <parameter type-id='type-id-27' name='size' filepath='src/export.c' line='669' column='1'/>
       <return type-id='type-id-18'/>
     </function-decl>
-    <function-decl name='efi_variable_get_data' mangled-name='efi_variable_get_data' filepath='src/export.c' line='690' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='efi_variable_get_data@@libefivar.so.0'>
-      <parameter type-id='type-id-283' name='var' filepath='src/export.c' line='690' column='1'/>
-      <parameter type-id='type-id-260' name='data' filepath='src/export.c' line='690' column='1'/>
-      <parameter type-id='type-id-255' name='size' filepath='src/export.c' line='690' column='1'/>
+    <function-decl name='efi_variable_get_data' mangled-name='efi_variable_get_data' filepath='src/export.c' line='682' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='efi_variable_get_data@@libefivar.so.0'>
+      <parameter type-id='type-id-283' name='var' filepath='src/export.c' line='682' column='1'/>
+      <parameter type-id='type-id-260' name='data' filepath='src/export.c' line='682' column='1'/>
+      <parameter type-id='type-id-255' name='size' filepath='src/export.c' line='682' column='1'/>
       <return type-id='type-id-33'/>
     </function-decl>
-    <function-decl name='efi_variable_set_attributes' mangled-name='efi_variable_set_attributes' filepath='src/export.c' line='703' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='efi_variable_set_attributes@@libefivar.so.0'>
-      <parameter type-id='type-id-283' name='var' filepath='src/export.c' line='703' column='1'/>
-      <parameter type-id='type-id-40' name='attrs' filepath='src/export.c' line='703' column='1'/>
+    <function-decl name='efi_variable_set_attributes' mangled-name='efi_variable_set_attributes' filepath='src/export.c' line='695' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='efi_variable_set_attributes@@libefivar.so.0'>
+      <parameter type-id='type-id-283' name='var' filepath='src/export.c' line='695' column='1'/>
+      <parameter type-id='type-id-40' name='attrs' filepath='src/export.c' line='695' column='1'/>
       <return type-id='type-id-18'/>
     </function-decl>
-    <function-decl name='efi_variable_get_attributes' mangled-name='efi_variable_get_attributes' filepath='src/export.c' line='710' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='efi_variable_get_attributes@@libefivar.so.0'>
-      <parameter type-id='type-id-283' name='var' filepath='src/export.c' line='710' column='1'/>
-      <parameter type-id='type-id-285' name='attrs' filepath='src/export.c' line='710' column='1'/>
+    <function-decl name='efi_variable_get_attributes' mangled-name='efi_variable_get_attributes' filepath='src/export.c' line='702' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='efi_variable_get_attributes@@libefivar.so.0'>
+      <parameter type-id='type-id-283' name='var' filepath='src/export.c' line='702' column='1'/>
+      <parameter type-id='type-id-285' name='attrs' filepath='src/export.c' line='702' column='1'/>
       <return type-id='type-id-18'/>
     </function-decl>
-    <function-decl name='efi_variable_realize' mangled-name='efi_variable_realize' filepath='src/export.c' line='722' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='efi_variable_realize@@libefivar.so.0'>
-      <parameter type-id='type-id-283' name='var' filepath='src/export.c' line='722' column='1'/>
+    <function-decl name='efi_variable_realize' mangled-name='efi_variable_realize' filepath='src/export.c' line='714' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='efi_variable_realize@@libefivar.so.0'>
+      <parameter type-id='type-id-283' name='var' filepath='src/export.c' line='714' column='1'/>
       <return type-id='type-id-18'/>
     </function-decl>
-    <function-decl name='efi_set_variable' filepath='src/include/efivar/efivar.h' line='85' column='1' visibility='default' binding='global' size-in-bits='64'>
+    <function-decl name='efi_set_variable' filepath='src/include/efivar/efivar.h' line='43' column='1' visibility='default' binding='global' size-in-bits='64'>
       <parameter type-id='type-id-36'/>
       <parameter type-id='type-id-30'/>
       <parameter type-id='type-id-32'/>
@@ -2233,7 +2233,7 @@
       <parameter type-id='type-id-242'/>
       <return type-id='type-id-18'/>
     </function-decl>
-    <function-decl name='efi_append_variable' mangled-name='efi_append_variable' filepath='src/include/efivar/efivar.h' line='89' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='efi_append_variable@@libefivar.so.0'>
+    <function-decl name='efi_append_variable' mangled-name='efi_append_variable' filepath='src/include/efivar/efivar.h' line='47' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='efi_append_variable@@libefivar.so.0'>
       <parameter type-id='type-id-36'/>
       <parameter type-id='type-id-30'/>
       <parameter type-id='type-id-32'/>
@@ -2417,7 +2417,7 @@
   </abi-instr>
   <abi-instr address-size='64' path='vars.c' comp-dir-path='src' language='LANG_C11'>
     <type-decl name='long long int' size-in-bits='64' id='type-id-286'/>
-    <var-decl name='vars_ops' type-id='type-id-214' visibility='default' filepath='src/lib.h' line='36' column='1'/>
+    <var-decl name='vars_ops' type-id='type-id-214' visibility='default' filepath='src/lib.h' line='44' column='1'/>
     <function-decl name='openat' filepath='/usr/include/fcntl.h' line='233' column='1' visibility='default' binding='global' size-in-bits='64'>
       <parameter type-id='type-id-18'/>
       <parameter type-id='type-id-30'/>

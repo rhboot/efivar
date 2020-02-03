@@ -54,24 +54,24 @@
     <type-decl name='unsigned short int' size-in-bits='16' id='type-id-26'/>
     <type-decl name='variadic parameter type' id='type-id-27'/>
     <type-decl name='void' id='type-id-28'/>
-    <class-decl name='efi_guid_t' size-in-bits='128' is-struct='yes' naming-typedef-id='type-id-29' visibility='default' filepath='src/include/efivar/efivar.h' line='20' column='1' id='type-id-30'>
+    <class-decl name='efi_guid_t' size-in-bits='128' is-struct='yes' naming-typedef-id='type-id-29' visibility='default' filepath='src/include/efivar/efivar-types.h' line='13' column='1' id='type-id-30'>
       <data-member access='public' layout-offset-in-bits='0'>
-        <var-decl name='a' type-id='type-id-31' visibility='default' filepath='src/include/efivar/efivar.h' line='21' column='1'/>
+        <var-decl name='a' type-id='type-id-31' visibility='default' filepath='src/include/efivar/efivar-types.h' line='14' column='1'/>
       </data-member>
       <data-member access='public' layout-offset-in-bits='32'>
-        <var-decl name='b' type-id='type-id-32' visibility='default' filepath='src/include/efivar/efivar.h' line='22' column='1'/>
+        <var-decl name='b' type-id='type-id-32' visibility='default' filepath='src/include/efivar/efivar-types.h' line='15' column='1'/>
       </data-member>
       <data-member access='public' layout-offset-in-bits='48'>
-        <var-decl name='c' type-id='type-id-32' visibility='default' filepath='src/include/efivar/efivar.h' line='23' column='1'/>
+        <var-decl name='c' type-id='type-id-32' visibility='default' filepath='src/include/efivar/efivar-types.h' line='16' column='1'/>
       </data-member>
       <data-member access='public' layout-offset-in-bits='64'>
-        <var-decl name='d' type-id='type-id-32' visibility='default' filepath='src/include/efivar/efivar.h' line='24' column='1'/>
+        <var-decl name='d' type-id='type-id-32' visibility='default' filepath='src/include/efivar/efivar-types.h' line='17' column='1'/>
       </data-member>
       <data-member access='public' layout-offset-in-bits='80'>
-        <var-decl name='e' type-id='type-id-19' visibility='default' filepath='src/include/efivar/efivar.h' line='25' column='1'/>
+        <var-decl name='e' type-id='type-id-19' visibility='default' filepath='src/include/efivar/efivar-types.h' line='18' column='1'/>
       </data-member>
     </class-decl>
-    <typedef-decl name='efi_guid_t' type-id='type-id-30' filepath='src/include/efivar/efivar.h' line='26' column='1' id='type-id-29'/>
+    <typedef-decl name='efi_guid_t' type-id='type-id-30' filepath='src/include/efivar/efivar-types.h' line='19' column='1' id='type-id-29'/>
     <class-decl name='acpi_root_info' size-in-bits='384' is-struct='yes' visibility='default' filepath='src/linux.h' line='10' column='1' id='type-id-33'>
       <data-member access='public' layout-offset-in-bits='0'>
         <var-decl name='acpi_hid' type-id='type-id-31' visibility='default' filepath='src/linux.h' line='11' column='1'/>
@@ -670,7 +670,7 @@
       <parameter type-id='type-id-89'/>
       <return type-id='type-id-89'/>
     </function-decl>
-    <function-decl name='efi_error_set' filepath='src/include/efivar/efivar.h' line='170' column='1' visibility='default' binding='global' size-in-bits='64'>
+    <function-decl name='efi_error_set' filepath='src/include/efivar/efivar.h' line='128' column='1' visibility='default' binding='global' size-in-bits='64'>
       <parameter type-id='type-id-98'/>
       <parameter type-id='type-id-98'/>
       <parameter type-id='type-id-15'/>
@@ -679,14 +679,14 @@
       <parameter is-variadic='yes'/>
       <return type-id='type-id-15'/>
     </function-decl>
-    <function-decl name='efi_error_clear' filepath='src/include/efivar/efivar.h' line='178' column='1' visibility='default' binding='global' size-in-bits='64'>
+    <function-decl name='efi_error_clear' filepath='src/include/efivar/efivar.h' line='136' column='1' visibility='default' binding='global' size-in-bits='64'>
       <return type-id='type-id-28'/>
     </function-decl>
-    <function-decl name='efi_set_loglevel' filepath='src/include/efivar/efivar.h' line='180' column='1' visibility='default' binding='global' size-in-bits='64'>
+    <function-decl name='efi_set_loglevel' filepath='src/include/efivar/efivar.h' line='138' column='1' visibility='default' binding='global' size-in-bits='64'>
       <parameter type-id='type-id-15'/>
       <return type-id='type-id-28'/>
     </function-decl>
-    <function-decl name='efi_get_logfile' filepath='src/include/efivar/efivar.h' line='238' column='1' visibility='default' binding='global' size-in-bits='64'>
+    <function-decl name='efi_get_logfile' filepath='src/include/efivar/efivar.h' line='196' column='1' visibility='default' binding='global' size-in-bits='64'>
       <return type-id='type-id-91'/>
     </function-decl>
     <function-decl name='device_get' filepath='src/linux.h' line='142' column='1' visibility='default' binding='global' size-in-bits='64'>
@@ -1082,7 +1082,7 @@
       <parameter type-id='type-id-122'/>
       <return type-id='type-id-89'/>
     </function-decl>
-    <function-decl name='efi_str_to_guid' filepath='src/include/efivar/efivar.h' line='98' column='1' visibility='default' binding='global' size-in-bits='64'>
+    <function-decl name='efi_str_to_guid' filepath='src/include/efivar/efivar.h' line='56' column='1' visibility='default' binding='global' size-in-bits='64'>
       <parameter type-id='type-id-98'/>
       <parameter type-id='type-id-122'/>
       <return type-id='type-id-15'/>
@@ -1191,7 +1191,7 @@
       <parameter type-id='type-id-89'/>
       <return type-id='type-id-89'/>
     </function-decl>
-    <function-decl name='efi_error_pop' filepath='src/include/efivar/efivar.h' line='179' column='1' visibility='default' binding='global' size-in-bits='64'>
+    <function-decl name='efi_error_pop' filepath='src/include/efivar/efivar.h' line='137' column='1' visibility='default' binding='global' size-in-bits='64'>
       <return type-id='type-id-28'/>
     </function-decl>
     <function-decl name='find_path_segment' filepath='src/path-helpers.h' line='12' column='1' visibility='default' binding='global' size-in-bits='64'>
@@ -2193,30 +2193,30 @@
     </class-decl>
     <typedef-decl name='efidp_data' type-id='type-id-266' filepath='src/include/efivar/efivar-dp.h' line='883' column='1' id='type-id-133'/>
     <typedef-decl name='efidp' type-id='type-id-268' filepath='src/include/efivar/efivar-dp.h' line='884' column='1' id='type-id-269'/>
-    <class-decl name='efi_ipv4_addr_t' size-in-bits='32' is-struct='yes' naming-typedef-id='type-id-270' visibility='default' filepath='src/include/efivar/efivar.h' line='28' column='1' id='type-id-271'>
+    <class-decl name='efi_ipv4_addr_t' size-in-bits='32' is-struct='yes' naming-typedef-id='type-id-270' visibility='default' filepath='src/include/efivar/efivar-types.h' line='31' column='1' id='type-id-271'>
       <data-member access='public' layout-offset-in-bits='0'>
-        <var-decl name='addr' type-id='type-id-156' visibility='default' filepath='src/include/efivar/efivar.h' line='29' column='1'/>
+        <var-decl name='addr' type-id='type-id-156' visibility='default' filepath='src/include/efivar/efivar-types.h' line='32' column='1'/>
       </data-member>
     </class-decl>
-    <typedef-decl name='efi_ipv4_addr_t' type-id='type-id-271' filepath='src/include/efivar/efivar.h' line='30' column='1' id='type-id-270'/>
-    <class-decl name='efi_ipv6_addr_t' size-in-bits='128' is-struct='yes' naming-typedef-id='type-id-272' visibility='default' filepath='src/include/efivar/efivar.h' line='32' column='1' id='type-id-273'>
+    <typedef-decl name='efi_ipv4_addr_t' type-id='type-id-271' filepath='src/include/efivar/efivar-types.h' line='33' column='1' id='type-id-270'/>
+    <class-decl name='efi_ipv6_addr_t' size-in-bits='128' is-struct='yes' naming-typedef-id='type-id-272' visibility='default' filepath='src/include/efivar/efivar-types.h' line='35' column='1' id='type-id-273'>
       <data-member access='public' layout-offset-in-bits='0'>
-        <var-decl name='addr' type-id='type-id-152' visibility='default' filepath='src/include/efivar/efivar.h' line='33' column='1'/>
+        <var-decl name='addr' type-id='type-id-152' visibility='default' filepath='src/include/efivar/efivar-types.h' line='36' column='1'/>
       </data-member>
     </class-decl>
-    <typedef-decl name='efi_ipv6_addr_t' type-id='type-id-273' filepath='src/include/efivar/efivar.h' line='34' column='1' id='type-id-272'/>
-    <union-decl name='efi_ip_addr_t' size-in-bits='128' naming-typedef-id='type-id-144' visibility='default' filepath='src/include/efivar/efivar.h' line='36' column='1' id='type-id-274'>
+    <typedef-decl name='efi_ipv6_addr_t' type-id='type-id-273' filepath='src/include/efivar/efivar-types.h' line='37' column='1' id='type-id-272'/>
+    <union-decl name='efi_ip_addr_t' size-in-bits='128' naming-typedef-id='type-id-144' visibility='default' filepath='src/include/efivar/efivar-types.h' line='39' column='1' id='type-id-274'>
       <data-member access='public'>
-        <var-decl name='addr' type-id='type-id-147' visibility='default' filepath='src/include/efivar/efivar.h' line='37' column='1'/>
+        <var-decl name='addr' type-id='type-id-147' visibility='default' filepath='src/include/efivar/efivar-types.h' line='40' column='1'/>
       </data-member>
       <data-member access='public'>
-        <var-decl name='v4' type-id='type-id-270' visibility='default' filepath='src/include/efivar/efivar.h' line='38' column='1'/>
+        <var-decl name='v4' type-id='type-id-270' visibility='default' filepath='src/include/efivar/efivar-types.h' line='41' column='1'/>
       </data-member>
       <data-member access='public'>
-        <var-decl name='v6' type-id='type-id-272' visibility='default' filepath='src/include/efivar/efivar.h' line='39' column='1'/>
+        <var-decl name='v6' type-id='type-id-272' visibility='default' filepath='src/include/efivar/efivar-types.h' line='42' column='1'/>
       </data-member>
     </union-decl>
-    <typedef-decl name='efi_ip_addr_t' type-id='type-id-274' filepath='src/include/efivar/efivar.h' line='40' column='1' id='type-id-144'/>
+    <typedef-decl name='efi_ip_addr_t' type-id='type-id-274' filepath='src/include/efivar/efivar-types.h' line='43' column='1' id='type-id-144'/>
     <class-decl name='efi_load_option_s' size-in-bits='48' is-struct='yes' visibility='default' filepath='src/loadopt.c' line='17' column='1' id='type-id-158'>
       <data-member access='public' layout-offset-in-bits='0'>
         <var-decl name='attributes' type-id='type-id-31' visibility='default' filepath='src/loadopt.c' line='18' column='1'/>
@@ -2240,7 +2240,7 @@
     <pointer-type-def type-id='type-id-32' size-in-bits='64' id='type-id-281'/>
     <pointer-type-def type-id='type-id-24' size-in-bits='64' id='type-id-138'/>
     <pointer-type-def type-id='type-id-138' size-in-bits='64' id='type-id-282'/>
-    <function-decl name='efi_get_verbose' filepath='src/include/efivar/efivar.h' line='236' column='1' visibility='default' binding='global' size-in-bits='64'>
+    <function-decl name='efi_get_verbose' filepath='src/include/efivar/efivar.h' line='194' column='1' visibility='default' binding='global' size-in-bits='64'>
       <return type-id='type-id-15'/>
     </function-decl>
     <function-decl name='efi_loadopt_create' mangled-name='efi_loadopt_create' filepath='src/loadopt.c' line='26' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='efi_loadopt_create@@libefiboot.so.0'>

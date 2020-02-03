@@ -18,14 +18,6 @@
 #define ATTRS_UNSET 0xa5a5a5a5a5a5a5a5
 #define ATTRS_MASK 0xffffffff
 
-struct efi_variable {
-	uint64_t attrs;
-	efi_guid_t *guid;
-	unsigned char *name;
-	uint8_t *data;
-	size_t data_size;
-};
-
 /* The exported structure is:
  * struct {
  *	uint32_t magic;
