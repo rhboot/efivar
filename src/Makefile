@@ -115,7 +115,7 @@ test : all
 
 .PHONY: test deps abiclean abixml
 .SECONDARY : libefivar.so.1.$(VERSION) libefivar.so.1
-.SECONDARY : libefiboot.so.1.$(VERSION) libefivar.so.1
+.SECONDARY : libefiboot.so.1.$(VERSION) libefiboot.so.1
 .SECONDARY : include/efivar/efivar-guids.h guid-symbols.c
 .INTERMEDIATE : guids.bin names.bin
 .PRECIOUS : guid-symbols.o makeguids
