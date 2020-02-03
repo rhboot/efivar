@@ -1,0 +1,7 @@
+libefisec.so.0 {
+	local:	*;
+};
+
+LIBEFISEC_1.38 {
+	global:	efi_get_libefisec_version;
+} libefisec.so.0;

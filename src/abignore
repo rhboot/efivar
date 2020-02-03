@@ -17,7 +17,7 @@
   name = efidp_data
   type_kind = typedef
   has_data_member_inserted_at = end
-  soname_regexp = libefi(var|boot)\\.so\\..*
+  soname_regexp = libefi(var|boot|sec)\\.so\\..*
 
 # https://bugzilla.redhat.com/show_bug.cgi?id=2030482 (el9 only)
 # 1 function with some indirect sub-type change:
@@ -43,11 +43,11 @@
 # allow new functions that are prefixed correctly
 [suppress_function]
   change_kind = added-function
-  soname_regexp = ^libefi(var|boot)\\.so\\..*
+  soname_regexp = ^libefi(var|boot|sec)\\.so\\..*
   name_regexp = ^(efidp_|efi_)[[:alnum:]_]+
 
 # allow new variables that are prefixed correctly
 [suppress_variable]
   change_kind = added-variable
-  soname_regexp = libefi(var|boot)\\.so\\..*
+  soname_regexp = libefi(var|boot|sec)\\.so\\..*
   symbol_name_regexp = ^(efidp_|efi_)[[:alnum:]_]+
