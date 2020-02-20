@@ -26,4 +26,4 @@ WARNING
 =======
 You should probably not run "make a brick" *ever*, unless you're already
 reasonably sure it won't permanently corrupt your firmware.  This is not a
-joke.
+joke. ⚠
