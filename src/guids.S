@@ -28,5 +28,8 @@ efi_well_known_names_end:
 	.byte 0
 
 #if defined(__linux__) && defined(__ELF__)
+#if defined(__CET__) && (defined(__i386__) || defined(__x86_64__))
+#include <cet.h>
+#endif
 .section .note.GNU-stack,"",%progbits
 #endif
