@@ -56,13 +56,10 @@ parse_emmc(struct device *dev, const char *path, const char *root UNUSED)
 	dev->emmc_info.slot_id = slot_id;
 	dev->interface_type = emmc;
 
-	if (rc == 6) {
-	        if (dev->part == -1)
-	                dev->part = partition;
+	if (rc == 6 && dev->part == -1)
+                dev->part = partition;
 
-	        pos2 = pos1;
-	}
-	current += pos2;
+	current += pos1;
 
 	debug("current:'%s' sz:%zd", current, current - path);
 	return current - path;
