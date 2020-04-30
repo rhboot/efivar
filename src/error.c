@@ -145,6 +145,7 @@ static FILE *efi_errlog, *efi_dbglog;
 static int efi_dbglog_fd = -1;
 static intptr_t efi_dbglog_cookie;
 static char efi_dbglog_buf[4096];
+static bool efi_dbglog_memfd = false;
 #endif
 static int log_level;
 
@@ -164,7 +165,8 @@ dbglog_write(void *cookie, const char *buf, size_t size)
 	if (efi_get_verbose() >= log_level) {
 		ret = fwrite(buf, 1, size, log);
 	} else if (efi_dbglog_fd >= 0) {
-		lseek(efi_dbglog_fd, 0, SEEK_SET);
+		if (efi_dbglog_memfd)
+			lseek(efi_dbglog_fd, 0, SEEK_SET);
 		if ((intptr_t)cookie != 0 &&
 		    (intptr_t)cookie == efi_dbglog_cookie &&
 		    size > 0 &&
@@ -242,7 +244,12 @@ efi_error_init(void)
 		.close = dbglog_close,
 	};
 
-	efi_dbglog_fd = memfd_create("efivar-debug.log", MFD_CLOEXEC);
+	efi_dbglog_fd = open("/dev/null", O_WRONLY|O_APPEND|O_CLOEXEC);
+	if (efi_dbglog_fd < 0) {
+		efi_dbglog_fd = memfd_create("efivar-debug.log", MFD_CLOEXEC);
+		if (efi_dbglog_fd >= 0)
+			efi_dbglog_memfd = true;
+	}
 	if (efi_dbglog_fd == -1)
 		return;
 
