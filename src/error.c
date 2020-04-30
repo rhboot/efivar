@@ -13,6 +13,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <sys/mman.h>
+#include <sys/param.h>
 #include <sys/random.h>
 #include <unistd.h>
 
@@ -160,19 +161,35 @@ static ssize_t
 dbglog_write(void *cookie, const char *buf, size_t size)
 {
 	FILE *log = efi_errlog ? efi_errlog : stderr;
-	ssize_t ret = size;
+	ssize_t ret = 0;
 
-	if (efi_get_verbose() >= log_level) {
-		ret = fwrite(buf, 1, size, log);
-	} else if (efi_dbglog_fd >= 0) {
-		if (efi_dbglog_memfd)
-			lseek(efi_dbglog_fd, 0, SEEK_SET);
-		if ((intptr_t)cookie != 0 &&
-		    (intptr_t)cookie == efi_dbglog_cookie &&
-		    size > 0 &&
-		    buf[size-1] == '\n')
-			size -= 1;
-		ret = write(efi_dbglog_fd, buf, size);
+	while (ret < (ssize_t)size) {
+		/*
+		 * This is limited to 32 characters per write because if
+		 * the only place this is going is strace logs, that's the
+		 * default character buffer display size.  If it's going
+		 * anywhere else, you won't really notice the difference,
+		 * since we're not inserting newlines.
+		 */
+		ssize_t sz = MIN(size - ret, 32);
+
+		if (efi_get_verbose() >= log_level) {
+			sz = fwrite(buf + ret, 1, sz, log);
+			if (sz < 1 && (ferror(log) || feof(log)))
+				break;
+		} else if (efi_dbglog_fd >= 0 && sz > 0) {
+			if (efi_dbglog_memfd)
+				lseek(efi_dbglog_fd, 0, SEEK_SET);
+			if ((intptr_t)cookie != 0 &&
+			    (intptr_t)cookie == efi_dbglog_cookie &&
+			    (ret + sz) < 0 &&
+			    buf[ret + sz - 1] == '\n')
+				sz -= 1;
+			sz = write(efi_dbglog_fd, buf + ret, sz);
+			if (sz < 0)
+				break;
+		}
+		ret += sz;
 	}
 	return ret;
 }
@@ -258,7 +275,7 @@ efi_error_init(void)
 		efi_dbglog_cookie = 0;
 
 	efi_dbglog = fopencookie((void *)efi_dbglog_cookie, "a", io_funcs);
-	if (efi_dbglog)
+	if (efi_dbglog && efi_dbglog_memfd)
 		setvbuf(efi_dbglog, efi_dbglog_buf, _IOLBF,
 			sizeof(efi_dbglog_buf));
 #endif
