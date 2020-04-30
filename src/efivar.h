@@ -7,8 +7,11 @@
 #ifndef PRIVATE_EFIVAR_H_
 #define PRIVATE_EFIVAR_H_
 
+#pragma GCC diagnostic warning "-Wcpp"
+
 #include <efivar/efivar.h>
 
+#include "diag.h"
 #include "util.h"
 #include "safemath.h"
 #include "efivar_endian.h"

@@ -22,14 +22,10 @@ $(call set-if-undefined,HOSTCCLD,$(HOSTCC))
 OPTIMIZE_GCC = -flto
 OPTIMIZE ?= -O2 $(call family,OPTIMIZE)
 DEBUGINFO ?= -g3
-WARNINGS_GCC ?= -Wmaybe-uninitialized \
-		-Wno-nonnull-compare
+WARNINGS_GCC ?=
 WARNINGS_CCC_ANALYZER ?= $(WARNINGS_GCC)
-WARNINGS ?= -Wall -Wextra \
-	    -Wno-address-of-packed-member \
-	    -Wno-missing-field-initializers \
-	    $(call family,WARNINGS)
-ERRORS ?= -Werror -Wno-error=cpp $(call family,ERRORS)
+WARNINGS ?= -Wall -Wextra $(call family,WARNINGS)
+ERRORS ?= -Werror $(call family,ERRORS)
 CPPFLAGS ?=
 override _CPPFLAGS := $(CPPFLAGS)
 override CPPFLAGS = $(_CPPFLAGS) -DLIBEFIVAR_VERSION=$(VERSION) \

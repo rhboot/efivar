@@ -890,27 +890,21 @@ extern int efidp_append_path(const_efidp dp0, const_efidp dp1, efidp *out);
 extern int efidp_append_node(const_efidp dp, const_efidp dn, efidp *out);
 extern int efidp_append_instance(const_efidp dp, const_efidp dpi, efidp *out);
 
-/*
- * GCC/Clang complains that we check for null if we have a nonnull attribute,
- * even though older or other compilers might just ignore that attribute if
- * they don't support it.  Ugh.
- */
 #if defined(__clang__)
+#pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wpointer-bool-conversion"
-#elif defined(__GNUC__) && __GNUC__ >= 6
-#pragma GCC diagnostic ignored "-Wnonnull-compare"
 #endif
 
 #if defined(__GNUC__) && !defined(__clang__)
-#define ATTR_ARTIFICIAL __attribute__((__artificial__))
+#define EFIVAR_ARTIFICIAL __attribute__((__artificial__))
 #else
-#define ATTR_ARTIFICIAL
+#define EFIVAR_ARTIFICIAL
 #endif
+#define EFIVAR_UNUSED __attribute__((__unused__))
+#define EFIVAR_WARN_UNCHECKED __attribute__((__warn_unused_result__))
 
 static inline int16_t
-ATTR_ARTIFICIAL
-__attribute__((__nonnull__(1)))
-__attribute__((__unused__))
+EFIVAR_ARTIFICIAL EFIVAR_UNUSED
 efidp_type(const_efidp dp)
 {
 	if (!dp) {
@@ -921,9 +915,7 @@ efidp_type(const_efidp dp)
 }
 
 static inline int16_t
-ATTR_ARTIFICIAL
-__attribute__((__nonnull__(1)))
-__attribute__((__unused__))
+EFIVAR_ARTIFICIAL EFIVAR_UNUSED
 efidp_subtype(const_efidp dp)
 {
 	if (!dp) {
@@ -934,10 +926,7 @@ efidp_subtype(const_efidp dp)
 }
 
 static inline ssize_t
-ATTR_ARTIFICIAL
-__attribute__((__nonnull__(1)))
-__attribute__((__unused__))
-__attribute__((__warn_unused_result__))
+EFIVAR_ARTIFICIAL EFIVAR_UNUSED EFIVAR_WARN_UNCHECKED
 efidp_node_size(const_efidp dn)
 {
 	if (!dn || dn->length < 4) {
@@ -948,10 +937,7 @@ efidp_node_size(const_efidp dn)
 }
 
 static inline int
-ATTR_ARTIFICIAL
-__attribute__((__nonnull__(1, 2)))
-__attribute__((__unused__))
-__attribute__((__warn_unused_result__))
+EFIVAR_ARTIFICIAL EFIVAR_UNUSED EFIVAR_WARN_UNCHECKED
 efidp_next_node(const_efidp in, const_efidp *out)
 {
 	ssize_t sz;
@@ -974,10 +960,7 @@ efidp_next_node(const_efidp in, const_efidp *out)
 }
 
 static inline int
-ATTR_ARTIFICIAL
-__attribute__((__nonnull__(1, 2)))
-__attribute__((__unused__))
-__attribute__((__warn_unused_result__))
+EFIVAR_ARTIFICIAL EFIVAR_UNUSED EFIVAR_WARN_UNCHECKED
 efidp_next_instance(const_efidp in, const_efidp *out)
 {
 	ssize_t sz;
@@ -1002,10 +985,7 @@ efidp_next_instance(const_efidp in, const_efidp *out)
 }
 
 static inline int
-ATTR_ARTIFICIAL
-__attribute__((__nonnull__(1)))
-__attribute__((__unused__))
-__attribute__((__warn_unused_result__))
+EFIVAR_ARTIFICIAL EFIVAR_UNUSED EFIVAR_WARN_UNCHECKED
 efidp_is_multiinstance(const_efidp dn)
 {
 	while (1) {
@@ -1033,10 +1013,7 @@ efidp_is_multiinstance(const_efidp dn)
 }
 
 static inline int
-ATTR_ARTIFICIAL
-__attribute__((__nonnull__(1, 2)))
-__attribute__((__unused__))
-__attribute__((__warn_unused_result__))
+EFIVAR_ARTIFICIAL EFIVAR_UNUSED EFIVAR_WARN_UNCHECKED
 efidp_get_next_end(const_efidp in, const_efidp *out)
 {
 	while (1) {
@@ -1063,10 +1040,7 @@ efidp_get_next_end(const_efidp in, const_efidp *out)
 }
 
 static inline ssize_t
-ATTR_ARTIFICIAL
-__attribute__((__nonnull__(1)))
-__attribute__((__unused__))
-__attribute__((__warn_unused_result__))
+EFIVAR_ARTIFICIAL EFIVAR_UNUSED EFIVAR_WARN_UNCHECKED
 efidp_size(const_efidp dp)
 {
 	ssize_t ret = 0;
@@ -1104,10 +1078,7 @@ efidp_size(const_efidp dp)
 }
 
 static inline ssize_t
-ATTR_ARTIFICIAL
-__attribute__((__nonnull__(1)))
-__attribute__((__unused__))
-__attribute__((__warn_unused_result__))
+EFIVAR_ARTIFICIAL EFIVAR_UNUSED EFIVAR_WARN_UNCHECKED
 efidp_instance_size(const_efidp dpi)
 {
 	ssize_t ret = 0;
@@ -1133,9 +1104,7 @@ efidp_instance_size(const_efidp dpi)
 }
 
 static inline int
-ATTR_ARTIFICIAL
-__attribute__((__nonnull__(1)))
-__attribute__((__unused__))
+EFIVAR_ARTIFICIAL EFIVAR_UNUSED
 efidp_is_valid(const_efidp dp, ssize_t limit)
 {
 	efidp_header *hdr = (efidp_header *)dp;
@@ -1222,10 +1191,6 @@ efidp_is_valid(const_efidp dp, ssize_t limit)
 	return 1;
 }
 
-#if defined(__GNUC__) && __GNUC__ >= 6
-#pragma GCC diagnostic pop
-#endif
-
 /* and now, printing and parsing */
 extern ssize_t efidp_parse_device_node(unsigned char *path,
 				       efidp out, size_t size);
@@ -1245,6 +1210,9 @@ extern ssize_t efidp_make_generic(uint8_t *buf, ssize_t size, uint8_t type,
 	efidp_make_generic(buf, size, EFIDP_END_TYPE,			\
 			   EFIDP_END_INSTANCE, sizeof (efidp_header));
 
+#if defined(__clang__)
+#pragma clang diagnostic pop
+#endif
 #endif /* _EFIVAR_DP_H */
 
 // vim:fenc=utf-8:tw=75:noet
