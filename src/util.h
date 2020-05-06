@@ -29,32 +29,6 @@
 
 #include "compiler.h"
 
-#define UNUSED __attribute__((__unused__))
-#define HIDDEN __attribute__((__visibility__ ("hidden")))
-#define PUBLIC __attribute__((__visibility__ ("default")))
-#define DESTRUCTOR __attribute__((destructor))
-#define CONSTRUCTOR __attribute__((constructor))
-#define ALIAS(x) __attribute__((weak, alias (#x)))
-#define NONNULL(...) __attribute__((__nonnull__(__VA_ARGS__)))
-#define PRINTF(...) __attribute__((__format__(printf, __VA_ARGS__)))
-#define FLATTEN __attribute__((__flatten__))
-#define PACKED __attribute__((__packed__))
-#if GNUC_PREREQ(10,0)
-# define VERSION(sym, ver) __attribute__ ((symver (# ver)))
-#else
-# define VERSION(sym, ver) __asm__(".symver " # sym "," # ver)
-#endif
-
-
-#define __branch_check__(x, expect, is_constant) \
-	__builtin_expect(!!(x), expect)
-#ifndef likely
-#define likely(x) (__branch_check__(x, 1, __builtin_constant_p(x)))
-#endif
-#ifndef unlikely
-#define unlikely(x) (__branch_check__(x, 0, __builtin_constant_p(x)))
-#endif
-
 static inline int UNUSED
 read_file(int fd, uint8_t **result, size_t *bufsize)
 {

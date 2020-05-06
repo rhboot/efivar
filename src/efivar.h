@@ -11,7 +11,9 @@
 
 #include <efivar/efivar.h>
 
+#include "compiler.h"
 #include "diag.h"
+#include "list.h"
 #include "util.h"
 #include "safemath.h"
 #include "efivar_endian.h"

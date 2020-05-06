@@ -64,18 +64,18 @@
 
 #define generic_sint_builtin_(op, x)					\
 	_Generic((x),							\
-		int: PASTE(__builtin_, op)(x),				\
-		long: PASTE33(__builtin_, op, l)(x),			\
-		long long: PASTE3(__builtin_, op, ll)(x)		\
+		int: CAT(__builtin_, op)(x),				\
+		long: CAT33(__builtin_, op, l)(x),			\
+		long long: CAT3(__builtin_, op, ll)(x)			\
 		)
 #define FFS(x) generic_sint_builtin_(ffs, x)
 #define CLRSB(x) generic_sint_builtin_(clrsb, x)
 
 #define generic_uint_builtin_(op, x)					\
 	_Generic((x),							\
-		unsigned int: PASTE(__builtin_, op)(x),			\
-		unsigned long: PASTE3(__builtin_, op, l)(x),		\
-		unsigned long long: PASTE3(__builtin_, op, ll)(x)	\
+		unsigned int: CAT(__builtin_, op)(x),			\
+		unsigned long: CAT3(__builtin_, op, l)(x),		\
+		unsigned long long: CAT3(__builtin_, op, ll)(x)		\
 		)
 #define CLZ(x) generic_uint_builtin_(clz, x)
 #define CTZ(x) generic_uint_builtin_(ctz, x)
