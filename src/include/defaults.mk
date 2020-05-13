@@ -20,7 +20,7 @@ $(call set-if-undefined,HOSTCC,$(COMPILER))
 $(call set-if-undefined,HOSTCCLD,$(HOSTCC))
 
 OPTIMIZE_GCC = -flto
-OPTIMIZE ?= -O2 $(call family,OPTIMIZE)
+OPTIMIZE ?= -Og $(call family,OPTIMIZE)
 DEBUGINFO ?= -g3
 WARNINGS_GCC ?=
 WARNINGS_CCC_ANALYZER ?= $(WARNINGS_GCC)
@@ -31,7 +31,7 @@ override _CPPFLAGS := $(CPPFLAGS)
 override CPPFLAGS = $(_CPPFLAGS) -DLIBEFIVAR_VERSION=$(VERSION) \
 	    -D_GNU_SOURCE \
 	    -I$(TOPDIR)/src/include/
-CFLAGS ?= $(FULL_OPTIMIZE) $(DEBUGINFO) $(WARNINGS) $(ERRORS)
+CFLAGS ?= $(OPTIMIZE) $(DEBUGINFO) $(WARNINGS) $(ERRORS)
 CFLAGS_GCC ?= -specs=$(TOPDIR)/src/include/gcc.specs \
 	      -fno-merge-constants
 override _CFLAGS := $(CFLAGS)
