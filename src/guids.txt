@@ -1,23 +1,29 @@
 00000000-0000-0000-0000-000000000000	zero	zeroed sentinel guid
+0223eddb-9079-4388-af77-2d65b1c35d3b	redhat	Red Hat
 093e0fae-a6c4-4f50-9f1b-d41e2b89c19a	sha512	SHA-512 hash
 0abba7dc-e516-4167-bbf5-4d9d1c739416	fwupdate	Linux Firmware Update Tool
 0b6e5233-a65c-44c9-9407-d9ab83bfc8bd	sha224	SHA-224 hash
 126a762d-5758-4fca-8531-201a7f57f850	lenovo_boot_menu	Lenovo Boot Menu
+26dc4851-195f-4ae1-9a19-fbf883bbb35e	supermicro	Super Micro
+3b053091-6c9f-04cc-b1ac-e2a51e3be5f5	asus	Asus
 3b8c8162-188c-46a4-aec9-be43f1d65697	ux_capsule	Firmware update localized text image
 3bd2a492-96c0-4079-b420-fcf98ef103ed	x509_sha256	SHA-256 hash of X.509 Certificate
 3c5766e8-269c-4e34-aa14-ed776e85b3b6	rsa2048	RSA 2048 pubkey
-3CC24E96-22C7-41D8-8863-8E39DCDCC2CF	lenovo	Lenovo
+3cc24e96-22c7-41d8-8863-8e39dcdcc2cf	lenovo	Lenovo
 3f7e615b-0d45-4f80-88dc-26b234958560	lenovo_diag	Lenovo Diagnostics
 446dbf63-2502-4cda-bcfa-2465d2b0fe9d	x509_sha512	SHA-512 hash of X.509 Certificate
 452e8ced-dfff-4b8c-ae01-5118862e682c	external_management	External Management Mechanism
 4aafd29d-68df-49ee-8aa9-347d375665a7	pkcs7_cert	PKCS7 Certificate
+55555555-5555-5555-5555-555555555555	fives	All Fives Test Data
 605dab50-e046-4300-abb6-3dd810dd8b23	shim	shim
 665d3f60-ad3e-4cad-8e26-db46eee9f1b5	lenovo_rescue	Lenovo Rescue and Recovery
 67f8444f-8743-48f1-a328-1eaab8736080	rsa2048_sha1	RSA-2048 signature of a SHA-1 hash
+6dc40ae4-2ee8-9c4c-a314-0fc7b2008710	canonical	Canonical
+70564dce-9afc-4ee3-85fc-949649d7e45c	dell	Dell
 7076876e-80c2-4ee6-aad2-28b349a6865b	x509_sha384	SHA-384 hash of X.509 Certificate
 721c8b66-426c-4e86-8e99-3457c46ab0b9	lenovo_setup	Lenovo Firmware Setup
 77fa9abd-0359-4d32-bd60-28f4e78f784b	microsoft	Microsoft
-7FACC7B6-127F-4E9C-9C5D-080F98994345	lenovo_2	Lenovo
+7facc7b6-127f-4e9c-9c5d-080f98994345	lenovo_2	Lenovo
 8108ac4e-9f11-4d59-850e-e21a522c59b2	auto_created_boot_option	Automatically Created Boot Option
 826ca512-cf10-4ac9-b187-be01496631bd	sha1	SHA-1
 82988420-7467-4490-9059-feb448dd1963	lenovo_me_config	Lenovo ME Configuration Menu
@@ -26,12 +32,11 @@
 a5c059a1-94e4-4aa7-87b5-ab155c2bf072	x509_cert	X.509 Certificate
 a7717414-c616-4977-9420-844712a735bf	rsa2048_sha256_cert	RSA-2048 key with SHA-256 Certificate
 a7d8d9a6-6ab0-4aeb-ad9d-163e59a7a380	lenovo_diag_splash	Lenovo Diagnostic Splash Screen
-ade9e48f-9cb8-98e6-31af-b4e6009e2fe3	redhat_2	Red Hat Maybe
 bc7838d2-0f82-4d60-8316-c068ee79d25b	lenovo_msg	Lenovo Vendor Message Device
 c1c41626-504c-4092-aca9-41f936934328	sha256	SHA-256
 c57ad6b7-0515-40a8-9d21-551652854e37	shell	EFI Shell
 d719b2cb-3d3a-4596-a3bc-dad00e67656f	security	EFI Security Database
 e2b36190-879b-4a3d-ad8d-f2e7bba32784	rsa2048_sha256	RSA-2048 signature of a SHA-256 hash
-ff3e5307-9fd0-48c9-85f1-8ad56c701e01	sha384	SHA-384
 f46ee6f4-4785-43a3-923d-7f786c3c8479	lenovo_startup_interrupt	Lenovo Startup Interrupt Menu
+ff3e5307-9fd0-48c9-85f1-8ad56c701e01	sha384	SHA-384
 ffffffff-ffff-ffff-ffff-ffffffffffff	zzignore-this-guid	zzignore-this-guid
