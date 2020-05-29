@@ -324,6 +324,44 @@ debug_markers_(const char * const file, int line,
 #define debug_hex(buf, size) log_hex(LOG_DEBUG, buf, size)
 #define dbgmk(prefix, args...) debug_markers_(__FILE__, __LINE__, __func__, LOG_DEBUG, prefix, ## args, -1)
 
+static inline UNUSED
+int16_t hexchar_to_bin(char hex)
+{
+	if (hex >= '0' && hex <= '9')
+		return hex - '0';
+	if (hex >= 'A' && hex <= 'F')
+		return hex - 'A' + 10;
+	if (hex >= 'a' && hex <= 'f')
+		return hex - 'a' + 10;
+	return -1;
+}
+
+static inline UNUSED uint8_t *
+hex_to_bin(char *hex, size_t size)
+{
+	uint8_t *ret = calloc(1, size+1);
+	if (!ret)
+		return NULL;
+
+	for (unsigned int i = 0, j = 0; i < size*2; i+= 2, j++) {
+		int16_t val;
+
+		val = hexchar_to_bin(hex[i]);
+		if (val > 15 || val < 0)
+			goto out_of_range;
+		ret[j] = (val & 0xf) << 4;
+		val = hexchar_to_bin(hex[i+1]);
+		if (val > 15 || val < 0)
+			goto out_of_range;
+		ret[j] |= val & 0xf;
+	};
+	return ret;
+out_of_range:
+	free(ret);
+	errno = ERANGE;
+	return NULL;
+}
+
 #endif /* EFIVAR_UTIL_H */
 
 // vim:fenc=utf-8:tw=75:noet
