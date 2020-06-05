@@ -20,6 +20,12 @@ family = $(foreach FAMILY_SUFFIX,$(FAMILY_SUFFIXES),$($(1)_$(FAMILY_SUFFIX)))
 %.a :
 	$(AR) -cvqs $@ $^
 
+%.1 : %.1.mdoc
+	$(MANDOC) -mdoc -Tman -Ios=Linux $^ > $@
+
+%.3 : %.3.mdoc
+	$(MANDOC) -mdoc -Tman -Ios=Linux $^ > $@
+
 % : %.c
 
 % : %.o

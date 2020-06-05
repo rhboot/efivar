@@ -1,0 +1,206 @@
+.Dd $Mdocdate: Jan 7 2021$
+.Dt EFISECDB 1
+.Sh NAME
+.Nm efisecdb
+.Nd utility for managing UEFI signature lists
+.Sh SYNOPSIS
+.Nm
+.Bk -words
+.Oo Fl s Ar SORT Oc
+.Oo Fl i Ar file Oo Fl i Ar file
+.Oc ... Oc
+\ \p
+.Oo
+.Cm Fl g Ar guid
+.Ao Cm Fl a | Fl r Ac
+.Ao
+.Cm Oo Fl t Ar hash-type Oc Cm Fl h Ar hash |
+.Cm Fl c Ar file
+.Ac
+\ \p
+.Oo
+.Cm Fl g Ar guid
+.Ao Cm Fl a | Fl r Ac
+.Ao
+.Cm Oo Fl t Ar hash-type Oc Cm Fl h Ar hash |
+.Cm Fl c Ar file
+.Ac
+.Oc ... Oc
+.Ao
+.Cm Fl d Op Fl A
+|
+.Cm Fl o Ar file
+|
+.Cm Fl L
+.Ac
+.Ek
+.Sh DESCRIPTION
+.Nm
+is a command line utility for management of UEFI signature lists in detached
+files. That is, it's for command line generation and management of files in the
+format of KEK, DB, and DBX.
+
+Operation occurs in three phases:
+.Bl -enum -compact
+.It
+Loading of security databases specified with
+.Fl Fl input
+.It
+Left-to-right processing of other options, using
+.Fl Fl hash-type, Fl Fl owner-guid, Fl Fl add,
+and
+.Fl Fl remove
+as state to build selectors to add or remove hashes and certificates specified by
+.Fl Fl hash
+and
+.Fl Fl certificate\fR.
+.It
+Generation of output
+.El
+
+The accumulated state is persistent; once an Owner GUID, Add or Delete
+operation, or hash type are specified, they need only be present again to
+change the operations that follow.  Operations are added to the list to process
+when
+.Fl h Ar hash
+or
+.Fl c Ar cert
+are specified, and are processed in the order they appear.  Additionally,
+at least one
+.Fl g
+argument and either
+.Fl Fl add
+or
+.Fl Fl remove
+must appear before the first use of
+.Fl h Ar hash
+or
+.Fl c Ar cert\fR.
+.Sh OPTIONS
+.Bl -tag
+.It Ao Fl s | Fl Fl sort Ac Ao Ar all | Ar data | Ar none | Ar type Ac
+Sort by data after sorting and grouping entry types, entry data, no sorting, or by entry type
+.It Ao Fl s | Fl Fl sort Ac Ao Ar ascending | Ar descending Ac
+Sort in ascending or descending order
+.It Fl i Ar file | Fl Fl infile Ar file
+Read EFI Security Database from
+.Ar file
+.It Fl g Ar guid | Fl Fl owner-guid Ar guid
+Use the specified GUID or symbolic refrence (i.e. {empty}) for forthcoming
+addition and removal operations
+.It Fl a | Fl Fl add | Fl r | Fl Fl remove
+Select
+.Ar add
+or
+.Ar remove
+for forthcoming operations
+.It Fl t Ar hash-type | Fl Fl hash-type Ar hash-type
+Select
+.Ar hash-type
+for forthcoming addition and removal operations
+.Po
+default \fIsha256\fR
+.Pc
+
+Use hash-type \fIhelp\fR to list supported hash types.
+.It Fl h Ar hash | Fl Fl hash Ar hash
+Add or remove the specified hash
+.It Fl c Ar file | Fl Fl certificate Ar file
+Add or remove the specified certificate
+.It Fl d | Fl Fl dump
+Produce a hex dump of the output
+.It Fl A | Fl Fl annotate
+Annotate the hex dump produced by
+.Fl Fl dump
+.It Fl o Ar file | Fl Fl outfile Ar file
+Write EFI Security Database to
+.Ar file
+.It Fl L | Fl Fl list-guids
+List the well known guids
+
+The output is tab delimited: GUID short_name desription
+.Sh EXAMPLES
+.Ss Dumping the current system's \fIDBX\fP database with annotations
+.Bd -literal -compact
+host:~$ \fBefisecdb -d -A -i /sys/firmware/efi/efivars/dbx-d719b2cb-3d3a-4596-a3bc-dad00e67656f\fR
+00000000  26 16 c4 c1 4c 50 92 40  ac a9 41 f9 36 93 43 28  |&...LP.@..A.6.C(|  esl[0].signature_type = {sha256}
+00000010  60 00 00 00                                       |....|              esl[0].signature_list_size = 96
+00000014              00 00 00 00                               |....|          esl[0].signature_header_size = 0
+00000018                           30 00 00 00                      |0...|      esl[0].signature_size = 48
+0000001c                                                                        esl[0].signature_header (end:0x0000001c)
+0000001c                                       bd 9a fa 77              |...w|  esl[0].signature[0].owner = {microsoft}
+00000020  59 03 32 4d bd 60 28 f4  e7 8f 78 4b              |Y.2M.`(...xK|
+0000002c                                       fe cf b2 32              |...2|  esl[0].signature[0].data (end:0x0000004c)
+00000030  d1 2e 99 4b 6d 48 5d 2c  71 67 72 8a a5 52 59 84  |...KmH],qgr..RY.|
+00000040  ad 5c a6 1e 75 16 22 1f  07 9a 14 36              |.\..u."....6|
+0000004c                                       bd 9a fa 77              |...w|  esl[0].signature[1].owner = {microsoft}
+00000050  59 03 32 4d bd 60 28 f4  e7 8f 78 4b              |Y.2M.`(...xK|
+0000005c                                       fe 63 a8 4f              |.c.O|  esl[0].signature[1].data (end:0x0000007c)
+00000060  78 2c c9 d3 fc f2 cc f9  fc 11 fb d0 37 60 87 87  |x,..........7`..|
+00000070  58 d2 62 85 ed 12 66 9b  dc 6e 6d 01              |X.b...f..nm.|
+0000007c
+.Ed
+.Ss Building a new EFI Security Database for use as \fIKEK\fP, replacing one certificate.
+.Bd -literal -compact
+# Figure out the original cert... the easy way
+host:~$ \fBstrings KEK-* | grep microsoft.*crt\fR\p
+Dhttp://www.microsoft.com/pki/certs/MicCorThiParMarRoo_2010-10-05.crt0
+
+# Find it, because --export isn't implemented yet
+host:~$ \fBwget \e\p
+        --user-agent='Mozilla/5.0 (Windows NT 10.0; WOW64; Trident/7.0; rv:11.0) like Gecko' \e\p
+        http://www.microsoft.com/pki/certs/MicCorThiParMarRoo_2010-10-05.crt\fR\p
+--2020-06-04 20:41:27--  http://www.microsoft.com/pki/certs/MicCorThiParMarRoo_2010-10-05.crt
+Resolving www.microsoft.com (www.microsoft.com)... 2600:141b:800:287::356e, 2600:141b:800:2a0::356e, 23.43.254.254
+Connecting to www.microsoft.com (www.microsoft.com)|2600:141b:800:287::356e|:80... connected.
+HTTP request sent, awaiting response... 200 OK
+Length: 1539 (1.5K) [application/octet-stream]
+Saving to: ‘MicCorThiParMarRoo_2010-10-05.crt’
+
+MicCorThiParMarRoo_ 100%[===================>]   1.50K  --.-KB/s    in 0s      
+
+2020-06-04 20:41:27 (177 MB/s) - ‘MicCorThiParMarRoo_2010-10-05.crt’ saved [1539/1539]
+
+# Pick a GUID-like object, any GUID-like object...
+host:~$ \fBuuidgen\fR
+aab3960c-501e-485e-ac59-62805970a3dd
+
+# Remove the old KEK entry and add a different one
+host:~$ \fBefisecdb -i KEK-8be4df61-93ca-11d2-aa0d-00e098032b8c \e\p
+        -g {microsoft} -r -c MicCorThiParMarRoo_2010-10-05.crt \e\p
+        -g aab3960c-501e-485e-ac59-62805970a3dd -a -c pjkek.cer \e\p
+        -o newkek.bin\fR\p
+.Ed
+.Ss Searching the list of well-known GUIDs
+.Bd -literal -compact
+host:~$ \fBefisecdb -L | grep shim\fR\p
+{605dab50-e046-4300-abb6-3dd810dd8b23}	{shim}	shim
+.Ed
+.Sh STANDARDS
+.Rs
+.%A UEFI Specification Working Group
+.%B Unified Extensible Firmware Interface (UEFI) Specification Version 2.8
+.%I Unified Extensible Firmware Interface Forum
+.%D March 2019
+.%U https://uefi.org/specifications\ \&
+.Re
+.Sh SEE ALSO
+.Xr authvar 1 ,
+.Xr efikeygen 1 ,
+.Xr pesign 1
+.Sh AUTHORS
+.An Peter Jones
+.Sh BUGS
+.Nm
+is currently lacking several useful features:
+.Bl -bullet -compact
+.It
+positional exporting of certificates
+.It
+.Fl Fl dump
+and
+.Fl Fl annotate
+do not adjust the output width for the terminal
+.It
+certificates can't be specified for removal by their \fIToBeSigned\fR hash
+.El

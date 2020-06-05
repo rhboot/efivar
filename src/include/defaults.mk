@@ -111,6 +111,7 @@ NM	:= $(CROSS_COMPILE)$(COMPILER)-nm
 RANLIB	:= $(CROSS_COMPILE)$(COMPILER)-ranlib
 ABIDW	:= abidw
 ABIDIFF := abidiff
+MANDOC	:= mandoc
 
 LDLIBS=$(foreach lib,$(LIBS),-l$(lib)) $(call pkg-config-ldlibs)
 
