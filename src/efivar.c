@@ -52,35 +52,6 @@ static const char *attribute_names[] = {
 	""
 };
 
-static int verbose_errors = 0;
-
-static void
-show_errors(void)
-{
-	int rc = 1;
-
-	if (!verbose_errors)
-		return;
-
-	printf("Error trace:\n");
-	for (int i = 0; rc > 0; i++) {
-		char *filename = NULL;
-		char *function = NULL;
-		int line = 0;
-		char *message = NULL;
-		int error = 0;
-
-		rc = efi_error_get(i, &filename, &function, &line, &message,
-				   &error);
-		if (rc < 0)
-			err(1, "error fetching trace value");
-		if (rc == 0)
-			break;
-		printf(" %s:%d %s(): %s: %s", filename, line, function,
-		       strerror(error), message);
-	}
-}
-
 static inline void
 validate_name(const char *name)
 {

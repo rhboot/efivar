@@ -22,7 +22,7 @@ LIBEFIVAR_SOURCES = crc32.c dp.c dp-acpi.c dp-hw.c dp-media.c dp-message.c \
 	efivarfs.c error.c export.c guid.c guids.S guid-symbols.c \
 	lib.c vars.c time.c
 LIBEFIVAR_OBJECTS = $(patsubst %.S,%.o,$(patsubst %.c,%.o,$(LIBEFIVAR_SOURCES)))
-EFIVAR_SOURCES = efivar.c
+EFIVAR_SOURCES = efivar.c util.c
 EFIVAR_OBJECTS = $(patsubst %.S,%.o,$(patsubst %.c,%.o,$(EFIVAR_SOURCES)))
 GENERATED_SOURCES = include/efivar/efivar-guids.h guid-symbols.c
 MAKEGUIDS_SOURCES = makeguids.c

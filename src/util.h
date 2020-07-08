@@ -339,6 +339,9 @@ log_(char *file, int line, const char *func, int level, char *fmt, ...)
 
 #define LOG_VERBOSE 0
 #define LOG_DEBUG 1
+#define LOG_DEBUG_DUMPER 2
+
+#define DEBUG_LEVEL 1
 
 /*
  * makeguids includes util.h, which means any declarations that reference
@@ -359,7 +362,7 @@ log_(char *file, int line, const char *func, int level, char *fmt, ...)
 #define debug(fmt, args...)
 #else
 #define log(level, fmt, args...) log_(__FILE__, __LINE__, __func__, level, fmt, ## args)
-#define debug(fmt, args...) log(LOG_DEBUG, fmt, ## args)
+#define debug(fmt, args...) log(DEBUG_LEVEL, fmt, ## args)
 #endif
 #define log_hex_(file, line, func, level, buf, size)			\
 	({								\
@@ -371,6 +374,40 @@ log_(char *file, int line, const char *func, int level, char *fmt, ...)
 #define log_hex(level, buf, size) log_hex_(__FILE__, __LINE__, __func__, level, buf, size)
 #define debug_hex(buf, size) log_hex(LOG_DEBUG, buf, size)
 #define dbgmk(prefix, args...) debug_markers_(__FILE__, __LINE__, __func__, LOG_DEBUG, prefix, ## args, -1)
+
+static inline UNUSED void
+show_errors(void)
+{
+	int rc = 1;
+
+	if (efi_get_verbose() < 1)
+		return;
+
+	printf("Error trace:\n");
+	for (int i = 0; rc > 0; i++) {
+		char *filename = NULL;
+		char *function = NULL;
+		int line = 0;
+		char *message = NULL;
+		int error = 0;
+		size_t len;
+
+		rc = efi_error_get(i, &filename, &function, &line, &message,
+				   &error);
+		if (rc < 0)
+			err(1, "error fetching trace value");
+		if (rc == 0)
+			break;
+		printf(" %s:%d %s(): %s: %s", filename, line, function,
+		       strerror(error), message);
+
+		len = strlen(message);
+		if (len >= 1 && message[len-1] != '\n')
+			printf("\n");
+	}
+	fflush(stdout);
+	efi_error_clear();
+}
 
 typedef struct {
 	list_t list;
