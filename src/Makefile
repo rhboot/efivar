@@ -7,7 +7,7 @@ include $(TOPDIR)/src/include/defaults.mk
 
 LIBTARGETS=libefivar.so libefiboot.so
 STATICLIBTARGETS=libefivar.a libefiboot.a
-BINTARGETS=efivar
+BINTARGETS=efivar thread-test
 STATICBINTARGETS=efivar-static
 PCTARGETS=efivar.pc efiboot.pc
 TARGETS=$(LIBTARGETS) $(BINTARGETS) $(PCTARGETS)
@@ -85,6 +85,10 @@ libefiboot.so : $(LIBEFIBOOT_OBJECTS)
 libefiboot.so : | libefiboot.map libefivar.so
 libefiboot.so : LIBS=efivar
 libefiboot.so : MAP=libefiboot.map
+
+thread-test : thread-test.o
+thread-test : CFLAGS=$(HOST_CFLAGS) -I$(TOPDIR)/src/include/efivar
+thread-test : LIBS=pthread efivar
 
 deps : $(ALL_SOURCES)
 	@$(MAKE) -f $(SRCDIR)/include/deps.mk deps SOURCES="$(ALL_SOURCES)"
