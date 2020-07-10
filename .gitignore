@@ -11,7 +11,6 @@
 *.map
 *.pc
 *.S
-!src/guids.S
 *.so
 *.so.*
 *.spec
@@ -22,7 +21,3 @@ core.*
 cov-int
 vgcore.*
 scan-results/
-src/efivar
-src/efivar-static
-src/makeguids
-src/guid-symbols.c

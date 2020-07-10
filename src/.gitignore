@@ -1,2 +1,8 @@
+!guids.S
 *.bin
+efivar
 efivar-guids.h
+efivar-static
+makeguids
+guid-symbols.c
+thread-test

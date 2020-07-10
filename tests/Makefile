@@ -3,7 +3,7 @@
 # Peter Jones, 2019-06-18 11:10
 #
 
-all: clean test0 test1 test2 test3 test4
+all: clean test0 test1 test2 test3 test4 test5
 
 GRUB_PREFIX ?= grub2
 EFIVAR ?= $(TOPDIR)/src/efivar
@@ -79,6 +79,10 @@ test4:
 	@cmp test.4.goal.var test.4.1.result.var
 	@rm test.4.0.result.var test.4.1.result.var
 	@echo passed
+
+test5:
+	@echo testing threading in libefivar
+	@TOPDIR=$(TOPDIR) $(TOPDIR)/tests/test-threading
 
 .PHONY: all clean test0
 # vim:ft=make
