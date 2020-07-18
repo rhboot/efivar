@@ -27,8 +27,8 @@ typedef struct {
 	char *message;
 } error_table_entry;
 
-static error_table_entry *error_table;
-static unsigned int current;
+static _Thread_local error_table_entry *error_table;
+static _Thread_local unsigned int current;
 
 int PUBLIC NONNULL(2, 3, 4, 5, 6)
 efi_error_get(unsigned int n,
