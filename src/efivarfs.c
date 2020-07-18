@@ -6,6 +6,7 @@
 
 #include "fix_coverity.h"
 
+#include <err.h>
 #include <errno.h>
 #include <fcntl.h>
 #include <linux/magic.h>
@@ -28,18 +29,39 @@
 #endif
 
 static char const default_efivarfs_path[] = "/sys/firmware/efi/efivars/";
+static char *efivarfs_path;
 
 static char const *
 get_efivarfs_path(void)
 {
-	static const char *path;
-	if (path)
-		return path;
+	if (efivarfs_path)
+		return efivarfs_path;
 
-	path = getenv("EFIVARFS_PATH");
-	if (!path)
-		path = default_efivarfs_path;
-	return path;
+	efivarfs_path = secure_getenv("EFIVARFS_PATH");
+	if (efivarfs_path)
+		efivarfs_path = strdup(efivarfs_path);
+	else
+		efivarfs_path = strdup(default_efivarfs_path);
+
+	if (!efivarfs_path)
+		err(1, "couldn't allocate memory");
+
+	return efivarfs_path;
+}
+
+static void CONSTRUCTOR
+init_efivarfs_path(void)
+{
+	get_efivarfs_path();
+}
+
+static void DESTRUCTOR
+fini_efivarfs_path(void)
+{
+	if (efivarfs_path) {
+		free(efivarfs_path);
+		efivarfs_path = NULL;
+	}
 }
 
 static int
