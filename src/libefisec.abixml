@@ -153,15 +153,15 @@
     <typedef-decl name='efi_secdb_data_t' type-id='type-id-55' filepath='src/include/efivar/efisec-secdb.h' line='25' column='1' id='type-id-54'/>
     <enum-decl name='efi_secdb_type_t' naming-typedef-id='type-id-65' filepath='src/include/efivar/efisec-secdb.h' line='27' column='1' id='type-id-66'>
       <underlying-type type-id='type-id-45'/>
-      <enumerator name='SHA256' value='0'/>
+      <enumerator name='X509_CERT' value='0'/>
       <enumerator name='X509_SHA256' value='1'/>
-      <enumerator name='X509_SHA384' value='2'/>
+      <enumerator name='SHA256' value='2'/>
       <enumerator name='X509_SHA512' value='3'/>
-      <enumerator name='X509_CERT' value='4'/>
-      <enumerator name='SHA1' value='5'/>
+      <enumerator name='SHA512' value='4'/>
+      <enumerator name='X509_SHA384' value='5'/>
       <enumerator name='SHA224' value='6'/>
       <enumerator name='SHA384' value='7'/>
-      <enumerator name='SHA512' value='8'/>
+      <enumerator name='SHA1' value='8'/>
       <enumerator name='RSA2048' value='9'/>
       <enumerator name='RSA2048_SHA1' value='10'/>
       <enumerator name='RSA2048_SHA256' value='11'/>

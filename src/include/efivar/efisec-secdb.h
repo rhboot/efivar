@@ -25,15 +25,15 @@ typedef union {
 } efi_secdb_data_t;
 
 typedef enum {
-	SHA256,		// SHA-256 hash
-	X509_SHA256,	// SHA-256 hash of the TBSData
-	X509_SHA384,	// SHA-384 hash of the TBSData
-	X509_SHA512,	// SHA-512 hash of the TBSData
 	X509_CERT,	// a raw x509 cert
-	SHA1,		// SHA-1 hash
+	X509_SHA256,	// SHA-256 hash of the TBSData
+	SHA256,		// SHA-256 hash
+	X509_SHA512,	// SHA-512 hash of the TBSData
+	SHA512,		// SHA-512 hash
+	X509_SHA384,	// SHA-384 hash of the TBSData
 	SHA224,		// SHA-224 hash
 	SHA384,		// SHA-384 hash
-	SHA512,		// SHA-512 hash
+	SHA1,		// SHA-1 hash
 	RSA2048,	// RSA-2048 pubkey (m, e=0x10001)
 	RSA2048_SHA1,	// RSA-2048 signature of a SHA-1 hash
 	RSA2048_SHA256,	// RSA-2048 signature of a SHA-256 hash
