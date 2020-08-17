@@ -44,7 +44,7 @@ static ssize_t
 parse_nvme(struct device *dev, const char *path, const char *root UNUSED)
 {
 	const char *current = path;
-	int rc;
+	int i, rc;
 	int32_t tosser0, tosser1, tosser2, ctrl_id, ns_id, partition;
 	uint8_t *filebuf = NULL;
 	int pos0 = -1, pos1 = -1, pos2 = -1;
@@ -64,7 +64,7 @@ parse_nvme(struct device *dev, const char *path, const char *root UNUSED)
 	/*
 	 * in this case, *any* of these is okay.
 	 */
-	for (int i = 0; subdirs[i].name; i++) {
+	for (i = 0; subdirs[i].name; i++) {
 		debug("searching for %s", subdirs[i].name);
 		pos0 = tosser0 = pos1 = -1;
 		rc = sscanf(current, subdirs[i].fmt, &pos0, &pos1, &pos2);
@@ -77,19 +77,33 @@ parse_nvme(struct device *dev, const char *path, const char *root UNUSED)
 		}
 	}
 
-	debug("searching for nvme0/nvme0n1 or nvme0/nvme0n1/nvme0n1p1");
-	rc = sscanf(current, "%nnvme%d/nvme%dn%d%n/nvme%dn%dp%d%n",
-	            &pos0, &tosser0, &ctrl_id, &ns_id, &pos1,
-	            &tosser1, &tosser2, &partition, &pos2);
-	debug("current:'%s' rc:%d pos0:%d pos1:%d pos2:%d\n", current, rc, pos0, pos1, pos2);
-	dbgmk("         ", pos0, MAX(pos1,pos2));
-	/*
-	 * If it isn't of that form, it's not one of our nvme devices.
-	 */
-	if (rc != 3 && rc != 6)
-	        return 0;
-	if (rc == 3)
-		pos2 = pos1;
+	if (!subdirs[i].name)
+		return 0;
+
+	debug("searching for nvme-subsysN/");
+	if (!strncmp("nvme-subsysN/", subdirs[i].name, 13)) {
+		debug("searching for nvme0n1");
+		rc = sscanf(current, "%nnvme%dn%d%n",
+			    &pos0, &ctrl_id, &ns_id, &pos1);
+		debug("current:'%s' rc:%d pos0:%d pos1:%d\n", current, rc, pos0, pos1);
+		dbgmk("         ", pos0, pos1);
+		if (rc != 2)
+			return 0;
+	} else {
+		debug("searching for nvme0/nvme0n1 or nvme0/nvme0n1/nvme0n1p1");
+		rc = sscanf(current, "%nnvme%d/nvme%dn%d%n/nvme%dn%dp%d%n",
+			    &pos0, &tosser0, &ctrl_id, &ns_id, &pos1,
+			    &tosser1, &tosser2, &partition, &pos2);
+		debug("current:'%s' rc:%d pos0:%d pos1:%d pos2:%d\n", current, rc, pos0, pos1, pos2);
+		dbgmk("         ", pos0, MAX(pos1,pos2));
+		/*
+		 * If it isn't of that form, it's not one of our nvme devices.
+		 */
+		if (rc != 3 && rc != 6)
+			return 0;
+		if (rc == 3)
+			pos2 = pos1;
+	}
 
 	dev->nvme_info.ctrl_id = ctrl_id;
 	dev->nvme_info.ns_id = ns_id;
