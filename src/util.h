@@ -37,7 +37,7 @@
 #define PRINTF(...) __attribute__((__format__(printf, __VA_ARGS__)))
 #define FLATTEN __attribute__((__flatten__))
 #define PACKED __attribute__((__packed__))
-#define VERSION(sym, ver) __asm__(".symver " # sym "," # ver)
+#define VERSION(sym, ver) __attribute__ ((symver (# ver)))
 
 #define __branch_check__(x, expect, is_constant) \
 	__builtin_expect(!!(x), expect)
