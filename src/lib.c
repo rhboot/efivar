@@ -33,6 +33,11 @@ _efi_set_variable(efi_guid_t guid, const char *name, uint8_t *data,
 		  size_t data_size, uint32_t attributes)
 {
 	int rc;
+	if (!ops->set_variable) {
+		efi_error("set_variable() is not implemented");
+		errno = ENOSYS;
+		return -1;
+	}
 	rc = ops->set_variable(guid, name, data, data_size, attributes, 0600);
 	if (rc < 0)
 		efi_error("ops->set_variable() failed");
@@ -45,6 +50,11 @@ _efi_set_variable_variadic(efi_guid_t guid, const char *name, uint8_t *data,
 			   size_t data_size, uint32_t attributes, ...)
 {
 	int rc;
+	if (!ops->set_variable) {
+		efi_error("set_variable() is not implemented");
+		errno = ENOSYS;
+		return -1;
+	}
 	rc = ops->set_variable(guid, name, data, data_size, attributes, 0600);
 	if (rc < 0)
 		efi_error("ops->set_variable() failed");
@@ -57,6 +67,11 @@ _efi_set_variable_mode(efi_guid_t guid, const char *name, uint8_t *data,
 		       size_t data_size, uint32_t attributes, mode_t mode)
 {
 	int rc;
+	if (!ops->set_variable) {
+		efi_error("set_variable() is not implemented");
+		errno = ENOSYS;
+		return -1;
+	}
 	rc = ops->set_variable(guid, name, data, data_size, attributes, mode);
 	if (rc < 0)
 		efi_error("ops->set_variable() failed");
