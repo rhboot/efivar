@@ -114,14 +114,14 @@ etoosmall:
 		return -1;
 	}
 
-	if (add(sz, namesz, &sz)) {
+	if (ADD(sz, namesz, &sz)) {
 overflow:
 		errno = EOVERFLOW;
 		efi_error("arithmetic overflow computing allocation size");
 		return -1;
 	}
 
-	if (add(sz, datasz, &min))
+	if (ADD(sz, datasz, &min))
 		goto overflow;
 
 	if (size < min)
@@ -372,7 +372,7 @@ efi_variable_export_dmpstore(efi_variable_t *var, uint8_t *data, size_t datasz)
 
 	namesz = utf8size(var->name, -1);
 	debug("sizeof(uint16_t):%zd * namesz:%"PRIu32, sizeof(uint16_t), namesz);
-	if (mul(sizeof (uint16_t), namesz, &namesz)) {
+	if (MUL(sizeof (uint16_t), namesz, &namesz)) {
 overflow:
 		errno = EOVERFLOW;
 		efi_error("arithmetic overflow computing name size");
@@ -387,12 +387,12 @@ overflow:
 	needed -= 3;
 
 	debug("needed:%"PRIu32" + namesz:%"PRIu32, needed, namesz);
-	if (add(needed, namesz, &needed))
+	if (ADD(needed, namesz, &needed))
 		goto overflow;
 	debug("needed -> %"PRIu32, needed);
 
 	debug("needed:%"PRIu32" + var->data_size:%zd", needed, var->data_size);
-	if (add(needed, var->data_size, &needed))
+	if (ADD(needed, var->data_size, &needed))
 		goto overflow;
 	debug("needed -> %"PRIu32, needed);
 
@@ -420,17 +420,17 @@ overflow:
 	tmpu32 *= sizeof(uint16_t);
 
 	debug("namesz:%"PRIu32" - tmpu32:%"PRIu32, namesz, tmpu32);
-	if (sub(namesz, tmpu32, &tmpu32))
+	if (SUB(namesz, tmpu32, &tmpu32))
 		goto overflow;
 	debug("tmpu32 -> %"PRIu32, tmpu32);
 
 	debug("namesz:%"PRIu32" - tmpu32:%"PRIu32, namesz, tmpu32);
-	if (sub(namesz, tmpu32, &namesz))
+	if (SUB(namesz, tmpu32, &namesz))
 		goto overflow;
 	debug("namesz -> %"PRIu32, namesz);
 
 	debug("needed:%"PRIu32" - tmpu32:%"PRIu32, needed, tmpu32);
-	if (sub(needed, tmpu32, &needed))
+	if (SUB(needed, tmpu32, &needed))
 		goto overflow;
 	debug("needed -> %"PRIu32, needed);
 
@@ -504,7 +504,7 @@ efi_variable_export(efi_variable_t *var, uint8_t *data, size_t datasz)
 
 	namesz = utf8size(var->name, -1);
 	debug("sizeof(uint16_t):%zd * namesz:%"PRIu32, sizeof(uint16_t), namesz);
-	if (mul(sizeof (uint16_t), namesz, &namesz)) {
+	if (MUL(sizeof (uint16_t), namesz, &namesz)) {
 overflow:
 		errno = EOVERFLOW;
 		efi_error("arithmetic overflow computing name size");
@@ -519,12 +519,12 @@ overflow:
 	needed -= 3;
 
 	debug("needed:%"PRIu32" + namesz:%"PRIu32, needed, namesz);
-	if (add(needed, namesz, &needed))
+	if (ADD(needed, namesz, &needed))
 		goto overflow;
 	debug("needed -> %"PRIu32, needed);
 
 	debug("needed:%"PRIu32" + var->data_size:%zd", needed, var->data_size);
-	if (add(needed, var->data_size, &needed))
+	if (ADD(needed, var->data_size, &needed))
 		goto overflow;
 	debug("needed -> %"PRIu32, needed);
 
@@ -564,17 +564,17 @@ overflow:
 	tmpu32 *= sizeof(uint16_t);
 
 	debug("namesz:%"PRIu32" - tmpu32:%"PRIu32, namesz, tmpu32);
-	if (sub(namesz, tmpu32, &tmpu32))
+	if (SUB(namesz, tmpu32, &tmpu32))
 		goto overflow;
 	debug("tmpu32 -> %"PRIu32, tmpu32);
 
 	debug("needed:%"PRIu32" - tmpu32:%"PRIu32, needed, tmpu32);
-	if (sub(needed, tmpu32, &needed))
+	if (SUB(needed, tmpu32, &needed))
 		goto overflow;
 	debug("needed -> %"PRIu32, needed);
 
 	debug("namesz:%"PRIu32" - tmpu32:%"PRIu32, namesz, tmpu32);
-	if (sub(namesz, tmpu32, &namesz))
+	if (SUB(namesz, tmpu32, &namesz))
 		goto overflow;
 	debug("namesz -> %"PRIu32, namesz);
 

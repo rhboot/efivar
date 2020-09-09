@@ -7,27 +7,98 @@
 #ifndef SAFEMATH_H_
 #define SAFEMATH_H_
 
+#include "compiler.h"
+
+#if GNUC_PREREQ(5, 1) || CLANG_PREREQ(3, 8)
+
+#define ADD(a, b, res) ({						\
+	__auto_type a_ = (a);						\
+	(((res) == NULL)						\
+	       ? __builtin_add_overflow((a), (b), &a_)			\
+	       : __builtin_add_overflow((a), (b), (res)));		\
+})
+#define SUB(a, b, res) ({						\
+	__auto_type a_ = (a);						\
+	(((res) == NULL)						\
+	       ? __builtin_sub_overflow((a), (b), &a_)			\
+	       : __builtin_sub_overflow((a), (b), (res)));		\
+})
+#define MUL(a, b, res) ({						\
+	__auto_type a_ = (a);						\
+	(((res) == NULL)						\
+	       ? __builtin_mul_overflow((a), (b), &a_)			\
+	       : __builtin_mul_overflow((a), (b), (res)));		\
+})
+#define DIV(a, b, res) ({						\
+	bool ret_ = true;						\
+	if ((b) != 0) {							\
+		if (!is_null(res))					\
+			(*(res)) = (a) / (b);				\
+		ret_ = false;						\
+	} else {							\
+		errno = EOVERFLOW; /* no EDIVBYZERO? */			\
+	}								\
+	ret_;								\
+})
 /*
- * I'm not actually sure when these appear, but they're present in the
- * version in front of me.
+ * These really just exists for chaining results easily with || in an expr
  */
-#if defined(__GNUC__) && defined(__GNUC_MINOR__)
-#if __GNUC__ >= 5 && __GNUC_MINOR__ >= 1
-#define int_add(a, b, c) __builtin_add_overflow(a, b, c)
-#define uint_add(a, b, c) __builtin_add_overflow(a, b, c)
-#define long_add(a, b, c) __builtin_add_overflow(a, b, c)
-#define ulong_add(a, b, c) __builtin_add_overflow(a, b, c)
+#define MOD(a, b, res) ({						\
+	if (!is_null(res))						\
+		(*(res)) = (a) % (b);					\
+	false;								\
+})
+#define DIVMOD(a, b, resd, resm) (DIV((a), (b), (resd)) || MOD((a), (b), (resm)))
+#define ASSIGN(a, res) ADD((a), (typeof(a)) 0, (res))
+#define ABS(val, absval) ({						\
+	bool res_;							\
+	if (val < 0)							\
+		res_ = SUB((typeof(val)) 0, (val), absval);		\
+	else								\
+		res_ = ASSIGN((val), (absval));				\
+	res_;								\
+})
 
-#define int_mul(a, b, c) __builtin_mul_overflow(a, b, c)
-#define uint_mul(a, b, c) __builtin_mul_overflow(a, b, c)
-#define long_mul(a, b, c) __builtin_mul_overflow(a, b, c)
-#define ulong_mul(a, b, c) __builtin_mul_overflow(a, b, c)
+#define INCREMENT(a) ADD((a), 1, &(a))
+#define DECREMENT(a) SUB((a), 1, &(a))
 
-#define int_sub(a, b, c) __builtin_sub_overflow(a, b, c)
-#define uint_sub(a, b, c) __builtin_sub_overflow(a, b, c)
-#define long_sub(a, b, c) __builtin_sub_overflow(a, b, c)
-#define ulong_sub(a, b, c) __builtin_sub_overflow(a, b, c)
-#endif
+#define generic_sint_builtin_(op, x)					\
+	_Generic((x),							\
+		int: PASTE(__builtin_, op)(x),				\
+		long: PASTE33(__builtin_, op, l)(x),			\
+		long long: PASTE3(__builtin_, op, ll)(x)		\
+		)
+#define FFS(x) generic_sint_builtin_(ffs, x)
+#define CLRSB(x) generic_sint_builtin_(clrsb, x)
+
+#define generic_uint_builtin_(op, x)					\
+	_Generic((x),							\
+		unsigned int: PASTE(__builtin_, op)(x),			\
+		unsigned long: PASTE3(__builtin_, op, l)(x),		\
+		unsigned long long: PASTE3(__builtin_, op, ll)(x)	\
+		)
+#define CLZ(x) generic_uint_builtin_(clz, x)
+#define CTZ(x) generic_uint_builtin_(ctz, x)
+#define POPCOUNT(x) generic_uint_builtin_(popcount, x)
+#define PARITY(x) generic_uint_builtin_(parity, x)
+
+#define int_add(a, b, c) ADD(a, b, c)
+#define uint_add(a, b, c) ADD(a, b, c)
+#define long_add(a, b, c) ADD(a, b, c)
+#define ulong_add(a, b, c) ADD(a, b, c)
+
+#define int_sub(a, b, c) SUB(a, b, c)
+#define uint_sub(a, b, c) SUB(a, b, c)
+#define long_sub(a, b, c) SUB(a, b, c)
+#define ulong_sub(a, b, c) SUB(a, b, c)
+
+#define int_mul(a, b, c) MUL(a, b, c)
+#define uint_mul(a, b, c) MUL(a, b, c)
+#define long_mul(a, b, c) MUL(a, b, c)
+#define ulong_mul(a, b, c) MUL(a, b, c)
+
+#else
+#warning gcc 5.1 or newer or clang 3.8 or newer is required
 #endif
 
 #ifndef int_add
@@ -153,38 +224,18 @@
 	})
 #endif
 
-#if defined(__GNUC__) && defined(__GNUC_MINOR__)
-#if __GNUC__ >= 5 && __GNUC_MINOR__ >= 1
-#define add(a, b, c) _Generic((c),					\
-			      int *: int_add(a, b, c),			\
-			      unsigned int *: uint_add(a, b, c),	\
-			      long *: long_add(a, b, c),		\
-			      unsigned long *: ulong_add(a, b, c))
-#define sub(a, b, c) _Generic((c),					\
-			      int *: int_sub(a, b, c),			\
-			      unsigned int *: uint_sub(a, b, c),	\
-			      long *: long_sub(a, b, c),		\
-			      unsigned long *: ulong_sub(a, b, c))
-#define mul(a, b, c) _Generic((c),					\
-			      int *: int_sub(a, b, c),			\
-			      unsigned int *: uint_mul(a, b, c),	\
-			      long *: long_mul(a, b, c),		\
-			      unsigned long *: ulong_mul(a, b, c))
-#endif
-#endif
-
-#ifndef add
-#define add(a, b, c) ({						\
+#ifndef ADD
+#define ADD(a, b, c) ({						\
 		(*(c)) = ((a) + (b));				\
 		})
 #endif
-#ifndef mul
-#define mul(a, b, c) ({						\
+#ifndef MUL
+#define MUL(a, b, c) ({						\
 		(*(c)) = ((a) * (b));				\
 		})
 #endif
-#ifndef sub
-#define sub(a, b, c) ({						\
+#ifndef SUB
+#define SUB(a, b, c) ({						\
 		(*(c)) = ((a) - (b));				\
 		})
 #endif

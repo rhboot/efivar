@@ -60,7 +60,7 @@ efidp_duplicate_extra(const_efidp dp, efidp *out, size_t extra)
 		return sz;
 	}
 
-	if (add(sz, extra, &plus)) {
+	if (ADD(sz, extra, &plus)) {
 		errno = EOVERFLOW;
 		efi_error("arithmetic overflow computing allocation size");
 		return -1;
@@ -150,7 +150,7 @@ efidp_append_path(const_efidp dp0, const_efidp dp1, efidp *out)
 	}
 
 	efidp new;
-	if (add(lsz, rsz, &newsz)) {
+	if (ADD(lsz, rsz, &newsz)) {
 		errno = EOVERFLOW;
 		efi_error("arithmetic overflow computing allocation size");
 		return -1;
@@ -214,7 +214,8 @@ efidp_append_node(const_efidp dp, const_efidp dn, efidp *out)
 		}
 	}
 
-	if (add(lsz, rsz, &newsz) || add(newsz, sizeof(end_entire), &newsz)) {
+	if (ADD(lsz, rsz, &newsz) ||
+	    ADD(newsz, sizeof(end_entire), &newsz)) {
 		errno = EOVERFLOW;
 		efi_error("arithmetic overflow computing allocation size");
 		return -1;
