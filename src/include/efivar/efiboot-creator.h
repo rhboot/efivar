@@ -15,12 +15,12 @@
 #define EFIBOOT_OPTIONS_WRITE_SIGNATURE	0x00000020
 #define EFIBOOT_OPTIONS_IGNORE_PMBR_ERR	0x00000040
 
-extern ssize_t efi_generate_file_device_path(uint8_t *buf, ssize_t size,
+extern "C" ssize_t efi_generate_file_device_path(uint8_t *buf, ssize_t size,
 					     const char * const filepath,
 					     uint32_t options, ...)
 	__attribute__((__nonnull__ (3)));
 
-extern ssize_t efi_generate_file_device_path_from_esp(uint8_t *buf,
+extern "C" ssize_t efi_generate_file_device_path_from_esp(uint8_t *buf,
 						      ssize_t size,
 						      const char *devpath,
 						      int partition,
@@ -30,7 +30,7 @@ extern ssize_t efi_generate_file_device_path_from_esp(uint8_t *buf,
 	__attribute__((__visibility__ ("default")));
 
 
-extern ssize_t efi_generate_ipv4_device_path(uint8_t *buf, ssize_t size,
+extern "C" ssize_t efi_generate_ipv4_device_path(uint8_t *buf, ssize_t size,
 					     const char * const ifname,
 					     const char * const local_addr,
 					     const char * const remote_addr,

@@ -21,7 +21,7 @@
 #include <efivar/efiboot-creator.h>
 #include <efivar/efiboot-loadopt.h>
 
-extern uint32_t efi_get_libefiboot_version(void)
+extern "C" uint32_t efi_get_libefiboot_version(void)
 	__attribute__((__visibility__("default")));
 
 #endif /* EFIBOOT_H */
