@@ -44,7 +44,7 @@ typedef struct {
 	uint8_t		function;
 	uint8_t		device;
 } EFIVAR_PACKED efidp_pci;
-extern ssize_t efidp_make_pci(uint8_t *buf, ssize_t size, uint8_t device,
+extern "C" ssize_t efidp_make_pci(uint8_t *buf, ssize_t size, uint8_t device,
 			      uint8_t function);
 
 #define EFIDP_HW_PCCARD	0x02
@@ -79,7 +79,7 @@ typedef struct {
 	efi_guid_t	vendor_guid;
 	uint32_t	hardware_device;
 } EFIVAR_PACKED efidp_edd10;
-extern ssize_t efidp_make_edd10(uint8_t *buf, ssize_t size,
+extern "C" ssize_t efidp_make_edd10(uint8_t *buf, ssize_t size,
 				uint32_t hardware_device);
 
 #define EFIDP_HW_CONTROLLER	0x05
@@ -108,7 +108,7 @@ typedef struct {
 	uint32_t	hid;
 	uint32_t	uid;
 } EFIVAR_PACKED efidp_acpi_hid;
-extern ssize_t efidp_make_acpi_hid(uint8_t *buf, ssize_t size, uint32_t hid,
+extern "C" ssize_t efidp_make_acpi_hid(uint8_t *buf, ssize_t size, uint32_t hid,
 				   uint32_t uid);
 
 #define EFIDP_ACPI_HID_EX	0x02
@@ -120,7 +120,7 @@ typedef struct {
 	/* three ascii string fields follow */
 	char		hidstr[];
 } EFIVAR_PACKED efidp_acpi_hid_ex;
-extern ssize_t
+extern "C" ssize_t
 efidp_make_acpi_hid_ex(uint8_t *buf, ssize_t size,
 		       uint32_t hid, uint32_t uid, uint32_t cid,
 		       const char *hidstr, const char *uidstr,
@@ -320,7 +320,7 @@ typedef struct {
 	uint8_t		slave;
 	uint16_t	lun;
 } EFIVAR_PACKED efidp_atapi;
-extern ssize_t efidp_make_atapi(uint8_t *buf, ssize_t size, uint16_t primary,
+extern "C" ssize_t efidp_make_atapi(uint8_t *buf, ssize_t size, uint16_t primary,
 		uint16_t slave, uint16_t lun);
 
 #define EFIDP_MSG_SCSI		0x02
@@ -329,7 +329,7 @@ typedef struct {
 	uint16_t	target;
 	uint16_t	lun;
 } EFIVAR_PACKED efidp_scsi;
-extern ssize_t efidp_make_scsi(uint8_t *buf, ssize_t size, uint16_t target,
+extern "C" ssize_t efidp_make_scsi(uint8_t *buf, ssize_t size, uint16_t target,
 			       uint16_t lun);
 
 #define EFIDP_MSG_FIBRECHANNEL	0x03
@@ -412,7 +412,7 @@ typedef struct {
 	uint16_t	lun;
 } EFIVAR_PACKED efidp_sata;
 #define SATA_HBA_DIRECT_CONNECT_FLAG	0x8000
-extern ssize_t efidp_make_sata(uint8_t *buf, ssize_t size, uint16_t hba_port,
+extern "C" ssize_t efidp_make_sata(uint8_t *buf, ssize_t size, uint16_t hba_port,
 			       int16_t port_multiplier_port, uint16_t lun);
 
 #define	EFIDP_MSG_I2O		0x06
@@ -427,7 +427,7 @@ typedef struct {
 	uint8_t		mac_addr[32];
 	uint8_t		if_type;
 } EFIVAR_PACKED efidp_mac_addr;
-extern ssize_t efidp_make_mac_addr(uint8_t *buf, ssize_t size,
+extern "C" ssize_t efidp_make_mac_addr(uint8_t *buf, ssize_t size,
 				   uint8_t if_type,
 				   const uint8_t * const mac_addr,
 				   ssize_t mac_addr_size);
@@ -446,7 +446,7 @@ typedef struct {
 	uint8_t		netmask[4];
 } EFIVAR_PACKED efidp_ipv4_addr;
 /* everything here is in host byte order */
-extern ssize_t efidp_make_ipv4(uint8_t *buf, ssize_t size,
+extern "C" ssize_t efidp_make_ipv4(uint8_t *buf, ssize_t size,
 			       uint32_t local, uint32_t remote,
 			       uint32_t gateway, uint32_t netmask,
 			       uint16_t local_port, uint16_t remote_port,
@@ -563,7 +563,7 @@ typedef struct {
 	uint8_t		drive_bay_id; /* If EFIDP_SAS_TOPOLOGY_NEXTBYTE set */
 	uint16_t	rtp;
 } EFIVAR_PACKED efidp_sas;
-extern ssize_t efidp_make_sas(uint8_t *buf, ssize_t size, uint64_t sas_address);
+extern "C" ssize_t efidp_make_sas(uint8_t *buf, ssize_t size, uint64_t sas_address);
 
 /* device_topology_info Bits 0:3 (enum) */
 #define EFIDP_SAS_TOPOLOGY_MASK		0x02
@@ -639,7 +639,7 @@ typedef struct {
 	uint32_t	namespace_id;
 	uint8_t		ieee_eui_64[8];
 } EFIVAR_PACKED efidp_nvme;
-extern ssize_t efidp_make_nvme(uint8_t *buf, ssize_t size,
+extern "C" ssize_t efidp_make_nvme(uint8_t *buf, ssize_t size,
 			       uint32_t namespace_id, uint8_t *ieee_eui_64);
 
 #define EFIDP_MSG_URI		0x18
@@ -679,7 +679,7 @@ typedef struct {
 	uint8_t		slot;
 } EFIVAR_PACKED efidp_emmc;
 
-extern ssize_t efidp_make_emmc(uint8_t *buf, ssize_t size, uint32_t slot_id);
+extern "C" ssize_t efidp_make_emmc(uint8_t *buf, ssize_t size, uint32_t slot_id);
 
 #define EFIDP_MSG_BTLE		0x1e
 typedef struct {
@@ -703,7 +703,7 @@ typedef struct {
 	efidp_header	header;
 	efi_guid_t	uuid;
 } EFIVAR_PACKED efidp_nvdimm;
-extern ssize_t efidp_make_nvdimm(uint8_t *buf, ssize_t size, efi_guid_t *uuid);
+extern "C" ssize_t efidp_make_nvdimm(uint8_t *buf, ssize_t size, efi_guid_t *uuid);
 
 /* Each media subtype */
 #define EFIDP_MEDIA_HD		0x1
@@ -719,7 +719,7 @@ typedef struct {
 	uint8_t		padding[6]; /* Emperically needed */
 #endif
 } EFIVAR_PACKED EFIVAR_PACKED efidp_hd;
-extern ssize_t efidp_make_hd(uint8_t *buf, ssize_t size, uint32_t num,
+extern "C" ssize_t efidp_make_hd(uint8_t *buf, ssize_t size, uint32_t num,
 			     uint64_t part_start, uint64_t part_size,
 			     uint8_t *signature, uint8_t format,
 			     uint8_t signature_type);
@@ -755,7 +755,7 @@ typedef struct {
 	efidp_header	header;
 	uint16_t	name[];
 } EFIVAR_PACKED efidp_file;
-extern ssize_t efidp_make_file(uint8_t *buf, ssize_t size, char *filename);
+extern "C" ssize_t efidp_make_file(uint8_t *buf, ssize_t size, char *filename);
 
 #define EFIDP_MEDIA_PROTOCOL	0x5
 typedef struct {
@@ -884,11 +884,11 @@ typedef union {
 typedef efidp_data *efidp;
 typedef const efidp_data *const_efidp;
 
-extern int efidp_set_node_data(const_efidp dn, void *buf, size_t bufsize);
-extern int efidp_duplicate_path(const_efidp dp, efidp *out);
-extern int efidp_append_path(const_efidp dp0, const_efidp dp1, efidp *out);
-extern int efidp_append_node(const_efidp dp, const_efidp dn, efidp *out);
-extern int efidp_append_instance(const_efidp dp, const_efidp dpi, efidp *out);
+extern "C" int efidp_set_node_data(const_efidp dn, void *buf, size_t bufsize);
+extern "C" int efidp_duplicate_path(const_efidp dp, efidp *out);
+extern "C" int efidp_append_path(const_efidp dp0, const_efidp dp1, efidp *out);
+extern "C" int efidp_append_node(const_efidp dp, const_efidp dn, efidp *out);
+extern "C" int efidp_append_instance(const_efidp dp, const_efidp dpi, efidp *out);
 
 #if defined(__clang__)
 #pragma clang diagnostic push
@@ -1192,16 +1192,16 @@ efidp_is_valid(const_efidp dp, ssize_t limit)
 }
 
 /* and now, printing and parsing */
-extern ssize_t efidp_parse_device_node(unsigned char *path,
+extern "C" ssize_t efidp_parse_device_node(unsigned char *path,
 				       efidp out, size_t size);
-extern ssize_t efidp_parse_device_path(unsigned char *path,
+extern "C" ssize_t efidp_parse_device_path(unsigned char *path,
 				       efidp out, size_t size);
-extern ssize_t efidp_format_device_path(unsigned char *buf, size_t size,
+extern "C" ssize_t efidp_format_device_path(unsigned char *buf, size_t size,
 					const_efidp dp, ssize_t limit);
-extern ssize_t efidp_make_vendor(uint8_t *buf, ssize_t size, uint8_t type,
+extern "C" ssize_t efidp_make_vendor(uint8_t *buf, ssize_t size, uint8_t type,
 				 uint8_t subtype,  efi_guid_t vendor_guid,
 				 void *data, size_t data_size);
-extern ssize_t efidp_make_generic(uint8_t *buf, ssize_t size, uint8_t type,
+extern "C" ssize_t efidp_make_generic(uint8_t *buf, ssize_t size, uint8_t type,
 				  uint8_t subtype, ssize_t total_size);
 #define efidp_make_end_entire(buf, size)				\
 	efidp_make_generic(buf, size, EFIDP_END_TYPE, EFIDP_END_ENTIRE,	\
