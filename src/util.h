@@ -27,6 +27,8 @@
 #include <tgmath.h>
 #include <unistd.h>
 
+#include "compiler.h"
+
 #define UNUSED __attribute__((__unused__))
 #define HIDDEN __attribute__((__visibility__ ("hidden")))
 #define PUBLIC __attribute__((__visibility__ ("default")))
@@ -37,7 +39,12 @@
 #define PRINTF(...) __attribute__((__format__(printf, __VA_ARGS__)))
 #define FLATTEN __attribute__((__flatten__))
 #define PACKED __attribute__((__packed__))
-#define VERSION(sym, ver) __attribute__ ((symver (# ver)))
+#if GNUC_PREREQ(10,0)
+# define VERSION(sym, ver) __attribute__ ((symver (# ver)))
+#else
+# define VERSION(sym, ver) __asm__(".symver " # sym "," # ver)
+#endif
+
 
 #define __branch_check__(x, expect, is_constant) \
 	__builtin_expect(!!(x), expect)
