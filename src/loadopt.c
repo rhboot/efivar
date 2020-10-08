@@ -136,7 +136,9 @@ efi_loadopt_optional_data_size(efi_load_option *opt, size_t size)
 		efi_error("efi device path is not valid");
 		return -1;
 	}
-	sz = efidp_size((const_efidp)p);
+	for (sz = 0; sz < opt->file_path_list_length;
+	     sz += efidp_size((const_efidp)(p + sz)))
+		;
 	if (sz != opt->file_path_list_length) {
 		efi_error("size does not match file path size (%zd/%d)",
 			  sz, opt->file_path_list_length);
