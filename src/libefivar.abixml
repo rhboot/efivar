@@ -393,6 +393,7 @@
       <parameter type-id='type-id-4' name='line' filepath='/usr/include/string.h' line='102' column='1'/>
       <parameter type-id='type-id-4' name='error' filepath='/usr/include/string.h' line='103' column='1'/>
       <parameter type-id='type-id-58' name='fmt' filepath='/usr/include/string.h' line='104' column='1'/>
+      <parameter is-variadic='yes'/>
       <return type-id='type-id-4'/>
     </function-decl>
     <typedef-decl name='__mode_t' type-id='type-id-1' filepath='/usr/include/bits/types.h' line='150' column='1' id='type-id-59'/>
@@ -467,6 +468,7 @@
       <parameter type-id='type-id-22' name='data' filepath='/usr/include/unistd.h' line='58' column='1'/>
       <parameter type-id='type-id-23' name='data_size' filepath='/usr/include/unistd.h' line='59' column='1'/>
       <parameter type-id='type-id-3' name='attributes' filepath='/usr/include/unistd.h' line='59' column='1'/>
+      <parameter is-variadic='yes'/>
       <return type-id='type-id-4'/>
     </function-decl>
     <function-decl name='_efi_set_variable' mangled-name='_efi_set_variable' filepath='/usr/include/unistd.h' line='46' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='_efi_set_variable@libefivar.so.0'>
