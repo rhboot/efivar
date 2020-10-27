@@ -1800,6 +1800,7 @@
       <parameter type-id='type-id-18' name='size'/>
       <parameter type-id='type-id-215' name='filepath'/>
       <parameter type-id='type-id-5' name='options'/>
+      <parameter is-variadic='yes'/>
       <return type-id='type-id-18'/>
     </function-decl>
     <function-decl name='efi_generate_file_device_path_from_esp' mangled-name='efi_generate_file_device_path_from_esp' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='efi_generate_file_device_path_from_esp@@libefiboot.so.0'>
@@ -1809,6 +1810,7 @@
       <parameter type-id='type-id-25' name='partition'/>
       <parameter type-id='type-id-214' name='relpath'/>
       <parameter type-id='type-id-5' name='options'/>
+      <parameter is-variadic='yes'/>
       <return type-id='type-id-18'/>
     </function-decl>
     <function-decl name='efidp_make_hd' mangled-name='efidp_make_hd' filepath='src/include/efivar/efivar-dp.h' line='735' column='1' visibility='default' binding='global' size-in-bits='64'>
