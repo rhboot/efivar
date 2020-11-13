@@ -467,10 +467,6 @@ static int
 _vars_chmod_variable(char *path, mode_t mode)
 {
 	mode_t mask = umask(umask(0));
-	size_t len = strlen(path);
-	char c = path[len - 5];
-	path[len - 5] = '\0';
-
 	char *files[] = {
 		"", "attributes", "data", "guid", "raw_var", "size", NULL
 		};
@@ -494,7 +490,6 @@ _vars_chmod_variable(char *path, mode_t mode)
 			ret = -1;
 		}
 	}
-	path[len - 5] = c;
 	errno = saved_errno;
 	return ret;
 }
