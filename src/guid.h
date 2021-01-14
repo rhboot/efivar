@@ -88,7 +88,7 @@ text_to_guid(const char *text, efi_guid_t *guid)
 
 	/* 84be9c3e-8a32-42c0-891c-4cd3b072becc
 	 * ^ */
-	strncpy(eightbytes, text, 8);
+	memcpy(eightbytes, text, 8);
 	if (check_segment_sanity(eightbytes, 8) < 0)
 		return -1;
 	guid->a = (uint32_t)strtoul(eightbytes, NULL, 16);
@@ -96,7 +96,7 @@ text_to_guid(const char *text, efi_guid_t *guid)
 
 	/* 84be9c3e-8a32-42c0-891c-4cd3b072becc
 	 *	  ^ */
-	strncpy(fourbytes, text+9, 4);
+	memcpy(fourbytes, text+9, 4);
 	if (check_segment_sanity(fourbytes, 4) < 0)
 		return -1;
 	guid->b = (uint16_t)strtoul(fourbytes, NULL, 16);
@@ -104,7 +104,7 @@ text_to_guid(const char *text, efi_guid_t *guid)
 
 	/* 84be9c3e-8a32-42c0-891c-4cd3b072becc
 	 *	       ^ */
-	strncpy(fourbytes, text+14, 4);
+	memcpy(fourbytes, text+14, 4);
 	if (check_segment_sanity(fourbytes, 4) < 0)
 		return -1;
 	guid->c = (uint16_t)strtoul(fourbytes, NULL, 16);
@@ -112,7 +112,7 @@ text_to_guid(const char *text, efi_guid_t *guid)
 
 	/* 84be9c3e-8a32-42c0-891c-4cd3b072becc
 	 *		    ^ */
-	strncpy(fourbytes, text+19, 4);
+	memcpy(fourbytes, text+19, 4);
 	if (check_segment_sanity(fourbytes, 4) < 0)
 		return -1;
 	guid->d = (uint16_t)strtoul(fourbytes, NULL, 16);
@@ -120,42 +120,42 @@ text_to_guid(const char *text, efi_guid_t *guid)
 
 	/* 84be9c3e-8a32-42c0-891c-4cd3b072becc
 	 *			 ^ */
-	strncpy(twobytes, text+24, 2);
+	memcpy(twobytes, text+24, 2);
 	if (check_segment_sanity(twobytes, 2) < 0)
 		return -1;
 	guid->e[0] = (uint8_t)strtoul(twobytes, NULL, 16);
 
 	/* 84be9c3e-8a32-42c0-891c-4cd3b072becc
 	 *			   ^ */
-	strncpy(twobytes, text+26, 2);
+	memcpy(twobytes, text+26, 2);
 	if (check_segment_sanity(twobytes, 2) < 0)
 		return -1;
 	guid->e[1] = (uint8_t)strtoul(twobytes, NULL, 16);
 
 	/* 84be9c3e-8a32-42c0-891c-4cd3b072becc
 	 *			     ^ */
-	strncpy(twobytes, text+28, 2);
+	memcpy(twobytes, text+28, 2);
 	if (check_segment_sanity(twobytes, 2) < 0)
 		return -1;
 	guid->e[2] = (uint8_t)strtoul(twobytes, NULL, 16);
 
 	/* 84be9c3e-8a32-42c0-891c-4cd3b072becc
 	 *			       ^ */
-	strncpy(twobytes, text+30, 2);
+	memcpy(twobytes, text+30, 2);
 	if (check_segment_sanity(twobytes, 2) < 0)
 		return -1;
 	guid->e[3] = (uint8_t)strtoul(twobytes, NULL, 16);
 
 	/* 84be9c3e-8a32-42c0-891c-4cd3b072becc
 	 *				 ^ */
-	strncpy(twobytes, text+32, 2);
+	memcpy(twobytes, text+32, 2);
 	if (check_segment_sanity(twobytes, 2) < 0)
 		return -1;
 	guid->e[4] = (uint8_t)strtoul(twobytes, NULL, 16);
 
 	/* 84be9c3e-8a32-42c0-891c-4cd3b072becc
 	 *				   ^ */
-	strncpy(twobytes, text+34, 2);
+	memcpy(twobytes, text+34, 2);
 	if (check_segment_sanity(twobytes, 2) < 0)
 		return -1;
 	guid->e[5] = (uint8_t)strtoul(twobytes, NULL, 16);
