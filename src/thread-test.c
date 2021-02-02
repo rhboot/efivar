@@ -61,7 +61,7 @@ multi_pthread_join(pthread_t * threads, unsigned count, void **worst_result)
 	return 0;
 }
 
-#include <efivar.h>
+#include <efivar/efivar.h>
 #define LOOP_COUNT 100
 
 static void *loop_get_variable_size_test(void *_ __attribute__((__unused__)))
