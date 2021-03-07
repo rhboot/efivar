@@ -208,7 +208,7 @@ utf8_to_ucs2(void *s, ssize_t size, bool terminate, const unsigned char *utf8)
 		uint32_t val = 0;
 
 		if ((utf8[i] & 0xe0) == 0xe0 && !(utf8[i] & 0x10)) {
-			val = ((utf8[i+0] & 0x0f) << 10)
+			val = ((utf8[i+0] & 0x0f) << 12)
 			     |((utf8[i+1] & 0x3f) << 6)
 			     |((utf8[i+2] & 0x3f) << 0);
 			i += 3;
