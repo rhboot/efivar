@@ -86,7 +86,7 @@ libefiboot.so : | libefiboot.map libefivar.so
 libefiboot.so : LIBS=efivar
 libefiboot.so : MAP=libefiboot.map
 
-thread-test : thread-test.o
+thread-test : libefivar.so
 thread-test : CFLAGS=$(HOST_CFLAGS) -I$(TOPDIR)/src/include/efivar
 thread-test : LIBS=pthread efivar
 
