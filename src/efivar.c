@@ -470,7 +470,7 @@ usage(int ret)
 	FILE *out = ret == 0 ? stdout : stderr;
 	fprintf(out,
 		"Usage: %s [OPTION...]\n"
-		"  -t, --attributes=<attributes>     attributes to use on append\n"
+		"  -A, --attributes=<attributes>     attributes to use on append\n"
 		"  -l, --list                        list current variables\n"
 		"  -p, --print                       print variable specified by --name\n"
 		"  -D, --dmpstore                    use DMPSTORE format when exporting\n"
