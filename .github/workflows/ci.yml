@@ -1,0 +1,17 @@
+{
+    "name": "pull-request",
+    "on": {
+        "push": { "branches": "main" },
+        "pull_request": { "branches": "main" },
+    },
+    "jobs": {
+        "linux": {
+            "runs-on": "ubuntu-latest",
+            "container": "vathpela/efi-ci:f35-x64",
+            "steps": [
+                { "uses": "actions/checkout@v2" },
+                { "run": "make" },
+            ],
+        },
+    },
+}
