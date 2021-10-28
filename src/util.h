@@ -40,9 +40,14 @@
 #define FLATTEN __attribute__((__flatten__))
 #define PACKED __attribute__((__packed__))
 #if GNUC_PREREQ(10,0)
-# define VERSION(sym, ver) __attribute__ ((symver (# ver)))
+# define VERSION_ATTR(sym, ver) __attribute__ ((symver (# ver)))
 #else
-# define VERSION(sym, ver) __asm__(".symver " # sym "," # ver)
+# define VERSION_ATTR(sym, ver)
+#endif
+#if !GNUC_PREREQ(10,0)
+# define VERSION_ASM(sym, ver) __asm__(".symver " # sym "," # ver)
+#else
+# define VERSION_ASM(sym, ver)
 #endif
 
 
