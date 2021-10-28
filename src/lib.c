@@ -28,8 +28,8 @@ struct efi_var_operations default_ops = {
 
 struct efi_var_operations *ops = NULL;
 
-int NONNULL(2, 3) PUBLIC
 VERSION(_efi_set_variable, _efi_set_variable@libefivar.so.0)
+int NONNULL(2, 3) PUBLIC
 _efi_set_variable(efi_guid_t guid, const char *name, uint8_t *data,
 		  size_t data_size, uint32_t attributes)
 {
@@ -45,8 +45,8 @@ _efi_set_variable(efi_guid_t guid, const char *name, uint8_t *data,
 	return rc;
 }
 
-int NONNULL(2, 3) PUBLIC
 VERSION(_efi_set_variable_variadic, efi_set_variable@libefivar.so.0)
+int NONNULL(2, 3) PUBLIC
 _efi_set_variable_variadic(efi_guid_t guid, const char *name, uint8_t *data,
 			   size_t data_size, uint32_t attributes, ...)
 {
@@ -62,8 +62,8 @@ _efi_set_variable_variadic(efi_guid_t guid, const char *name, uint8_t *data,
 	return rc;
 }
 
-int NONNULL(2, 3) PUBLIC
 VERSION(_efi_set_variable_mode,efi_set_variable@@LIBEFIVAR_0.24)
+int NONNULL(2, 3) PUBLIC
 _efi_set_variable_mode(efi_guid_t guid, const char *name, uint8_t *data,
 		       size_t data_size, uint32_t attributes, mode_t mode)
 {

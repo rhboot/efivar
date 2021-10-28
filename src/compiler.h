@@ -61,7 +61,7 @@
 # if GNUC_PREREQ(10,0)
 #  define VERSION(sym, ver) __attribute__ ((symver (# ver)))
 # else
-#  define VERSION(sym, ver) __asm__(".symver " # sym "," # ver)
+#  define VERSION(sym, ver) __asm__(".symver " # sym "," # ver);
 # endif
 #endif
 #define NORETURN __attribute__((__noreturn__))
