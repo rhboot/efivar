@@ -2,11 +2,16 @@
 .*.h.P
 .*.d
 .*.sw?
+.gdb_history
 *~
 *.a
 *.bin
-*.env
+*.C
+/.cache/
+*.cer
 *.E
+*.env
+*.esl
 *.o
 *.map
 *.pc
@@ -17,6 +22,7 @@
 *.strace
 *.tar.*
 *.var
+compile_commands.json
 core.*
 cov-int
 vgcore.*
