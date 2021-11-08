@@ -19,7 +19,9 @@ $(call set-if-undefined,CCLD,$(CC))
 $(call set-if-undefined,HOSTCC,$(COMPILER))
 $(call set-if-undefined,HOSTCCLD,$(HOSTCC))
 
-OPTIMIZE_GCC = -flto
+# temporary, see https://sourceware.org/bugzilla/show_bug.cgi?id=28264
+#OPTIMIZE_GCC = -flto
+OPTIMIZE_GCC =
 OPTIMIZE ?= -Og $(call family,OPTIMIZE)
 DEBUGINFO ?= -g3
 WARNINGS_GCC ?=

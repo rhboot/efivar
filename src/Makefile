@@ -21,8 +21,10 @@ LIBEFIVAR_SOURCES = crc32.c dp.c dp-acpi.c dp-hw.c dp-media.c dp-message.c \
 	lib.c vars.c
 LIBEFIVAR_OBJECTS = $(patsubst %.S,%.o,$(patsubst %.c,%.o,$(LIBEFIVAR_SOURCES)))
 EFIVAR_SOURCES = efivar.c
+EFIVAR_OBJECTS = $(patsubst %.S,%.o,$(patsubst %.c,%.o,$(EFIVAR_SOURCES)))
 GENERATED_SOURCES = include/efivar/efivar-guids.h guid-symbols.c
 MAKEGUIDS_SOURCES = makeguids.c guid.c
+MAKEGUIDS_OBJECTS = $(patsubst %.S,%.o,$(patsubst %.c,%.o,$(MAKEGUIDS_SOURCES)))
 ALL_SOURCES=$(LIBEFIBOOT_SOURCES) $(LIBEFIVAR_SOURCES) $(MAKEGUIDS_SOURCES) \
 	$(sort $(wildcard include/efivar/*.h)) $(GENERATED_SOURCES) $(EFIVAR_SOURCES)
 
@@ -58,7 +60,7 @@ makeguids : CCLD=$(HOSTCCLD)
 makeguids : CFLAGS=$(HOST_CFLAGS)
 makeguids : LDFLAGS=$(HOST_LDFLAGS)
 makeguids : CCLDFLAGS=$(HOST_CCLDFLAGS)
-makeguids : $(MAKEGUIDS_SOURCES)
+makeguids : $(MAKEGUIDS_OBJECTS)
 
 guids.o : guids.S | guids.bin names.bin
 
@@ -72,10 +74,10 @@ libefivar.so : | $(GENERATED_SOURCES) libefivar.map
 libefivar.so : LIBS=dl
 libefivar.so : MAP=libefivar.map
 
-efivar : efivar.c | libefivar.so
+efivar : $(EFIVAR_OBJECTS) | libefivar.so
 efivar : LIBS=efivar dl
 
-efivar-static : efivar.c $(patsubst %.o,%.static.o,$(LIBEFIVAR_OBJECTS))
+efivar-static : $(EFIVAR_OBJECTS) $(patsubst %.o,%.static.o,$(LIBEFIVAR_OBJECTS))
 efivar-static : | $(GENERATED_SOURCES)
 efivar-static : LIBS=dl
 

@@ -21,12 +21,12 @@ family = $(foreach FAMILY_SUFFIX,$(FAMILY_SUFFIXES),$($(1)_$(FAMILY_SUFFIX)))
 
 % : %.c
 
-% : %.c
-	$(CCLD) $(CCLDFLAGS) $(CPPFLAGS) -o $@ $^ $(LDLIBS)
+% : %.o
+	$(CCLD) $(CCLDFLAGS) $(CPPFLAGS) -o $@ $(sort $^) $(LDLIBS)
 
 %-static : CCLDFLAGS+=-static
-%-static : %.c
-	$(CCLD) $(CCLDFLAGS) $(CPPFLAGS) -o $@ $^ $(LDLIBS)
+%-static : %.o
+	$(CCLD) $(CCLDFLAGS) $(CPPFLAGS) -o $@ $(sort $^) $(LDLIBS)
 
 %.so :
 	$(CCLD) $(CCLDFLAGS) $(CPPFLAGS) $(SOFLAGS) \
