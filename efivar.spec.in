@@ -8,9 +8,12 @@ Requires:       %{name}-libs = %{version}-%{release}
 ExclusiveArch:  %{efi}
 
 BuildRequires:  efi-srpm-macros
+BuildRequires:  gcc
 BuildRequires:  git
 BuildRequires:  glibc-static
 BuildRequires:  libabigail
+BuildRequires:  mandoc
+BuildRequires:  make
 # please don't fix this to reflect github's incomprehensible url that goes
 # to a different tarball.
 Source0:        https://github.com/rhboot/efivar/releases/download/%{version}/efivar-%{version}.tar.bz2
