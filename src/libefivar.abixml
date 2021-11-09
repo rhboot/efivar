@@ -75,7 +75,9 @@
     <elf-symbol name='efidp_set_node_data' version='libefivar.so.0' is-default-version='yes' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes'/>
   </elf-function-symbols>
   <elf-variable-symbols>
+    <elf-symbol name='efi_guid_auto_created_boot_option' size='16' version='LIBEFIVAR_1.38' is-default-version='yes' type='object-type' binding='global-binding' visibility='default-visibility' is-defined='yes'/>
     <elf-symbol name='efi_guid_empty' size='16' version='libefivar.so.0' is-default-version='yes' type='object-type' binding='global-binding' visibility='default-visibility' is-defined='yes'/>
+    <elf-symbol name='efi_guid_external_management' size='16' version='LIBEFIVAR_1.38' is-default-version='yes' type='object-type' binding='global-binding' visibility='default-visibility' is-defined='yes'/>
     <elf-symbol name='efi_guid_fwupdate' size='16' version='LIBEFIVAR_1.35' is-default-version='yes' type='object-type' binding='global-binding' visibility='default-visibility' is-defined='yes'/>
     <elf-symbol name='efi_guid_global' size='16' version='libefivar.so.0' is-default-version='yes' type='object-type' binding='global-binding' visibility='default-visibility' is-defined='yes'/>
     <elf-symbol name='efi_guid_grub' size='16' version='LIBEFIVAR_1.38' is-default-version='yes' type='object-type' binding='global-binding' visibility='default-visibility' is-defined='yes'/>
@@ -2254,7 +2256,7 @@
     <var-decl name='efi_guid_lenovo' type-id='type-id-37' mangled-name='efi_guid_lenovo' visibility='default' filepath='src/include/efivar/efivar-guids.h' line='14' column='1' elf-symbol-id='efi_guid_lenovo@@libefivar.so.0'/>
     <var-decl name='efi_guid_lenovo_diag' type-id='type-id-37' mangled-name='efi_guid_lenovo_diag' visibility='default' filepath='src/include/efivar/efivar-guids.h' line='15' column='1' elf-symbol-id='efi_guid_lenovo_diag@@libefivar.so.0'/>
     <var-decl name='efi_guid_x509_sha512' type-id='type-id-37' mangled-name='efi_guid_x509_sha512' visibility='default' filepath='src/include/efivar/efivar-guids.h' line='16' column='1' elf-symbol-id='efi_guid_x509_sha512@@libefivar.so.0'/>
-    <var-decl name='efi_guid_external_management' type-id='type-id-37' visibility='default' filepath='src/include/efivar/efivar-guids.h' line='17' column='1'/>
+    <var-decl name='efi_guid_external_management' type-id='type-id-37' mangled-name='efi_guid_external_management' visibility='default' filepath='src/include/efivar/efivar-guids.h' line='17' column='1' elf-symbol-id='efi_guid_external_management@@LIBEFIVAR_1.38'/>
     <var-decl name='efi_guid_pkcs7_cert' type-id='type-id-37' mangled-name='efi_guid_pkcs7_cert' visibility='default' filepath='src/include/efivar/efivar-guids.h' line='18' column='1' elf-symbol-id='efi_guid_pkcs7_cert@@libefivar.so.0'/>
     <var-decl name='efi_guid_shim' type-id='type-id-37' mangled-name='efi_guid_shim' visibility='default' filepath='src/include/efivar/efivar-guids.h' line='19' column='1' elf-symbol-id='efi_guid_shim@@libefivar.so.0'/>
     <var-decl name='efi_guid_lenovo_rescue' type-id='type-id-37' mangled-name='efi_guid_lenovo_rescue' visibility='default' filepath='src/include/efivar/efivar-guids.h' line='20' column='1' elf-symbol-id='efi_guid_lenovo_rescue@@libefivar.so.0'/>
@@ -2263,7 +2265,7 @@
     <var-decl name='efi_guid_lenovo_setup' type-id='type-id-37' mangled-name='efi_guid_lenovo_setup' visibility='default' filepath='src/include/efivar/efivar-guids.h' line='23' column='1' elf-symbol-id='efi_guid_lenovo_setup@@libefivar.so.0'/>
     <var-decl name='efi_guid_microsoft' type-id='type-id-37' mangled-name='efi_guid_microsoft' visibility='default' filepath='src/include/efivar/efivar-guids.h' line='24' column='1' elf-symbol-id='efi_guid_microsoft@@libefivar.so.0'/>
     <var-decl name='efi_guid_lenovo_2' type-id='type-id-37' mangled-name='efi_guid_lenovo_2' visibility='default' filepath='src/include/efivar/efivar-guids.h' line='25' column='1' elf-symbol-id='efi_guid_lenovo_2@@libefivar.so.0'/>
-    <var-decl name='efi_guid_auto_created_boot_option' type-id='type-id-37' visibility='default' filepath='src/include/efivar/efivar-guids.h' line='26' column='1'/>
+    <var-decl name='efi_guid_auto_created_boot_option' type-id='type-id-37' mangled-name='efi_guid_auto_created_boot_option' visibility='default' filepath='src/include/efivar/efivar-guids.h' line='26' column='1' elf-symbol-id='efi_guid_auto_created_boot_option@@LIBEFIVAR_1.38'/>
     <var-decl name='efi_guid_sha1' type-id='type-id-37' mangled-name='efi_guid_sha1' visibility='default' filepath='src/include/efivar/efivar-guids.h' line='27' column='1' elf-symbol-id='efi_guid_sha1@@libefivar.so.0'/>
     <var-decl name='efi_guid_lenovo_me_config' type-id='type-id-37' mangled-name='efi_guid_lenovo_me_config' visibility='default' filepath='src/include/efivar/efivar-guids.h' line='28' column='1' elf-symbol-id='efi_guid_lenovo_me_config@@libefivar.so.0'/>
     <var-decl name='efi_guid_global' type-id='type-id-37' mangled-name='efi_guid_global' visibility='default' filepath='src/include/efivar/efivar-guids.h' line='29' column='1' elf-symbol-id='efi_guid_global@@libefivar.so.0'/>

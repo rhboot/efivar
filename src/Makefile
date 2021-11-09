@@ -64,6 +64,17 @@ makeguids : $(MAKEGUIDS_OBJECTS)
 
 $(MAKEGUIDS_OUTPUT) : makeguids
 $(MAKEGUIDS_OUTPUT) : guids.txt
+	@set -e ; \
+	missing=no ; \
+	for x in $$(cat guids.txt  | awk '{ print $$2 }' | grep -v ^zz) ; do \
+		if ! grep -q "efi_guid_$${x}" libefivar.map.in ; then \
+			echo missing symbol "efi_guid_$${x}" ; \
+			missing=yes ; \
+		fi ; \
+	done ; \
+	if [ "$${missing}" != "no" ]; then \
+		exit 1 ; \
+	fi
 	./makeguids guids.txt guids.bin names.bin \
 		guid-symbols.c include/efivar/efivar-guids.h
 
