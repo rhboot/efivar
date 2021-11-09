@@ -7,6 +7,7 @@ INCLUDEDIR ?= $(PREFIX)/include
 BINDIR	?= $(EXEC_PREFIX)/bin
 PCDIR	?= $(LIBDIR)/pkgconfig
 DESTDIR	?=
+PKGS	?=
 
 CROSS_COMPILE	?=
 COMPILER 	?= gcc
@@ -27,6 +28,7 @@ DEBUGINFO ?= -g3
 WARNINGS_GCC ?=
 WARNINGS_CCC_ANALYZER ?= $(WARNINGS_GCC)
 WARNINGS ?= -Wall -Wextra $(call family,WARNINGS)
+ERRORS_GCC ?=
 ERRORS ?= -Werror $(call family,ERRORS)
 CPPFLAGS ?=
 override _CPPFLAGS := $(CPPFLAGS)
@@ -79,6 +81,7 @@ HOST_CPPFLAGS ?= $(CPPFLAGS)
 override _HOST_CPPFLAGS := $(HOST_CPPFLAGS)
 override HOST_CPPFLAGS = $(_HOST_CPPFLAGS) \
 			 -DEFIVAR_BUILD_ENVIRONMENT $(HOST_MARCH)
+HOST_CFLAGS_GCC ?=
 HOST_CFLAGS_CLANG ?=
 HOST_CFLAGS ?= $(CFLAGS) $(call family,HOST_CFLAGS)
 override _HOST_CFLAGS := $(HOST_CFLAGS)
@@ -108,8 +111,6 @@ NM	:= $(CROSS_COMPILE)$(COMPILER)-nm
 RANLIB	:= $(CROSS_COMPILE)$(COMPILER)-ranlib
 ABIDW	:= abidw
 ABIDIFF := abidiff
-
-PKGS	=
 
 LDLIBS=$(foreach lib,$(LIBS),-l$(lib)) $(call pkg-config-ldlibs)
 
