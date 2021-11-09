@@ -49,6 +49,7 @@ make LIBDIR=%{_libdir} BINDIR=%{_bindir} CFLAGS="$RPM_OPT_FLAGS" LDFLAGS="$RPM_L
 
 %install
 %makeinstall
+install -m 0644 src/abignore %{buildroot}%{_includedir}/efivar/.abignore
 
 %check
 %ifarch x86_64
