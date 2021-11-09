@@ -25,6 +25,8 @@ EFIVAR_OBJECTS = $(patsubst %.S,%.o,$(patsubst %.c,%.o,$(EFIVAR_SOURCES)))
 GENERATED_SOURCES = include/efivar/efivar-guids.h guid-symbols.c
 MAKEGUIDS_SOURCES = makeguids.c
 MAKEGUIDS_OBJECTS = $(patsubst %.S,%.o,$(patsubst %.c,%.o,$(MAKEGUIDS_SOURCES)))
+MAKEGUIDS_OUTPUT = guids.bin names.bin $(GENERATED_SOURCES)
+
 ALL_SOURCES=$(LIBEFIBOOT_SOURCES) $(LIBEFIVAR_SOURCES) $(MAKEGUIDS_SOURCES) \
 	$(sort $(wildcard include/efivar/*.h)) $(GENERATED_SOURCES) $(EFIVAR_SOURCES)
 
@@ -36,6 +38,9 @@ endif
 all : $(TARGETS)
 
 static : $(STATICTARGETS)
+
+$(BINTARGETS) : | $(LIBTARGETS) $(PCTARGETS)
+$(STATICTARGETS) : | $(STATICLIBTARGETS) $(PCTARGETS)
 
 abiclean :
 	@rm -vf $(patsubst %.so,%.abixml,$@)
@@ -57,23 +62,13 @@ makeguids : LDFLAGS=$(HOST_LDFLAGS)
 makeguids : CCLDFLAGS=$(HOST_CCLDFLAGS)
 makeguids : $(MAKEGUIDS_OBJECTS)
 
-guid-symbols.c : makeguids | guids.txt
+$(MAKEGUIDS_OUTPUT) : makeguids
+$(MAKEGUIDS_OUTPUT) : guids.txt
 	./makeguids guids.txt guids.bin names.bin \
 		guid-symbols.c include/efivar/efivar-guids.h
 
-guids.bin : makeguids | guids.txt
-	./makeguids guids.txt guids.bin names.bin \
-		guid-symbols.c include/efivar/efivar-guids.h
-
-names.bin : makeguids | guids.txt
-	./makeguids guids.txt guids.bin names.bin \
-		guid-symbols.c include/efivar/efivar-guids.h
-
-include/efivar/efivar-guids.h : makeguids | guids.txt
-	./makeguids guids.txt guids.bin names.bin \
-		guid-symbols.c include/efivar/efivar-guids.h
-
-guids.o : guids.S | guids.bin names.bin
+guids.o : | makeguids
+guids.o : guids.S guids.bin names.bin
 
 prep : makeguids $(GENERATED_SOURCES)
 
@@ -132,7 +127,10 @@ install : all
 test : all
 	$(MAKE) -C test $@
 
-.PHONY: test deps abiclean abixml
+.PHONY: abiclean abicheck abidw abixml all
+.PHONY: clean deps install test
 .SECONDARY : libefivar.so.1.$(VERSION) libefivar.so.1
 .SECONDARY : libefiboot.so.1.$(VERSION) libefiboot.so.1
+.SECONDARY : $(GENERATED_SOURCES)
+.INTERMEDIATE : guids.bin names.bin
 .PRECIOUS : makeguids

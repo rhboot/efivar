@@ -9,23 +9,13 @@ include $(TOPDIR)/src/include/scan-build.mk
 
 SUBDIRS := src docs
 
-all : | efivar.spec src/include/version.mk
-all :
+all : | efivar.spec src/include/version.mk prep
+all clean install prep :
 	@set -e ; for x in $(SUBDIRS) ; do \
 		$(MAKE) -C $$x $@ ; \
 	done
 
-install :
-	@set -e ; for x in $(SUBDIRS) ; do \
-		$(MAKE) -C $$x $@ ; \
-	done
-
-prep :
-	@set -e ; for x in $(SUBDIRS) ; do \
-		$(MAKE) -C $$x $@ ; \
-	done
-
-abidw abicheck efivar efivar-static static:
+abicheck abidw efivar efivar-static static : | all
 	$(MAKE) -C src $@
 
 abiupdate :
@@ -33,10 +23,13 @@ abiupdate :
 	$(MAKE) -C src abiclean abixml
 
 $(SUBDIRS) :
-	$(MAKE) -C $@
+	$(MAKE) -C $@ all
 
 brick : all
-	@set -e ; for x in $(SUBDIRS) ; do $(MAKE) -C $${x} test ; done
+	@echo -n $(info this is the rule for brick PWD:$(PWD) MAKECMDGOALS:$(MAKECMDGOALS))
+	@set -e ; for x in $(SUBDIRS) ; do \
+		$(MAKE) -C $${x} test ; \
+	done
 
 a :
 	@if [ $${EUID} != 0 ]; then \
@@ -44,16 +37,12 @@ a :
 		exit 1 ; \
 	fi
 
-.PHONY: $(SUBDIRS) a brick abiupdate
-
 GITTAG = $(shell bash -c "echo $$(($(VERSION) + 1))")
 
 efivar.spec : | Makefile src/include/version.mk
 
-clean :
-	@set -e ; for x in $(SUBDIRS) ; do \
-		$(MAKE) -C $$x $@ ; \
-	done
+clean : clean-toplevel
+clean-toplevel:
 	@rm -vf efivar.spec vgcore.* core.*
 
 test : all
@@ -88,4 +77,9 @@ archive: abicheck bumpver abidw tag efivar.spec
 	@rm -rf /tmp/efivar-$(GITTAG)
 	@echo "The archive is in efivar-$(GITTAG).tar.bz2"
 
+.PHONY: $(SUBDIRS)
+.PHONY: a abiclean abicheck abidw abiupdate all archive
+.PHONY: brick bumpver clean clean-toplevel
+.PHONY: efivar efivar-static
+.PHONY: install prep tag test test-archive
 .NOTPARALLEL:
