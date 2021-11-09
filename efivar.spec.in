@@ -5,9 +5,12 @@ Summary:        Tools to manage UEFI variables
 License:        LGPL-2.1
 URL:            https://github.com/rhinstaller/efivar
 Requires:       %{name}-libs = %{version}-%{release}
-ExclusiveArch:  %{ix86} x86_64 aarch64
+ExclusiveArch:  %{efi}
 
-BuildRequires:  git glibc-static libabigail
+BuildRequires:  efi-srpm-macros
+BuildRequires:  git
+BuildRequires:  glibc-static
+BuildRequires:  libabigail
 Source0:        https://github.com/rhboot/efivar/archive/%{version}.tar.gz
 
 %description
