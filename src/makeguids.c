@@ -159,7 +159,7 @@ main(int argc, char *argv[])
 		*end = '\0';
 
 		efi_guid_t guid;
-		rc = efi_str_to_guid(guidstr, &guid);
+		rc = efi_str_to_guid_(guidstr, &guid);
 		if (rc < 0)
 			err(1, "makeguids: \"%s\": 4 invalid data on line %d",
 				argv[1], line);

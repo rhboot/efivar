@@ -20,6 +20,11 @@ install :
 		$(MAKE) -C $$x $@ ; \
 	done
 
+prep :
+	@set -e ; for x in $(SUBDIRS) ; do \
+		$(MAKE) -C $$x $@ ; \
+	done
+
 abidw abicheck efivar efivar-static static:
 	$(MAKE) -C src $@
 

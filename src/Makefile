@@ -23,13 +23,15 @@ LIBEFIVAR_OBJECTS = $(patsubst %.S,%.o,$(patsubst %.c,%.o,$(LIBEFIVAR_SOURCES)))
 EFIVAR_SOURCES = efivar.c
 EFIVAR_OBJECTS = $(patsubst %.S,%.o,$(patsubst %.c,%.o,$(EFIVAR_SOURCES)))
 GENERATED_SOURCES = include/efivar/efivar-guids.h guid-symbols.c
-MAKEGUIDS_SOURCES = makeguids.c guid.c
+MAKEGUIDS_SOURCES = makeguids.c
 MAKEGUIDS_OBJECTS = $(patsubst %.S,%.o,$(patsubst %.c,%.o,$(MAKEGUIDS_SOURCES)))
 ALL_SOURCES=$(LIBEFIBOOT_SOURCES) $(LIBEFIVAR_SOURCES) $(MAKEGUIDS_SOURCES) \
 	$(sort $(wildcard include/efivar/*.h)) $(GENERATED_SOURCES) $(EFIVAR_SOURCES)
 
+ifneq ($(MAKECMDGOALS),clean)
 $(call deps-of,$(ALL_SOURCES)) : | deps
 -include $(call deps-of,$(ALL_SOURCES))
+endif
 
 all : $(TARGETS)
 
@@ -46,13 +48,6 @@ abidw : $(patsubst %.so,%.abixml,$(LIBTARGETS))
 
 abicheck : $(patsubst %.so,%.abicheck,$(LIBTARGETS))
 
-./guid-symbols.c : include/efivar/efivar-guids.h
-./guids.bin : include/efivar/efivar-guids.h
-./names.bin : include/efivar/efivar-guids.h
-include/efivar/efivar-guids.h : makeguids guids.txt
-	./makeguids guids.txt guids.bin names.bin \
-		guid-symbols.c include/efivar/efivar-guids.h
-
 makeguids : CPPFLAGS=$(HOST_CPPFLAGS)
 makeguids : LIBS=dl
 makeguids : CC=$(HOSTCC)
@@ -62,9 +57,27 @@ makeguids : LDFLAGS=$(HOST_LDFLAGS)
 makeguids : CCLDFLAGS=$(HOST_CCLDFLAGS)
 makeguids : $(MAKEGUIDS_OBJECTS)
 
+guid-symbols.c : makeguids | guids.txt
+	./makeguids guids.txt guids.bin names.bin \
+		guid-symbols.c include/efivar/efivar-guids.h
+
+guids.bin : makeguids | guids.txt
+	./makeguids guids.txt guids.bin names.bin \
+		guid-symbols.c include/efivar/efivar-guids.h
+
+names.bin : makeguids | guids.txt
+	./makeguids guids.txt guids.bin names.bin \
+		guid-symbols.c include/efivar/efivar-guids.h
+
+include/efivar/efivar-guids.h : makeguids | guids.txt
+	./makeguids guids.txt guids.bin names.bin \
+		guid-symbols.c include/efivar/efivar-guids.h
+
 guids.o : guids.S | guids.bin names.bin
 
-$(LIBEFIVAR_OBJECTS) $(LIBEFIBOOT_OBJECTS) : | $(GENERATED_SOURCES)
+prep : makeguids $(GENERATED_SOURCES)
+
+$(LIBEFIVAR_OBJECTS) $(LIBEFIBOOT_OBJECTS) : prep
 
 libefivar.a : | $(GENERATED_SOURCES)
 libefivar.a : $(patsubst %.o,%.static.o,$(LIBEFIVAR_OBJECTS))
@@ -122,6 +135,4 @@ test : all
 .PHONY: test deps abiclean abixml
 .SECONDARY : libefivar.so.1.$(VERSION) libefivar.so.1
 .SECONDARY : libefiboot.so.1.$(VERSION) libefiboot.so.1
-.SECONDARY : include/efivar/efivar-guids.h guid-symbols.c
-.INTERMEDIATE : guids.bin names.bin
-.PRECIOUS : guid-symbols.o makeguids
+.PRECIOUS : makeguids

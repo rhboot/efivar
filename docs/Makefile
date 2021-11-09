@@ -40,6 +40,8 @@ all :
 
 clean :
 
+prep :
+
 test :
 
 install :

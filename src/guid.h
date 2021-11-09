@@ -197,6 +197,16 @@ efi_guid_cmp_(const efi_guid_t *a, const efi_guid_t *b)
 	return 0;
 }
 
+static inline int NONNULL(1, 2)
+efi_str_to_guid_(const char *s, efi_guid_t *guid)
+{
+	int rc;
+	rc = text_to_guid(s, guid);
+	if (rc < 0)
+		efi_error("text_to_guid(\"%s\",...)", s);
+	return rc;
+}
+
 #endif /* LIBEFIVAR_GUID */
 
 // vim:fenc=utf-8:tw=75:noet

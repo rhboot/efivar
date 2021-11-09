@@ -35,11 +35,7 @@ efi_guid_is_empty(const efi_guid_t *guid)
 int NONNULL(1, 2) PUBLIC
 efi_str_to_guid(const char *s, efi_guid_t *guid)
 {
-	int rc;
-	rc = text_to_guid(s, guid);
-	if (rc < 0)
-		efi_error("text_to_guid(\"%s\",...)", s);
-	return rc;
+	return efi_str_to_guid_(s, guid);
 }
 
 int NONNULL(1) PUBLIC

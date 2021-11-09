@@ -2286,24 +2286,24 @@
       <parameter type-id='type-id-47' name='guid' filepath='src/guid.c' line='36' column='1'/>
       <return type-id='type-id-18'/>
     </function-decl>
-    <function-decl name='efi_guid_to_name' mangled-name='efi_guid_to_name' filepath='src/guid.c' line='132' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='efi_guid_to_name@@libefivar.so.0'>
-      <parameter type-id='type-id-47' name='guid' filepath='src/guid.c' line='132' column='1'/>
-      <parameter type-id='type-id-35' name='name' filepath='src/guid.c' line='132' column='1'/>
+    <function-decl name='efi_guid_to_name' mangled-name='efi_guid_to_name' filepath='src/guid.c' line='128' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='efi_guid_to_name@@libefivar.so.0'>
+      <parameter type-id='type-id-47' name='guid' filepath='src/guid.c' line='128' column='1'/>
+      <parameter type-id='type-id-35' name='name' filepath='src/guid.c' line='128' column='1'/>
       <return type-id='type-id-18'/>
     </function-decl>
-    <function-decl name='efi_guid_to_symbol' mangled-name='efi_guid_to_symbol' filepath='src/guid.c' line='147' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='efi_guid_to_symbol@@libefivar.so.0'>
-      <parameter type-id='type-id-47' name='guid' filepath='src/guid.c' line='147' column='1'/>
-      <parameter type-id='type-id-35' name='symbol' filepath='src/guid.c' line='147' column='1'/>
+    <function-decl name='efi_guid_to_symbol' mangled-name='efi_guid_to_symbol' filepath='src/guid.c' line='143' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='efi_guid_to_symbol@@libefivar.so.0'>
+      <parameter type-id='type-id-47' name='guid' filepath='src/guid.c' line='143' column='1'/>
+      <parameter type-id='type-id-35' name='symbol' filepath='src/guid.c' line='143' column='1'/>
       <return type-id='type-id-18'/>
     </function-decl>
-    <function-decl name='efi_guid_to_id_guid' mangled-name='efi_guid_to_id_guid' filepath='src/guid.c' line='161' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='efi_guid_to_id_guid@@libefivar.so.0'>
-      <parameter type-id='type-id-38' name='guid' filepath='src/guid.c' line='161' column='1'/>
-      <parameter type-id='type-id-35' name='sp' filepath='src/guid.c' line='161' column='1'/>
+    <function-decl name='efi_guid_to_id_guid' mangled-name='efi_guid_to_id_guid' filepath='src/guid.c' line='157' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='efi_guid_to_id_guid@@libefivar.so.0'>
+      <parameter type-id='type-id-38' name='guid' filepath='src/guid.c' line='157' column='1'/>
+      <parameter type-id='type-id-35' name='sp' filepath='src/guid.c' line='157' column='1'/>
       <return type-id='type-id-18'/>
     </function-decl>
-    <function-decl name='efi_name_to_guid' mangled-name='efi_name_to_guid' filepath='src/guid.c' line='229' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='efi_name_to_guid@@libefivar.so.0'>
-      <parameter type-id='type-id-30' name='name' filepath='src/guid.c' line='229' column='1'/>
-      <parameter type-id='type-id-47' name='guid' filepath='src/guid.c' line='229' column='1'/>
+    <function-decl name='efi_name_to_guid' mangled-name='efi_name_to_guid' filepath='src/guid.c' line='225' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='efi_name_to_guid@@libefivar.so.0'>
+      <parameter type-id='type-id-30' name='name' filepath='src/guid.c' line='225' column='1'/>
+      <parameter type-id='type-id-47' name='guid' filepath='src/guid.c' line='225' column='1'/>
       <return type-id='type-id-18'/>
     </function-decl>
     <function-decl name='dlopen' filepath='/usr/include/dlfcn.h' line='56' column='1' visibility='default' binding='global' size-in-bits='64'>
