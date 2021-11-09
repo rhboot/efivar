@@ -17,7 +17,11 @@ test0:
 	@$(GRUB_PREFIX)-editenv test.0.result.env set debug=all,-scripting,-lexer
 	@truncate -s 512 test.0.result.env
 	@LD_LIBRARY_PATH=$(TOPDIR)/src $(EFIVAR) -n {grub}-GRUB_ENV -f test.0.result.env -D -e test.0.result.var
-	@cmp test.0.result.var test.0.goal.var
+	@if grep -q "Do not edit" test.0.result.env ; then \
+		cmp test.0.result.var test.0.new.goal.var ; \
+	else \
+		cmp test.0.result.var test.0.old.goal.var ; \
+	fi
 	@rm test.0.result.*
 	@echo passed
 
@@ -27,7 +31,11 @@ test1:
 	@$(GRUB_PREFIX)-editenv test.1.result.env set debug=all,-scripting,-lexer
 	@truncate -s 512 test.1.result.env
 	@LD_LIBRARY_PATH=$(TOPDIR)/src $(EFIVAR) -n {grub}-GRUB_ENV -f test.1.result.env -e test.1.result.var
-	@cmp test.1.result.var test.1.goal.var
+	@if grep -q "Do not edit" test.1.result.env ; then \
+		cmp test.1.result.var test.1.new.goal.var ; \
+	else \
+		cmp test.1.result.var test.1.old.goal.var ; \
+	fi
 	@rm test.1.result.*
 	@echo passed
 
@@ -36,28 +44,41 @@ test2:
 	@$(GRUB_PREFIX)-editenv test.2.result.env set debug=all,-scripting,-lexer
 	@truncate -s 512 test.2.result.env
 	@echo test importing from DMPSTORE and exporting to DMPSTORE and symbolic guid-name validation
-	@LD_LIBRARY_PATH=$(TOPDIR)/src $(EFIVAR) -n {grub}-GRUB_ENV -f test.2.result.env -D -e test.2.0.goal.var
-	@LD_LIBRARY_PATH=$(TOPDIR)/src $(EFIVAR) -i test.2.0.goal.var -e test.2.0.result.var -D
-	@cmp test.2.0.result.var test.2.0.result.var
-	@rm test.2.0.*
+	@LD_LIBRARY_PATH=$(TOPDIR)/src $(EFIVAR) -n {grub}-GRUB_ENV -f test.2.result.env -D -e test.2.0.export.var
+	@LD_LIBRARY_PATH=$(TOPDIR)/src $(EFIVAR) -i test.2.0.export.var -e test.2.0.result.var -D
+	@if grep -q "Do not edit" test.2.result.env ; then \
+		cmp test.2.0.result.var test.2.0.new.goal.var ; \
+	else \
+		cmp test.2.0.result.var test.2.0.old.goal.var ; \
+	fi
 	@echo passed
 	@echo test importing from DMPSTORE and exporting to libefivar
-	@LD_LIBRARY_PATH=$(TOPDIR)/src $(EFIVAR) -n {grub}-GRUB_ENV -f test.2.result.env -D -e test.2.1.goal.var
-	@LD_LIBRARY_PATH=$(TOPDIR)/src $(EFIVAR) -i test.2.1.goal.var -e test.2.1.result.var
-	@cmp test.2.1.result.var test.2.1.result.var
-	@rm test.2.1.*
+	@LD_LIBRARY_PATH=$(TOPDIR)/src $(EFIVAR) -n {grub}-GRUB_ENV -f test.2.result.env -D -e test.2.1.export.var
+	@LD_LIBRARY_PATH=$(TOPDIR)/src $(EFIVAR) -i test.2.1.export.var -e test.2.1.result.var
+	@if grep -q "Do not edit" test.2.result.env ; then \
+		cmp test.2.1.result.var test.2.1.new.goal.var ; \
+	else \
+		cmp test.2.1.result.var test.2.1.old.goal.var ; \
+	fi
 	@echo passed
 	@echo test importing from libefivar and exporting to DMPSTORE and mixed-case guid-name validation
-	@LD_LIBRARY_PATH=$(TOPDIR)/src $(EFIVAR) -n 91376aff-cBa6-42bE-949d-06fde81128e8-GRUB_ENV -f test.2.result.env -e test.2.2.goal.var
-	@LD_LIBRARY_PATH=$(TOPDIR)/src $(EFIVAR) -i test.2.2.goal.var -e test.2.2.result.var -D
-	@cmp test.2.2.result.var test.2.2.result.var
-	@rm test.2.2.*
+	@LD_LIBRARY_PATH=$(TOPDIR)/src $(EFIVAR) -n 91376aff-cBa6-42bE-949d-06fde81128e8-GRUB_ENV -f test.2.result.env -e test.2.2.export.var
+	@LD_LIBRARY_PATH=$(TOPDIR)/src $(EFIVAR) -i test.2.2.export.var -e test.2.2.result.var -D
+	@if grep -q "Do not edit" test.2.result.env ; then \
+		cmp test.2.2.result.var test.2.2.new.goal.var ; \
+	else \
+		cmp test.2.2.result.var test.2.2.old.goal.var ; \
+	fi
 	@echo passed
 	@echo test importing from libefivar and exporting to libefivar and guid-name validation
-	@LD_LIBRARY_PATH=$(TOPDIR)/src $(EFIVAR) -n 91376aff-cba6-42be-949d-06fde81128e8-GRUB_ENV -f test.2.result.env -e test.2.3.goal.var
-	@LD_LIBRARY_PATH=$(TOPDIR)/src $(EFIVAR) -i test.2.3.goal.var -e test.2.3.result.var
-	@cmp test.2.3.result.var test.2.3.result.var
-	@rm test.2.3.* test.2.result.env
+	@LD_LIBRARY_PATH=$(TOPDIR)/src $(EFIVAR) -n 91376aff-cba6-42be-949d-06fde81128e8-GRUB_ENV -f test.2.result.env -e test.2.3.export.var
+	@LD_LIBRARY_PATH=$(TOPDIR)/src $(EFIVAR) -i test.2.3.export.var -e test.2.3.result.var
+	@if grep -q "Do not edit" test.2.result.env ; then \
+		cmp test.2.3.result.var test.2.3.new.goal.var ; \
+	else \
+		cmp test.2.3.result.var test.2.3.old.goal.var ; \
+	fi
+	@rm test.2.*result.* test.2.*export.var
 	@echo passed
 	@echo testing efivar -L
 	@LD_LIBRARY_PATH=$(TOPDIR)/src $(EFIVAR) -L | \
