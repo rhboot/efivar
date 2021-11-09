@@ -122,7 +122,7 @@ install : all
 	$(INSTALL) -d -m 755 $(DESTDIR)$(INCLUDEDIR)/efivar
 	$(foreach x, $(sort $(wildcard $(TOPDIR)/src/include/efivar/*.h)), $(INSTALL) -m 644 $(x) $(DESTDIR)$(INCLUDEDIR)/efivar/$(notdir $(x));)
 	$(INSTALL) -d -m 755 $(DESTDIR)$(BINDIR)
-	$(foreach x, $(BINTARGETS), $(INSTALL) -m 755 $(x) $(DESTDIR)$(BINDIR);)
+	$(foreach x, $(filter-out %-test,$(BINTARGETS)), $(INSTALL) -m 755 $(x) $(DESTDIR)$(BINDIR);)
 
 test : all
 	$(MAKE) -C test $@
