@@ -231,11 +231,7 @@ efi_variable_import_efivar(uint8_t *data, size_t datasz, efi_variable_t **var_ou
 			return -1;
 		*var.guid = *(efi_guid_t *)ptr;
 		ptr += sizeof (efi_guid_t);
-		debug("var.guid:"GUID_FORMAT,
-		      var.guid->a, var.guid->b, var.guid->c,
-		      bswap_16(var.guid->d),
-		      var.guid->e[0], var.guid->e[1], var.guid->e[2],
-		      var.guid->e[3], var.guid->e[4], var.guid->e[5]);
+		debug("var.guid:"GUID_FORMAT, GUID_FORMAT_ARGS(var.guid));
 
 		uint32_t name_len = *(uint32_t *)ptr;
 		ptr += sizeof (uint32_t);

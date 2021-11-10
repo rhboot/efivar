@@ -10,8 +10,6 @@
 #include <dirent.h>
 #include <limits.h>
 
-#define GUID_FORMAT "%08x-%04x-%04x-%04x-%02x%02x%02x%02x%02x%02x"
-
 struct efi_variable {
 	uint64_t attrs;
 	efi_guid_t *guid;

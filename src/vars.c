@@ -233,9 +233,7 @@ vars_get_variable_size(efi_guid_t guid, const char *name, size_t *size)
 
 	char *path = NULL;
 	int rc = asprintf(&path, "%s%s-"GUID_FORMAT"/size", get_vars_path(),
-			  name, guid.a, guid.b, guid.c, bswap_16(guid.d),
-			  guid.e[0], guid.e[1], guid.e[2], guid.e[3],
-			  guid.e[4], guid.e[5]);
+			  name, GUID_FORMAT_ARGS(&guid));
 	if (rc < 0) {
 		efi_error("asprintf failed");
 		goto err;
@@ -303,11 +301,8 @@ vars_get_variable(efi_guid_t guid, const char *name, uint8_t **data,
 	 */
 	ratelimit = geteuid() == 0 ? 0 : 10000;
 
-	rc = asprintf(&path, "%s%s-" GUID_FORMAT "/raw_var",
-			  get_vars_path(),
-			  name, guid.a, guid.b, guid.c, bswap_16(guid.d),
-			  guid.e[0], guid.e[1], guid.e[2],
-			  guid.e[3], guid.e[4], guid.e[5]);
+	rc = asprintf(&path, "%s%s-" GUID_FORMAT "/raw_var", get_vars_path(),
+		      name, GUID_FORMAT_ARGS(&guid));
 	if (rc < 0) {
 		efi_error("asprintf failed");
 		goto err;
@@ -397,11 +392,8 @@ vars_del_variable(efi_guid_t guid, const char *name)
 	size_t buf_size = 0;
 	char *delvar;
 
-	rc = asprintf(&path, "%s%s-" GUID_FORMAT "/raw_var",
-			  get_vars_path(),
-			  name, guid.a, guid.b, guid.c, bswap_16(guid.d),
-			  guid.e[0], guid.e[1], guid.e[2],
-			  guid.e[3], guid.e[4], guid.e[5]);
+	rc = asprintf(&path, "%s%s-" GUID_FORMAT "/raw_var", get_vars_path(),
+		      name, GUID_FORMAT_ARGS(&guid));
 	if (rc < 0) {
 		efi_error("asprintf failed");
 		goto err;
@@ -504,9 +496,7 @@ vars_chmod_variable(efi_guid_t guid, const char *name, mode_t mode)
 
 	char *path;
 	int rc = asprintf(&path, "%s%s-" GUID_FORMAT, get_vars_path(),
-			  name, guid.a, guid.b, guid.c, bswap_16(guid.d),
-			  guid.e[0], guid.e[1], guid.e[2], guid.e[3],
-			  guid.e[4], guid.e[5]);
+			  name, GUID_FORMAT_ARGS(&guid));
 	if (rc < 0) {
 		efi_error("asprintf failed");
 		return -1;
@@ -544,9 +534,7 @@ vars_set_variable(efi_guid_t guid, const char *name, uint8_t *data,
 
 	char *path;
 	int rc = asprintf(&path, "%s%s-" GUID_FORMAT "/data", get_vars_path(),
-			  name, guid.a, guid.b, guid.c, bswap_16(guid.d),
-			  guid.e[0], guid.e[1], guid.e[2], guid.e[3],
-			  guid.e[4], guid.e[5]);
+			  name, GUID_FORMAT_ARGS(&guid));
 	if (rc < 0) {
 		efi_error("asprintf failed");
 		goto err;

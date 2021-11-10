@@ -45,29 +45,12 @@ efi_guid_to_str(const efi_guid_t *guid, char **sp)
 	int rc = -1;
 
 	if (!sp) {
-		rc = snprintf(NULL, 0, GUID_FORMAT,
-				le32_to_cpu(guid->a),
-				le16_to_cpu(guid->b),
-				le16_to_cpu(guid->c),
-				be16_to_cpu(guid->d),
-				guid->e[0], guid->e[1], guid->e[2], guid->e[3],
-				guid->e[4], guid->e[5]);
+		rc = snprintf(NULL, 0, GUID_FORMAT, GUID_FORMAT_ARGS(guid));
 	} else if (sp && *sp) {
 		rc = snprintf(*sp, GUID_LENGTH_WITH_NUL, GUID_FORMAT,
-				le32_to_cpu(guid->a),
-				le16_to_cpu(guid->b),
-				le16_to_cpu(guid->c),
-				be16_to_cpu(guid->d),
-				guid->e[0], guid->e[1], guid->e[2], guid->e[3],
-				guid->e[4], guid->e[5]);
+			      GUID_FORMAT_ARGS(guid));
 	} else {
-		rc = asprintf(&ret, GUID_FORMAT,
-				le32_to_cpu(guid->a),
-				le16_to_cpu(guid->b),
-				le16_to_cpu(guid->c),
-				be16_to_cpu(guid->d),
-				guid->e[0], guid->e[1], guid->e[2], guid->e[3],
-				guid->e[4], guid->e[5]);
+		rc = asprintf(&ret, GUID_FORMAT, GUID_FORMAT_ARGS(guid));
 		if (rc >= 0)
 			*sp = ret;
 	}
@@ -178,28 +161,12 @@ efi_guid_to_id_guid(const efi_guid_t *guid, char **sp)
 	}
 	if (!sp) {
 		return snprintf(NULL, 0, "{"GUID_FORMAT"}",
-				le32_to_cpu(guid->a),
-				le16_to_cpu(guid->b),
-				le16_to_cpu(guid->c),
-				be16_to_cpu(guid->d),
-				guid->e[0], guid->e[1], guid->e[2], guid->e[3],
-				guid->e[4], guid->e[5]);
+				GUID_FORMAT_ARGS(guid));
 	} else if (sp && *sp) {
 		return snprintf(*sp, GUID_LENGTH_WITH_NUL+2, "{"GUID_FORMAT"}",
-				le32_to_cpu(guid->a),
-				le16_to_cpu(guid->b),
-				le16_to_cpu(guid->c),
-				be16_to_cpu(guid->d),
-				guid->e[0], guid->e[1], guid->e[2], guid->e[3],
-				guid->e[4], guid->e[5]);
+				GUID_FORMAT_ARGS(guid));
 	}
-	rc = asprintf(&ret, "{"GUID_FORMAT"}",
-				le32_to_cpu(guid->a),
-				le16_to_cpu(guid->b),
-				le16_to_cpu(guid->c),
-				be16_to_cpu(guid->d),
-			guid->e[0], guid->e[1], guid->e[2], guid->e[3],
-			guid->e[4], guid->e[5]);
+	rc = asprintf(&ret, "{"GUID_FORMAT"}", GUID_FORMAT_ARGS(guid));
 	if (rc >= 0)
 		*sp = ret;
 	return rc;

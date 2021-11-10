@@ -116,10 +116,7 @@ list_all_variables(void)
 	char *name = NULL;
 	int rc;
 	while ((rc = efi_get_next_variable_name(&guid, &name)) > 0)
-		 printf(GUID_FORMAT "-%s\n",
-			guid->a, guid->b, guid->c, bswap_16(guid->d),
-			guid->e[0], guid->e[1], guid->e[2], guid->e[3],
-			guid->e[4], guid->e[5], name);
+		 printf(GUID_FORMAT "-%s\n", GUID_FORMAT_ARGS(guid), name);
 
 	if (rc < 0) {
 		fprintf(stderr, "efivar: error listing variables: %m\n");
@@ -196,10 +193,7 @@ show_variable_data(efi_guid_t guid, const char *name, uint32_t attributes,
 		   int display_type)
 {
 	if (display_type == SHOW_VERBOSE) {
-		printf("GUID: "GUID_FORMAT "\n",
-		       guid.a, guid.b, guid.c, bswap_16(guid.d),
-		       guid.e[0], guid.e[1], guid.e[2], guid.e[3],
-		       guid.e[4], guid.e[5]);
+		printf("GUID: "GUID_FORMAT "\n", GUID_FORMAT_ARGS(&guid));
 		printf("Name: \"%s\"\n", name);
 		printf("Attributes:\n");
 		for (int i = 0; attribute_names[i][0] != '\0'; i++) {
@@ -622,13 +616,9 @@ int main(int argc, char *argv[])
 				if (!efi_guid_cmp(&sentinal, &guid[i].guid))
 					break;
 				printf("{"GUID_FORMAT"} {%s} %s %s\n",
-					guid[i].guid.a, guid[i].guid.b,
-					guid[i].guid.c, bswap_16(guid[i].guid.d),
-					guid[i].guid.e[0], guid[i].guid.e[1],
-					guid[i].guid.e[2], guid[i].guid.e[3],
-					guid[i].guid.e[4], guid[i].guid.e[5],
-					guid[i].symbol + strlen("efi_guid_"),
-					guid[i].symbol, guid[i].name);
+				       GUID_FORMAT_ARGS(&guid[i].guid),
+				       guid[i].symbol + strlen("efi_guid_"),
+				       guid[i].symbol, guid[i].name);
 			}
 			break;
 					}

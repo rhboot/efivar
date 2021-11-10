@@ -100,10 +100,7 @@ efivarfs_probe(void)
 
 #define make_efivarfs_path(str, guid, name) ({				\
 		asprintf(str, "%s%s-" GUID_FORMAT, get_efivarfs_path(),	\
-			name, (guid).a, (guid).b, (guid).c,		\
-			bswap_16((guid).d),				\
-			(guid).e[0], (guid).e[1], (guid).e[2],		\
-			(guid).e[3], (guid).e[4], (guid).e[5]);		\
+			name, GUID_FORMAT_ARGS(&(guid)));		\
 	})
 
 static int
