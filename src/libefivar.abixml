@@ -2320,6 +2320,12 @@
       <parameter type-id='type-id-31'/>
       <return type-id='type-id-26'/>
     </function-decl>
+    <function-decl name='strncmp' filepath='/usr/include/string.h' line='143' column='1' visibility='default' binding='global' size-in-bits='64'>
+      <parameter type-id='type-id-30'/>
+      <parameter type-id='type-id-30'/>
+      <parameter type-id='type-id-27'/>
+      <return type-id='type-id-18'/>
+    </function-decl>
     <function-decl name='strndup' filepath='/usr/include/string.h' line='179' column='1' visibility='default' binding='global' size-in-bits='64'>
       <parameter type-id='type-id-30'/>
       <parameter type-id='type-id-27'/>

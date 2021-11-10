@@ -169,6 +169,34 @@ struct guidname {
 	char name[256];
 };
 
+static inline int
+efi_int_cmp_(uint64_t a, uint64_t b)
+{
+	if (a < b)
+		return -1;
+	if (a > b)
+		return 1;
+	return 0;
+}
+
+static inline int NONNULL(1, 2)
+efi_guid_cmp_(const efi_guid_t *a, const efi_guid_t *b)
+{
+	if (a->a != b->a)
+		return efi_int_cmp_(a->a, b->a);
+	if (a->b != b->b)
+		return efi_int_cmp_(a->b, b->b);
+	if (a->c != b->c)
+		return efi_int_cmp_(a->c, b->c);
+	if (a->d != b->d)
+		return efi_int_cmp_(be16_to_cpu(a->d), be16_to_cpu(b->d));
+	for (size_t i = 0; i < sizeof(a->e)/sizeof(a->e[0]); i++) {
+		if (a->e[i] != b->e[i])
+			return efi_int_cmp_(a->e[i], b->e[i]);
+	}
+	return 0;
+}
+
 #endif /* LIBEFIVAR_GUID */
 
 // vim:fenc=utf-8:tw=75:noet

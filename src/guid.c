@@ -19,7 +19,7 @@ extern const efi_guid_t efi_guid_zero;
 int NONNULL(1, 2) PUBLIC
 efi_guid_cmp(const efi_guid_t *a, const efi_guid_t *b)
 {
-	return memcmp(a, b, sizeof (efi_guid_t));
+	return efi_guid_cmp_(a, b);
 }
 
 int NONNULL(1) PUBLIC
@@ -91,7 +91,7 @@ cmpguidp(const void *p1, const void *p2)
 	struct guidname *gn1 = (struct guidname *)p1;
 	struct guidname *gn2 = (struct guidname *)p2;
 
-	return memcmp(&gn1->guid, &gn2->guid, sizeof (gn1->guid));
+	return efi_guid_cmp_(&gn1->guid, &gn2->guid);
 }
 
 static int NONNULL(1, 2)
@@ -100,7 +100,7 @@ cmpnamep(const void *p1, const void *p2)
 	struct guidname *gn1 = (struct guidname *)p1;
 	struct guidname *gn2 = (struct guidname *)p2;
 
-	return memcmp(gn1->name, gn2->name, sizeof (gn1->name));
+	return strncmp(gn1->name, gn2->name, sizeof (gn1->name));
 }
 
 static int NONNULL(1, 2)

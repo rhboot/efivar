@@ -14,6 +14,7 @@
 #include <sys/stat.h>
 
 #include "efivar.h"
+#include "guid.h"
 
 efi_guid_t const efi_guid_zero = {0};
 efi_guid_t const efi_guid_empty = {0};
@@ -29,7 +30,7 @@ cmpguidp(const void *p1, const void *p2)
 	struct guidname *gn1 = (struct guidname *)p1;
 	struct guidname *gn2 = (struct guidname *)p2;
 
-	return memcmp(&gn1->guid, &gn2->guid, sizeof (gn1->guid));
+	return efi_guid_cmp_(&gn1->guid, &gn2->guid);
 }
 
 static int
@@ -38,7 +39,7 @@ cmpnamep(const void *p1, const void *p2)
 	struct guidname *gn1 = (struct guidname *)p1;
 	struct guidname *gn2 = (struct guidname *)p2;
 
-	return memcmp(gn1->name, gn2->name, sizeof (gn1->name));
+	return strncmp(gn1->name, gn2->name, sizeof (gn1->name));
 }
 
 struct guid_aliases {
