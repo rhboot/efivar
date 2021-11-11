@@ -143,6 +143,7 @@ list_sort(struct list_head *head,
 	for (i = 0; i < nmemb; i++) {
 		INIT_LIST_HEAD(array[i]);
 		list_add(array[i], head);
+		head = head->next;
 	}
 	free(array);
 
