@@ -532,8 +532,7 @@ int main(int argc, char *argv[])
 			case 'A':
 				attributes = strtoul(optarg, NULL, 10);
 				if (errno == ERANGE || errno == EINVAL)
-					err(1,
-					    "invalid argument for -t: %s: %m\n",
+					err(1, "invalid argument for -A: %s",
 					    optarg);
 				break;
 			case 'a':
