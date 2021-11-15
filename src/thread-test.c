@@ -5,6 +5,10 @@
  */
 
 #include <alloca.h>
+#include <efivar.h>
+#include <err.h>
+#include <errno.h>
+#include <getopt.h>
 #include <pthread.h>
 #include <stdlib.h>
 #include <stdio.h>
@@ -12,6 +16,10 @@
 #include <inttypes.h>
 #include <sys/types.h>
 #include <unistd.h>
+
+#define LOOP_COUNT 100
+
+static int verbosity = 0;
 
 // returns: the number of threads created
 static size_t
@@ -24,7 +32,7 @@ multi_pthread_create(pthread_t * threads, unsigned count,
 	for (; i < count; i++) {
 		result = pthread_create(&threads[i], NULL, start_routine, NULL);
 		if (result != 0) {
-			perror("pthread_create");
+			err(1, "pthread_create failed");
 			break;
 		}
 	}
@@ -36,7 +44,11 @@ multi_pthread_create(pthread_t * threads, unsigned count,
 #define TEST_FAIL ((void*)1)
 static const char *test_result_str(void *result)
 {
-	return (result == TEST_SUCCESS) ? "SUCCESS" : "FAIL";
+	if (result == TEST_SUCCESS)
+		return "SUCCESS";
+	if (result == PTHREAD_CANCELED)
+		return "CANCELED";
+	return "FAIL";
 }
 
 // returns: 0 on success
@@ -49,11 +61,12 @@ multi_pthread_join(pthread_t * threads, unsigned count, void **worst_result)
 
 		join_result = pthread_join(threads[i], &result);
 		if (join_result != 0) {
-			perror("pthread_join");
+			warnx("pthread_join failed");
 			return 1;
 		}
-		printf("[MAIN-THREAD] child %d exited with %s\n", i,
-		       test_result_str(result));
+		if (verbosity >= 1)
+			printf("[MAIN-THREAD] child %d exited with %s\n", i,
+			       test_result_str(result));
 		if (result != NULL) {
 			*worst_result = result;
 		}
@@ -61,12 +74,10 @@ multi_pthread_join(pthread_t * threads, unsigned count, void **worst_result)
 	return 0;
 }
 
-#include <efivar.h>
-#define LOOP_COUNT 100
-
 static void *loop_get_variable_size_test(void *_ __attribute__((__unused__)))
 {
-	//printf("[DEBUG] test running on new thread!\n");
+	if (verbosity >= 2)
+		printf("[DEBUG] test running on new thread!\n");
 	for (unsigned i = 0; i < LOOP_COUNT; i++) {
 		size_t size;
 		efi_guid_t guid = { 0 };
@@ -74,11 +85,11 @@ static void *loop_get_variable_size_test(void *_ __attribute__((__unused__)))
 
 		result = efi_get_variable_size(guid, "foo2", &size);
 		if (result == 0 || errno != ENOENT) {
-			printf("fail, iteration=%u, result=%d errno=%d, expected error\n",
-			       i, result, errno);
+			err(1, "fail, iteration=%u, result=%d expected ENOENT, got",
+			    i, result);
 			return TEST_FAIL;
-		} else {
-			//printf("[DEBUG] iteration=%u, result=%d errno=%d\n", i, result, errno);
+		} else if (verbosity >= 2) {
+			printf("[DEBUG] iteration=%u, result=%d errno=%d\n", i, result, errno);
 		}
 	}
 	return TEST_SUCCESS;
@@ -96,22 +107,71 @@ static int multithreaded_test(size_t count, void *(*test_func)(void *))
 		// error already logged
 		return 1;
 	}
-	printf("worst result %s\n", test_result_str(worst_result));
+	if (verbosity >= 1)
+		printf("worst result %s\n", test_result_str(worst_result));
 	return (worst_result == TEST_SUCCESS) ? 0 : -1;
+}
+
+static void __attribute__((__noreturn__))
+usage(int ret)
+{
+	FILE *out = ret == 0 ? stdout : stderr;
+	fprintf(out,
+		"Usage: %s [OPTION...]\n"
+		"  -v, --verbose                     be more verbose\n"
+		"  -t, --thread-count N              use N threads\n"
+		"Help options:\n"
+		"  -?, --help                        Show this help message\n"
+		"      --usage                       Display brief usage message\n",
+		program_invocation_short_name);
+	exit(ret);
 }
 
 int main(int argc, char *argv[])
 {
-	int thread_count;
+	unsigned long thread_count = 64;
+	char *sopts = "vt:?";
+	struct option lopts[] = {
+		{"help", no_argument, 0, '?'},
+		{"quiet", no_argument, 0, 'q'},
+		{"thread-count", no_argument, 0, 't'},
+		{"usage", no_argument, 0, 0},
+		{"verbose", no_argument, 0, 'v'},
+		{0, 0, 0, 0},
+	};
+	int c;
+	int i;
+	int rc;
 
-	if (argc != 2) {
-		printf("Usage: %s THREAD_COUNT\n", argv[0]);
-		return 1;
+	while ((c = getopt_long(argc, argv, sopts, lopts, &i)) != -1) {
+		switch (c) {
+		case 'q':
+			verbosity -= 1;
+			break;
+		case 't':
+			thread_count = strtoul(optarg, NULL, 0);
+			if (errno == ERANGE || errno == EINVAL)
+				err(1, "invalid argument for -t: %s", optarg);
+			break;
+		case 'v':
+			verbosity += 1;
+			break;
+		case '?':
+			usage(EXIT_SUCCESS);
+			break;
+		case 0:
+			if (strcmp(lopts[i].name, "usage"))
+				usage(EXIT_SUCCESS);
+			break;
+		}
 	}
 
-	thread_count = atoi(argv[1]);
-	printf("thread count %d\n", thread_count);
-	return multithreaded_test(thread_count, loop_get_variable_size_test);
+	if (verbosity >= 1)
+		printf("thread count %lu\n", thread_count);
+	rc = multithreaded_test(thread_count, loop_get_variable_size_test);
+	if (verbosity >= 0)
+		printf("thread test %s\n", rc == 0 ? "passed" : "failed");
+	return rc;
 }
 
 // vim:fenc=utf-8:tw=75:noet

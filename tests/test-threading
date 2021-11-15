@@ -23,15 +23,8 @@ LIBEFIVAR_OPS=efivarfs
 export EFIVARFS_PATH LD_LIBRARY_PATH LIBEFIVAR_OPS
 
 test() {
-	echo "================================================================================"
-	echo "testing $1 thread..."
-	echo "================================================================================"
-	if "${TOPDIR}/src/thread-test" "$1" ; then
-		echo "${1} thread worked"
-	else
-		echo "${1} thread failed"
-		exit 1
-	fi
+	echo -n "testing $1 thread..."
+	"${TOPDIR}/src/thread-test" -t "$1"
 }
 
 test 1
