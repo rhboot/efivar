@@ -7,6 +7,12 @@
 #define STATIC_HEXDUMP_H
 
 #include <ctype.h>
+#include <inttypes.h>
+#include <stdbool.h>
+#include <stdio.h>
+#include <unistd.h>
+
+#include "compiler.h"
 
 /*
  * prepare_hex(): writes the address of the region being dumped and the hex

@@ -27,7 +27,10 @@
 #include <tgmath.h>
 #include <unistd.h>
 
+#include "include/efivar/efivar.h"
+
 #include "compiler.h"
+#include "list.h"
 
 static inline int UNUSED
 read_file(int fd, uint8_t **result, size_t *bufsize)
@@ -195,7 +198,7 @@ lcm(uint64_t x, uint64_t y)
 		_rc;						\
 	})
 
-static inline ssize_t
+static inline ssize_t UNUSED
 get_file(uint8_t **result, const char * const fmt, ...)
 {
 	char *path;
