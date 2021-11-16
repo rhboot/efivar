@@ -212,7 +212,7 @@ show_variable_data(efi_guid_t guid, const char *name, uint32_t attributes,
 				printf("%02x ", data[index]);
 				if (index % 8 == 7)
 					printf(" ");
-				if (isprint(data[index]))
+				if (safe_to_print(data[index]))
 					charbuf[index % 16] = data[index];
 				index++;
 				if (index % 16 == 0)

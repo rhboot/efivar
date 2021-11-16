@@ -13,6 +13,7 @@
 #include <unistd.h>
 
 #include "compiler.h"
+#include "util.h"
 
 /*
  * prepare_hex(): writes the address of the region being dumped and the hex
@@ -82,7 +83,7 @@ prepare_text(void *data, size_t size, char *buf, int position)
 		buf[offset++] = ' ';
 	buf[offset++] = '|';
 	for (j = 0; j < 16 - after - before; j++) {
-		if (isprint(((uint8_t *)data)[j]))
+		if (safe_to_print(((uint8_t *)data)[j]))
 			buf[offset++] = ((uint8_t *)data)[j];
 		else
 			buf[offset++] = '.';

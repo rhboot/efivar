@@ -9,6 +9,7 @@
 #define EFIVAR_UTIL_H 1
 
 #include <alloca.h>
+#include <ctype.h>
 #include <endian.h>
 #include <errno.h>
 #include <fcntl.h>
@@ -363,6 +364,39 @@ out_of_range:
 	free(ret);
 	errno = ERANGE;
 	return NULL;
+}
+
+#define LEG(x, y)                                           \
+	({                                                  \
+		intmax_t x_ = (intmax_t)(x);                \
+		intmax_t y_ = (intmax_t)(y);                \
+		((x_ > y_) ? '>' : ((x_ < y_) ? '<' : '='));\
+	})
+
+/*
+ * this is isprint() but it doesn't consider characters that move the
+ * cursor or have other side effects as printable
+ */
+static inline bool UNUSED
+safe_to_print(const int c)
+{
+	if (!isprint(c))
+		return false;
+
+	switch (c) {
+	case '\a':
+	case '\b':
+	case '\t':
+	case '\n':
+	case '\v':
+	case '\f':
+	case '\r':
+		return false;
+	default:
+		break;
+	}
+
+	return true;
 }
 
 #endif /* EFIVAR_UTIL_H */
