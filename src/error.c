@@ -174,6 +174,7 @@ dbglog_write(void *cookie, const char *buf, size_t size)
 			sz = fwrite(buf + ret, 1, sz, log);
 			if (sz < 1 && (ferror(log) || feof(log)))
 				break;
+			fflush(log);
 		} else if (efi_dbglog_fd >= 0 && sz > 0) {
 			if ((intptr_t)cookie != 0 &&
 			    (intptr_t)cookie == efi_dbglog_cookie &&

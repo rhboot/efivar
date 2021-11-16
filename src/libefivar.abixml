@@ -2049,12 +2049,12 @@
     <function-decl name='efi_error_pop' mangled-name='efi_error_pop' filepath='src/error.c' line='133' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='efi_error_pop@@LIBEFIVAR_1.38'>
       <return type-id='type-id-19'/>
     </function-decl>
-    <function-decl name='efi_set_verbose' mangled-name='efi_set_verbose' filepath='src/error.c' line='278' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='efi_set_verbose@@LIBEFIVAR_1.36'>
-      <parameter type-id='type-id-21' name='verbosity' filepath='src/error.c' line='278' column='1'/>
-      <parameter type-id='type-id-30' name='errlog' filepath='src/error.c' line='278' column='1'/>
+    <function-decl name='efi_set_verbose' mangled-name='efi_set_verbose' filepath='src/error.c' line='279' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='efi_set_verbose@@LIBEFIVAR_1.36'>
+      <parameter type-id='type-id-21' name='verbosity' filepath='src/error.c' line='279' column='1'/>
+      <parameter type-id='type-id-30' name='errlog' filepath='src/error.c' line='279' column='1'/>
       <return type-id='type-id-19'/>
     </function-decl>
-    <function-decl name='efi_get_verbose' mangled-name='efi_get_verbose' filepath='src/error.c' line='286' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='efi_get_verbose@@LIBEFIVAR_1.36'>
+    <function-decl name='efi_get_verbose' mangled-name='efi_get_verbose' filepath='src/error.c' line='287' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='efi_get_verbose@@LIBEFIVAR_1.36'>
       <return type-id='type-id-21'/>
     </function-decl>
     <function-decl name='fclose' filepath='/usr/include/stdio.h' line='172' column='1' visibility='default' binding='global' size-in-bits='64'>

@@ -15,7 +15,7 @@ all clean install prep :
 		$(MAKE) -C $$x $@ ; \
 	done
 
-abicheck abidw efivar efivar-static static : | all
+abicheck abidw efisecdb efisecdb-static efivar efivar-static static : | all
 	$(MAKE) -C src $@
 
 abiupdate :
@@ -44,6 +44,7 @@ efivar.spec : | Makefile src/include/version.mk
 clean : clean-toplevel
 clean-toplevel:
 	@rm -vf efivar.spec vgcore.* core.*
+	@$(MAKE) -C tests clean
 
 test : all
 	@$(MAKE) -C tests

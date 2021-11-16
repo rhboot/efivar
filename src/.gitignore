@@ -3,6 +3,8 @@
 /efivar
 efivar-guids.h
 efivar-static
+efisecdb
+efisecdb-static
 makeguids
 guid-symbols.c
 guids.lds

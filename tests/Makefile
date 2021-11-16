@@ -8,7 +8,15 @@ TESTS = test.dmpstore.export \
 	test.grubenv.var \
 	test.bootorder.var \
 	test.conin.var \
-	test.efivar.threading
+	test.efivar.threading \
+	test.parse.db \
+	test.esl.annotation \
+	test.esl.sha256.unsorted \
+	test.esl.sha256.ascending \
+	test.esl.sha256.removal.descending \
+	test.esl.sha256.addition.unsorted \
+	test.esl.cert.addition \
+	test.esl.cert.removal
 
 all: clean $(TESTS)
 
@@ -30,9 +38,19 @@ else
 endif
 
 EFIVAR ?= $(VALGRIND) $(TOPDIR)/src/efivar $(loud)
+EFISECDB ?= $(VALGRIND) $(TOPDIR)/src/efisecdb $(loud)
+
+EFIVAR ?= $(VALGRIND) $(TOPDIR)/src/efivar $(loud)
 
 clean:
-	$(quiet)rm $(rmverbose) -f test.*.result*
+	$(quiet)rm $(rmverbose) -f test.*.result* \
+		test.esl.annotation.esl.result \
+		test.esl.cert.addition.esl.goal.txt \
+		test.esl.cert.removal.esl.goal.txt \
+		test.esl.sha256.addition.unsorted.esl.goal.txt \
+		test.esl.sha256.ascending.esl.goal.txt \
+		test.esl.sha256.removal.descending.esl.goal.txt \
+		test.esl.sha256.unsorted.esl.goal.txt
 
 test.dmpstore.export:
 	$(quiet)echo testing export to DMPSTORE format
@@ -128,6 +146,140 @@ test.conin.var:
 test.efivar.threading:
 	$(quiet)echo testing threading in libefivar
 	$(quiet)TOPDIR=$(TOPDIR) $(TOPDIR)/tests/test-threading
+
+test.esl.dump.x509.sha256:
+	$(quiet)echo testing ESL dumping with x509 + sha256 sums
+	$(quiet)LD_LIBRARY_PATH=$(TOPDIR)/src $(EFISECDB) \
+		-i test.esl.sha256.addition.unsorted.esl.goal -A > test.esl.dump.x509.sha256.result.txt
+	$(quiet)cmp test.esl.dump.x509.sha256.goal.txt test.esl.sha256.addition.unsorted.result.txt
+	$(quiet)echo passed
+
+%.goal.txt : %.goal
+	$(quiet)LD_LIBRARY_PATH=$(TOPDIR)/src ../src/efisecdb --dump --annotate \
+		-s none -i $< > $@
+
+%.result.txt : %.result
+	$(quiet)LD_LIBRARY_PATH=$(TOPDIR)/src ../src/efisecdb --dump --annotate \
+		-s none -i $< > $@
+
+%.var.result.txt : %.var
+	$(quiet)LD_LIBRARY_PATH=$(TOPDIR)/src ../src/efisecdb --dump --annotate \
+		-s none -i $< > $@
+
+test.parse.db: test.parse.db.var.result.txt
+	$(quiet)echo testing parsing db variable
+	$(quiet)if ! cmp test.parse.db.var.goal.txt test.parse.db.var.result.txt ; then \
+		diff -U 200 test.parse.db.var.goal.txt test.parse.db.var.result.txt ; \
+		exit 1 ; \
+	fi
+	$(quiet)echo passed
+
+test.esl.annotation.esl.result : test.esl.annotation.esl
+	$(quiet)cp $(rmverbose) $< $@
+
+test.esl.annotation: test.esl.annotation.esl.goal.txt
+test.esl.annotation: test.esl.annotation.esl.result.txt
+	$(quiet)echo testing ESL annotation with x509 + sha256 sums
+	$(quiet)if ! cmp $@.esl.goal.txt $@.esl.result.txt ; then \
+		diff -U 200 $@.esl.goal.txt $@.esl.result.txt ; \
+		exit 1 ; \
+	fi
+	$(quiet)echo passed
+
+test.esl.sha256.unsorted.esl.result:
+	$(quiet)LD_LIBRARY_PATH=$(TOPDIR)/src $(EFISECDB) -g {redhat} -t sha256 -a \
+		-h 87428fc522803d31065e7bce3cf03fe475096631e5e07bbd7a0fde60c4cf25c7 \
+		-h 0263829989b6fd954f72baaf2fc64bc2e2f01d692d4de72986ea808f6e99813f \
+		-h a3a5e715f0cc574a73c3f9bebb6bc24f32ffd5b67b387244c2c909da779a1478 \
+		-h 8d74beec1be996322ad76813bafb92d40839895d6dd7ee808b17ca201eac98be \
+		-s none -f -o $@
+
+test.esl.sha256.unsorted: test.esl.sha256.unsorted.esl.result.txt test.esl.sha256.unsorted.esl.goal.txt
+	$(quiet)echo testing ESL creation with sha256 sums '(unsorted)'
+	$(quiet)if ! cmp $@.esl.goal $@.esl.result ; then \
+		diff -U 200 $@.esl.goal.txt $@.esl.result.txt ; \
+		exit 1 ; \
+	fi
+	$(quiet)echo passed
+
+test.esl.sha256.ascending.esl.result:
+	$(quiet)LD_LIBRARY_PATH=$(TOPDIR)/src $(EFISECDB) -g {redhat} -t sha256 -a \
+		-h 87428fc522803d31065e7bce3cf03fe475096631e5e07bbd7a0fde60c4cf25c7 \
+		-h 0263829989b6fd954f72baaf2fc64bc2e2f01d692d4de72986ea808f6e99813f \
+		-h a3a5e715f0cc574a73c3f9bebb6bc24f32ffd5b67b387244c2c909da779a1478 \
+		-h 8d74beec1be996322ad76813bafb92d40839895d6dd7ee808b17ca201eac98be \
+		-s data -s ascending -f -o $@
+
+test.esl.sha256.ascending: test.esl.sha256.ascending.esl.goal.txt test.esl.sha256.ascending.esl.result.txt
+	$(quiet)echo testing ESL creation with sha256 sums '(ascending)'
+	$(quiet)if ! cmp $@.esl.goal $@.esl.result ; then \
+		diff -U 200 $@.esl.goal.txt $@.esl.result.txt ; \
+		exit 1 ; \
+	fi
+	$(quiet)echo passed
+
+test.esl.sha256.removal.descending.esl.result:
+	$(quiet)LD_LIBRARY_PATH=$(TOPDIR)/src $(EFISECDB) -g {redhat} -t sha256 \
+		-i test.esl.sha256.unsorted.esl.goal -r \
+		-h a3a5e715f0cc574a73c3f9bebb6bc24f32ffd5b67b387244c2c909da779a1478 \
+		-s data -s descending -f -o $@
+
+test.esl.sha256.removal.descending: test.esl.sha256.removal.descending.esl.result.txt
+test.esl.sha256.removal.descending: test.esl.sha256.removal.descending.esl.goal.txt
+	$(quiet)echo testing ESL entry removal with sha256 sums '(descending)'
+	$(quiet)if ! cmp $@.esl.goal $@.esl.result ; then \
+		diff -U 200 $@.esl.goal.txt $@.esl.result.txt ; \
+		exit 1 ; \
+	fi
+	$(quiet)echo passed
+
+test.esl.sha256.addition.unsorted.esl.result:
+	$(quiet)LD_LIBRARY_PATH=$(TOPDIR)/src $(EFISECDB) -g {redhat} -t sha256 \
+		-i test.esl.sha256.addition.unsorted.esl.goal -a \
+		-h a3a5e715f0cc574a73c3f9bebb6bc24f32ffd5b67b387244c2c909da779a1478 \
+		-s none -f -o test.esl.sha256.addition.unsorted.esl.result
+
+test.esl.sha256.addition.unsorted: test.esl.sha256.addition.unsorted.esl.result.txt
+test.esl.sha256.addition.unsorted: test.esl.sha256.addition.unsorted.esl.goal.txt
+	$(quiet)echo testing adding a sha256 sum to an existing ESL '(unsorted)'
+	$(quiet)if ! cmp $@.esl.goal $@.esl.result ; then \
+		diff -U 200 $@.esl.goal.txt $@.esl.result.txt ; \
+		exit 1 ; \
+	fi
+	$(quiet)echo passed
+
+test.esl.cert.addition.esl.result:
+	$(quiet)LD_LIBRARY_PATH=$(TOPDIR)/src $(EFISECDB) -g {redhat} -t sha256 \
+		-i test.esl.sha256.unsorted.esl.goal -a -c test.esl.cert.addition.cert.cer \
+		-f -o test.esl.cert.addition.esl.result
+
+test.esl.cert.addition:
+	$(quiet)echo testing ESL entry addition with x509 cert
+	$(quiet)$(MAKE) test.esl.cert.addition.esl.result.txt test.esl.cert.addition.esl.goal.txt
+	$(quiet)if ! cmp test.esl.cert.addition.esl.goal test.esl.cert.addition.esl.result ; then \
+		diff -U 200 test.esl.cert.addition.esl.goal.txt test.esl.cert.addition.esl.result.txt ; \
+		exit 1 ; \
+	fi
+	$(quiet)rm -f test.esl.cert.addition.esl.result test.esl.cert.addition.*.esl.txt
+	$(quiet)echo passed
+
+test.esl.cert.removal.esl.goal.txt : test.esl.cert.removal.esl.goal
+
+test.esl.cert.removal.esl.result:
+	$(quiet)LD_LIBRARY_PATH=$(TOPDIR)/src $(EFISECDB) -g {redhat} -t sha256 \
+		-i test.esl.cert.addition.cert.esl.goal -r -c test.esl.cert.addition.cert.cer \
+		-f -o test.esl.cert.removal.esl.result
+
+test.esl.cert.removal:
+	$(quiet)echo testing ESL entry removal with x509 cert
+	$(quiet)$(MAKE) test.esl.cert.removal.esl.goal.txt test.esl.cert.removal.esl.result.txt
+	$(quiet)if ! cmp test.esl.cert.removal.esl.goal test.esl.cert.removal.esl.result ; then \
+		diff -U 200 test.esl.cert.removal.esl.goal.txt test.esl.cert.removal.esl.result.txt ; \
+		exit 1 ; \
+	fi
+	$(quiet)cmp test.esl.cert.removal.esl.goal test.esl.cert.removal.esl.result
+	$(quiet)rm -f test.esl.cert.removal.esl.result
+	$(quiet)echo passed
 
 .PHONY: all clean $(TESTS)
 

@@ -1,3 +1,10 @@
+!*.cer
+!*.esl
+*.esl.txt
+*.result.*
 !*.var
 *.export.var
-*.result.*
+test.*.result.var
+test.*.esl.result
+test.*.esl.goal.txt
+!test.esl.annotation.esl.goal.txt

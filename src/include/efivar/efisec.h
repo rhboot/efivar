@@ -10,6 +10,7 @@
 #include <efivar/efivar.h>
 
 #include <efivar/efisec-types.h>
+#include <efivar/efisec-secdb.h>
 
 extern uint32_t efi_get_libefisec_version(void)
 	__attribute__((__visibility__("default")));

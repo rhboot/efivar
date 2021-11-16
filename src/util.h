@@ -470,6 +470,7 @@ out_of_range:
 		intmax_t y_ = (intmax_t)(y);                \
 		((x_ > y_) ? '>' : ((x_ < y_) ? '<' : '='));\
 	})
+#define LEGR(r) (((r) > 0) ? '>' : (((r) < 0) ? '<' : '='))
 
 /*
  * this is isprint() but it doesn't consider characters that move the

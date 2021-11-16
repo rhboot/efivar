@@ -4,4 +4,12 @@ libefisec.so.0 {
 
 LIBEFISEC_1.38 {
 	global:	efi_get_libefisec_version;
+		efi_secdb_add_entry;
+		efi_secdb_algs_;
+		efi_secdb_del_entry;
+		efi_secdb_free;
+		efi_secdb_new;
+		efi_secdb_parse;
+		efi_secdb_realize;
+		efi_secdb_set_bool;
 } libefisec.so.0;

@@ -8,13 +8,13 @@ include $(TOPDIR)/src/include/workarounds.mk
 
 LIBTARGETS=libefivar.so libefiboot.so libefisec.so
 STATICLIBTARGETS=libefivar.a libefiboot.a libefisec.a
-BINTARGETS=efivar thread-test
-STATICBINTARGETS=efivar-static
+BINTARGETS=efivar efisecdb thread-test
+STATICBINTARGETS=efivar-static efisecdb-static
 PCTARGETS=efivar.pc efiboot.pc efisec.pc
 TARGETS=$(LIBTARGETS) $(BINTARGETS) $(PCTARGETS)
 STATICTARGETS=$(STATICLIBTARGETS) $(STATICBINTARGETS)
 
-LIBEFISEC_SOURCES = sec.c
+LIBEFISEC_SOURCES = sec.c secdb.c esl-iter.c util.c
 LIBEFISEC_OBJECTS = $(patsubst %.c,%.o,$(LIBEFISEC_SOURCES))
 LIBEFIBOOT_SOURCES = crc32.c creator.c disk.c gpt.c loadopt.c path-helpers.c \
 		     linux.c $(sort $(wildcard linux-*.c))
@@ -23,8 +23,10 @@ LIBEFIVAR_SOURCES = crc32.c dp.c dp-acpi.c dp-hw.c dp-media.c dp-message.c \
 	efivarfs.c error.c export.c guid.c guid-symbols.c \
 	lib.c vars.c time.c
 LIBEFIVAR_OBJECTS = $(patsubst %.S,%.o,$(patsubst %.c,%.o,$(LIBEFIVAR_SOURCES)))
-EFIVAR_SOURCES = efivar.c util.c
+EFIVAR_SOURCES = efivar.c guid.c util.c
 EFIVAR_OBJECTS = $(patsubst %.S,%.o,$(patsubst %.c,%.o,$(EFIVAR_SOURCES)))
+EFISECDB_SOURCES = efisecdb.c guid-symbols.c secdb-dump.c util.c
+EFISECDB_OBJECTS = $(patsubst %.S,%.o,$(patsubst %.c,%.o,$(EFISECDB_SOURCES)))
 GENERATED_SOURCES = include/efivar/efivar-guids.h guid-symbols.c
 MAKEGUIDS_SOURCES = makeguids.c util.c
 MAKEGUIDS_OBJECTS = $(patsubst %.S,%.o,$(patsubst %.c,%.o,$(MAKEGUIDS_SOURCES)))
@@ -113,6 +115,14 @@ libefisec.a : $(patsubst %.o,%.static.o,$(LIBEFISEC_OBJECTS))
 libefisec.so : $(LIBEFISEC_OBJECTS)
 libefisec.so : | libefisec.map
 libefisec.so : MAP=libefisec.map
+
+efisecdb : $(EFISECDB_OBJECTS) | libefisec.so
+efisecdb : LIBS=efivar efisec dl
+
+efisecdb-static : $(EFISECDB_OBJECTS)
+efisecdb-static : $(patsubst %.o,%.static.o,$(LIBEFISEC_OBJECTS) $(LIBEFIVAR_OBJECTS))
+efisecdb-static : | $(GENERATED_SOURCES)
+efisecdb-static : LIBS=dl
 
 thread-test : libefivar.so
 thread-test : CFLAGS=$(HOST_CFLAGS) -I$(TOPDIR)/src/include/efivar

@@ -66,7 +66,9 @@ make abicheck
 %license COPYING
 %doc README.md
 %{_bindir}/efivar
+%{_bindir}/efisecdb
 %exclude %{_bindir}/efivar-static
+%exclude %{_bindir}/efisecdb-static
 %{_mandir}/man1/*
 
 %files devel
