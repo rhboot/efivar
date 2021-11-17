@@ -7,10 +7,18 @@
     "jobs": {
         "linux": {
             "runs-on": "ubuntu-latest",
-            "container": "vathpela/efi-ci:f35-x64",
+            "strategy": {
+                "fail-fast": false,
+                "matrix": {
+                    "container": [
+                        "f33", "f34", "f35", "f36", "centos8", "centos9",
+                    ],
+                },
+            },
+            "container": "vathpela/efi-ci:${{ matrix.container }}-x64",
             "steps": [
                 { "uses": "actions/checkout@v2" },
-                { "run": "make" },
+                { "run": "make all test" },
             ],
         },
     },
