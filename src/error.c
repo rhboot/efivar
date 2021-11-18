@@ -12,7 +12,6 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
-#include <sys/mman.h>
 #include <sys/param.h>
 #include <sys/random.h>
 #include <unistd.h>
@@ -145,8 +144,6 @@ static FILE *efi_errlog, *efi_dbglog;
 #ifndef ANDROID
 static int efi_dbglog_fd = -1;
 static intptr_t efi_dbglog_cookie;
-static char efi_dbglog_buf[4096];
-static bool efi_dbglog_memfd = false;
 #endif
 static int log_level;
 
@@ -178,8 +175,6 @@ dbglog_write(void *cookie, const char *buf, size_t size)
 			if (sz < 1 && (ferror(log) || feof(log)))
 				break;
 		} else if (efi_dbglog_fd >= 0 && sz > 0) {
-			if (efi_dbglog_memfd)
-				lseek(efi_dbglog_fd, 0, SEEK_SET);
 			if ((intptr_t)cookie != 0 &&
 			    (intptr_t)cookie == efi_dbglog_cookie &&
 			    (ret + sz) < 0 &&
@@ -262,12 +257,7 @@ efi_error_init(void)
 	};
 
 	efi_dbglog_fd = open("/dev/null", O_WRONLY|O_APPEND|O_CLOEXEC);
-	if (efi_dbglog_fd < 0) {
-		efi_dbglog_fd = memfd_create("efivar-debug.log", MFD_CLOEXEC);
-		if (efi_dbglog_fd >= 0)
-			efi_dbglog_memfd = true;
-	}
-	if (efi_dbglog_fd == -1)
+	if (efi_dbglog_fd < 0)
 		return;
 
 	bytes = getrandom(&efi_dbglog_cookie, sizeof(efi_dbglog_cookie), 0);
@@ -275,9 +265,6 @@ efi_error_init(void)
 		efi_dbglog_cookie = 0;
 
 	efi_dbglog = fopencookie((void *)efi_dbglog_cookie, "a", io_funcs);
-	if (efi_dbglog && efi_dbglog_memfd)
-		setvbuf(efi_dbglog, efi_dbglog_buf, _IOLBF,
-			sizeof(efi_dbglog_buf));
 #endif
 }
 
