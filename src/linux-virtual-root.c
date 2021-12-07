@@ -49,12 +49,12 @@ parse_virtual_root(struct device *dev UNUSED, const char *current, const char *r
 		rc = sscanf(current, subdirs[i].fmt, &pos0, &pos1);
 		debug("current:'%s' rc:%d pos0:%d pos1:%d\n", current, rc, pos0, pos1);
 		dbgmk("         ", pos0, pos1);
-		if (rc == 1) {
-			sz += pos1;
-			current += pos1;
-			if (i > 0)
-				goto found;
-		}
+		if (rc != 0 || pos0 == -1 || pos1 == -1)
+			continue;
+		sz += pos1;
+		current += pos1;
+		if (i > 0)
+			goto found;
 	}
 
 	sz = 0;
