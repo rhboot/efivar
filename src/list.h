@@ -34,7 +34,7 @@ typedef struct list_head list_t;
 		(ptr)->prev = (ptr); \
 	})
 
-static inline int
+static inline int __attribute__((__unused__))
 list_empty(const struct list_head *head)
 {
 	return head->next == head;
@@ -56,7 +56,7 @@ list_add(struct list_head *new, struct list_head *head)
 	__list_add(new, head, head->next);
 }
 
-static inline void
+static inline void __attribute__((__unused__))
 list_add_tail(struct list_head *new, struct list_head *head)
 {
 	__list_add(new, head->prev, head);
@@ -75,7 +75,7 @@ __list_del_entry(struct list_head *entry)
 	__list_del(entry->prev, entry->next);
 }
 
-static inline void
+static inline void __attribute__((__unused__))
 list_del(struct list_head *entry)
 {
 	__list_del_entry(entry);
@@ -119,7 +119,7 @@ list_size(struct list_head *entry)
  * Sort a list with cmp()
  * creates a temporary array on the heap
  */
-static inline int
+static inline int __attribute__((__unused__))
 list_sort(struct list_head *head,
 	  int (*cmp)(const void *a, const void *b, void *state),
 	  void *state)
@@ -134,6 +134,18 @@ list_sort(struct list_head *head,
 		return -1;
 
 	list_for_each(pos, head) {
+		/*
+		 * clang-analyzer can't quite figure out that this iterator
+		 * is limited by the same expression as list_size() is
+		 * using, so it complains that this is eventually accessing
+		 * uninitialized memory.  This check below accomplishes
+		 * nothing, it's effectively i < nmemb, but done with
+		 * pointers.
+		 */
+		char *ptr = (char *)&array[i];
+		char *end = (char *)&array[nmemb];
+		if (ptr >= end)
+			break;
 		array[i++] = pos;
 	}
 
