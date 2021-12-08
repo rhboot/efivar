@@ -222,7 +222,7 @@ efi_strptime(const char *s, const char *format, efi_time_t *time)
 char *
 efi_asctime_r(const efi_time_t * const time, char *buf)
 {
-	struct tm tm;
+	struct tm tm = { 0, };
 	char *ret;
 
 	newtz(time->timezone);
