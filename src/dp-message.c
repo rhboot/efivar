@@ -333,29 +333,14 @@ _format_message_dn(unsigned char *buf, size_t size, const_efidp dp)
 		format(buf, size, off, "I2O", "I2O(%d)", dp->i2o.target);
 		break;
 	case EFIDP_MSG_INFINIBAND:
-		if (dp->infiniband.resource_flags &
-				EFIDP_INFINIBAND_RESOURCE_IOC_SERVICE) {
-			format(buf, size, off, "Infiniband",
-	"Infiniband(%08x,%"PRIx64"%"PRIx64",%"PRIx64",%"PRIu64",%"PRIu64")",
-				    dp->infiniband.resource_flags,
-				    dp->infiniband.port_gid[1],
-				    dp->infiniband.port_gid[0],
-				    dp->infiniband.service_id,
-				    dp->infiniband.target_port_id,
-				    dp->infiniband.device_id);
-		} else {
-			format(buf, size, off, "Infiniband",
-			       "Infiniband(%08x,%"PRIx64"%"PRIx64",",
-			       dp->infiniband.resource_flags,
-			       dp->infiniband.port_gid[1],
-			       dp->infiniband.port_gid[0]);
-			format_guid(buf, size, off, "Infiniband",
-				    &dp->infiniband.ioc_guid);
-			format(buf, size, off, "Infiniband",
-			       ",%"PRIu64",%"PRIu64")",
-			       dp->infiniband.target_port_id,
-			       dp->infiniband.device_id);
-		}
+		format(buf, size, off, "Infiniband",
+		       "Infiniband(%08x,%"PRIx64"%"PRIx64",%"PRIx64",%"PRIu64",%"PRIu64")",
+		       dp->infiniband.resource_flags,
+		       dp->infiniband.port_gid[1],
+		       dp->infiniband.port_gid[0],
+		       dp->infiniband.ioc_guid,
+		       dp->infiniband.target_port_id,
+		       dp->infiniband.device_id);
 		break;
 	case EFIDP_MSG_MAC_ADDR:
 		format(buf, size, off, "MAC", "MAC(");
