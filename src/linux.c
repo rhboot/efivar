@@ -329,6 +329,7 @@ print_dev_dp_node(struct device *dev, struct dev_probe *probe)
 	uint8_t *dp;
 	ssize_t bufsz;
 	uint8_t *buf;
+	ssize_t sz;
 
 	dpsz = probe->create(dev, NULL, 0, 0);
 	if (dpsz <= 0)
@@ -342,9 +343,12 @@ print_dev_dp_node(struct device *dev, struct dev_probe *probe)
 	if (dpsz <= 0)
 		return;
 
-	efidp_make_end_entire(dp + dpsz, 4);
+	sz = efidp_make_end_entire(dp + dpsz, 4);
+	if (sz < 0)
+		return;
+	dpsz += sz;
 	bufsz = efidp_format_device_path(NULL, 0,
-					 (const_efidp)dp, dpsz + 4);
+					 (const_efidp)dp, dpsz);
 	if (bufsz <= 0)
 		return;
 
@@ -353,7 +357,7 @@ print_dev_dp_node(struct device *dev, struct dev_probe *probe)
 		return;
 
 	bufsz = efidp_format_device_path(buf, bufsz,
-			(const_efidp)dp, dpsz + 4);
+			(const_efidp)dp, dpsz);
 	if (bufsz <= 0)
 		return;
 
