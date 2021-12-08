@@ -9,6 +9,8 @@
 
 #pragma GCC diagnostic warning "-Wcpp"
 
+#include "fix_coverity.h"
+
 #include <efivar/efivar.h>
 
 #include "compiler.h"

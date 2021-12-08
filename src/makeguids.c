@@ -175,7 +175,7 @@ main(int argc, char *argv[])
 	printf("%d lines\n", line-1);
 
 	fprintf(header, "#ifndef EFIVAR_GUIDS_H\n#define EFIVAR_GUIDS_H 1\n\n");
-
+	fprintf(symout, "#include \"fix_coverity.h\"\n");
 	fprintf(symout, "#include <efivar/efivar.h>\n");
 	fprintf(symout, "#include <endian.h>\n");
 	fprintf(symout, """\n\

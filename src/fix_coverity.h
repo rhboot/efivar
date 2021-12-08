@@ -69,10 +69,29 @@
  */
 #ifdef __x86_64__
 #if __COVERITY_GCC_VERSION_AT_LEAST(7, 0)
+#include <sys/cdefs.h>
+#ifdef __attribute_malloc__
+#undef __attribute_malloc__
+#define __attribute_malloc__
+#endif
+#ifdef __attr_dealloc
+#undef __attr_dealloc
+#define __attr_dealloc(a, b)
+#endif
 #if 0
 typedef float _Float128 __attribute__((__mode__(__TF__)));
 typedef __complex__ float __cfloat128 __attribute__ ((__mode__ (__TC__)));
 typedef _Complex float __cfloat128 __attribute__ ((__mode__ (__TC__)));
+#elif __GNUC__ >= 11
+#define _Mdouble_complex_
+#define _COMPLEX_H
+#ifdef __MATHCALL
+#undef __MATCHALL
+#define __MATHCALL(x)
+#include <bits/cmathcalls.h>
+#undef _COMPLEX_H
+#include <complex.h>
+#endif
 #else
 #include <unistd.h>
 #define __cplusplus 201103L

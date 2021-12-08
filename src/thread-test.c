@@ -4,6 +4,8 @@
  * Copyright Jonathan Marler
  */
 
+#include "fix_coverity.h"
+
 #include <alloca.h>
 #include <efivar.h>
 #include <err.h>
