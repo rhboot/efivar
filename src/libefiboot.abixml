@@ -845,17 +845,18 @@
         <var-decl name='tv_usec' type-id='type-id-110' visibility='default' filepath='/usr/include/bits/types/struct_timeval.h' line='15' column='1'/>
       </data-member>
     </class-decl>
-    <pointer-type-def type-id='type-id-111' size-in-bits='64' id='type-id-112'/>
-    <qualified-type-def type-id='type-id-112' restrict='yes' id='type-id-113'/>
-    <pointer-type-def type-id='type-id-34' size-in-bits='64' id='type-id-114'/>
-    <qualified-type-def type-id='type-id-85' restrict='yes' id='type-id-115'/>
-    <pointer-type-def type-id='type-id-85' size-in-bits='64' id='type-id-116'/>
-    <function-decl name='gpt_disk_get_partition_info' filepath='src/gpt.h' line='142' column='1' visibility='default' binding='global' size-in-bits='64'>
+    <pointer-type-def type-id='type-id-29' size-in-bits='64' id='type-id-112'/>
+    <pointer-type-def type-id='type-id-111' size-in-bits='64' id='type-id-113'/>
+    <qualified-type-def type-id='type-id-113' restrict='yes' id='type-id-114'/>
+    <pointer-type-def type-id='type-id-34' size-in-bits='64' id='type-id-115'/>
+    <qualified-type-def type-id='type-id-85' restrict='yes' id='type-id-116'/>
+    <pointer-type-def type-id='type-id-85' size-in-bits='64' id='type-id-117'/>
+    <function-decl name='gpt_disk_get_partition_info' filepath='src/gpt.h' line='149' column='1' visibility='default' binding='global' size-in-bits='64'>
       <parameter type-id='type-id-15'/>
       <parameter type-id='type-id-31'/>
-      <parameter type-id='type-id-114'/>
-      <parameter type-id='type-id-114'/>
-      <parameter type-id='type-id-109'/>
+      <parameter type-id='type-id-115'/>
+      <parameter type-id='type-id-115'/>
+      <parameter type-id='type-id-112'/>
       <parameter type-id='type-id-109'/>
       <parameter type-id='type-id-109'/>
       <parameter type-id='type-id-15'/>
@@ -878,7 +879,7 @@
       <return type-id='type-id-15'/>
     </function-decl>
     <function-decl name='posix_memalign' filepath='/usr/include/stdlib.h' line='585' column='1' visibility='default' binding='global' size-in-bits='64'>
-      <parameter type-id='type-id-116'/>
+      <parameter type-id='type-id-117'/>
       <parameter type-id='type-id-86'/>
       <parameter type-id='type-id-86'/>
       <return type-id='type-id-15'/>
@@ -895,8 +896,8 @@
       <return type-id='type-id-15'/>
     </function-decl>
     <function-decl name='gettimeofday' filepath='/usr/include/sys/time.h' line='67' column='1' visibility='default' binding='global' size-in-bits='64'>
-      <parameter type-id='type-id-113'/>
-      <parameter type-id='type-id-115'/>
+      <parameter type-id='type-id-114'/>
+      <parameter type-id='type-id-116'/>
       <return type-id='type-id-15'/>
     </function-decl>
     <function-decl name='lseek' filepath='/usr/include/unistd.h' line='339' column='1' visibility='default' binding='global' size-in-bits='64'>
@@ -919,30 +920,30 @@
     </function-decl>
   </abi-instr>
   <abi-instr address-size='64' path='gpt.c' comp-dir-path='src' language='LANG_C11'>
-    <array-type-def dimensions='1' type-id='type-id-6' size-in-bits='520' id='type-id-117'>
-      <subrange length='65' type-id='type-id-3' id='type-id-118'/>
+    <array-type-def dimensions='1' type-id='type-id-6' size-in-bits='520' id='type-id-118'>
+      <subrange length='65' type-id='type-id-3' id='type-id-119'/>
     </array-type-def>
-    <class-decl name='utsname' size-in-bits='3120' is-struct='yes' visibility='default' filepath='/usr/include/sys/utsname.h' line='48' column='1' id='type-id-119'>
+    <class-decl name='utsname' size-in-bits='3120' is-struct='yes' visibility='default' filepath='/usr/include/sys/utsname.h' line='48' column='1' id='type-id-120'>
       <data-member access='public' layout-offset-in-bits='0'>
-        <var-decl name='sysname' type-id='type-id-117' visibility='default' filepath='/usr/include/sys/utsname.h' line='51' column='1'/>
+        <var-decl name='sysname' type-id='type-id-118' visibility='default' filepath='/usr/include/sys/utsname.h' line='51' column='1'/>
       </data-member>
       <data-member access='public' layout-offset-in-bits='520'>
-        <var-decl name='nodename' type-id='type-id-117' visibility='default' filepath='/usr/include/sys/utsname.h' line='54' column='1'/>
+        <var-decl name='nodename' type-id='type-id-118' visibility='default' filepath='/usr/include/sys/utsname.h' line='54' column='1'/>
       </data-member>
       <data-member access='public' layout-offset-in-bits='1040'>
-        <var-decl name='release' type-id='type-id-117' visibility='default' filepath='/usr/include/sys/utsname.h' line='57' column='1'/>
+        <var-decl name='release' type-id='type-id-118' visibility='default' filepath='/usr/include/sys/utsname.h' line='57' column='1'/>
       </data-member>
       <data-member access='public' layout-offset-in-bits='1560'>
-        <var-decl name='version' type-id='type-id-117' visibility='default' filepath='/usr/include/sys/utsname.h' line='59' column='1'/>
+        <var-decl name='version' type-id='type-id-118' visibility='default' filepath='/usr/include/sys/utsname.h' line='59' column='1'/>
       </data-member>
       <data-member access='public' layout-offset-in-bits='2080'>
-        <var-decl name='machine' type-id='type-id-117' visibility='default' filepath='/usr/include/sys/utsname.h' line='62' column='1'/>
+        <var-decl name='machine' type-id='type-id-118' visibility='default' filepath='/usr/include/sys/utsname.h' line='62' column='1'/>
       </data-member>
       <data-member access='public' layout-offset-in-bits='2600'>
-        <var-decl name='domainname' type-id='type-id-117' visibility='default' filepath='/usr/include/sys/utsname.h' line='67' column='1'/>
+        <var-decl name='domainname' type-id='type-id-118' visibility='default' filepath='/usr/include/sys/utsname.h' line='67' column='1'/>
       </data-member>
     </class-decl>
-    <pointer-type-def type-id='type-id-119' size-in-bits='64' id='type-id-120'/>
+    <pointer-type-def type-id='type-id-120' size-in-bits='64' id='type-id-121'/>
     <function-decl name='crc32' filepath='src/crc32.h' line='17' column='1' visibility='default' binding='global' size-in-bits='64'>
       <parameter type-id='type-id-85'/>
       <parameter type-id='type-id-3'/>
@@ -964,7 +965,7 @@
       <return type-id='type-id-35'/>
     </function-decl>
     <function-decl name='uname' filepath='/usr/include/sys/utsname.h' line='81' column='1' visibility='default' binding='global' size-in-bits='64'>
-      <parameter type-id='type-id-120'/>
+      <parameter type-id='type-id-121'/>
       <return type-id='type-id-15'/>
     </function-decl>
   </abi-instr>
@@ -1011,7 +1012,7 @@
     </function-decl>
   </abi-instr>
   <abi-instr address-size='64' path='linux-ata.c' comp-dir-path='src' language='LANG_C11'>
-    <pointer-type-def type-id='type-id-31' size-in-bits='64' id='type-id-121'/>
+    <pointer-type-def type-id='type-id-31' size-in-bits='64' id='type-id-122'/>
     <function-decl name='efidp_make_atapi' filepath='src/include/efivar/efivar-dp.h' line='323' column='1' visibility='default' binding='global' size-in-bits='64'>
       <parameter type-id='type-id-109'/>
       <parameter type-id='type-id-89'/>
@@ -1022,14 +1023,14 @@
     </function-decl>
     <function-decl name='parse_scsi_link' filepath='src/linux.h' line='340' column='1' visibility='default' binding='global' size-in-bits='64'>
       <parameter type-id='type-id-98'/>
-      <parameter type-id='type-id-121'/>
-      <parameter type-id='type-id-121'/>
-      <parameter type-id='type-id-121'/>
-      <parameter type-id='type-id-121'/>
-      <parameter type-id='type-id-114'/>
-      <parameter type-id='type-id-121'/>
-      <parameter type-id='type-id-121'/>
-      <parameter type-id='type-id-121'/>
+      <parameter type-id='type-id-122'/>
+      <parameter type-id='type-id-122'/>
+      <parameter type-id='type-id-122'/>
+      <parameter type-id='type-id-122'/>
+      <parameter type-id='type-id-115'/>
+      <parameter type-id='type-id-122'/>
+      <parameter type-id='type-id-122'/>
+      <parameter type-id='type-id-122'/>
       <return type-id='type-id-89'/>
     </function-decl>
     <var-decl name='ata_parser' type-id='type-id-54' visibility='default' filepath='src/linux.h' line='359' column='1'/>
@@ -1075,16 +1076,15 @@
     <var-decl name='pci_parser' type-id='type-id-54' visibility='default' filepath='src/linux.h' line='352' column='1'/>
   </abi-instr>
   <abi-instr address-size='64' path='linux-pmem.c' comp-dir-path='src' language='LANG_C11'>
-    <pointer-type-def type-id='type-id-29' size-in-bits='64' id='type-id-122'/>
     <function-decl name='efidp_make_nvdimm' filepath='src/include/efivar/efivar-dp.h' line='706' column='1' visibility='default' binding='global' size-in-bits='64'>
       <parameter type-id='type-id-109'/>
       <parameter type-id='type-id-89'/>
-      <parameter type-id='type-id-122'/>
+      <parameter type-id='type-id-112'/>
       <return type-id='type-id-89'/>
     </function-decl>
     <function-decl name='efi_str_to_guid' filepath='src/include/efivar/efivar.h' line='57' column='1' visibility='default' binding='global' size-in-bits='64'>
       <parameter type-id='type-id-98'/>
-      <parameter type-id='type-id-122'/>
+      <parameter type-id='type-id-112'/>
       <return type-id='type-id-15'/>
     </function-decl>
     <var-decl name='pmem_parser' type-id='type-id-54' visibility='default' filepath='src/linux.h' line='347' column='1'/>
@@ -2336,7 +2336,7 @@
       <return type-id='type-id-15'/>
     </function-decl>
     <function-decl name='fread' filepath='/usr/include/stdio.h' line='669' column='1' visibility='default' binding='global' size-in-bits='64'>
-      <parameter type-id='type-id-115'/>
+      <parameter type-id='type-id-116'/>
       <parameter type-id='type-id-86'/>
       <parameter type-id='type-id-86'/>
       <parameter type-id='type-id-92'/>

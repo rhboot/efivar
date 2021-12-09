@@ -697,7 +697,7 @@ find_valid_gpt(int fd, gpt_header ** gpt, gpt_entry ** ptes,
  ************************************************************/
 int NONNULL(3, 4, 5, 6, 7) HIDDEN
 gpt_disk_get_partition_info(int fd, uint32_t num, uint64_t * start,
-			    uint64_t * size, uint8_t *signature,
+			    uint64_t * size, efi_guid_t *signature,
 			    uint8_t * mbr_type, uint8_t * signature_type,
 			    int ignore_pmbr_error, int logical_block_size)
 {

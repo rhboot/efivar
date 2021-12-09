@@ -87,7 +87,7 @@ msdos_disk_get_extended_partition_info (int fd UNUSED,
 static int
 msdos_disk_get_partition_info (int fd, int write_signature,
 			       legacy_mbr *mbr, uint32_t num, uint64_t *start,
-			       uint64_t *size, uint8_t *signature,
+			       uint64_t *size, uint32_t *signature,
 			       uint8_t *mbr_type, uint8_t *signature_type)
 {
 	int rc;
@@ -146,7 +146,7 @@ msdos_disk_get_partition_info (int fd, int write_signature,
 			return rc;
 		}
 	}
-	*(uint32_t *)signature = mbr->unique_mbr_signature;
+	*signature = mbr->unique_mbr_signature;
 
 	if (num > 4) {
 		/* Extended partition */
@@ -172,7 +172,7 @@ msdos_disk_get_partition_info (int fd, int write_signature,
 static int
 get_partition_info(int fd, uint32_t options,
 		   uint32_t part, uint64_t *start, uint64_t *size,
-		   uint8_t *signature, uint8_t *mbr_type,
+		   partition_signature_t *signature, uint8_t *mbr_type,
 		   uint8_t *signature_type)
 {
 	legacy_mbr *mbr;
@@ -199,21 +199,15 @@ get_partition_info(int fd, uint32_t options,
 		goto error_free_mbr;
 	}
 	mbr = (legacy_mbr *)mbr_sector;
-	gpt_invalid = gpt_disk_get_partition_info(fd, part,
-						  start, size,
-						  signature,
-						  mbr_type,
-						  signature_type,
-			(options & EFIBOOT_OPTIONS_IGNORE_PMBR_ERR)?1:0,
-			sector_size);
+	gpt_invalid = gpt_disk_get_partition_info(
+	    fd, part, start, size, &signature->gpt_signature, mbr_type,
+	    signature_type, (options & EFIBOOT_OPTIONS_IGNORE_PMBR_ERR) ? 1 : 0,
+	    sector_size);
 	if (gpt_invalid < 0) {
-		mbr_invalid = msdos_disk_get_partition_info(fd,
-			(options & EFIBOOT_OPTIONS_WRITE_SIGNATURE)?1:0,
-							    mbr, part,
-							    start, size,
-							    signature,
-							    mbr_type,
-							    signature_type);
+		mbr_invalid = msdos_disk_get_partition_info(
+		    fd, (options & EFIBOOT_OPTIONS_WRITE_SIGNATURE) ? 1 : 0,
+		    mbr, part, start, size, &signature->mbr_signature, mbr_type,
+		    signature_type);
 		if (mbr_invalid < 0) {
 			efi_error("neither MBR nor GPT is valid");
 			rc = -1;
@@ -234,8 +228,10 @@ is_partitioned(int fd)
 	uint32_t options = 0;
 	uint32_t part = 1;
 	uint64_t start = 0, size = 0;
-	uint8_t signature = 0, mbr_type = 0, signature_type = 0;
+	uint8_t mbr_type = 0, signature_type = 0;
+	partition_signature_t signature;
 
+	memset(&signature, 0, sizeof(signature));
 	rc = get_partition_info(fd, options, part, &start, &size,
 				&signature, &mbr_type, &signature_type);
 	if (rc < 0)
@@ -248,7 +244,8 @@ make_hd_dn(uint8_t *buf, ssize_t size, int fd, int32_t partition,
 	   uint32_t options)
 {
 	uint64_t part_start=0, part_size = 0;
-	uint8_t signature[16]="", format=0, signature_type=0;
+	partition_signature_t signature;
+	uint8_t format=0, signature_type=0;
 	int rc;
 
 	errno = 0;
@@ -256,8 +253,9 @@ make_hd_dn(uint8_t *buf, ssize_t size, int fd, int32_t partition,
 	if (partition <= 0)
 		return 0;
 
+	memset(&signature, 0, sizeof(signature));
 	rc = get_partition_info(fd, options, partition, &part_start,
-				&part_size, signature, &format,
+				&part_size, &signature, &format,
 				&signature_type);
 	if (rc < 0) {
 		efi_error("could not get partition info");
@@ -265,7 +263,7 @@ make_hd_dn(uint8_t *buf, ssize_t size, int fd, int32_t partition,
 	}
 
 	rc = efidp_make_hd(buf, size, partition, part_start, part_size,
-			   signature, format, signature_type);
+			   (uint8_t *)&signature, format, signature_type);
 	if (rc < 0)
 		efi_error("could not make HD DP node");
 	return rc;

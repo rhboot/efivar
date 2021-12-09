@@ -14,6 +14,8 @@
 #define _EFIBOOT_GPT_H
 
 #include <inttypes.h>
+#include "include/efivar/efivar-types.h"
+#include "compiler.h"
 
 #define EFI_PMBR_OSTYPE_EFI ((uint8_t)0xEF)
 #define EFI_PMBR_OSTYPE_EFI_GPT ((uint8_t)0xEE)
@@ -137,10 +139,15 @@ typedef struct _legacy_mbr {
 
 #define EFI_GPT_PRIMARY_PARTITION_TABLE_LBA 1
 
+typedef union {
+	efi_guid_t gpt_signature;
+	uint32_t mbr_signature;
+} partition_signature_t;
+
 /* Functions */
 extern int NONNULL(3, 4, 5, 6, 7) HIDDEN
 gpt_disk_get_partition_info (int fd, uint32_t num, uint64_t *start,
-			     uint64_t *size, uint8_t *signature,
+			     uint64_t *size, efi_guid_t *signature,
 			     uint8_t *mbr_type, uint8_t *signature_type,
 			     int ignore_pmbr_error, int logical_sector_size);
 
