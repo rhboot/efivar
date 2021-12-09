@@ -88,7 +88,7 @@ prepare_text(void *data, size_t size, char *buf, int position)
 		else
 			buf[offset++] = '.';
 	}
-	buf[offset++] = size > 0 ? '|' : ' ';
+	buf[offset++] = '|';
 	buf[offset] = '\0';
 }
 
