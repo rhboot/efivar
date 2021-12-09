@@ -72,153 +72,153 @@
       </data-member>
     </class-decl>
     <typedef-decl name='efi_guid_t' type-id='type-id-30' filepath='src/include/efivar/efivar-types.h' line='19' column='1' id='type-id-29'/>
-    <class-decl name='acpi_root_info' size-in-bits='384' is-struct='yes' visibility='default' filepath='src/linux.h' line='10' column='1' id='type-id-33'>
+    <class-decl name='acpi_root_info' size-in-bits='384' is-struct='yes' visibility='default' filepath='src/linux.h' line='18' column='1' id='type-id-33'>
       <data-member access='public' layout-offset-in-bits='0'>
-        <var-decl name='acpi_hid' type-id='type-id-31' visibility='default' filepath='src/linux.h' line='11' column='1'/>
+        <var-decl name='acpi_hid' type-id='type-id-31' visibility='default' filepath='src/linux.h' line='19' column='1'/>
       </data-member>
       <data-member access='public' layout-offset-in-bits='64'>
-        <var-decl name='acpi_uid' type-id='type-id-34' visibility='default' filepath='src/linux.h' line='12' column='1'/>
+        <var-decl name='acpi_uid' type-id='type-id-34' visibility='default' filepath='src/linux.h' line='20' column='1'/>
       </data-member>
       <data-member access='public' layout-offset-in-bits='128'>
-        <var-decl name='acpi_cid' type-id='type-id-31' visibility='default' filepath='src/linux.h' line='13' column='1'/>
+        <var-decl name='acpi_cid' type-id='type-id-31' visibility='default' filepath='src/linux.h' line='21' column='1'/>
       </data-member>
       <data-member access='public' layout-offset-in-bits='192'>
-        <var-decl name='acpi_hid_str' type-id='type-id-35' visibility='default' filepath='src/linux.h' line='14' column='1'/>
+        <var-decl name='acpi_hid_str' type-id='type-id-35' visibility='default' filepath='src/linux.h' line='22' column='1'/>
       </data-member>
       <data-member access='public' layout-offset-in-bits='256'>
-        <var-decl name='acpi_uid_str' type-id='type-id-35' visibility='default' filepath='src/linux.h' line='15' column='1'/>
+        <var-decl name='acpi_uid_str' type-id='type-id-35' visibility='default' filepath='src/linux.h' line='23' column='1'/>
       </data-member>
       <data-member access='public' layout-offset-in-bits='320'>
-        <var-decl name='acpi_cid_str' type-id='type-id-35' visibility='default' filepath='src/linux.h' line='16' column='1'/>
+        <var-decl name='acpi_cid_str' type-id='type-id-35' visibility='default' filepath='src/linux.h' line='24' column='1'/>
       </data-member>
     </class-decl>
-    <class-decl name='pci_root_info' size-in-bits='32' is-struct='yes' visibility='default' filepath='src/linux.h' line='19' column='1' id='type-id-36'>
+    <class-decl name='pci_root_info' size-in-bits='32' is-struct='yes' visibility='default' filepath='src/linux.h' line='27' column='1' id='type-id-36'>
       <data-member access='public' layout-offset-in-bits='0'>
-        <var-decl name='pci_domain' type-id='type-id-32' visibility='default' filepath='src/linux.h' line='20' column='1'/>
+        <var-decl name='pci_domain' type-id='type-id-32' visibility='default' filepath='src/linux.h' line='28' column='1'/>
       </data-member>
       <data-member access='public' layout-offset-in-bits='16'>
-        <var-decl name='pci_bus' type-id='type-id-18' visibility='default' filepath='src/linux.h' line='21' column='1'/>
+        <var-decl name='pci_bus' type-id='type-id-18' visibility='default' filepath='src/linux.h' line='29' column='1'/>
       </data-member>
     </class-decl>
-    <class-decl name='pci_dev_info' size-in-bits='128' is-struct='yes' visibility='default' filepath='src/linux.h' line='24' column='1' id='type-id-37'>
+    <class-decl name='pci_dev_info' size-in-bits='128' is-struct='yes' visibility='default' filepath='src/linux.h' line='32' column='1' id='type-id-37'>
       <data-member access='public' layout-offset-in-bits='0'>
-        <var-decl name='pci_domain' type-id='type-id-32' visibility='default' filepath='src/linux.h' line='25' column='1'/>
+        <var-decl name='pci_domain' type-id='type-id-32' visibility='default' filepath='src/linux.h' line='33' column='1'/>
       </data-member>
       <data-member access='public' layout-offset-in-bits='16'>
-        <var-decl name='pci_bus' type-id='type-id-18' visibility='default' filepath='src/linux.h' line='26' column='1'/>
+        <var-decl name='pci_bus' type-id='type-id-18' visibility='default' filepath='src/linux.h' line='34' column='1'/>
       </data-member>
       <data-member access='public' layout-offset-in-bits='24'>
-        <var-decl name='pci_device' type-id='type-id-18' visibility='default' filepath='src/linux.h' line='27' column='1'/>
+        <var-decl name='pci_device' type-id='type-id-18' visibility='default' filepath='src/linux.h' line='35' column='1'/>
       </data-member>
       <data-member access='public' layout-offset-in-bits='32'>
-        <var-decl name='pci_function' type-id='type-id-18' visibility='default' filepath='src/linux.h' line='28' column='1'/>
+        <var-decl name='pci_function' type-id='type-id-18' visibility='default' filepath='src/linux.h' line='36' column='1'/>
       </data-member>
       <data-member access='public' layout-offset-in-bits='64'>
-        <var-decl name='driverlink' type-id='type-id-35' visibility='default' filepath='src/linux.h' line='29' column='1'/>
+        <var-decl name='driverlink' type-id='type-id-35' visibility='default' filepath='src/linux.h' line='37' column='1'/>
       </data-member>
     </class-decl>
-    <class-decl name='scsi_info' size-in-bits='192' is-struct='yes' visibility='default' filepath='src/linux.h' line='32' column='1' id='type-id-38'>
+    <class-decl name='scsi_info' size-in-bits='192' is-struct='yes' visibility='default' filepath='src/linux.h' line='40' column='1' id='type-id-38'>
       <data-member access='public' layout-offset-in-bits='0'>
-        <var-decl name='scsi_bus' type-id='type-id-31' visibility='default' filepath='src/linux.h' line='33' column='1'/>
+        <var-decl name='scsi_bus' type-id='type-id-31' visibility='default' filepath='src/linux.h' line='41' column='1'/>
       </data-member>
       <data-member access='public' layout-offset-in-bits='32'>
-        <var-decl name='scsi_device' type-id='type-id-31' visibility='default' filepath='src/linux.h' line='34' column='1'/>
+        <var-decl name='scsi_device' type-id='type-id-31' visibility='default' filepath='src/linux.h' line='42' column='1'/>
       </data-member>
       <data-member access='public' layout-offset-in-bits='64'>
-        <var-decl name='scsi_target' type-id='type-id-31' visibility='default' filepath='src/linux.h' line='35' column='1'/>
+        <var-decl name='scsi_target' type-id='type-id-31' visibility='default' filepath='src/linux.h' line='43' column='1'/>
       </data-member>
       <data-member access='public' layout-offset-in-bits='128'>
-        <var-decl name='scsi_lun' type-id='type-id-34' visibility='default' filepath='src/linux.h' line='36' column='1'/>
+        <var-decl name='scsi_lun' type-id='type-id-34' visibility='default' filepath='src/linux.h' line='44' column='1'/>
       </data-member>
     </class-decl>
-    <class-decl name='sas_info' size-in-bits='256' is-struct='yes' visibility='default' filepath='src/linux.h' line='39' column='1' id='type-id-39'>
+    <class-decl name='sas_info' size-in-bits='256' is-struct='yes' visibility='default' filepath='src/linux.h' line='47' column='1' id='type-id-39'>
       <data-member access='public' layout-offset-in-bits='0'>
-        <var-decl name='scsi_bus' type-id='type-id-31' visibility='default' filepath='src/linux.h' line='40' column='1'/>
+        <var-decl name='scsi_bus' type-id='type-id-31' visibility='default' filepath='src/linux.h' line='48' column='1'/>
       </data-member>
       <data-member access='public' layout-offset-in-bits='32'>
-        <var-decl name='scsi_device' type-id='type-id-31' visibility='default' filepath='src/linux.h' line='41' column='1'/>
+        <var-decl name='scsi_device' type-id='type-id-31' visibility='default' filepath='src/linux.h' line='49' column='1'/>
       </data-member>
       <data-member access='public' layout-offset-in-bits='64'>
-        <var-decl name='scsi_target' type-id='type-id-31' visibility='default' filepath='src/linux.h' line='42' column='1'/>
+        <var-decl name='scsi_target' type-id='type-id-31' visibility='default' filepath='src/linux.h' line='50' column='1'/>
       </data-member>
       <data-member access='public' layout-offset-in-bits='128'>
-        <var-decl name='scsi_lun' type-id='type-id-34' visibility='default' filepath='src/linux.h' line='43' column='1'/>
+        <var-decl name='scsi_lun' type-id='type-id-34' visibility='default' filepath='src/linux.h' line='51' column='1'/>
       </data-member>
       <data-member access='public' layout-offset-in-bits='192'>
-        <var-decl name='sas_address' type-id='type-id-34' visibility='default' filepath='src/linux.h' line='45' column='1'/>
+        <var-decl name='sas_address' type-id='type-id-34' visibility='default' filepath='src/linux.h' line='53' column='1'/>
       </data-member>
     </class-decl>
-    <class-decl name='sata_info' size-in-bits='320' is-struct='yes' visibility='default' filepath='src/linux.h' line='48' column='1' id='type-id-40'>
+    <class-decl name='sata_info' size-in-bits='320' is-struct='yes' visibility='default' filepath='src/linux.h' line='56' column='1' id='type-id-40'>
       <data-member access='public' layout-offset-in-bits='0'>
-        <var-decl name='scsi_bus' type-id='type-id-31' visibility='default' filepath='src/linux.h' line='49' column='1'/>
+        <var-decl name='scsi_bus' type-id='type-id-31' visibility='default' filepath='src/linux.h' line='57' column='1'/>
       </data-member>
       <data-member access='public' layout-offset-in-bits='32'>
-        <var-decl name='scsi_device' type-id='type-id-31' visibility='default' filepath='src/linux.h' line='50' column='1'/>
+        <var-decl name='scsi_device' type-id='type-id-31' visibility='default' filepath='src/linux.h' line='58' column='1'/>
       </data-member>
       <data-member access='public' layout-offset-in-bits='64'>
-        <var-decl name='scsi_target' type-id='type-id-31' visibility='default' filepath='src/linux.h' line='51' column='1'/>
+        <var-decl name='scsi_target' type-id='type-id-31' visibility='default' filepath='src/linux.h' line='59' column='1'/>
       </data-member>
       <data-member access='public' layout-offset-in-bits='128'>
-        <var-decl name='scsi_lun' type-id='type-id-34' visibility='default' filepath='src/linux.h' line='52' column='1'/>
+        <var-decl name='scsi_lun' type-id='type-id-34' visibility='default' filepath='src/linux.h' line='60' column='1'/>
       </data-member>
       <data-member access='public' layout-offset-in-bits='192'>
-        <var-decl name='ata_devno' type-id='type-id-31' visibility='default' filepath='src/linux.h' line='54' column='1'/>
+        <var-decl name='ata_devno' type-id='type-id-31' visibility='default' filepath='src/linux.h' line='62' column='1'/>
       </data-member>
       <data-member access='public' layout-offset-in-bits='224'>
-        <var-decl name='ata_port' type-id='type-id-31' visibility='default' filepath='src/linux.h' line='55' column='1'/>
+        <var-decl name='ata_port' type-id='type-id-31' visibility='default' filepath='src/linux.h' line='63' column='1'/>
       </data-member>
       <data-member access='public' layout-offset-in-bits='256'>
-        <var-decl name='ata_pmp' type-id='type-id-31' visibility='default' filepath='src/linux.h' line='56' column='1'/>
+        <var-decl name='ata_pmp' type-id='type-id-31' visibility='default' filepath='src/linux.h' line='64' column='1'/>
       </data-member>
       <data-member access='public' layout-offset-in-bits='288'>
-        <var-decl name='ata_print_id' type-id='type-id-31' visibility='default' filepath='src/linux.h' line='58' column='1'/>
+        <var-decl name='ata_print_id' type-id='type-id-31' visibility='default' filepath='src/linux.h' line='66' column='1'/>
       </data-member>
     </class-decl>
-    <class-decl name='ata_info' size-in-bits='256' is-struct='yes' visibility='default' filepath='src/linux.h' line='61' column='1' id='type-id-41'>
+    <class-decl name='ata_info' size-in-bits='256' is-struct='yes' visibility='default' filepath='src/linux.h' line='69' column='1' id='type-id-41'>
       <data-member access='public' layout-offset-in-bits='0'>
-        <var-decl name='scsi_bus' type-id='type-id-31' visibility='default' filepath='src/linux.h' line='62' column='1'/>
+        <var-decl name='scsi_bus' type-id='type-id-31' visibility='default' filepath='src/linux.h' line='70' column='1'/>
       </data-member>
       <data-member access='public' layout-offset-in-bits='32'>
-        <var-decl name='scsi_device' type-id='type-id-31' visibility='default' filepath='src/linux.h' line='63' column='1'/>
+        <var-decl name='scsi_device' type-id='type-id-31' visibility='default' filepath='src/linux.h' line='71' column='1'/>
       </data-member>
       <data-member access='public' layout-offset-in-bits='64'>
-        <var-decl name='scsi_target' type-id='type-id-31' visibility='default' filepath='src/linux.h' line='64' column='1'/>
+        <var-decl name='scsi_target' type-id='type-id-31' visibility='default' filepath='src/linux.h' line='72' column='1'/>
       </data-member>
       <data-member access='public' layout-offset-in-bits='128'>
-        <var-decl name='scsi_lun' type-id='type-id-34' visibility='default' filepath='src/linux.h' line='65' column='1'/>
+        <var-decl name='scsi_lun' type-id='type-id-34' visibility='default' filepath='src/linux.h' line='73' column='1'/>
       </data-member>
       <data-member access='public' layout-offset-in-bits='192'>
-        <var-decl name='scsi_host' type-id='type-id-31' visibility='default' filepath='src/linux.h' line='67' column='1'/>
+        <var-decl name='scsi_host' type-id='type-id-31' visibility='default' filepath='src/linux.h' line='75' column='1'/>
       </data-member>
     </class-decl>
-    <class-decl name='nvme_info' size-in-bits='160' is-struct='yes' visibility='default' filepath='src/linux.h' line='70' column='1' id='type-id-42'>
+    <class-decl name='nvme_info' size-in-bits='160' is-struct='yes' visibility='default' filepath='src/linux.h' line='78' column='1' id='type-id-42'>
       <data-member access='public' layout-offset-in-bits='0'>
-        <var-decl name='ctrl_id' type-id='type-id-43' visibility='default' filepath='src/linux.h' line='71' column='1'/>
+        <var-decl name='ctrl_id' type-id='type-id-43' visibility='default' filepath='src/linux.h' line='79' column='1'/>
       </data-member>
       <data-member access='public' layout-offset-in-bits='32'>
-        <var-decl name='ns_id' type-id='type-id-43' visibility='default' filepath='src/linux.h' line='72' column='1'/>
+        <var-decl name='ns_id' type-id='type-id-43' visibility='default' filepath='src/linux.h' line='80' column='1'/>
       </data-member>
       <data-member access='public' layout-offset-in-bits='64'>
-        <var-decl name='has_eui' type-id='type-id-15' visibility='default' filepath='src/linux.h' line='73' column='1'/>
+        <var-decl name='has_eui' type-id='type-id-15' visibility='default' filepath='src/linux.h' line='81' column='1'/>
       </data-member>
       <data-member access='public' layout-offset-in-bits='96'>
-        <var-decl name='eui' type-id='type-id-21' visibility='default' filepath='src/linux.h' line='74' column='1'/>
+        <var-decl name='eui' type-id='type-id-21' visibility='default' filepath='src/linux.h' line='82' column='1'/>
       </data-member>
     </class-decl>
-    <class-decl name='nvdimm_info' size-in-bits='256' is-struct='yes' visibility='default' filepath='src/linux.h' line='77' column='1' id='type-id-44'>
+    <class-decl name='nvdimm_info' size-in-bits='256' is-struct='yes' visibility='default' filepath='src/linux.h' line='85' column='1' id='type-id-44'>
       <data-member access='public' layout-offset-in-bits='0'>
-        <var-decl name='namespace_label' type-id='type-id-29' visibility='default' filepath='src/linux.h' line='78' column='1'/>
+        <var-decl name='namespace_label' type-id='type-id-29' visibility='default' filepath='src/linux.h' line='86' column='1'/>
       </data-member>
       <data-member access='public' layout-offset-in-bits='128'>
-        <var-decl name='nvdimm_label' type-id='type-id-29' visibility='default' filepath='src/linux.h' line='79' column='1'/>
+        <var-decl name='nvdimm_label' type-id='type-id-29' visibility='default' filepath='src/linux.h' line='87' column='1'/>
       </data-member>
     </class-decl>
-    <class-decl name='emmc_info' size-in-bits='32' is-struct='yes' visibility='default' filepath='src/linux.h' line='82' column='1' id='type-id-45'>
+    <class-decl name='emmc_info' size-in-bits='32' is-struct='yes' visibility='default' filepath='src/linux.h' line='90' column='1' id='type-id-45'>
       <data-member access='public' layout-offset-in-bits='0'>
-        <var-decl name='slot_id' type-id='type-id-43' visibility='default' filepath='src/linux.h' line='83' column='1'/>
+        <var-decl name='slot_id' type-id='type-id-43' visibility='default' filepath='src/linux.h' line='91' column='1'/>
       </data-member>
     </class-decl>
-    <enum-decl name='interface_type' filepath='src/linux.h' line='86' column='1' id='type-id-46'>
+    <enum-decl name='interface_type' filepath='src/linux.h' line='94' column='1' id='type-id-46'>
       <underlying-type type-id='type-id-23'/>
       <enumerator name='unknown' value='0'/>
       <enumerator name='isa' value='1'/>
@@ -243,125 +243,125 @@
       <enumerator name='nd_pmem' value='20'/>
       <enumerator name='emmc' value='21'/>
     </enum-decl>
-    <class-decl name='device' size-in-bits='2752' is-struct='yes' visibility='default' filepath='src/linux.h' line='99' column='1' id='type-id-47'>
+    <class-decl name='device' size-in-bits='2752' is-struct='yes' visibility='default' filepath='src/linux.h' line='107' column='1' id='type-id-47'>
       <data-member access='public' layout-offset-in-bits='0'>
-        <var-decl name='interface_type' type-id='type-id-46' visibility='default' filepath='src/linux.h' line='100' column='1'/>
+        <var-decl name='interface_type' type-id='type-id-46' visibility='default' filepath='src/linux.h' line='108' column='1'/>
       </data-member>
       <data-member access='public' layout-offset-in-bits='32'>
-        <var-decl name='flags' type-id='type-id-31' visibility='default' filepath='src/linux.h' line='101' column='1'/>
+        <var-decl name='flags' type-id='type-id-31' visibility='default' filepath='src/linux.h' line='109' column='1'/>
       </data-member>
       <data-member access='public' layout-offset-in-bits='64'>
-        <var-decl name='link' type-id='type-id-35' visibility='default' filepath='src/linux.h' line='102' column='1'/>
+        <var-decl name='link' type-id='type-id-35' visibility='default' filepath='src/linux.h' line='110' column='1'/>
       </data-member>
       <data-member access='public' layout-offset-in-bits='128'>
-        <var-decl name='device' type-id='type-id-35' visibility='default' filepath='src/linux.h' line='103' column='1'/>
+        <var-decl name='device' type-id='type-id-35' visibility='default' filepath='src/linux.h' line='111' column='1'/>
       </data-member>
       <data-member access='public' layout-offset-in-bits='192'>
-        <var-decl name='driver' type-id='type-id-35' visibility='default' filepath='src/linux.h' line='104' column='1'/>
+        <var-decl name='driver' type-id='type-id-35' visibility='default' filepath='src/linux.h' line='112' column='1'/>
       </data-member>
       <data-member access='public' layout-offset-in-bits='256'>
-        <var-decl name='probes' type-id='type-id-48' visibility='default' filepath='src/linux.h' line='106' column='1'/>
+        <var-decl name='probes' type-id='type-id-48' visibility='default' filepath='src/linux.h' line='114' column='1'/>
       </data-member>
       <data-member access='public' layout-offset-in-bits='320'>
-        <var-decl name='n_probes' type-id='type-id-25' visibility='default' filepath='src/linux.h' line='107' column='1'/>
+        <var-decl name='n_probes' type-id='type-id-25' visibility='default' filepath='src/linux.h' line='115' column='1'/>
       </data-member>
       <data-member access='public' layout-offset-in-bits='384'>
         <var-decl name='' type-id='type-id-49' visibility='default'/>
       </data-member>
     </class-decl>
-    <union-decl name='__anonymous_union__' size-in-bits='2368' is-anonymous='yes' visibility='default' filepath='src/linux.h' line='109' column='1' id='type-id-49'>
+    <union-decl name='__anonymous_union__' size-in-bits='2368' is-anonymous='yes' visibility='default' filepath='src/linux.h' line='117' column='1' id='type-id-49'>
       <data-member access='public'>
         <var-decl name='' type-id='type-id-50' visibility='default'/>
       </data-member>
       <data-member access='public'>
-        <var-decl name='ifname' type-id='type-id-35' visibility='default' filepath='src/linux.h' line='138' column='1'/>
+        <var-decl name='ifname' type-id='type-id-35' visibility='default' filepath='src/linux.h' line='146' column='1'/>
       </data-member>
     </union-decl>
-    <class-decl name='__anonymous_struct__' size-in-bits='2368' is-struct='yes' is-anonymous='yes' visibility='default' filepath='src/linux.h' line='110' column='1' id='type-id-50'>
+    <class-decl name='__anonymous_struct__' size-in-bits='2368' is-struct='yes' is-anonymous='yes' visibility='default' filepath='src/linux.h' line='118' column='1' id='type-id-50'>
       <data-member access='public' layout-offset-in-bits='0'>
-        <var-decl name='stat' type-id='type-id-51' visibility='default' filepath='src/linux.h' line='111' column='1'/>
+        <var-decl name='stat' type-id='type-id-51' visibility='default' filepath='src/linux.h' line='119' column='1'/>
       </data-member>
       <data-member access='public' layout-offset-in-bits='1152'>
-        <var-decl name='controllernum' type-id='type-id-25' visibility='default' filepath='src/linux.h' line='113' column='1'/>
+        <var-decl name='controllernum' type-id='type-id-25' visibility='default' filepath='src/linux.h' line='121' column='1'/>
       </data-member>
       <data-member access='public' layout-offset-in-bits='1184'>
-        <var-decl name='disknum' type-id='type-id-25' visibility='default' filepath='src/linux.h' line='114' column='1'/>
+        <var-decl name='disknum' type-id='type-id-25' visibility='default' filepath='src/linux.h' line='122' column='1'/>
       </data-member>
       <data-member access='public' layout-offset-in-bits='1216'>
-        <var-decl name='part' type-id='type-id-15' visibility='default' filepath='src/linux.h' line='115' column='1'/>
+        <var-decl name='part' type-id='type-id-15' visibility='default' filepath='src/linux.h' line='123' column='1'/>
       </data-member>
       <data-member access='public' layout-offset-in-bits='1280'>
-        <var-decl name='major' type-id='type-id-34' visibility='default' filepath='src/linux.h' line='116' column='1'/>
+        <var-decl name='major' type-id='type-id-34' visibility='default' filepath='src/linux.h' line='124' column='1'/>
       </data-member>
       <data-member access='public' layout-offset-in-bits='1344'>
-        <var-decl name='minor' type-id='type-id-31' visibility='default' filepath='src/linux.h' line='117' column='1'/>
+        <var-decl name='minor' type-id='type-id-31' visibility='default' filepath='src/linux.h' line='125' column='1'/>
       </data-member>
       <data-member access='public' layout-offset-in-bits='1376'>
-        <var-decl name='edd10_devicenum' type-id='type-id-31' visibility='default' filepath='src/linux.h' line='118' column='1'/>
+        <var-decl name='edd10_devicenum' type-id='type-id-31' visibility='default' filepath='src/linux.h' line='126' column='1'/>
       </data-member>
       <data-member access='public' layout-offset-in-bits='1408'>
-        <var-decl name='disk_name' type-id='type-id-35' visibility='default' filepath='src/linux.h' line='120' column='1'/>
+        <var-decl name='disk_name' type-id='type-id-35' visibility='default' filepath='src/linux.h' line='128' column='1'/>
       </data-member>
       <data-member access='public' layout-offset-in-bits='1472'>
-        <var-decl name='part_name' type-id='type-id-35' visibility='default' filepath='src/linux.h' line='121' column='1'/>
+        <var-decl name='part_name' type-id='type-id-35' visibility='default' filepath='src/linux.h' line='129' column='1'/>
       </data-member>
       <data-member access='public' layout-offset-in-bits='1536'>
-        <var-decl name='acpi_root' type-id='type-id-33' visibility='default' filepath='src/linux.h' line='123' column='1'/>
+        <var-decl name='acpi_root' type-id='type-id-33' visibility='default' filepath='src/linux.h' line='131' column='1'/>
       </data-member>
       <data-member access='public' layout-offset-in-bits='1920'>
-        <var-decl name='pci_root' type-id='type-id-36' visibility='default' filepath='src/linux.h' line='124' column='1'/>
+        <var-decl name='pci_root' type-id='type-id-36' visibility='default' filepath='src/linux.h' line='132' column='1'/>
       </data-member>
       <data-member access='public' layout-offset-in-bits='1952'>
-        <var-decl name='n_pci_devs' type-id='type-id-25' visibility='default' filepath='src/linux.h' line='125' column='1'/>
+        <var-decl name='n_pci_devs' type-id='type-id-25' visibility='default' filepath='src/linux.h' line='133' column='1'/>
       </data-member>
       <data-member access='public' layout-offset-in-bits='1984'>
-        <var-decl name='pci_dev' type-id='type-id-52' visibility='default' filepath='src/linux.h' line='126' column='1'/>
+        <var-decl name='pci_dev' type-id='type-id-52' visibility='default' filepath='src/linux.h' line='134' column='1'/>
       </data-member>
       <data-member access='public' layout-offset-in-bits='2048'>
         <var-decl name='' type-id='type-id-53' visibility='default'/>
       </data-member>
     </class-decl>
-    <union-decl name='__anonymous_union__1' size-in-bits='320' is-anonymous='yes' visibility='default' filepath='src/linux.h' line='128' column='1' id='type-id-53'>
+    <union-decl name='__anonymous_union__1' size-in-bits='320' is-anonymous='yes' visibility='default' filepath='src/linux.h' line='136' column='1' id='type-id-53'>
       <data-member access='public'>
-        <var-decl name='scsi_info' type-id='type-id-38' visibility='default' filepath='src/linux.h' line='129' column='1'/>
+        <var-decl name='scsi_info' type-id='type-id-38' visibility='default' filepath='src/linux.h' line='137' column='1'/>
       </data-member>
       <data-member access='public'>
-        <var-decl name='sas_info' type-id='type-id-39' visibility='default' filepath='src/linux.h' line='130' column='1'/>
+        <var-decl name='sas_info' type-id='type-id-39' visibility='default' filepath='src/linux.h' line='138' column='1'/>
       </data-member>
       <data-member access='public'>
-        <var-decl name='sata_info' type-id='type-id-40' visibility='default' filepath='src/linux.h' line='131' column='1'/>
+        <var-decl name='sata_info' type-id='type-id-40' visibility='default' filepath='src/linux.h' line='139' column='1'/>
       </data-member>
       <data-member access='public'>
-        <var-decl name='ata_info' type-id='type-id-41' visibility='default' filepath='src/linux.h' line='132' column='1'/>
+        <var-decl name='ata_info' type-id='type-id-41' visibility='default' filepath='src/linux.h' line='140' column='1'/>
       </data-member>
       <data-member access='public'>
-        <var-decl name='nvme_info' type-id='type-id-42' visibility='default' filepath='src/linux.h' line='133' column='1'/>
+        <var-decl name='nvme_info' type-id='type-id-42' visibility='default' filepath='src/linux.h' line='141' column='1'/>
       </data-member>
       <data-member access='public'>
-        <var-decl name='emmc_info' type-id='type-id-45' visibility='default' filepath='src/linux.h' line='134' column='1'/>
+        <var-decl name='emmc_info' type-id='type-id-45' visibility='default' filepath='src/linux.h' line='142' column='1'/>
       </data-member>
       <data-member access='public'>
-        <var-decl name='nvdimm_info' type-id='type-id-44' visibility='default' filepath='src/linux.h' line='135' column='1'/>
+        <var-decl name='nvdimm_info' type-id='type-id-44' visibility='default' filepath='src/linux.h' line='143' column='1'/>
       </data-member>
     </union-decl>
-    <class-decl name='dev_probe' size-in-bits='384' is-struct='yes' visibility='default' filepath='src/linux.h' line='314' column='1' id='type-id-54'>
+    <class-decl name='dev_probe' size-in-bits='384' is-struct='yes' visibility='default' filepath='src/linux.h' line='329' column='1' id='type-id-54'>
       <data-member access='public' layout-offset-in-bits='0'>
-        <var-decl name='name' type-id='type-id-35' visibility='default' filepath='src/linux.h' line='315' column='1'/>
+        <var-decl name='name' type-id='type-id-35' visibility='default' filepath='src/linux.h' line='330' column='1'/>
       </data-member>
       <data-member access='public' layout-offset-in-bits='64'>
-        <var-decl name='iftypes' type-id='type-id-55' visibility='default' filepath='src/linux.h' line='316' column='1'/>
+        <var-decl name='iftypes' type-id='type-id-55' visibility='default' filepath='src/linux.h' line='331' column='1'/>
       </data-member>
       <data-member access='public' layout-offset-in-bits='128'>
-        <var-decl name='flags' type-id='type-id-31' visibility='default' filepath='src/linux.h' line='317' column='1'/>
+        <var-decl name='flags' type-id='type-id-31' visibility='default' filepath='src/linux.h' line='332' column='1'/>
       </data-member>
       <data-member access='public' layout-offset-in-bits='192'>
-        <var-decl name='parse' type-id='type-id-56' visibility='default' filepath='src/linux.h' line='318' column='1'/>
+        <var-decl name='parse' type-id='type-id-56' visibility='default' filepath='src/linux.h' line='333' column='1'/>
       </data-member>
       <data-member access='public' layout-offset-in-bits='256'>
-        <var-decl name='create' type-id='type-id-57' visibility='default' filepath='src/linux.h' line='320' column='1'/>
+        <var-decl name='create' type-id='type-id-57' visibility='default' filepath='src/linux.h' line='335' column='1'/>
       </data-member>
       <data-member access='public' layout-offset-in-bits='320'>
-        <var-decl name='make_part_name' type-id='type-id-58' visibility='default' filepath='src/linux.h' line='322' column='1'/>
+        <var-decl name='make_part_name' type-id='type-id-58' visibility='default' filepath='src/linux.h' line='337' column='1'/>
       </data-member>
     </class-decl>
     <typedef-decl name='int32_t' type-id='type-id-59' filepath='/usr/include/bits/stdint-intn.h' line='26' column='1' id='type-id-43'/>
@@ -689,32 +689,32 @@
     <function-decl name='efi_get_logfile' filepath='src/include/efivar/efivar.h' line='197' column='1' visibility='default' binding='global' size-in-bits='64'>
       <return type-id='type-id-91'/>
     </function-decl>
-    <function-decl name='device_get' filepath='src/linux.h' line='142' column='1' visibility='default' binding='global' size-in-bits='64'>
+    <function-decl name='device_get' filepath='src/linux.h' line='150' column='1' visibility='default' binding='global' size-in-bits='64'>
       <parameter type-id='type-id-15'/>
       <parameter type-id='type-id-15'/>
       <return type-id='type-id-102'/>
     </function-decl>
-    <function-decl name='device_free' filepath='src/linux.h' line='143' column='1' visibility='default' binding='global' size-in-bits='64'>
+    <function-decl name='device_free' filepath='src/linux.h' line='151' column='1' visibility='default' binding='global' size-in-bits='64'>
       <parameter type-id='type-id-102'/>
       <return type-id='type-id-28'/>
     </function-decl>
-    <function-decl name='set_part' filepath='src/linux.h' line='145' column='1' visibility='default' binding='global' size-in-bits='64'>
+    <function-decl name='set_part' filepath='src/linux.h' line='153' column='1' visibility='default' binding='global' size-in-bits='64'>
       <parameter type-id='type-id-102'/>
       <parameter type-id='type-id-15'/>
       <return type-id='type-id-15'/>
     </function-decl>
-    <function-decl name='make_blockdev_path' filepath='src/linux.h' line='149' column='1' visibility='default' binding='global' size-in-bits='64'>
+    <function-decl name='make_blockdev_path' filepath='src/linux.h' line='157' column='1' visibility='default' binding='global' size-in-bits='64'>
       <parameter type-id='type-id-109'/>
       <parameter type-id='type-id-89'/>
       <parameter type-id='type-id-102'/>
       <return type-id='type-id-15'/>
     </function-decl>
-    <function-decl name='find_parent_devpath' filepath='src/linux.h' line='156' column='1' visibility='default' binding='global' size-in-bits='64'>
+    <function-decl name='find_parent_devpath' filepath='src/linux.h' line='164' column='1' visibility='default' binding='global' size-in-bits='64'>
       <parameter type-id='type-id-99'/>
       <parameter type-id='type-id-95'/>
       <return type-id='type-id-15'/>
     </function-decl>
-    <function-decl name='make_mac_path' filepath='src/linux.h' line='159' column='1' visibility='default' binding='global' size-in-bits='64'>
+    <function-decl name='make_mac_path' filepath='src/linux.h' line='167' column='1' visibility='default' binding='global' size-in-bits='64'>
       <parameter type-id='type-id-109'/>
       <parameter type-id='type-id-89'/>
       <parameter type-id='type-id-99'/>
@@ -873,7 +873,7 @@
       <parameter type-id='type-id-18'/>
       <return type-id='type-id-89'/>
     </function-decl>
-    <function-decl name='get_sector_size' filepath='src/linux.h' line='154' column='1' visibility='default' binding='global' size-in-bits='64'>
+    <function-decl name='get_sector_size' filepath='src/linux.h' line='162' column='1' visibility='default' binding='global' size-in-bits='64'>
       <parameter type-id='type-id-15'/>
       <return type-id='type-id-15'/>
     </function-decl>
@@ -987,13 +987,13 @@
       <parameter type-id='type-id-98'/>
       <return type-id='type-id-89'/>
     </function-decl>
-    <function-decl name='parse_acpi_hid_uid' filepath='src/linux.h' line='151' column='1' visibility='default' binding='global' size-in-bits='64'>
+    <function-decl name='parse_acpi_hid_uid' filepath='src/linux.h' line='159' column='1' visibility='default' binding='global' size-in-bits='64'>
       <parameter type-id='type-id-102'/>
       <parameter type-id='type-id-98'/>
       <parameter is-variadic='yes'/>
       <return type-id='type-id-15'/>
     </function-decl>
-    <var-decl name='acpi_root_parser' type-id='type-id-54' visibility='default' filepath='src/linux.h' line='334' column='1'/>
+    <var-decl name='acpi_root_parser' type-id='type-id-54' visibility='default' filepath='src/linux.h' line='349' column='1'/>
     <function-decl name='strndup' filepath='/usr/include/string.h' line='179' column='1' visibility='default' binding='global' size-in-bits='64'>
       <parameter type-id='type-id-98'/>
       <parameter type-id='type-id-86'/>
@@ -1020,7 +1020,7 @@
       <parameter type-id='type-id-32'/>
       <return type-id='type-id-89'/>
     </function-decl>
-    <function-decl name='parse_scsi_link' filepath='src/linux.h' line='325' column='1' visibility='default' binding='global' size-in-bits='64'>
+    <function-decl name='parse_scsi_link' filepath='src/linux.h' line='340' column='1' visibility='default' binding='global' size-in-bits='64'>
       <parameter type-id='type-id-98'/>
       <parameter type-id='type-id-121'/>
       <parameter type-id='type-id-121'/>
@@ -1032,7 +1032,7 @@
       <parameter type-id='type-id-121'/>
       <return type-id='type-id-89'/>
     </function-decl>
-    <var-decl name='ata_parser' type-id='type-id-54' visibility='default' filepath='src/linux.h' line='344' column='1'/>
+    <var-decl name='ata_parser' type-id='type-id-54' visibility='default' filepath='src/linux.h' line='359' column='1'/>
     <function-decl name='strstr' filepath='/usr/include/string.h' line='334' column='1' visibility='default' binding='global' size-in-bits='64'>
       <parameter type-id='type-id-98'/>
       <parameter type-id='type-id-98'/>
@@ -1046,10 +1046,10 @@
       <parameter type-id='type-id-31'/>
       <return type-id='type-id-89'/>
     </function-decl>
-    <var-decl name='emmc_parser' type-id='type-id-54' visibility='default' filepath='src/linux.h' line='345' column='1'/>
+    <var-decl name='emmc_parser' type-id='type-id-54' visibility='default' filepath='src/linux.h' line='360' column='1'/>
   </abi-instr>
   <abi-instr address-size='64' path='linux-i2o.c' comp-dir-path='src' language='LANG_C11'>
-    <var-decl name='i2o_parser' type-id='type-id-54' visibility='default' filepath='src/linux.h' line='342' column='1'/>
+    <var-decl name='i2o_parser' type-id='type-id-54' visibility='default' filepath='src/linux.h' line='357' column='1'/>
   </abi-instr>
   <abi-instr address-size='64' path='linux-nvme.c' comp-dir-path='src' language='LANG_C11'>
     <function-decl name='efidp_make_nvme' filepath='src/include/efivar/efivar-dp.h' line='642' column='1' visibility='default' binding='global' size-in-bits='64'>
@@ -1059,10 +1059,10 @@
       <parameter type-id='type-id-109'/>
       <return type-id='type-id-89'/>
     </function-decl>
-    <var-decl name='nvme_parser' type-id='type-id-54' visibility='default' filepath='src/linux.h' line='340' column='1'/>
+    <var-decl name='nvme_parser' type-id='type-id-54' visibility='default' filepath='src/linux.h' line='355' column='1'/>
   </abi-instr>
   <abi-instr address-size='64' path='linux-pci-root.c' comp-dir-path='src' language='LANG_C11'>
-    <var-decl name='pci_root_parser' type-id='type-id-54' visibility='default' filepath='src/linux.h' line='333' column='1'/>
+    <var-decl name='pci_root_parser' type-id='type-id-54' visibility='default' filepath='src/linux.h' line='348' column='1'/>
   </abi-instr>
   <abi-instr address-size='64' path='linux-pci.c' comp-dir-path='src' language='LANG_C11'>
     <function-decl name='efidp_make_pci' filepath='src/include/efivar/efivar-dp.h' line='47' column='1' visibility='default' binding='global' size-in-bits='64'>
@@ -1072,7 +1072,7 @@
       <parameter type-id='type-id-18'/>
       <return type-id='type-id-89'/>
     </function-decl>
-    <var-decl name='pci_parser' type-id='type-id-54' visibility='default' filepath='src/linux.h' line='337' column='1'/>
+    <var-decl name='pci_parser' type-id='type-id-54' visibility='default' filepath='src/linux.h' line='352' column='1'/>
   </abi-instr>
   <abi-instr address-size='64' path='linux-pmem.c' comp-dir-path='src' language='LANG_C11'>
     <pointer-type-def type-id='type-id-29' size-in-bits='64' id='type-id-122'/>
@@ -1087,7 +1087,7 @@
       <parameter type-id='type-id-122'/>
       <return type-id='type-id-15'/>
     </function-decl>
-    <var-decl name='pmem_parser' type-id='type-id-54' visibility='default' filepath='src/linux.h' line='332' column='1'/>
+    <var-decl name='pmem_parser' type-id='type-id-54' visibility='default' filepath='src/linux.h' line='347' column='1'/>
     <function-decl name='getenv' filepath='/usr/include/stdlib.h' line='639' column='1' visibility='default' binding='global' size-in-bits='64'>
       <parameter type-id='type-id-98'/>
       <return type-id='type-id-35'/>
@@ -1100,7 +1100,7 @@
       <parameter type-id='type-id-34'/>
       <return type-id='type-id-89'/>
     </function-decl>
-    <var-decl name='sas_parser' type-id='type-id-54' visibility='default' filepath='src/linux.h' line='338' column='1'/>
+    <var-decl name='sas_parser' type-id='type-id-54' visibility='default' filepath='src/linux.h' line='353' column='1'/>
   </abi-instr>
   <abi-instr address-size='64' path='linux-sata.c' comp-dir-path='src' language='LANG_C11'>
     <array-type-def dimensions='1' type-id='type-id-6' size-in-bits='2048' id='type-id-123'>
@@ -1135,11 +1135,11 @@
       <parameter type-id='type-id-32'/>
       <return type-id='type-id-89'/>
     </function-decl>
-    <function-decl name='is_pata' filepath='src/linux.h' line='148' column='1' visibility='default' binding='global' size-in-bits='64'>
+    <function-decl name='is_pata' filepath='src/linux.h' line='156' column='1' visibility='default' binding='global' size-in-bits='64'>
       <parameter type-id='type-id-102'/>
       <return type-id='type-id-5'/>
     </function-decl>
-    <var-decl name='sata_parser' type-id='type-id-54' visibility='default' filepath='src/linux.h' line='339' column='1'/>
+    <var-decl name='sata_parser' type-id='type-id-54' visibility='default' filepath='src/linux.h' line='354' column='1'/>
     <function-decl name='opendir' filepath='/usr/include/dirent.h' line='134' column='1' visibility='default' binding='global' size-in-bits='64'>
       <parameter type-id='type-id-98'/>
       <return type-id='type-id-90'/>
@@ -1157,16 +1157,16 @@
       <parameter type-id='type-id-32'/>
       <return type-id='type-id-89'/>
     </function-decl>
-    <var-decl name='scsi_parser' type-id='type-id-54' visibility='default' filepath='src/linux.h' line='343' column='1'/>
+    <var-decl name='scsi_parser' type-id='type-id-54' visibility='default' filepath='src/linux.h' line='358' column='1'/>
   </abi-instr>
   <abi-instr address-size='64' path='linux-soc-root.c' comp-dir-path='src' language='LANG_C11'>
-    <var-decl name='soc_root_parser' type-id='type-id-54' visibility='default' filepath='src/linux.h' line='335' column='1'/>
+    <var-decl name='soc_root_parser' type-id='type-id-54' visibility='default' filepath='src/linux.h' line='350' column='1'/>
   </abi-instr>
   <abi-instr address-size='64' path='linux-virtblk.c' comp-dir-path='src' language='LANG_C11'>
-    <var-decl name='virtblk_parser' type-id='type-id-54' visibility='default' filepath='src/linux.h' line='341' column='1'/>
+    <var-decl name='virtblk_parser' type-id='type-id-54' visibility='default' filepath='src/linux.h' line='356' column='1'/>
   </abi-instr>
   <abi-instr address-size='64' path='linux-virtual-root.c' comp-dir-path='src' language='LANG_C11'>
-    <var-decl name='virtual_root_parser' type-id='type-id-54' visibility='default' filepath='src/linux.h' line='336' column='1'/>
+    <var-decl name='virtual_root_parser' type-id='type-id-54' visibility='default' filepath='src/linux.h' line='351' column='1'/>
   </abi-instr>
   <abi-instr address-size='64' path='linux.c' comp-dir-path='src' language='LANG_C11'>
     <typedef-decl name='const_efidp' type-id='type-id-130' filepath='src/include/efivar/efivar-dp.h' line='885' column='1' id='type-id-131'/>

@@ -7,6 +7,14 @@
 #ifndef _EFIBOOT_LINUX_H
 #define _EFIBOOT_LINUX_H
 
+#include <stdbool.h>
+#include <stdint.h>
+#include <sys/stat.h>
+#include <sys/types.h>
+
+#include "include/efivar/efivar-types.h"
+#include "compiler.h"
+
 struct acpi_root_info {
 	uint32_t acpi_hid;
 	uint64_t acpi_uid;
@@ -263,8 +271,15 @@ extern ssize_t HIDDEN make_mac_path(uint8_t *buf, ssize_t size,
 		int rc_ = 0;							\
 		debug("searching for %s from in %s", name, dev->disk_name);	\
 		for (unsigned int try_ = 0; true; try_++) {			\
-			char slashdev_[sizeof("device")				\
-				       + try_ * strlen("/device")];		\
+			char *slashdev_;					\
+										\
+			slashdev_ = alloca(sizeof("device")			\
+					   + try_ * strlen("/device"));		\
+			if (!slashdev_) {					\
+				rc_ = -1;					\
+				efi_error("cannot allocate memory: %m");	\
+				goto find_device_link_err_;			\
+			}							\
 										\
 			char *nul_ = stpcpy(slashdev_, "device");		\
 			for (unsigned int i_ = 0; i_ < try_; i_++)		\
