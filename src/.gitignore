@@ -1,6 +1,6 @@
 !guids.S
 *.bin
-efivar
+/efivar
 efivar-guids.h
 efivar-static
 makeguids
