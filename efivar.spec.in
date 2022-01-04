@@ -2,7 +2,7 @@ Name:           efivar
 Version:        @@VERSION@@
 Release:        1%{?dist}
 Summary:        Tools to manage UEFI variables
-License:        LGPL-2.1
+License:        LGPL-2.1-only
 URL:            https://github.com/rhboot/efivar
 Requires:       %{name}-libs = %{version}-%{release}
 ExclusiveArch:  %{efi}
