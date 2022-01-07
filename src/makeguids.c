@@ -16,19 +16,16 @@
 #include "efivar.h"
 #include "guid.h"
 
+#pragma GCC diagnostic ignored "-Wunused-parameter"
+
 efi_guid_t const efi_guid_zero = {0};
 efi_guid_t const efi_guid_empty = {0};
-
-struct guidname efi_well_known_guids;
-struct guidname efi_well_known_guids_end;
-struct guidname efi_well_known_names;
-struct guidname efi_well_known_names_end;
 
 static int
 cmpguidp(const void *p1, const void *p2)
 {
-	struct guidname *gn1 = (struct guidname *)p1;
-	struct guidname *gn2 = (struct guidname *)p2;
+	struct efivar_guidname *gn1 = (struct efivar_guidname *)p1;
+	struct efivar_guidname *gn2 = (struct efivar_guidname *)p2;
 
 	return efi_guid_cmp_(&gn1->guid, &gn2->guid);
 }
@@ -36,8 +33,8 @@ cmpguidp(const void *p1, const void *p2)
 static int
 cmpnamep(const void *p1, const void *p2)
 {
-	struct guidname *gn1 = (struct guidname *)p1;
-	struct guidname *gn2 = (struct guidname *)p2;
+	struct efivar_guidname *gn1 = (struct efivar_guidname *)p1;
+	struct efivar_guidname *gn2 = (struct efivar_guidname *)p2;
 
 	return strncmp(gn1->name, gn2->name, sizeof(gn1->name));
 }
@@ -54,23 +51,22 @@ static struct guid_aliases guid_aliases[] = {
 };
 
 static void make_aliases(FILE *symout, FILE *header,
-			 const char *alias, const uint8_t *guid_data)
+			 const char *alias, const efi_guid_t *guid)
 {
 	for (unsigned int i = 0; guid_aliases[i].name != NULL; i++) {
 		if (!strcmp(guid_aliases[i].alias, alias)) {
 			fprintf(symout,
 				"\nconst efi_guid_t\n"
 				"\t__attribute__((__visibility__ (\"default\")))\n"
-				"\t%s = {cpu_to_le32(0x%02x%02x%02x%02x),cpu_to_le16(0x%02x%02x),cpu_to_le16(0x%02x%02x),cpu_to_be16(0x%02x%02x),{0x%02x,0x%02x,0x%02x,0x%02x,0x%02x,0x%02x}};\n\n",
+				"\t%s = {cpu_to_le32(0x%08x),cpu_to_le16(0x%04hx),"
+					"cpu_to_le16(0x%04hx),cpu_to_be16(0x%02hhx%02hhx),"
+					"{0x%02hhx,0x%02hhx,0x%02hhx,0x%02hhx,0x%02hhx,0x%02hhx}};\n\n",
 				guid_aliases[i].name,
-				guid_data[3], guid_data[2],
-				guid_data[1], guid_data[0],
-				guid_data[5], guid_data[4],
-				guid_data[7], guid_data[6],
-				guid_data[8], guid_data[9],
-				guid_data[10], guid_data[11],
-				guid_data[12], guid_data[13],
-				guid_data[14], guid_data[15]);
+				guid->a, guid->b, guid->c,
+				(uint8_t)(guid->d & 0xff),
+				(uint8_t)((guid->d & 0xff00) >> 8),
+				guid->e[0], guid->e[1], guid->e[2],
+				guid->e[3], guid->e[4], guid->e[5]);
 
 			fprintf(header,
 				"extern const efi_guid_t %s __attribute__((__visibility__ (\"default\")));\n",
@@ -79,106 +75,109 @@ static void make_aliases(FILE *symout, FILE *header,
 	}
 }
 
+static void
+write_guidnames(FILE *out, const char *listname,
+		struct efivar_guidname *guidnames, size_t n, const char *symver)
+{
+	size_t i;
+
+	fprintf(out,
+		"const struct efivar_guidname\n"
+			"\t__attribute__((__visibility__ (\"default\")))\n"
+			"\t%s_[%zd]= {\n",
+			listname, n);
+	for (i = 0; i < n; i++) {
+		struct efivar_guidname *gn = &guidnames[i];
+
+		fprintf(out,
+			"\t\t{.guid={.a=cpu_to_le32(%#x),\n"
+			"\t\t        .b=cpu_to_le16(%#x),\n"
+			"\t\t        .c=cpu_to_le16(%#x),\n"
+			"\t\t        .d=cpu_to_be16(0x%02hhx%02hhx),\n"
+			"\t\t        .e={%#x,%#x,%#x,%#x,%#x,%#x}},\n"
+			"\t\t .symbol=\"%s\",\n"
+			"\t\t .name=\"%s\",\n"
+			"\t\t .description=\"%s\",\n"
+			"\t\t},\n",
+			gn->guid.a, gn->guid.b, gn->guid.c,
+			(uint8_t)(gn->guid.d & 0xff),
+			(uint8_t)((gn->guid.d & 0xff00) >> 8),
+			gn->guid.e[0], gn->guid.e[1], gn->guid.e[2],
+			gn->guid.e[3], gn->guid.e[4], gn->guid.e[5],
+			gn->symbol, gn->name, gn->description);
+	}
+	fprintf(out, "};\n");
+}
+
 int
 main(int argc, char *argv[])
 {
-	if (argc != 6)
-		exit(1);
-
-	int in, guidout, nameout;
 	int rc;
+	int argstart = 0;
+	FILE *symout, *header, *ldsout;
+	int dash_t = 0;
 
-	FILE *symout, *header;
-
-	in = open(argv[1], O_RDONLY);
-	if (in < 0)
-		err(1, "makeguids: could not open \"%s\"", argv[1]);
-
-	guidout = open(argv[2], O_WRONLY|O_CREAT|O_TRUNC, 0644);
-	if (guidout < 0)
-		err(1, "makeguids: could not open \"%s\"", argv[2]);
-
-	nameout = open(argv[3], O_WRONLY|O_CREAT|O_TRUNC, 0644);
-	if (nameout < 0)
-		err(1, "makeguids: could not open \"%s\"", argv[3]);
-
-	symout = fopen(argv[4], "w");
-	if (symout == NULL)
-		err(1, "makeguids: could not open \"%s\"", argv[4]);
-	rc = chmod(argv[4], 0644);
-	if (rc < 0)
-		warn("makeguids: chmod(%s, 0644)", argv[4]);
-
-	header = fopen(argv[5], "w");
-	if (header == NULL)
-		err(1, "makeguids: could not open \"%s\"", argv[5]);
-	rc = chmod(argv[5], 0644);
-	if (rc < 0)
-		warn("makeguids: chmod(%s, 0644)", argv[5]);
-
-	char *inbuf = NULL;
-	size_t inlen = 0;
-	rc = read_file(in, (uint8_t **)&inbuf, &inlen);
-	if (rc < 0)
-		err(1, "makeguids: could not read \"%s\"", argv[1]);
-
-	struct guidname *outbuf = malloc(1);
-	if (!outbuf)
-		err(1, "makeguids");
-
-	char *guidstr = inbuf;
-	unsigned int line;
-	for (line = 1;
-	     guidstr && guidstr[0] != '\0' &&
-		(uintptr_t)guidstr - (uintptr_t)inbuf < inlen;
-	     line++) {
-
-		outbuf = realloc(outbuf, line * sizeof(struct guidname));
-		if (!outbuf)
-			err(1, "makeguids");
-		memset(outbuf + line - 1, 0, sizeof(struct guidname));
-
-		char *symbol = strchr(guidstr, '\t');
-		if (symbol == NULL)
-			err(1, "makeguids: \"%s\": 1 invalid data on line %d",
-				argv[1], line);
-		*symbol = '\0';
-		symbol += 1;
-
-		char *name = strchr(symbol, '\t');
-		if (name == NULL)
-			err(1, "makeguids: \"%s\": 2 invalid data on line %d",
-				argv[1], line);
-		*name = '\0';
-		name += 1;
-
-		char *end = strchr(name, '\n');
-		if (end == NULL)
-			err(1, "makeguids: \"%s\": 3 invalid data on line %d",
-				argv[1], line);
-		*end = '\0';
-
-		efi_guid_t guid;
-		rc = efi_str_to_guid_(guidstr, &guid);
-		if (rc < 0)
-			err(1, "makeguids: \"%s\": 4 invalid data on line %d",
-				argv[1], line);
-
-		memcpy(&outbuf[line-1].guid, &guid, sizeof(guid));
-		strcpy(outbuf[line-1].symbol, "efi_guid_");
-		strncat(outbuf[line-1].symbol, symbol,
-					255 - strlen("efi_guid_"));
-		strncpy(outbuf[line-1].name, name, 255);
-
-		guidstr = end+1;
+	if (argc < 5) {
+		errx(1, "Not enough arguments.\n");
+	} else if (argc > 5 && !strcmp(argv[1],"-T")) {
+		argstart = 1;
+		dash_t = 1;
+	} else if (argc > 5) {
+		errx(1, "Too many arguments.\n");
 	}
-	printf("%d lines\n", line-1);
+
+	symout = fopen(argv[argstart + 2], "w");
+	if (symout == NULL)
+		err(1, "could not open \"%s\"", argv[argstart + 2]);
+	rc = chmod(argv[argstart + 2], 0644);
+	if (rc < 0)
+		warn("chmod(%s, 0644)", argv[argstart + 2]);
+
+	header = fopen(argv[argstart + 3], "w");
+	if (header == NULL)
+		err(1, "could not open \"%s\"", argv[argstart + 3]);
+	rc = chmod(argv[argstart + 3], 0644);
+	if (rc < 0)
+		warn("chmod(%s, 0644)", argv[argstart + 3]);
+
+	ldsout = fopen(argv[argstart + 4], "w");
+	if (ldsout == NULL)
+		err(1, "could not open \"%s\"", argv[argstart + 4]);
+	rc = chmod(argv[argstart + 4], 0644);
+	if (rc < 0)
+		warn("chmod(%s, 0644)", argv[argstart + 4]);
+
+	struct guidname_index *guidnames = NULL;
+
+	rc = read_guids_at(AT_FDCWD, argv[argstart + 1], &guidnames);
+	if (rc < 0)
+		err(1, "could not read \"%s\"", argv[argstart + 1]);
+
+	struct efivar_guidname *outbuf;
+
+	outbuf = calloc(guidnames->nguids, sizeof(struct efivar_guidname));
+	if (!outbuf)
+		err(1, "could not allocate memory");
+
+	unsigned int line = guidnames->nguids;
+	char *strtab = guidnames->strtab;
 
 	fprintf(header, "#ifndef EFIVAR_GUIDS_H\n#define EFIVAR_GUIDS_H 1\n\n");
+	fprintf(header, "\n\
+struct efivar_guidname {\n\
+	efi_guid_t guid;\n\
+	char symbol[256];\n\
+	char name[256];\n\
+	char description[256];\n\
+} __attribute__((__aligned__(16)));\n\n");
+
+	fprintf(symout, "#ifndef EFIVAR_BUILD_ENVIRONMENT\n");
+	fprintf(symout, "#define EFIVAR_BUILD_ENVIRONMENT\n");
+	fprintf(symout, "#endif /* EFIVAR_BUILD_ENVIRONMENT */\n\n");
 	fprintf(symout, "#include \"fix_coverity.h\"\n");
 	fprintf(symout, "#include <efivar/efivar.h>\n");
 	fprintf(symout, "#include <endian.h>\n");
-	fprintf(symout, """\n\
+	fprintf(symout, "\n\
 #if BYTE_ORDER == BIG_ENDIAN\n\
 #define cpu_to_be32(n) (n)\n\
 #define cpu_to_be16(n) (n)\n\
@@ -192,47 +191,136 @@ main(int argc, char *argv[])
 #endif\n\
 """);
 
-	for (unsigned int i = 0; i < line-1; i++) {
-		uint8_t *guid_data = (uint8_t *) &outbuf[i].guid;
+	unsigned int i;
+	for (i = 0; i < line; i++) {
+		struct guidname_offset *gno = &guidnames->offsets[i];
+		char *sym = &strtab[gno->symoff];
+		char *name = &strtab[gno->nameoff];
+		char *desc = &strtab[gno->descoff];
 
-		if (!strcmp(outbuf[i].symbol, "efi_guid_zzignore-this-guid"))
+		make_aliases(symout, header, sym, &gno->guid);
+
+		size_t sz;
+
+		outbuf[i].guid = gno->guid;
+
+		sz = sizeof(outbuf[i].symbol);
+		strncpy(outbuf[i].symbol, sym, sz);
+		outbuf[i].symbol[sz - 1] = '\0';
+
+		sz = sizeof(outbuf[i].name);
+		strncpy(outbuf[i].name, name, sz);
+		outbuf[i].name[sz - 1] = '\0';
+
+		sz = sizeof(outbuf[i].description);
+		strncpy(outbuf[i].description, desc, sz);
+		outbuf[i].description[sz - 1] = '\0';
+
+		if (!strcmp(sym, "efi_guid_zzignore-this-guid"))
 			break;
 
-		make_aliases(symout, header, outbuf[i].symbol, guid_data);
+		fprintf(header, "extern const efi_guid_t %s __attribute__((__visibility__ (\"default\")));\n", sym);
 
-		fprintf(header, "extern const efi_guid_t %s __attribute__((__visibility__ (\"default\")));\n", outbuf[i].symbol);
-
-		fprintf(symout, "const\n"
+		fprintf(symout, "const efi_guid_t\n"
 			"__attribute__((__visibility__ (\"default\")))\n"
-			"efi_guid_t %s = {cpu_to_le32(0x%02x%02x%02x%02x),cpu_to_le16(0x%02x%02x),cpu_to_le16(0x%02x%02x),cpu_to_be16(0x%02x%02x),{0x%02x,0x%02x,0x%02x,0x%02x,0x%02x,0x%02x}};\n\n",
-			outbuf[i].symbol,
-			guid_data[3], guid_data[2],
-			guid_data[1], guid_data[0],
-			guid_data[5], guid_data[4],
-			guid_data[7], guid_data[6],
-			guid_data[8], guid_data[9],
-			guid_data[10], guid_data[11],
-			guid_data[12], guid_data[13],
-			guid_data[14], guid_data[15]);
+			"\t%s = {cpu_to_le32(0x%08x),cpu_to_le16(0x%04hx),"
+				"cpu_to_le16(0x%04hx),cpu_to_be16(0x%02hhx%02hhx),"
+				"{0x%02hhx,0x%02hhx,0x%02hhx,0x%02hhx,0x%02hhx,0x%02hhx}};\n\n",
+			sym,
+			gno->guid.a, gno->guid.b, gno->guid.c,
+			(uint8_t)(gno->guid.d & 0xff),
+			(uint8_t)((gno->guid.d & 0xff00) >> 8),
+			gno->guid.e[0], gno->guid.e[1], gno->guid.e[2],
+			gno->guid.e[3], gno->guid.e[4], gno->guid.e[5]);
 	}
+
+	fprintf(header, "\n");
+	fprintf(header, "#ifndef EFIVAR_BUILD_ENVIRONMENT\n\n");
+	fprintf(header,
+		"extern const struct efivar_guidname\n"
+			"\t__attribute__((__visibility__ (\"default\")))\n"
+			"\tefi_well_known_guids[%d];\n",
+		i);
+	fprintf(header,
+		"extern const struct efivar_guidname\n"
+			"\t__attribute__((__visibility__ (\"default\")))\n"
+			"\tefi_well_known_guids_end;\n");
+	fprintf(header,
+		"extern const uint64_t\n"
+			"\t__attribute__((__visibility__ (\"default\")))\n"
+			"\tefi_n_well_known_guids;\n\n");
+	fprintf(header,
+		"extern const struct efivar_guidname\n"
+			"\t__attribute__((__visibility__ (\"default\")))\n"
+			"\tefi_well_known_names[%d];\n",
+		i);
+	fprintf(header,
+		"extern const struct efivar_guidname\n"
+			"\t__attribute__((__visibility__ (\"default\")))\n"
+			"\tefi_well_known_names_end;\n");
+	fprintf(header,
+		"extern const uint64_t\n"
+			"\t__attribute__((__visibility__ (\"default\")))\n"
+			"\tefi_n_well_known_names;\n\n");
+	fprintf(header, "#endif /* EFIVAR_BUILD_ENVIRONMENT */\n");
+
+	/*
+	 * These are intentionally off by one, omitting:
+	 * ffffffff-ffff-ffff-ffff-ffffffffffff	zzignore-this-guid	zzignore-this-guid
+	 */
+	fprintf(symout,
+		"const uint64_t\n"
+			"\t__attribute__((__visibility__ (\"default\")))\n"
+			"\tefi_n_well_known_guids = %u;\n",
+		i);
+	fprintf(symout,
+		"const uint64_t\n"
+			"\t__attribute__((__visibility__ (\"default\")))\n"
+			"\tefi_n_well_known_names = %u;\n\n",
+		i);
+
+	/*
+	 * Emit the end from here as well.
+	 */
 
 	fprintf(header, "\n#endif /* EFIVAR_GUIDS_H */\n");
 	fclose(header);
+
+	fprintf(symout,
+		"struct efivar_guidname {\n"
+		"\tefi_guid_t guid;\n"
+		"\tchar symbol[256];\n"
+		"\tchar name[256];\n"
+		"\tchar description[256];\n"
+		"} __attribute__((__aligned__(16)));\n\n");
+
+	qsort(outbuf, line, sizeof(struct efivar_guidname), cmpguidp);
+	write_guidnames(symout, "efi_well_known_guids", outbuf, line, "libefivar.so.0");
+
+	qsort(outbuf, line, sizeof(struct efivar_guidname), cmpnamep);
+	write_guidnames(symout, "efi_well_known_names", outbuf, line, "LIBEFIVAR_1.38");
+
 	fclose(symout);
 
-	qsort(outbuf, line-1, sizeof(struct guidname), cmpguidp);
-	rc = write(guidout, outbuf, sizeof(struct guidname) * (line - 1));
-	if (rc < 0)
-		err(1, "makeguids");
+	fprintf(ldsout,
+		"SECTIONS\n"
+		"{\n"
+		"  .data :\n"
+		"  {\n"
+		"    efi_well_known_guids = efi_well_known_guids_;\n"
+		"    efi_well_known_guids_end = efi_well_known_guids_ + %zd;\n"
+		"    efi_well_known_names = efi_well_known_names_;\n"
+		"    efi_well_known_names_end = efi_well_known_names_ + %zd;\n"
+		"  }\n"
+		"}%s;\n",
+		(line - 1) * sizeof(struct efivar_guidname),
+		(line - 1) * sizeof(struct efivar_guidname),
+		dash_t ? " INSERT AFTER .data" : "");
 
-	qsort(outbuf, line-1, sizeof(struct guidname), cmpnamep);
-	rc = write(nameout, outbuf, sizeof(struct guidname) * (line - 1));
-	if (rc < 0)
-		err(1, "makeguids");
-	close(in);
-	close(guidout);
-	close(nameout);
-	free(inbuf);
+	fclose(ldsout);
+
+	free(guidnames->strtab);
+	free(guidnames);
 
 	return 0;
 }

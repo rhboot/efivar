@@ -3,6 +3,7 @@ default : all
 .PHONY: default all clean install test
 
 include $(TOPDIR)/src/include/version.mk
+include $(TOPDIR)/src/include/workarounds.mk
 
 comma:= ,
 empty:=
@@ -30,7 +31,8 @@ family = $(foreach FAMILY_SUFFIX,$(FAMILY_SUFFIXES),$($(1)_$(FAMILY_SUFFIX)))
 
 %.so :
 	$(CCLD) $(CCLDFLAGS) $(CPPFLAGS) $(SOFLAGS) \
-	  -o $@ $^ $(LDLIBS)
+		$(foreach LDS,$(LDSCRIPTS),$(LD_DASH_T) $(LDS)) \
+		-o $@ $^ $(LDLIBS)
 	ln -vfs $@ $@.1
 
 %.abixml : %.so

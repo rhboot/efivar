@@ -5,4 +5,5 @@ efivar-guids.h
 efivar-static
 makeguids
 guid-symbols.c
+guids.lds
 thread-test

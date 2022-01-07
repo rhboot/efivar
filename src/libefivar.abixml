@@ -118,8 +118,14 @@
     <elf-symbol name='efi_guid_x509_sha384' size='16' version='libefivar.so.0' is-default-version='yes' type='object-type' binding='global-binding' visibility='default-visibility' is-defined='yes'/>
     <elf-symbol name='efi_guid_x509_sha512' size='16' version='libefivar.so.0' is-default-version='yes' type='object-type' binding='global-binding' visibility='default-visibility' is-defined='yes'/>
     <elf-symbol name='efi_guid_zero' size='16' version='libefivar.so.0' is-default-version='yes' type='object-type' binding='global-binding' visibility='default-visibility' is-defined='yes'/>
-    <elf-symbol name='efi_well_known_guids' size='22176' version='libefivar.so.0' is-default-version='yes' type='object-type' binding='global-binding' visibility='default-visibility' is-defined='yes'/>
-    <elf-symbol name='efi_well_known_guids_end' size='1' version='libefivar.so.0' is-default-version='yes' type='object-type' binding='global-binding' visibility='default-visibility' is-defined='yes'/>
+    <elf-symbol name='efi_n_well_known_guids' size='8' version='LIBEFIVAR_1.38' is-default-version='yes' type='object-type' binding='global-binding' visibility='default-visibility' is-defined='yes'/>
+    <elf-symbol name='efi_n_well_known_names' size='8' version='LIBEFIVAR_1.38' is-default-version='yes' type='object-type' binding='global-binding' visibility='default-visibility' is-defined='yes'/>
+    <elf-symbol name='efi_well_known_guids' version='libefivar.so.0' is-default-version='yes' type='object-type' binding='global-binding' visibility='default-visibility' is-defined='yes'/>
+    <elf-symbol name='efi_well_known_guids_' size='32928' version='libefivar.so.0' is-default-version='yes' type='object-type' binding='global-binding' visibility='default-visibility' alias='efi_well_known_guids@@libefivar.so.0' is-defined='yes'/>
+    <elf-symbol name='efi_well_known_guids_end' version='libefivar.so.0' is-default-version='yes' type='object-type' binding='global-binding' visibility='default-visibility' is-defined='yes'/>
+    <elf-symbol name='efi_well_known_names' version='LIBEFIVAR_1.38' is-default-version='yes' type='object-type' binding='global-binding' visibility='default-visibility' is-defined='yes'/>
+    <elf-symbol name='efi_well_known_names_' size='32928' version='LIBEFIVAR_1.38' is-default-version='yes' type='object-type' binding='global-binding' visibility='default-visibility' alias='efi_well_known_names@@LIBEFIVAR_1.38' is-defined='yes'/>
+    <elf-symbol name='efi_well_known_names_end' version='LIBEFIVAR_1.38' is-default-version='yes' type='object-type' binding='global-binding' visibility='default-visibility' is-defined='yes'/>
   </elf-variable-symbols>
   <abi-instr address-size='64' path='dp-acpi.c' comp-dir-path='src' language='LANG_C11'>
     <array-type-def dimensions='1' type-id='type-id-1' size-in-bits='8' id='type-id-2'>
@@ -2239,49 +2245,72 @@
     </function-decl>
   </abi-instr>
   <abi-instr address-size='64' path='guid-symbols.c' comp-dir-path='src' language='LANG_C11'>
-    <var-decl name='efi_guid_empty' type-id='type-id-40' mangled-name='efi_guid_empty' visibility='default' filepath='src/include/efivar/efivar-guids.h' line='4' column='1' elf-symbol-id='efi_guid_empty@@libefivar.so.0'/>
-    <var-decl name='efi_guid_zero' type-id='type-id-40' mangled-name='efi_guid_zero' visibility='default' filepath='src/include/efivar/efivar-guids.h' line='5' column='1' elf-symbol-id='efi_guid_zero@@libefivar.so.0'/>
-    <var-decl name='efi_guid_redhat_2' type-id='type-id-40' mangled-name='efi_guid_redhat_2' visibility='default' filepath='src/include/efivar/efivar-guids.h' line='6' column='1' elf-symbol-id='efi_guid_redhat_2@@libefivar.so.0'/>
-    <var-decl name='efi_guid_redhat' type-id='type-id-40' mangled-name='efi_guid_redhat' visibility='default' filepath='src/include/efivar/efivar-guids.h' line='7' column='1' elf-symbol-id='efi_guid_redhat@@libefivar.so.0'/>
-    <var-decl name='efi_guid_sha512' type-id='type-id-40' mangled-name='efi_guid_sha512' visibility='default' filepath='src/include/efivar/efivar-guids.h' line='8' column='1' elf-symbol-id='efi_guid_sha512@@libefivar.so.0'/>
-    <var-decl name='efi_guid_fwupdate' type-id='type-id-40' mangled-name='efi_guid_fwupdate' visibility='default' filepath='src/include/efivar/efivar-guids.h' line='9' column='1' elf-symbol-id='efi_guid_fwupdate@@LIBEFIVAR_1.35'/>
-    <var-decl name='efi_guid_sha224' type-id='type-id-40' mangled-name='efi_guid_sha224' visibility='default' filepath='src/include/efivar/efivar-guids.h' line='10' column='1' elf-symbol-id='efi_guid_sha224@@libefivar.so.0'/>
-    <var-decl name='efi_guid_lenovo_boot_menu' type-id='type-id-40' mangled-name='efi_guid_lenovo_boot_menu' visibility='default' filepath='src/include/efivar/efivar-guids.h' line='11' column='1' elf-symbol-id='efi_guid_lenovo_boot_menu@@libefivar.so.0'/>
-    <var-decl name='efi_guid_supermicro' type-id='type-id-40' mangled-name='efi_guid_supermicro' visibility='default' filepath='src/include/efivar/efivar-guids.h' line='12' column='1' elf-symbol-id='efi_guid_supermicro@@LIBEFIVAR_1.38'/>
-    <var-decl name='efi_guid_asus' type-id='type-id-40' mangled-name='efi_guid_asus' visibility='default' filepath='src/include/efivar/efivar-guids.h' line='13' column='1' elf-symbol-id='efi_guid_asus@@LIBEFIVAR_1.38'/>
-    <var-decl name='efi_guid_ux_capsule' type-id='type-id-40' mangled-name='efi_guid_ux_capsule' visibility='default' filepath='src/include/efivar/efivar-guids.h' line='14' column='1' elf-symbol-id='efi_guid_ux_capsule@@LIBEFIVAR_1.33'/>
-    <var-decl name='efi_guid_x509_sha256' type-id='type-id-40' mangled-name='efi_guid_x509_sha256' visibility='default' filepath='src/include/efivar/efivar-guids.h' line='15' column='1' elf-symbol-id='efi_guid_x509_sha256@@libefivar.so.0'/>
-    <var-decl name='efi_guid_rsa2048' type-id='type-id-40' mangled-name='efi_guid_rsa2048' visibility='default' filepath='src/include/efivar/efivar-guids.h' line='16' column='1' elf-symbol-id='efi_guid_rsa2048@@libefivar.so.0'/>
-    <var-decl name='efi_guid_lenovo' type-id='type-id-40' mangled-name='efi_guid_lenovo' visibility='default' filepath='src/include/efivar/efivar-guids.h' line='17' column='1' elf-symbol-id='efi_guid_lenovo@@libefivar.so.0'/>
-    <var-decl name='efi_guid_lenovo_diag' type-id='type-id-40' mangled-name='efi_guid_lenovo_diag' visibility='default' filepath='src/include/efivar/efivar-guids.h' line='18' column='1' elf-symbol-id='efi_guid_lenovo_diag@@libefivar.so.0'/>
-    <var-decl name='efi_guid_x509_sha512' type-id='type-id-40' mangled-name='efi_guid_x509_sha512' visibility='default' filepath='src/include/efivar/efivar-guids.h' line='19' column='1' elf-symbol-id='efi_guid_x509_sha512@@libefivar.so.0'/>
-    <var-decl name='efi_guid_external_management' type-id='type-id-40' mangled-name='efi_guid_external_management' visibility='default' filepath='src/include/efivar/efivar-guids.h' line='20' column='1' elf-symbol-id='efi_guid_external_management@@LIBEFIVAR_1.38'/>
-    <var-decl name='efi_guid_pkcs7_cert' type-id='type-id-40' mangled-name='efi_guid_pkcs7_cert' visibility='default' filepath='src/include/efivar/efivar-guids.h' line='21' column='1' elf-symbol-id='efi_guid_pkcs7_cert@@libefivar.so.0'/>
-    <var-decl name='efi_guid_fives' type-id='type-id-40' mangled-name='efi_guid_fives' visibility='default' filepath='src/include/efivar/efivar-guids.h' line='22' column='1' elf-symbol-id='efi_guid_fives@@LIBEFIVAR_1.38'/>
-    <var-decl name='efi_guid_shim' type-id='type-id-40' mangled-name='efi_guid_shim' visibility='default' filepath='src/include/efivar/efivar-guids.h' line='23' column='1' elf-symbol-id='efi_guid_shim@@libefivar.so.0'/>
-    <var-decl name='efi_guid_lenovo_rescue' type-id='type-id-40' mangled-name='efi_guid_lenovo_rescue' visibility='default' filepath='src/include/efivar/efivar-guids.h' line='24' column='1' elf-symbol-id='efi_guid_lenovo_rescue@@libefivar.so.0'/>
-    <var-decl name='efi_guid_rsa2048_sha1' type-id='type-id-40' mangled-name='efi_guid_rsa2048_sha1' visibility='default' filepath='src/include/efivar/efivar-guids.h' line='25' column='1' elf-symbol-id='efi_guid_rsa2048_sha1@@libefivar.so.0'/>
-    <var-decl name='efi_guid_canonical' type-id='type-id-40' mangled-name='efi_guid_canonical' visibility='default' filepath='src/include/efivar/efivar-guids.h' line='26' column='1' elf-symbol-id='efi_guid_canonical@@LIBEFIVAR_1.38'/>
-    <var-decl name='efi_guid_dell' type-id='type-id-40' mangled-name='efi_guid_dell' visibility='default' filepath='src/include/efivar/efivar-guids.h' line='27' column='1' elf-symbol-id='efi_guid_dell@@LIBEFIVAR_1.38'/>
-    <var-decl name='efi_guid_x509_sha384' type-id='type-id-40' mangled-name='efi_guid_x509_sha384' visibility='default' filepath='src/include/efivar/efivar-guids.h' line='28' column='1' elf-symbol-id='efi_guid_x509_sha384@@libefivar.so.0'/>
-    <var-decl name='efi_guid_lenovo_setup' type-id='type-id-40' mangled-name='efi_guid_lenovo_setup' visibility='default' filepath='src/include/efivar/efivar-guids.h' line='29' column='1' elf-symbol-id='efi_guid_lenovo_setup@@libefivar.so.0'/>
-    <var-decl name='efi_guid_microsoft' type-id='type-id-40' mangled-name='efi_guid_microsoft' visibility='default' filepath='src/include/efivar/efivar-guids.h' line='30' column='1' elf-symbol-id='efi_guid_microsoft@@libefivar.so.0'/>
-    <var-decl name='efi_guid_lenovo_2' type-id='type-id-40' mangled-name='efi_guid_lenovo_2' visibility='default' filepath='src/include/efivar/efivar-guids.h' line='31' column='1' elf-symbol-id='efi_guid_lenovo_2@@libefivar.so.0'/>
-    <var-decl name='efi_guid_auto_created_boot_option' type-id='type-id-40' mangled-name='efi_guid_auto_created_boot_option' visibility='default' filepath='src/include/efivar/efivar-guids.h' line='32' column='1' elf-symbol-id='efi_guid_auto_created_boot_option@@LIBEFIVAR_1.38'/>
-    <var-decl name='efi_guid_sha1' type-id='type-id-40' mangled-name='efi_guid_sha1' visibility='default' filepath='src/include/efivar/efivar-guids.h' line='33' column='1' elf-symbol-id='efi_guid_sha1@@libefivar.so.0'/>
-    <var-decl name='efi_guid_lenovo_me_config' type-id='type-id-40' mangled-name='efi_guid_lenovo_me_config' visibility='default' filepath='src/include/efivar/efivar-guids.h' line='34' column='1' elf-symbol-id='efi_guid_lenovo_me_config@@libefivar.so.0'/>
-    <var-decl name='efi_guid_global' type-id='type-id-40' mangled-name='efi_guid_global' visibility='default' filepath='src/include/efivar/efivar-guids.h' line='35' column='1' elf-symbol-id='efi_guid_global@@libefivar.so.0'/>
-    <var-decl name='efi_guid_grub' type-id='type-id-40' mangled-name='efi_guid_grub' visibility='default' filepath='src/include/efivar/efivar-guids.h' line='36' column='1' elf-symbol-id='efi_guid_grub@@LIBEFIVAR_1.38'/>
-    <var-decl name='efi_guid_x509_cert' type-id='type-id-40' mangled-name='efi_guid_x509_cert' visibility='default' filepath='src/include/efivar/efivar-guids.h' line='37' column='1' elf-symbol-id='efi_guid_x509_cert@@libefivar.so.0'/>
-    <var-decl name='efi_guid_rsa2048_sha256_cert' type-id='type-id-40' mangled-name='efi_guid_rsa2048_sha256_cert' visibility='default' filepath='src/include/efivar/efivar-guids.h' line='38' column='1' elf-symbol-id='efi_guid_rsa2048_sha256_cert@@libefivar.so.0'/>
-    <var-decl name='efi_guid_lenovo_diag_splash' type-id='type-id-40' mangled-name='efi_guid_lenovo_diag_splash' visibility='default' filepath='src/include/efivar/efivar-guids.h' line='39' column='1' elf-symbol-id='efi_guid_lenovo_diag_splash@@libefivar.so.0'/>
-    <var-decl name='efi_guid_lenovo_msg' type-id='type-id-40' mangled-name='efi_guid_lenovo_msg' visibility='default' filepath='src/include/efivar/efivar-guids.h' line='40' column='1' elf-symbol-id='efi_guid_lenovo_msg@@libefivar.so.0'/>
-    <var-decl name='efi_guid_sha256' type-id='type-id-40' mangled-name='efi_guid_sha256' visibility='default' filepath='src/include/efivar/efivar-guids.h' line='41' column='1' elf-symbol-id='efi_guid_sha256@@libefivar.so.0'/>
-    <var-decl name='efi_guid_shell' type-id='type-id-40' mangled-name='efi_guid_shell' visibility='default' filepath='src/include/efivar/efivar-guids.h' line='42' column='1' elf-symbol-id='efi_guid_shell@@libefivar.so.0'/>
-    <var-decl name='efi_guid_security' type-id='type-id-40' mangled-name='efi_guid_security' visibility='default' filepath='src/include/efivar/efivar-guids.h' line='43' column='1' elf-symbol-id='efi_guid_security@@libefivar.so.0'/>
-    <var-decl name='efi_guid_rsa2048_sha256' type-id='type-id-40' mangled-name='efi_guid_rsa2048_sha256' visibility='default' filepath='src/include/efivar/efivar-guids.h' line='44' column='1' elf-symbol-id='efi_guid_rsa2048_sha256@@libefivar.so.0'/>
-    <var-decl name='efi_guid_lenovo_startup_interrupt' type-id='type-id-40' mangled-name='efi_guid_lenovo_startup_interrupt' visibility='default' filepath='src/include/efivar/efivar-guids.h' line='45' column='1' elf-symbol-id='efi_guid_lenovo_startup_interrupt@@libefivar.so.0'/>
-    <var-decl name='efi_guid_sha384' type-id='type-id-40' mangled-name='efi_guid_sha384' visibility='default' filepath='src/include/efivar/efivar-guids.h' line='46' column='1' elf-symbol-id='efi_guid_sha384@@libefivar.so.0'/>
+    <array-type-def dimensions='1' type-id='type-id-285' size-in-bits='263424' id='type-id-286'>
+      <subrange length='42' type-id='type-id-3' id='type-id-287'/>
+    </array-type-def>
+    <class-decl name='efivar_guidname' size-in-bits='6272' is-struct='yes' visibility='default' filepath='src/guid-symbols.c' line='201' column='1' id='type-id-288'>
+      <data-member access='public' layout-offset-in-bits='0'>
+        <var-decl name='guid' type-id='type-id-39' visibility='default' filepath='src/guid-symbols.c' line='202' column='1'/>
+      </data-member>
+      <data-member access='public' layout-offset-in-bits='128'>
+        <var-decl name='symbol' type-id='type-id-213' visibility='default' filepath='src/guid-symbols.c' line='203' column='1'/>
+      </data-member>
+      <data-member access='public' layout-offset-in-bits='2176'>
+        <var-decl name='name' type-id='type-id-213' visibility='default' filepath='src/guid-symbols.c' line='204' column='1'/>
+      </data-member>
+      <data-member access='public' layout-offset-in-bits='4224'>
+        <var-decl name='description' type-id='type-id-213' visibility='default' filepath='src/guid-symbols.c' line='205' column='1'/>
+      </data-member>
+    </class-decl>
+    <qualified-type-def type-id='type-id-288' const='yes' id='type-id-285'/>
+    <qualified-type-def type-id='type-id-43' const='yes' id='type-id-289'/>
+    <var-decl name='efi_guid_empty' type-id='type-id-40' mangled-name='efi_guid_empty' visibility='default' filepath='src/guid-symbols.c' line='23' column='1' elf-symbol-id='efi_guid_empty@@libefivar.so.0'/>
+    <var-decl name='efi_guid_zero' type-id='type-id-40' mangled-name='efi_guid_zero' visibility='default' filepath='src/guid-symbols.c' line='27' column='1' elf-symbol-id='efi_guid_zero@@libefivar.so.0'/>
+    <var-decl name='efi_guid_redhat_2' type-id='type-id-40' mangled-name='efi_guid_redhat_2' visibility='default' filepath='src/guid-symbols.c' line='32' column='1' elf-symbol-id='efi_guid_redhat_2@@libefivar.so.0'/>
+    <var-decl name='efi_guid_redhat' type-id='type-id-40' mangled-name='efi_guid_redhat' visibility='default' filepath='src/guid-symbols.c' line='36' column='1' elf-symbol-id='efi_guid_redhat@@libefivar.so.0'/>
+    <var-decl name='efi_guid_sha512' type-id='type-id-40' mangled-name='efi_guid_sha512' visibility='default' filepath='src/guid-symbols.c' line='40' column='1' elf-symbol-id='efi_guid_sha512@@libefivar.so.0'/>
+    <var-decl name='efi_guid_fwupdate' type-id='type-id-40' mangled-name='efi_guid_fwupdate' visibility='default' filepath='src/guid-symbols.c' line='44' column='1' elf-symbol-id='efi_guid_fwupdate@@LIBEFIVAR_1.35'/>
+    <var-decl name='efi_guid_sha224' type-id='type-id-40' mangled-name='efi_guid_sha224' visibility='default' filepath='src/guid-symbols.c' line='48' column='1' elf-symbol-id='efi_guid_sha224@@libefivar.so.0'/>
+    <var-decl name='efi_guid_lenovo_boot_menu' type-id='type-id-40' mangled-name='efi_guid_lenovo_boot_menu' visibility='default' filepath='src/guid-symbols.c' line='52' column='1' elf-symbol-id='efi_guid_lenovo_boot_menu@@libefivar.so.0'/>
+    <var-decl name='efi_guid_supermicro' type-id='type-id-40' mangled-name='efi_guid_supermicro' visibility='default' filepath='src/guid-symbols.c' line='56' column='1' elf-symbol-id='efi_guid_supermicro@@LIBEFIVAR_1.38'/>
+    <var-decl name='efi_guid_asus' type-id='type-id-40' mangled-name='efi_guid_asus' visibility='default' filepath='src/guid-symbols.c' line='60' column='1' elf-symbol-id='efi_guid_asus@@LIBEFIVAR_1.38'/>
+    <var-decl name='efi_guid_ux_capsule' type-id='type-id-40' mangled-name='efi_guid_ux_capsule' visibility='default' filepath='src/guid-symbols.c' line='64' column='1' elf-symbol-id='efi_guid_ux_capsule@@LIBEFIVAR_1.33'/>
+    <var-decl name='efi_guid_x509_sha256' type-id='type-id-40' mangled-name='efi_guid_x509_sha256' visibility='default' filepath='src/guid-symbols.c' line='68' column='1' elf-symbol-id='efi_guid_x509_sha256@@libefivar.so.0'/>
+    <var-decl name='efi_guid_rsa2048' type-id='type-id-40' mangled-name='efi_guid_rsa2048' visibility='default' filepath='src/guid-symbols.c' line='72' column='1' elf-symbol-id='efi_guid_rsa2048@@libefivar.so.0'/>
+    <var-decl name='efi_guid_lenovo' type-id='type-id-40' mangled-name='efi_guid_lenovo' visibility='default' filepath='src/guid-symbols.c' line='76' column='1' elf-symbol-id='efi_guid_lenovo@@libefivar.so.0'/>
+    <var-decl name='efi_guid_lenovo_diag' type-id='type-id-40' mangled-name='efi_guid_lenovo_diag' visibility='default' filepath='src/guid-symbols.c' line='80' column='1' elf-symbol-id='efi_guid_lenovo_diag@@libefivar.so.0'/>
+    <var-decl name='efi_guid_x509_sha512' type-id='type-id-40' mangled-name='efi_guid_x509_sha512' visibility='default' filepath='src/guid-symbols.c' line='84' column='1' elf-symbol-id='efi_guid_x509_sha512@@libefivar.so.0'/>
+    <var-decl name='efi_guid_external_management' type-id='type-id-40' mangled-name='efi_guid_external_management' visibility='default' filepath='src/guid-symbols.c' line='88' column='1' elf-symbol-id='efi_guid_external_management@@LIBEFIVAR_1.38'/>
+    <var-decl name='efi_guid_pkcs7_cert' type-id='type-id-40' mangled-name='efi_guid_pkcs7_cert' visibility='default' filepath='src/guid-symbols.c' line='92' column='1' elf-symbol-id='efi_guid_pkcs7_cert@@libefivar.so.0'/>
+    <var-decl name='efi_guid_fives' type-id='type-id-40' mangled-name='efi_guid_fives' visibility='default' filepath='src/guid-symbols.c' line='96' column='1' elf-symbol-id='efi_guid_fives@@LIBEFIVAR_1.38'/>
+    <var-decl name='efi_guid_shim' type-id='type-id-40' mangled-name='efi_guid_shim' visibility='default' filepath='src/guid-symbols.c' line='100' column='1' elf-symbol-id='efi_guid_shim@@libefivar.so.0'/>
+    <var-decl name='efi_guid_lenovo_rescue' type-id='type-id-40' mangled-name='efi_guid_lenovo_rescue' visibility='default' filepath='src/guid-symbols.c' line='104' column='1' elf-symbol-id='efi_guid_lenovo_rescue@@libefivar.so.0'/>
+    <var-decl name='efi_guid_rsa2048_sha1' type-id='type-id-40' mangled-name='efi_guid_rsa2048_sha1' visibility='default' filepath='src/guid-symbols.c' line='108' column='1' elf-symbol-id='efi_guid_rsa2048_sha1@@libefivar.so.0'/>
+    <var-decl name='efi_guid_canonical' type-id='type-id-40' mangled-name='efi_guid_canonical' visibility='default' filepath='src/guid-symbols.c' line='112' column='1' elf-symbol-id='efi_guid_canonical@@LIBEFIVAR_1.38'/>
+    <var-decl name='efi_guid_dell' type-id='type-id-40' mangled-name='efi_guid_dell' visibility='default' filepath='src/guid-symbols.c' line='116' column='1' elf-symbol-id='efi_guid_dell@@LIBEFIVAR_1.38'/>
+    <var-decl name='efi_guid_x509_sha384' type-id='type-id-40' mangled-name='efi_guid_x509_sha384' visibility='default' filepath='src/guid-symbols.c' line='120' column='1' elf-symbol-id='efi_guid_x509_sha384@@libefivar.so.0'/>
+    <var-decl name='efi_guid_lenovo_setup' type-id='type-id-40' mangled-name='efi_guid_lenovo_setup' visibility='default' filepath='src/guid-symbols.c' line='124' column='1' elf-symbol-id='efi_guid_lenovo_setup@@libefivar.so.0'/>
+    <var-decl name='efi_guid_microsoft' type-id='type-id-40' mangled-name='efi_guid_microsoft' visibility='default' filepath='src/guid-symbols.c' line='128' column='1' elf-symbol-id='efi_guid_microsoft@@libefivar.so.0'/>
+    <var-decl name='efi_guid_lenovo_2' type-id='type-id-40' mangled-name='efi_guid_lenovo_2' visibility='default' filepath='src/guid-symbols.c' line='132' column='1' elf-symbol-id='efi_guid_lenovo_2@@libefivar.so.0'/>
+    <var-decl name='efi_guid_auto_created_boot_option' type-id='type-id-40' mangled-name='efi_guid_auto_created_boot_option' visibility='default' filepath='src/guid-symbols.c' line='136' column='1' elf-symbol-id='efi_guid_auto_created_boot_option@@LIBEFIVAR_1.38'/>
+    <var-decl name='efi_guid_sha1' type-id='type-id-40' mangled-name='efi_guid_sha1' visibility='default' filepath='src/guid-symbols.c' line='140' column='1' elf-symbol-id='efi_guid_sha1@@libefivar.so.0'/>
+    <var-decl name='efi_guid_lenovo_me_config' type-id='type-id-40' mangled-name='efi_guid_lenovo_me_config' visibility='default' filepath='src/guid-symbols.c' line='144' column='1' elf-symbol-id='efi_guid_lenovo_me_config@@libefivar.so.0'/>
+    <var-decl name='efi_guid_global' type-id='type-id-40' mangled-name='efi_guid_global' visibility='default' filepath='src/guid-symbols.c' line='148' column='1' elf-symbol-id='efi_guid_global@@libefivar.so.0'/>
+    <var-decl name='efi_guid_grub' type-id='type-id-40' mangled-name='efi_guid_grub' visibility='default' filepath='src/guid-symbols.c' line='152' column='1' elf-symbol-id='efi_guid_grub@@LIBEFIVAR_1.38'/>
+    <var-decl name='efi_guid_x509_cert' type-id='type-id-40' mangled-name='efi_guid_x509_cert' visibility='default' filepath='src/guid-symbols.c' line='156' column='1' elf-symbol-id='efi_guid_x509_cert@@libefivar.so.0'/>
+    <var-decl name='efi_guid_rsa2048_sha256_cert' type-id='type-id-40' mangled-name='efi_guid_rsa2048_sha256_cert' visibility='default' filepath='src/guid-symbols.c' line='160' column='1' elf-symbol-id='efi_guid_rsa2048_sha256_cert@@libefivar.so.0'/>
+    <var-decl name='efi_guid_lenovo_diag_splash' type-id='type-id-40' mangled-name='efi_guid_lenovo_diag_splash' visibility='default' filepath='src/guid-symbols.c' line='164' column='1' elf-symbol-id='efi_guid_lenovo_diag_splash@@libefivar.so.0'/>
+    <var-decl name='efi_guid_lenovo_msg' type-id='type-id-40' mangled-name='efi_guid_lenovo_msg' visibility='default' filepath='src/guid-symbols.c' line='168' column='1' elf-symbol-id='efi_guid_lenovo_msg@@libefivar.so.0'/>
+    <var-decl name='efi_guid_sha256' type-id='type-id-40' mangled-name='efi_guid_sha256' visibility='default' filepath='src/guid-symbols.c' line='172' column='1' elf-symbol-id='efi_guid_sha256@@libefivar.so.0'/>
+    <var-decl name='efi_guid_shell' type-id='type-id-40' mangled-name='efi_guid_shell' visibility='default' filepath='src/guid-symbols.c' line='176' column='1' elf-symbol-id='efi_guid_shell@@libefivar.so.0'/>
+    <var-decl name='efi_guid_security' type-id='type-id-40' mangled-name='efi_guid_security' visibility='default' filepath='src/guid-symbols.c' line='180' column='1' elf-symbol-id='efi_guid_security@@libefivar.so.0'/>
+    <var-decl name='efi_guid_rsa2048_sha256' type-id='type-id-40' mangled-name='efi_guid_rsa2048_sha256' visibility='default' filepath='src/guid-symbols.c' line='184' column='1' elf-symbol-id='efi_guid_rsa2048_sha256@@libefivar.so.0'/>
+    <var-decl name='efi_guid_lenovo_startup_interrupt' type-id='type-id-40' mangled-name='efi_guid_lenovo_startup_interrupt' visibility='default' filepath='src/guid-symbols.c' line='188' column='1' elf-symbol-id='efi_guid_lenovo_startup_interrupt@@libefivar.so.0'/>
+    <var-decl name='efi_guid_sha384' type-id='type-id-40' mangled-name='efi_guid_sha384' visibility='default' filepath='src/guid-symbols.c' line='192' column='1' elf-symbol-id='efi_guid_sha384@@libefivar.so.0'/>
+    <var-decl name='efi_n_well_known_guids' type-id='type-id-289' mangled-name='efi_n_well_known_guids' visibility='default' filepath='src/guid-symbols.c' line='196' column='1' elf-symbol-id='efi_n_well_known_guids@@LIBEFIVAR_1.38'/>
+    <var-decl name='efi_n_well_known_names' type-id='type-id-289' mangled-name='efi_n_well_known_names' visibility='default' filepath='src/guid-symbols.c' line='199' column='1' elf-symbol-id='efi_n_well_known_names@@LIBEFIVAR_1.38'/>
+    <var-decl name='efi_well_known_guids_' type-id='type-id-286' mangled-name='efi_well_known_guids_' visibility='default' filepath='src/guid-symbols.c' line='210' column='1' elf-symbol-id='efi_well_known_guids_@@libefivar.so.0'/>
+    <var-decl name='efi_well_known_names_' type-id='type-id-286' mangled-name='efi_well_known_names_' visibility='default' filepath='src/guid-symbols.c' line='592' column='1' elf-symbol-id='efi_well_known_names_@@LIBEFIVAR_1.38'/>
   </abi-instr>
   <abi-instr address-size='64' path='guid.c' comp-dir-path='src' language='LANG_C11'>
     <function-decl name='efi_str_to_guid' mangled-name='efi_str_to_guid' filepath='src/guid.c' line='36' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='efi_str_to_guid@@libefivar.so.0'>
@@ -2289,24 +2318,24 @@
       <parameter type-id='type-id-50' name='guid' filepath='src/guid.c' line='36' column='1'/>
       <return type-id='type-id-21'/>
     </function-decl>
-    <function-decl name='efi_guid_to_name' mangled-name='efi_guid_to_name' filepath='src/guid.c' line='111' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='efi_guid_to_name@@libefivar.so.0'>
-      <parameter type-id='type-id-50' name='guid' filepath='src/guid.c' line='111' column='1'/>
-      <parameter type-id='type-id-38' name='name' filepath='src/guid.c' line='111' column='1'/>
+    <function-decl name='efi_guid_to_name' mangled-name='efi_guid_to_name' filepath='src/guid.c' line='105' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='efi_guid_to_name@@libefivar.so.0'>
+      <parameter type-id='type-id-50' name='guid' filepath='src/guid.c' line='105' column='1'/>
+      <parameter type-id='type-id-38' name='name' filepath='src/guid.c' line='105' column='1'/>
       <return type-id='type-id-21'/>
     </function-decl>
-    <function-decl name='efi_guid_to_symbol' mangled-name='efi_guid_to_symbol' filepath='src/guid.c' line='126' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='efi_guid_to_symbol@@libefivar.so.0'>
-      <parameter type-id='type-id-50' name='guid' filepath='src/guid.c' line='126' column='1'/>
-      <parameter type-id='type-id-38' name='symbol' filepath='src/guid.c' line='126' column='1'/>
+    <function-decl name='efi_guid_to_symbol' mangled-name='efi_guid_to_symbol' filepath='src/guid.c' line='120' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='efi_guid_to_symbol@@libefivar.so.0'>
+      <parameter type-id='type-id-50' name='guid' filepath='src/guid.c' line='120' column='1'/>
+      <parameter type-id='type-id-38' name='symbol' filepath='src/guid.c' line='120' column='1'/>
       <return type-id='type-id-21'/>
     </function-decl>
-    <function-decl name='efi_guid_to_id_guid' mangled-name='efi_guid_to_id_guid' filepath='src/guid.c' line='140' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='efi_guid_to_id_guid@@libefivar.so.0'>
-      <parameter type-id='type-id-41' name='guid' filepath='src/guid.c' line='140' column='1'/>
-      <parameter type-id='type-id-38' name='sp' filepath='src/guid.c' line='140' column='1'/>
+    <function-decl name='efi_guid_to_id_guid' mangled-name='efi_guid_to_id_guid' filepath='src/guid.c' line='134' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='efi_guid_to_id_guid@@libefivar.so.0'>
+      <parameter type-id='type-id-41' name='guid' filepath='src/guid.c' line='134' column='1'/>
+      <parameter type-id='type-id-38' name='sp' filepath='src/guid.c' line='134' column='1'/>
       <return type-id='type-id-21'/>
     </function-decl>
-    <function-decl name='efi_name_to_guid' mangled-name='efi_name_to_guid' filepath='src/guid.c' line='192' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='efi_name_to_guid@@libefivar.so.0'>
-      <parameter type-id='type-id-33' name='name' filepath='src/guid.c' line='192' column='1'/>
-      <parameter type-id='type-id-50' name='guid' filepath='src/guid.c' line='192' column='1'/>
+    <function-decl name='efi_name_to_guid' mangled-name='efi_name_to_guid' filepath='src/guid.c' line='186' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='efi_name_to_guid@@libefivar.so.0'>
+      <parameter type-id='type-id-33' name='name' filepath='src/guid.c' line='186' column='1'/>
+      <parameter type-id='type-id-50' name='guid' filepath='src/guid.c' line='186' column='1'/>
       <return type-id='type-id-21'/>
     </function-decl>
     <function-decl name='dlopen' filepath='/usr/include/dlfcn.h' line='56' column='1' visibility='default' binding='global' size-in-bits='64'>
@@ -2417,7 +2446,7 @@
     </function-decl>
   </abi-instr>
   <abi-instr address-size='64' path='time.c' comp-dir-path='src' language='LANG_C11'>
-    <class-decl name='tm' size-in-bits='448' is-struct='yes' visibility='default' filepath='/usr/include/bits/types/struct_tm.h' line='7' column='1' id='type-id-285'>
+    <class-decl name='tm' size-in-bits='448' is-struct='yes' visibility='default' filepath='/usr/include/bits/types/struct_tm.h' line='7' column='1' id='type-id-290'>
       <data-member access='public' layout-offset-in-bits='0'>
         <var-decl name='tm_sec' type-id='type-id-21' visibility='default' filepath='/usr/include/bits/types/struct_tm.h' line='9' column='1'/>
       </data-member>
@@ -2452,16 +2481,16 @@
         <var-decl name='tm_zone' type-id='type-id-33' visibility='default' filepath='/usr/include/bits/types/struct_tm.h' line='21' column='1'/>
       </data-member>
     </class-decl>
-    <typedef-decl name='time_t' type-id='type-id-242' filepath='/usr/include/bits/types/time_t.h' line='10' column='1' id='type-id-286'/>
-    <qualified-type-def type-id='type-id-22' restrict='yes' id='type-id-287'/>
-    <qualified-type-def type-id='type-id-286' const='yes' id='type-id-288'/>
-    <pointer-type-def type-id='type-id-288' size-in-bits='64' id='type-id-289'/>
-    <qualified-type-def type-id='type-id-289' restrict='yes' id='type-id-290'/>
-    <qualified-type-def type-id='type-id-285' const='yes' id='type-id-291'/>
-    <pointer-type-def type-id='type-id-291' size-in-bits='64' id='type-id-292'/>
-    <qualified-type-def type-id='type-id-292' restrict='yes' id='type-id-293'/>
-    <pointer-type-def type-id='type-id-285' size-in-bits='64' id='type-id-294'/>
+    <typedef-decl name='time_t' type-id='type-id-242' filepath='/usr/include/bits/types/time_t.h' line='10' column='1' id='type-id-291'/>
+    <qualified-type-def type-id='type-id-22' restrict='yes' id='type-id-292'/>
+    <qualified-type-def type-id='type-id-291' const='yes' id='type-id-293'/>
+    <pointer-type-def type-id='type-id-293' size-in-bits='64' id='type-id-294'/>
     <qualified-type-def type-id='type-id-294' restrict='yes' id='type-id-295'/>
+    <qualified-type-def type-id='type-id-290' const='yes' id='type-id-296'/>
+    <pointer-type-def type-id='type-id-296' size-in-bits='64' id='type-id-297'/>
+    <qualified-type-def type-id='type-id-297' restrict='yes' id='type-id-298'/>
+    <pointer-type-def type-id='type-id-290' size-in-bits='64' id='type-id-299'/>
+    <qualified-type-def type-id='type-id-299' restrict='yes' id='type-id-300'/>
     <function-decl name='setenv' filepath='/usr/include/stdlib.h' line='658' column='1' visibility='default' binding='global' size-in-bits='64'>
       <parameter type-id='type-id-33'/>
       <parameter type-id='type-id-33'/>
@@ -2473,39 +2502,39 @@
       <return type-id='type-id-21'/>
     </function-decl>
     <function-decl name='mktime' filepath='/usr/include/time.h' line='83' column='1' visibility='default' binding='global' size-in-bits='64'>
-      <parameter type-id='type-id-294'/>
-      <return type-id='type-id-286'/>
+      <parameter type-id='type-id-299'/>
+      <return type-id='type-id-291'/>
     </function-decl>
     <function-decl name='strftime' filepath='/usr/include/time.h' line='100' column='1' visibility='default' binding='global' size-in-bits='64'>
-      <parameter type-id='type-id-287'/>
+      <parameter type-id='type-id-292'/>
       <parameter type-id='type-id-29'/>
       <parameter type-id='type-id-34'/>
-      <parameter type-id='type-id-293'/>
+      <parameter type-id='type-id-298'/>
       <return type-id='type-id-29'/>
     </function-decl>
     <function-decl name='strptime' filepath='/usr/include/time.h' line='107' column='1' visibility='default' binding='global' size-in-bits='64'>
       <parameter type-id='type-id-34'/>
       <parameter type-id='type-id-34'/>
-      <parameter type-id='type-id-294'/>
+      <parameter type-id='type-id-299'/>
       <return type-id='type-id-22'/>
     </function-decl>
     <function-decl name='gmtime_r' filepath='/usr/include/time.h' line='154' column='1' visibility='default' binding='global' size-in-bits='64'>
-      <parameter type-id='type-id-290'/>
       <parameter type-id='type-id-295'/>
-      <return type-id='type-id-294'/>
+      <parameter type-id='type-id-300'/>
+      <return type-id='type-id-299'/>
     </function-decl>
     <function-decl name='localtime_r' filepath='/usr/include/time.h' line='159' column='1' visibility='default' binding='global' size-in-bits='64'>
-      <parameter type-id='type-id-290'/>
       <parameter type-id='type-id-295'/>
-      <return type-id='type-id-294'/>
+      <parameter type-id='type-id-300'/>
+      <return type-id='type-id-299'/>
     </function-decl>
     <function-decl name='asctime' filepath='/usr/include/time.h' line='179' column='1' visibility='default' binding='global' size-in-bits='64'>
-      <parameter type-id='type-id-292'/>
+      <parameter type-id='type-id-297'/>
       <return type-id='type-id-22'/>
     </function-decl>
     <function-decl name='asctime_r' filepath='/usr/include/time.h' line='197' column='1' visibility='default' binding='global' size-in-bits='64'>
-      <parameter type-id='type-id-293'/>
-      <parameter type-id='type-id-287'/>
+      <parameter type-id='type-id-298'/>
+      <parameter type-id='type-id-292'/>
       <return type-id='type-id-22'/>
     </function-decl>
     <function-decl name='tzset' filepath='/usr/include/time.h' line='228' column='1' visibility='default' binding='global' size-in-bits='64'>
@@ -2513,7 +2542,7 @@
     </function-decl>
   </abi-instr>
   <abi-instr address-size='64' path='vars.c' comp-dir-path='src' language='LANG_C11'>
-    <type-decl name='long long int' size-in-bits='64' id='type-id-296'/>
+    <type-decl name='long long int' size-in-bits='64' id='type-id-301'/>
     <var-decl name='vars_ops' type-id='type-id-216' visibility='default' filepath='src/lib.h' line='42' column='1'/>
     <function-decl name='openat' filepath='/usr/include/fcntl.h' line='233' column='1' visibility='default' binding='global' size-in-bits='64'>
       <parameter type-id='type-id-21'/>
@@ -2526,7 +2555,7 @@
       <parameter type-id='type-id-34'/>
       <parameter type-id='type-id-245'/>
       <parameter type-id='type-id-21'/>
-      <return type-id='type-id-296'/>
+      <return type-id='type-id-301'/>
     </function-decl>
     <function-decl name='umask' filepath='/usr/include/sys/stat.h' line='380' column='1' visibility='default' binding='global' size-in-bits='64'>
       <parameter type-id='type-id-235'/>

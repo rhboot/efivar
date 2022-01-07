@@ -29,6 +29,7 @@
 #include "crc32.h"
 #include "hexdump.h"
 #include "path-helpers.h"
+#include "makeguids.h"
 
 #endif /* !PRIVATE_EFIVAR_H_ */
 

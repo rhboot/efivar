@@ -24,6 +24,7 @@ extern char *optarg;
 extern int optind, opterr, optopt;
 
 #include "efivar.h"
+#include "efivar/efivar-guids.h"
 
 #define ACTION_USAGE		0x00
 #define ACTION_LIST		0x01
@@ -574,22 +575,17 @@ int main(int argc, char *argv[])
 				      EDIT_WRITE);
 			break;
 		case ACTION_LIST_GUIDS: {
-			efi_guid_t sentinal = {0xffffffff,0xffff,0xffff,0xffff,
-					       {0xff,0xff,0xff,0xff,0xff,0xff}};
-			extern struct guidname efi_well_known_guids[];
-			extern struct guidname efi_well_known_guids_end;
-			intptr_t start = (intptr_t)&efi_well_known_guids;
-			intptr_t end = (intptr_t)&efi_well_known_guids_end;
-			unsigned int i;
+			const struct efivar_guidname *guid = &efi_well_known_guids[0];
+			const uint64_t n = efi_n_well_known_guids;
+			size_t i;
 
-			struct guidname *guid = &efi_well_known_guids[0];
-			for (i = 0; i < (end-start) / sizeof(*guid); i++) {
-				if (!efi_guid_cmp(&sentinal, &guid[i].guid))
-					break;
-				printf("{"GUID_FORMAT"} {%s} %s %s\n",
-				       GUID_FORMAT_ARGS(&guid[i].guid),
-				       guid[i].symbol + strlen("efi_guid_"),
-				       guid[i].symbol, guid[i].name);
+			debug("&guid[0]:%p n:%lu end:%p", &guid[0], n, &guid[n]);
+			for (i = 0; i < n; i++) {
+				printf("{"GUID_FORMAT"}\t",
+				       GUID_FORMAT_ARGS(&guid[i].guid));
+				printf("{%s}\t", guid[i].name);
+				printf("%s\t", guid[i].symbol);
+				printf("%s\n", guid[i].description);
 			}
 			break;
 					}

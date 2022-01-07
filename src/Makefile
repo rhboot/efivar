@@ -4,6 +4,7 @@ include $(TOPDIR)/src/include/deprecated.mk
 include $(TOPDIR)/src/include/version.mk
 include $(TOPDIR)/src/include/rules.mk
 include $(TOPDIR)/src/include/defaults.mk
+include $(TOPDIR)/src/include/workarounds.mk
 
 LIBTARGETS=libefivar.so libefiboot.so libefisec.so
 STATICLIBTARGETS=libefivar.a libefiboot.a libefisec.a
@@ -19,15 +20,15 @@ LIBEFIBOOT_SOURCES = crc32.c creator.c disk.c gpt.c loadopt.c path-helpers.c \
 		     linux.c $(sort $(wildcard linux-*.c))
 LIBEFIBOOT_OBJECTS = $(patsubst %.c,%.o,$(LIBEFIBOOT_SOURCES))
 LIBEFIVAR_SOURCES = crc32.c dp.c dp-acpi.c dp-hw.c dp-media.c dp-message.c \
-	efivarfs.c error.c export.c guid.c guids.S guid-symbols.c \
+	efivarfs.c error.c export.c guid.c guid-symbols.c \
 	lib.c vars.c time.c
 LIBEFIVAR_OBJECTS = $(patsubst %.S,%.o,$(patsubst %.c,%.o,$(LIBEFIVAR_SOURCES)))
 EFIVAR_SOURCES = efivar.c util.c
 EFIVAR_OBJECTS = $(patsubst %.S,%.o,$(patsubst %.c,%.o,$(EFIVAR_SOURCES)))
 GENERATED_SOURCES = include/efivar/efivar-guids.h guid-symbols.c
-MAKEGUIDS_SOURCES = makeguids.c
+MAKEGUIDS_SOURCES = makeguids.c util.c
 MAKEGUIDS_OBJECTS = $(patsubst %.S,%.o,$(patsubst %.c,%.o,$(MAKEGUIDS_SOURCES)))
-MAKEGUIDS_OUTPUT = guids.bin names.bin $(GENERATED_SOURCES)
+MAKEGUIDS_OUTPUT = $(GENERATED_SOURCES) guids.lds
 
 ALL_SOURCES=$(LIBEFISEC_SOURCES) $(LIBEFIBOOT_SOURCES) $(LIBEFIVAR_SOURCES) \
 	    $(MAKEGUIDS_SOURCES) $(GENERATED_SOURCES) $(EFIVAR_SOURCES) \
@@ -78,11 +79,7 @@ $(MAKEGUIDS_OUTPUT) : guids.txt
 	if [ "$${missing}" != "no" ]; then \
 		exit 1 ; \
 	fi
-	./makeguids guids.txt guids.bin names.bin \
-		guid-symbols.c include/efivar/efivar-guids.h
-
-guids.o : | makeguids
-guids.o : guids.S guids.bin names.bin
+	./makeguids $(LD_DASH_T) guids.txt guid-symbols.c include/efivar/efivar-guids.h guids.lds
 
 prep : makeguids $(GENERATED_SOURCES)
 
@@ -94,6 +91,7 @@ libefivar.a : $(patsubst %.o,%.static.o,$(LIBEFIVAR_OBJECTS))
 libefivar.so : $(LIBEFIVAR_OBJECTS)
 libefivar.so : | $(GENERATED_SOURCES) libefivar.map
 libefivar.so : LIBS=dl
+libefivar.so : LDSCRIPTS=guids.lds
 libefivar.so : MAP=libefivar.map
 
 efivar : $(EFIVAR_OBJECTS) | libefivar.so
@@ -126,6 +124,7 @@ deps : $(ALL_SOURCES)
 clean : 
 	@rm -rfv *~ *.o *.a *.E *.so *.so.* *.pc *.bin .*.d *.map \
 		makeguids guid-symbols.c include/efivar/efivar-guids.h \
+		guids.lds \
 		$(TARGETS) $(STATICTARGETS)
 	@# remove the deps files we used to create, as well.
 	@rm -rfv .*.P .*.h.P *.S.P include/efivar/.*.h.P

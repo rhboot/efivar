@@ -12,6 +12,9 @@
 #include <stdlib.h>
 #include <string.h>
 #include "efivar_endian.h"
+#include "compiler.h"
+#include "include/efivar/efivar-types.h"
+#include "include/efivar/efivar.h"
 
 #define GUID_FORMAT "%08x-%04x-%04x-%04x-%02x%02x%02x%02x%02x%02x"
 #define GUID_FORMAT_ARGS(guidp)						\
@@ -167,11 +170,14 @@ text_to_guid(const char *text, efi_guid_t *guid)
 	return 0;
 }
 
-struct guidname {
+#ifndef EFIVAR_GUIDS_H
+struct efivar_guidname {
 	efi_guid_t guid;
 	char symbol[256];
 	char name[256];
-};
+	char description[256];
+} __attribute__((__aligned__(16)));
+#endif /* EFIVAR_GUIDS_H */
 
 static inline int
 efi_int_cmp_(uint64_t a, uint64_t b)
@@ -183,7 +189,7 @@ efi_int_cmp_(uint64_t a, uint64_t b)
 	return 0;
 }
 
-static inline int NONNULL(1, 2)
+static inline int NONNULL(1, 2) UNUSED
 efi_guid_cmp_(const efi_guid_t *a, const efi_guid_t *b)
 {
 	if (a->a != b->a)
@@ -201,7 +207,7 @@ efi_guid_cmp_(const efi_guid_t *a, const efi_guid_t *b)
 	return 0;
 }
 
-static inline int NONNULL(1, 2)
+static inline int NONNULL(1, 2) UNUSED
 efi_str_to_guid_(const char *s, efi_guid_t *guid)
 {
 	int rc;

@@ -10,6 +10,7 @@ scan-clean : clean
 
 scan-build : | scan-test
 scan-build : clean
+	$(MAKE) -C src makeguids
 	scan-build -o scan-results make $(DASHJ) CC=clang all
 
 scan-build-all: | scan-build

@@ -30,6 +30,7 @@ libefivar.so.0 {
 		efi_variable_set_name;
 		efi_variables_supported;
 		efi_well_known_guids;
+		efi_well_known_guids_;
 		efi_well_known_guids_end;
 		efidp_append_instance;
 		efidp_append_node;
@@ -145,6 +146,11 @@ LIBEFIVAR_1.38 {
 		efi_guid_supermicro;
 		efi_variable_alloc;
 		efi_variable_export_dmpstore;
+		efi_well_known_names;
+		efi_well_known_names_;
+		efi_well_known_names_end;
+		efi_n_well_known_names;
+		efi_n_well_known_guids;
 
 		tm_to_efi_time;
 		efi_time_to_tm;

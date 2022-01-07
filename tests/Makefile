@@ -108,7 +108,7 @@ test.grubenv.var:
 	$(quiet)echo passed
 	$(quiet)echo testing efivar -L
 	$(quiet)LD_LIBRARY_PATH=$(TOPDIR)/src $(EFIVAR) -L | \
-		grep -q '^{91376aff-cba6-42be-949d-06fde81128e8} {grub} efi_guid_grub GRUB$$'
+		grep -q '^{91376aff-cba6-42be-949d-06fde81128e8}	{grub}	efi_guid_grub	GRUB$$'
 	$(quiet)echo passed
 
 test.bootorder.var:
