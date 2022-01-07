@@ -39,7 +39,7 @@ cmpnamep(const void *p1, const void *p2)
 	struct guidname *gn1 = (struct guidname *)p1;
 	struct guidname *gn2 = (struct guidname *)p2;
 
-	return strncmp(gn1->name, gn2->name, sizeof (gn1->name));
+	return strncmp(gn1->name, gn2->name, sizeof(gn1->name));
 }
 
 struct guid_aliases {
@@ -133,7 +133,7 @@ main(int argc, char *argv[])
 		(uintptr_t)guidstr - (uintptr_t)inbuf < inlen;
 	     line++) {
 
-		outbuf = realloc(outbuf, line * sizeof (struct guidname));
+		outbuf = realloc(outbuf, line * sizeof(struct guidname));
 		if (!outbuf)
 			err(1, "makeguids");
 		memset(outbuf + line - 1, 0, sizeof(struct guidname));
@@ -220,13 +220,13 @@ main(int argc, char *argv[])
 	fclose(header);
 	fclose(symout);
 
-	qsort(outbuf, line-1, sizeof (struct guidname), cmpguidp);
-	rc = write(guidout, outbuf, sizeof (struct guidname) * (line - 1));
+	qsort(outbuf, line-1, sizeof(struct guidname), cmpguidp);
+	rc = write(guidout, outbuf, sizeof(struct guidname) * (line - 1));
 	if (rc < 0)
 		err(1, "makeguids");
 
-	qsort(outbuf, line-1, sizeof (struct guidname), cmpnamep);
-	rc = write(nameout, outbuf, sizeof (struct guidname) * (line - 1));
+	qsort(outbuf, line-1, sizeof(struct guidname), cmpnamep);
+	rc = write(nameout, outbuf, sizeof(struct guidname) * (line - 1));
 	if (rc < 0)
 		err(1, "makeguids");
 	close(in);

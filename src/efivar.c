@@ -407,7 +407,7 @@ prepare_data(const char *filename, uint8_t **data, size_t *data_size)
 	if (fd < 0)
 		goto err;
 
-	memset(&statbuf, '\0', sizeof (statbuf));
+	memset(&statbuf, '\0', sizeof(statbuf));
 	rc = fstat(fd, &statbuf);
 	if (rc < 0)
 		goto err;
