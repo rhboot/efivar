@@ -6,9 +6,9 @@ LD_FLAVOR := $(shell $(LD) --version | grep -E '^(LLD|GNU ld)'|sed 's/ .*//g')
 LD_VERSION := $(shell $(LD) --version | grep -E '^(LLD|GNU ld)'|sed 's/.* //')
 # I haven't tested 2.36 here; 2.35 is definitely broken and 2.37 seems to work
 LD_DASH_T := $(shell \
-	if [ "x${LD_FLAVOR}" == xLLD ] ; then \
+	if [ "x${LD_FLAVOR}" = xLLD ] ; then \
 		echo '-T' ; \
-	elif [ "x${LD_FLAVOR}" == xGNU ] ; then \
+	elif [ "x${LD_FLAVOR}" = xGNU ] ; then \
 		if echo "${LD_VERSION}" | grep -q -E '^2\.3[789]|^2\.[456789]|^[3456789]|^[[:digit:]][[:digit:]]' ; then \
 			echo '-T' ; \
 		else \
