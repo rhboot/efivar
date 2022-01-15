@@ -37,7 +37,7 @@ family = $(foreach FAMILY_SUFFIX,$(FAMILY_SUFFIXES),$($(1)_$(FAMILY_SUFFIX)))
 
 %.so :
 	$(CCLD) $(CCLDFLAGS) $(CPPFLAGS) $(SOFLAGS) \
-		$(foreach LDS,$(LDSCRIPTS),$(LD_DASH_T) $(LDS)) \
+		$(foreach LDS,$(LDSCRIPTS),$(LD_DASH_T) -T $(LDS)) \
 		-o $@ $^ $(LDLIBS)
 	ln -vfs $@ $@.1
 
