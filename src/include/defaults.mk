@@ -71,13 +71,15 @@ override SOFLAGS = $(_SOFLAGS) \
 		   -Wl,--version-script=$(MAP) \
 		   $(call family,SOFLAGS)
 
-HOST_CPPFLAGS ?= $(CPPFLAGS)
+HOST_CPPFLAGS ?=
 override _HOST_CPPFLAGS := $(HOST_CPPFLAGS)
 override HOST_CPPFLAGS = $(_HOST_CPPFLAGS) \
-			 -DEFIVAR_BUILD_ENVIRONMENT
+			 -DEFIVAR_BUILD_ENVIRONMENT \
+			 -D_GNU_SOURCE \
+			 -I$(TOPDIR)/src/include/
 HOST_CFLAGS_GCC ?=
 HOST_CFLAGS_CLANG ?=
-HOST_CFLAGS ?= $(CFLAGS) $(call family,HOST_CFLAGS)
+HOST_CFLAGS ?= $(call family,HOST_CFLAGS)
 override _HOST_CFLAGS := $(HOST_CFLAGS)
 override HOST_CFLAGS = $(_HOST_CFLAGS)
 HOST_LDFLAGS_CLANG ?= -Wl,--fatal-warnings,-z,relro -rtlib=compiler-rt
