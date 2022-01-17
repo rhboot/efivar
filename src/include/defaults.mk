@@ -71,16 +71,10 @@ override SOFLAGS = $(_SOFLAGS) \
 		   -Wl,--version-script=$(MAP) \
 		   $(call family,SOFLAGS)
 
-HOST_ARCH=$(shell uname -m)
-ifneq ($(HOST_ARCH),ia64)
-	HOST_MARCH=-march=native
-else
-	HOST_MARCH=
-endif
 HOST_CPPFLAGS ?= $(CPPFLAGS)
 override _HOST_CPPFLAGS := $(HOST_CPPFLAGS)
 override HOST_CPPFLAGS = $(_HOST_CPPFLAGS) \
-			 -DEFIVAR_BUILD_ENVIRONMENT $(HOST_MARCH)
+			 -DEFIVAR_BUILD_ENVIRONMENT
 HOST_CFLAGS_GCC ?=
 HOST_CFLAGS_CLANG ?=
 HOST_CFLAGS ?= $(CFLAGS) $(call family,HOST_CFLAGS)
