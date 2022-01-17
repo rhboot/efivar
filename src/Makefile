@@ -88,7 +88,7 @@ $(MAKEGUIDS_OUTPUT) : guids.txt
 
 prep : makeguids $(GENERATED_SOURCES)
 
-$(LIBEFIVAR_OBJECTS) $(LIBEFIBOOT_OBJECTS) : prep
+$(LIBEFIVAR_OBJECTS) $(LIBEFIBOOT_OBJECTS) : include/efivar/efivar-guids.h
 
 libefivar.a : | $(GENERATED_SOURCES)
 libefivar.a : $(patsubst %.o,%.static.o,$(LIBEFIVAR_OBJECTS))
