@@ -28,9 +28,12 @@ EFIVAR_OBJECTS = $(patsubst %.S,%.o,$(patsubst %.c,%.o,$(EFIVAR_SOURCES)))
 EFISECDB_SOURCES = efisecdb.c guid-symbols.c secdb-dump.c util.c
 EFISECDB_OBJECTS = $(patsubst %.S,%.o,$(patsubst %.c,%.o,$(EFISECDB_SOURCES)))
 GENERATED_SOURCES = include/efivar/efivar-guids.h guid-symbols.c
-MAKEGUIDS_SOURCES = makeguids.c util.c
+MAKEGUIDS_SOURCES = makeguids.c util-makeguids.c
 MAKEGUIDS_OBJECTS = $(patsubst %.S,%.o,$(patsubst %.c,%.o,$(MAKEGUIDS_SOURCES)))
 MAKEGUIDS_OUTPUT = $(GENERATED_SOURCES) guids.lds
+
+util-makeguids.c : util.c
+	cp util.c util-makeguids.c
 
 ALL_SOURCES=$(LIBEFISEC_SOURCES) $(LIBEFIBOOT_SOURCES) $(LIBEFIVAR_SOURCES) \
 	    $(MAKEGUIDS_SOURCES) $(GENERATED_SOURCES) $(EFIVAR_SOURCES) \
