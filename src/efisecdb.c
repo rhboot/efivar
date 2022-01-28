@@ -255,8 +255,7 @@ list_guids(void)
  * failure.
  */
 static int
-parse_input_files(list_t *infiles, char **outfile, efi_secdb_t **secdb,
-		  bool dump)
+parse_input_files(list_t *infiles, efi_secdb_t **secdb, bool dump)
 {
 	int status = 0;
 	list_t *pos, *tmp;
@@ -297,8 +296,6 @@ parse_input_files(list_t *infiles, char **outfile, efi_secdb_t **secdb,
 				if (!dump)
 					exit(1);
 				status = 1;
-				xfree(*outfile);
-				*outfile = NULL;
 				break;
 			}
 		}
@@ -528,7 +525,7 @@ sort_err:
 	efi_secdb_set_bool(secdb, EFI_SECDB_SORT_DATA, do_sort_data);
 	efi_secdb_set_bool(secdb, EFI_SECDB_SORT_DESCENDING, sort_descending);
 
-	status = parse_input_files(&infiles, &outfile, &secdb, dump);
+	status = parse_input_files(&infiles, &secdb, dump);
 	if (status == 0) {
 		for_each_action_safe(pos, tmp, &actions) {
 			action_t *action = list_entry(pos, action_t, list);
