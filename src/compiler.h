@@ -7,8 +7,6 @@
 #ifndef COMPILER_H_
 #define COMPILER_H_
 
-#include <sys/cdefs.h>
-
 /* GCC version checking borrowed from glibc. */
 #if defined(__GNUC__) && defined(__GNUC_MINOR__)
 #  define GNUC_PREREQ(maj,min) \
