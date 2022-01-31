@@ -7,6 +7,10 @@
 #ifndef EFISEC_SECDB_H_
 #define EFISEC_SECDB_H_
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 typedef struct efi_secdb efi_secdb_t;
 
 typedef union {
@@ -89,6 +93,10 @@ typedef efi_secdb_visitor_status_t
 extern int efi_secdb_visit_entries(efi_secdb_t *secdb,
 				   efi_secdb_visitor_t *visitor,
 				   void *closure);
+
+#ifdef __cplusplus
+} /* extern "C" */
+#endif
 
 #endif /* !EFISEC_SECDB_H_ */
 // vim:fenc=utf-8:tw=75:noet

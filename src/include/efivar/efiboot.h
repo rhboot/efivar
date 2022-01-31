@@ -21,8 +21,16 @@
 #include <efivar/efiboot-creator.h>
 #include <efivar/efiboot-loadopt.h>
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 extern uint32_t efi_get_libefiboot_version(void)
 	__attribute__((__visibility__("default")));
+
+#ifdef __cplusplus
+} /* extern "C" */
+#endif
 
 #endif /* EFIBOOT_H */
 

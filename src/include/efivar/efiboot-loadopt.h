@@ -7,6 +7,10 @@
 #ifndef _EFIBOOT_LOADOPT_H
 #define _EFIBOOT_LOADOPT_H 1
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 typedef struct efi_load_option_s efi_load_option;
 
 extern ssize_t efi_loadopt_create(uint8_t *buf, ssize_t size,
@@ -58,6 +62,10 @@ extern ssize_t efi_loadopt_optional_data_size(efi_load_option *opt, size_t size)
 extern int efi_loadopt_is_valid(efi_load_option *opt, size_t size)
 	__attribute__((__nonnull__ (1)))
 	__attribute__((__visibility__ ("default")));
+
+#ifdef __cplusplus
+} /* extern "C" */
+#endif
 
 #endif /* _EFIBOOT_LOADOPT_H */
 

@@ -10,6 +10,10 @@
 #include <stdint.h>
 #include <efivar/efivar-types.h>
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 /*
  * Storage for specific hashes and cryptographic (pkcs1, not pkcs7)
  * signatures
@@ -230,6 +234,10 @@ typedef struct {
 	// uint8_t				newcert[];
 	// uint8_t				signing_cert[];
 } efi_variable_nonced_authentication_3 __attribute__((aligned (1)));
+
+#ifdef __cplusplus
+} /* extern "C" */
+#endif
 
 #endif /* !SECURITY_H_ */
 // vim:fenc=utf-8:tw=75:noet

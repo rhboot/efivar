@@ -163,6 +163,10 @@ main(int argc, char *argv[])
 	char *strtab = guidnames->strtab;
 
 	fprintf(header, "#ifndef EFIVAR_GUIDS_H\n#define EFIVAR_GUIDS_H 1\n\n");
+	fprintf(header, "\
+#ifdef __cplusplus\n\
+extern \"C\" {\n\
+#endif\n");
 	fprintf(header, "\n\
 struct efivar_guidname {\n\
 	efi_guid_t guid;\n\
@@ -283,6 +287,10 @@ struct efivar_guidname {\n\
 	 * Emit the end from here as well.
 	 */
 
+	fprintf(header, "\n\
+#ifdef __cplusplus\n\
+} /* extern \"C\" */\n\
+#endif\n");
 	fprintf(header, "\n#endif /* EFIVAR_GUIDS_H */\n");
 	fclose(header);
 

@@ -10,6 +10,10 @@
 
 #include <stdint.h>
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 typedef struct {
 	uint32_t	a;
 	uint16_t	b;
@@ -94,6 +98,10 @@ typedef struct {
 #define EFI_VARIABLE_TIME_BASED_AUTHENTICATED_WRITE_ACCESS	((uint64_t)0x0000000000000020)
 #define EFI_VARIABLE_APPEND_WRITE				((uint64_t)0x0000000000000040)
 #define EFI_VARIABLE_ENHANCED_AUTHENTICATED_ACCESS		((uint64_t)0x0000000000000080)
+
+#ifdef __cplusplus
+} /* extern "C" */
+#endif
 
 #endif /* EFI_TYPES_H */
 // vim:fenc=utf-8:tw=75:noet

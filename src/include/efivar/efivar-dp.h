@@ -8,6 +8,10 @@
 
 #include <limits.h>
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 #define efidp_encode_bitfield_(name, shift, mask)			\
 	(((name) << (shift)) & (mask))
 #define efidp_decode_bitfield_(value, name, shift, mask)		\
@@ -1213,6 +1217,11 @@ extern ssize_t efidp_make_generic(uint8_t *buf, ssize_t size, uint8_t type,
 #if defined(__clang__)
 #pragma clang diagnostic pop
 #endif
+
+#ifdef __cplusplus
+} /* extern "C" */
+#endif
+
 #endif /* _EFIVAR_DP_H */
 
 // vim:fenc=utf-8:tw=75:noet

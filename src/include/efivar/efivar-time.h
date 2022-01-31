@@ -14,6 +14,10 @@
 
 #include <stdbool.h>
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 extern int tm_to_efi_time(const struct tm *const s, efi_time_t *d, bool tzadj);
 extern int efi_time_to_tm(const efi_time_t * const s, struct tm *d);
 
@@ -28,6 +32,10 @@ extern time_t efi_mktime(const efi_time_t *const time);
 extern char *efi_strptime(const char *s, const char *format, efi_time_t *time);
 extern size_t efi_strftime(char *s, size_t max, const char *format,
 			   const efi_time_t *time);
+
+#ifdef __cplusplus
+} /* extern "C" */
+#endif
 
 #endif /* !EFIVAR_TIME_H_ */
 // vim:fenc=utf-8:tw=75:noet

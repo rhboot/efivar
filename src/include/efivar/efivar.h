@@ -24,6 +24,10 @@
 #include <efivar/efivar-guids.h>
 #endif
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 #define EFI_VARIABLE_HAS_AUTH_HEADER	0x0000000100000000
 #define EFI_VARIABLE_HAS_SIGNATURE	0x0000000200000000
 
@@ -199,6 +203,10 @@ extern FILE * efi_get_logfile(void)
 
 extern uint32_t efi_get_libefivar_version(void)
 	__attribute__((__visibility__("default")));
+
+#ifdef __cplusplus
+} /* extern "C" */
+#endif
 
 #include <efivar/efivar-dp.h>
 #include <efivar/efivar-time.h>

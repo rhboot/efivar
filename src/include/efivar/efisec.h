@@ -12,8 +12,16 @@
 #include <efivar/efisec-types.h>
 #include <efivar/efisec-secdb.h>
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 extern uint32_t efi_get_libefisec_version(void)
 	__attribute__((__visibility__("default")));
+
+#ifdef __cplusplus
+} /* extern "C" */
+#endif
 
 #endif /* EFISEC_H */
 

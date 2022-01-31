@@ -7,6 +7,10 @@
 #ifndef _EFIBOOT_CREATOR_H
 #define _EFIBOOT_CREATOR_H
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 #define EFIBOOT_ABBREV_NONE		0x00000001
 #define EFIBOOT_ABBREV_HD		0x00000002
 #define EFIBOOT_ABBREV_FILE		0x00000004
@@ -42,6 +46,10 @@ extern ssize_t efi_generate_ipv4_device_path(uint8_t *buf, ssize_t size,
 					     uint8_t addr_origin)
 	__attribute__((__nonnull__ (3,4,5,6,7)))
 	__attribute__((__visibility__ ("default")));
+
+#ifdef __cplusplus
+} /* extern "C" */
+#endif
 
 #endif /* _EFIBOOT_CREATOR_H */
 
