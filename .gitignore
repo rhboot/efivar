@@ -27,3 +27,16 @@ core.*
 cov-int
 vgcore.*
 scan-results/
+Makefile.in
+autom4te.cache
+compile
+configure
+install-sh
+missing
+depcomp
+m4
+ltmain.sh
+config.guess
+config.sub
+config.h.in
+aclocal.m4

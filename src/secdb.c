@@ -5,6 +5,7 @@
  * Copyright Red Hat, Inc.
  */
 
+#include <config.h>
 #include "efisec.h"
 #include "efivar/efisec-secdb.h"
 

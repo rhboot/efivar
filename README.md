@@ -17,10 +17,7 @@ Lesser General Public License for more details.
 You should have received a copy of the GNU Lesser General Public License
 along with this library.  If not, see [http://www.gnu.org/licenses/].
 
-There is an ABI tracker for this project at [ABI Laboratory].
-
 [http://www.gnu.org/licenses/]: http://www.gnu.org/licenses/
-[ABI Laboratory]: https://abi-laboratory.pro/tracker/timeline/efivar/
 
 WARNING
 =======

@@ -4,6 +4,7 @@
  * Copyright Jonathan Marler
  */
 
+#include <config.h>
 #include "fix_coverity.h"
 
 #include <alloca.h>

@@ -4,6 +4,7 @@
  * Copyright 2012-2013 Red Hat, Inc.
  */
 
+#include <config.h>
 #include "fix_coverity.h"
 
 #include <errno.h>
@@ -28,7 +29,6 @@ struct efi_var_operations default_ops = {
 
 struct efi_var_operations *ops = NULL;
 
-VERSION(_efi_set_variable, _efi_set_variable@libefivar.so.0)
 int NONNULL(2, 3) PUBLIC
 _efi_set_variable(efi_guid_t guid, const char *name, uint8_t *data,
 		  size_t data_size, uint32_t attributes)
@@ -45,7 +45,6 @@ _efi_set_variable(efi_guid_t guid, const char *name, uint8_t *data,
 	return rc;
 }
 
-VERSION(_efi_set_variable_variadic, efi_set_variable@libefivar.so.0)
 int NONNULL(2, 3) PUBLIC
 _efi_set_variable_variadic(efi_guid_t guid, const char *name, uint8_t *data,
 			   size_t data_size, uint32_t attributes, ...)
@@ -62,7 +61,6 @@ _efi_set_variable_variadic(efi_guid_t guid, const char *name, uint8_t *data,
 	return rc;
 }
 
-VERSION(_efi_set_variable_mode,efi_set_variable@@LIBEFIVAR_0.24)
 int NONNULL(2, 3) PUBLIC
 _efi_set_variable_mode(efi_guid_t guid, const char *name, uint8_t *data,
 		       size_t data_size, uint32_t attributes, mode_t mode)

@@ -3,6 +3,7 @@
  * path-helper.c
  * Copyright 2018 Peter Jones <pjones@redhat.com>
  */
+#include <config.h>
 #include "fix_coverity.h"
 
 #include "efivar.h"

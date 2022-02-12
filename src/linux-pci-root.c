@@ -4,6 +4,7 @@
  * Copyright 2012-2019 Red Hat, Inc.
  */
 
+#include <config.h>
 #include "fix_coverity.h"
 
 #include <errno.h>

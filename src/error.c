@@ -5,6 +5,7 @@
  * Copyright (C) 2000-2001 Dell Computer Corporation <Matt_Domsch@dell.com>
  */
 
+#include <config.h>
 #include "fix_coverity.h"
 
 #include <errno.h>

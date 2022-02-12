@@ -4,6 +4,7 @@
  * Copyright 2012-2013 Red Hat, Inc.
  */
 
+#include <config.h>
 #include "fix_coverity.h"
 
 #include <err.h>
@@ -77,7 +78,7 @@ static void make_aliases(FILE *symout, FILE *header,
 
 static void
 write_guidnames(FILE *out, const char *listname,
-		struct efivar_guidname *guidnames, size_t n, const char *symver)
+		struct efivar_guidname *guidnames, size_t n)
 {
 	size_t i;
 
@@ -107,6 +108,12 @@ write_guidnames(FILE *out, const char *listname,
 			gn->symbol, gn->name, gn->description);
 	}
 	fprintf(out, "};\n");
+        fprintf(out,
+                "extern const struct efivar_guidname\n"
+                "\t%s[%zd]\n"
+                "\t__attribute__((__visibility__(\"default\")))\n"
+                "\t__attribute__((alias(\"%s_\")));\n\n",
+                listname, n, listname);
 }
 
 int
@@ -114,15 +121,11 @@ main(int argc, char *argv[])
 {
 	int rc;
 	int argstart = 0;
-	FILE *symout, *header, *ldsout;
-	int dash_t = 0;
+	FILE *symout, *header;
 
-	if (argc < 5) {
+	if (argc < 4) {
 		errx(1, "Not enough arguments.\n");
-	} else if (argc > 5 && !strcmp(argv[1],"-T")) {
-		argstart = 1;
-		dash_t = 1;
-	} else if (argc > 5) {
+	} else if (argc > 4) {
 		errx(1, "Too many arguments.\n");
 	}
 
@@ -139,13 +142,6 @@ main(int argc, char *argv[])
 	rc = chmod(argv[argstart + 3], 0644);
 	if (rc < 0)
 		warn("chmod(%s, 0644)", argv[argstart + 3]);
-
-	ldsout = fopen(argv[argstart + 4], "w");
-	if (ldsout == NULL)
-		err(1, "could not open \"%s\"", argv[argstart + 4]);
-	rc = chmod(argv[argstart + 4], 0644);
-	if (rc < 0)
-		warn("chmod(%s, 0644)", argv[argstart + 4]);
 
 	struct guidname_index *guidnames = NULL;
 
@@ -248,6 +244,11 @@ struct efivar_guidname {\n\
 	fprintf(header,
 		"extern const struct efivar_guidname\n"
 			"\t__attribute__((__visibility__ (\"default\")))\n"
+			"\tefi_well_known_guids_[%d];\n",
+		i);
+	fprintf(header,
+		"extern const struct efivar_guidname\n"
+			"\t__attribute__((__visibility__ (\"default\")))\n"
 			"\tefi_well_known_guids_end;\n");
 	fprintf(header,
 		"extern const uint64_t\n"
@@ -257,6 +258,11 @@ struct efivar_guidname {\n\
 		"extern const struct efivar_guidname\n"
 			"\t__attribute__((__visibility__ (\"default\")))\n"
 			"\tefi_well_known_names[%d];\n",
+		i);
+	fprintf(header,
+		"extern const struct efivar_guidname\n"
+			"\t__attribute__((__visibility__ (\"default\")))\n"
+			"\tefi_well_known_names_[%d];\n",
 		i);
 	fprintf(header,
 		"extern const struct efivar_guidname\n"
@@ -303,29 +309,12 @@ struct efivar_guidname {\n\
 		"} __attribute__((__aligned__(16)));\n\n");
 
 	qsort(outbuf, line, sizeof(struct efivar_guidname), cmpguidp);
-	write_guidnames(symout, "efi_well_known_guids", outbuf, line, "libefivar.so.0");
+	write_guidnames(symout, "efi_well_known_guids", outbuf, line);
 
 	qsort(outbuf, line, sizeof(struct efivar_guidname), cmpnamep);
-	write_guidnames(symout, "efi_well_known_names", outbuf, line, "LIBEFIVAR_1.38");
+	write_guidnames(symout, "efi_well_known_names", outbuf, line);
 
 	fclose(symout);
-
-	fprintf(ldsout,
-		"SECTIONS\n"
-		"{\n"
-		"  .data :\n"
-		"  {\n"
-		"    efi_well_known_guids = efi_well_known_guids_;\n"
-		"    efi_well_known_guids_end = efi_well_known_guids_ + %zd;\n"
-		"    efi_well_known_names = efi_well_known_names_;\n"
-		"    efi_well_known_names_end = efi_well_known_names_ + %zd;\n"
-		"  }\n"
-		"}%s;\n",
-		(line - 1) * sizeof(struct efivar_guidname),
-		(line - 1) * sizeof(struct efivar_guidname),
-		dash_t ? " INSERT AFTER .data" : "");
-
-	fclose(ldsout);
 
 	free(guidnames->strtab);
 	free(guidnames);

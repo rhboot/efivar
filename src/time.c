@@ -4,6 +4,7 @@
  * Copyright 2020 Peter Jones <pjones@redhat.com>
  */
 
+#include <config.h>
 #include "efivar.h"
 
 int

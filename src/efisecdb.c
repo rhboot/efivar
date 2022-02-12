@@ -4,6 +4,7 @@
  * Copyright Peter Jones <pjones@redhat.com>
  * Copyright Red Hat, Inc.
  */
+#include <config.h>
 #include "fix_coverity.h"
 
 #include "linux.h"

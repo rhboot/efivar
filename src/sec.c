@@ -5,6 +5,7 @@
  *
  */
 
+#include <config.h>
 #include "efivar.h"
 
 uint32_t PUBLIC

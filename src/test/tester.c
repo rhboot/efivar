@@ -5,6 +5,7 @@
  * Copyright 2012-2018 Peter M. Jones <pjones@redhat.com>
  */
 
+#include <config.h>
 #include <alloca.h>
 #include <errno.h>
 #include <fcntl.h>

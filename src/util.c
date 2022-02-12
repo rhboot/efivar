@@ -4,6 +4,7 @@
  * Copyright Peter Jones <pjones@redhat.com>
  */
 
+#include <config.h>
 #include "efivar.h"
 
 size_t HIDDEN page_size = 4096;

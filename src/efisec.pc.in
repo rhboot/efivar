@@ -1,11 +1,11 @@
-prefix=@@PREFIX@@
-exec_prefix=@@EXEC_PREFIX@@
-libdir=@@LIBDIR@@
-includedir=@@INCLUDEDIR@@
+prefix=@prefix@
+exec_prefix=@exec_prefix@
+libdir=@libdir@
+includedir=@includedir@
 
 Name: efisec
 Description: UEFI Security Features
-Version: @@VERSION@@
+Version: @VERSION@
 Libs: -L${libdir} -lefivar -lefisec
 Libs.private: -ldl
 Cflags: -I${includedir}/efivar

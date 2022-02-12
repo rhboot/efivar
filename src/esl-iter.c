@@ -4,6 +4,7 @@
  * Copyright Peter M. Jones <pjones@redhat.com>
  */
 
+#include <config.h>
 #include "efisec.h"
 
 typedef struct esl_list_iter esl_list_iter;

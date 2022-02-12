@@ -55,15 +55,6 @@
 #define PRINTF(...) __attribute__((__format__(printf, __VA_ARGS__)))
 #define FLATTEN __attribute__((__flatten__))
 #define PACKED __attribute__((__packed__))
-#if defined(__clang__)
-# define VERSION(sym, ver)
-#else
-# if GNUC_PREREQ(10,0)
-#  define VERSION(sym, ver) __attribute__ ((symver (# ver)))
-# else
-#  define VERSION(sym, ver) __asm__(".symver " # sym "," # ver);
-# endif
-#endif
 #define NORETURN __attribute__((__noreturn__))
 #define ALIGNED(n) __attribute__((__aligned__(n)))
 #define CLEANUP_FUNC(x) __attribute__((__cleanup__(x)))

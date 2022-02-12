@@ -8,6 +8,7 @@
  * http://developer.intel.com/technology/efi/efi.htm
  */
 
+#include <config.h>
 #include "fix_coverity.h"
 
 #include <asm/byteorder.h>

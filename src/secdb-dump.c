@@ -4,6 +4,7 @@
  * Copyright Peter Jones <pjones@redhat.com>
  */
 
+#include <config.h>
 #include "efisec.h"
 #include "hexdump.h"
 

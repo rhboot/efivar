@@ -4,6 +4,7 @@
  * Copyright 2012 Red Hat, Inc.
  */
 
+#include <config.h>
 #include "fix_coverity.h"
 
 #include <ctype.h>
