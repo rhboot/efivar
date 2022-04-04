@@ -248,7 +248,7 @@ secdb_dump(efi_secdb_t *secdb, bool annotations)
 		esln += 1;
 	}
 	secdb_dump_finish();
-	printf("%08lx\n", offset);
+	printf("%08zx\n", offset);
 
 	fflush(stdout);
 }
