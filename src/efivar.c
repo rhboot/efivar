@@ -633,7 +633,7 @@ int main(int argc, char *argv[])
 				if (sz < 0)
 					err(1, "Could not import data from \"%s\"", infile);
 
-				free(data);
+				munmap(data, data_size);
 				data = NULL;
 				data_size = 0;
 
