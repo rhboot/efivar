@@ -73,8 +73,12 @@ override SOFLAGS = $(_SOFLAGS) \
 
 HOST_ARCH=$(shell uname -m)
 ifneq ($(HOST_ARCH),ia64)
+ifneq ($(HOST_ARCH),ppc64le)
 ifneq ($(HOST_ARCH),riscv64)
 	HOST_MARCH=-march=native
+else
+	HOST_MARCH=
+endif
 else
 	HOST_MARCH=
 endif
