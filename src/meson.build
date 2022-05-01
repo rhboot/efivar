@@ -27,11 +27,11 @@ abidiff_args = ['--suppr', files('abignore'), '--headers-dir2', join_paths(meson
 
 c = meson.get_compiler('c')
 
-has_ver_script = c.has_link_argument('-Wl,--version-script=' + join_paths(meson.source_root(), 'src/libefivar.map.in'))
+has_ver_script = c.has_link_argument('-Wl,--version-script=' + join_paths(meson.source_root(), 'src/libefivar.map'))
 can_test_abi = has_ver_script and abidiff.found()
 
 if has_ver_script
-  link_arg = '-Wl,--version-script=' + join_paths(meson.source_root(), 'src/lib@0@.map.in')
+  link_arg = '-Wl,--version-script=' + join_paths(meson.source_root(), 'src/lib@0@.map')
 else
   link_arg = ''
 endif
