@@ -42,7 +42,7 @@ if can_test_abi
 endif
 
 lib_efiboot_sources = ['crc32.c', 'creator.c', 'disk.c', 'gpt.c', 'loadopt.c', 'path-helpers.c', 'linux.c', 'linux-acpi.c', 'linux-acpi-root.c', 'linux-ata.c', 'linux-emmc.c', 'linux-i2o.c', 'linux-md.c', 'linux-nvme.c', 'linux-pci.c', 'linux-pci-root.c', 'linux-pmem.c', 'linux-sas.c', 'linux-sata.c', 'linux-scsi.c', 'linux-soc-root.c', 'linux-virtblk.c', 'linux-virtual-root.c']
-lib_efiboot = library('efiboot', lib_efiboot_sources, version : lib_ver, link_with : [lib_efivar], install : true, link_args : link_arg.format('efiboot'), include_directories : incdir)
+lib_efiboot = library('efiboot', lib_efiboot_sources, gen_guids, version : lib_ver, link_with : [lib_efivar], install : true, link_args : link_arg.format('efiboot'), include_directories : incdir)
 lib_efiboot_xml = custom_target('efiboot_xml', input : [lib_efiboot], output: ['libefiboot.abixml'],
                                command : abidw_command)
 if can_test_abi
@@ -50,7 +50,7 @@ if can_test_abi
 endif
 
 lib_efisec_sources = ['sec.c', 'secdb.c', 'esl-iter.c', 'util.c']
-lib_efisec = library('efisec', lib_efisec_sources, version : lib_ver, link_with : [lib_efivar], install : true, link_args : link_arg.format('efisec'), include_directories : incdir)
+lib_efisec = library('efisec', lib_efisec_sources, gen_guids, version : lib_ver, link_with : [lib_efivar], install : true, link_args : link_arg.format('efisec'), include_directories : incdir)
 lib_efisec_xml = custom_target('efisec_xml', input : [lib_efisec], output: ['libefisec.abixml'],
                                command : abidw_command)
 if can_test_abi
@@ -63,10 +63,10 @@ alias_target('abixml', lib_efivar_xml, lib_efiboot_xml, lib_efisec_xml)
 
 
 efivar_sources = ['efivar.c', 'guid.c', 'util.c']
-efivar = executable('efivar', efivar_sources, install : true, link_with : [lib_efivar], include_directories : incdir)
+efivar = executable('efivar', efivar_sources, gen_guids, install : true, link_with : [lib_efivar], include_directories : incdir)
 
 efisecdb_sources = ['efisecdb.c', 'secdb-dump.c', 'util.c']
-efisecdb = executable('efisecdb', efisecdb_sources, install : true, link_with : [lib_efivar, lib_efisec], include_directories : incdir)
+efisecdb = executable('efisecdb', efisecdb_sources, gen_guids, install : true, link_with : [lib_efivar, lib_efisec], include_directories : incdir)
 
 
 pkg = import('pkgconfig')
