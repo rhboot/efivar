@@ -2,7 +2,7 @@ incdir = include_directories('include')
 
 
 makeguids_sources = ['makeguids.c', 'util.c']
-makeguids = executable('makeguids', makeguids_sources, c_args : ['-DEFIVAR_BUILD_ENVIRONMENT'], include_directories : incdir)
+makeguids = executable('makeguids', makeguids_sources, c_args : ['-DEFIVAR_BUILD_ENVIRONMENT'], native : true, include_directories : incdir)
 
 gen_guids = custom_target('gen-guids',
                           input : ['guids.txt'],
