@@ -1,5 +1,5 @@
 Name:           efivar
-Version:        @@VERSION@@
+Version:        @version@
 Release:        1%{?dist}
 Summary:        Tools to manage UEFI variables
 License:        LGPL-2.1-only
@@ -13,7 +13,7 @@ BuildRequires:  git
 BuildRequires:  glibc-static
 BuildRequires:  libabigail
 BuildRequires:  mandoc
-BuildRequires:  make
+BuildRequires:  meson
 # please don't fix this to reflect github's incomprehensible url that goes
 # to a different tarball.
 Source0:        https://github.com/rhboot/efivar/releases/download/%{version}/efivar-%{version}.tar.bz2
@@ -48,15 +48,16 @@ git config --unset user.name
 %build
 %define _lto_cflags %{nil}
 
-make LIBDIR=%{_libdir} BINDIR=%{_bindir} CFLAGS="$RPM_OPT_FLAGS" LDFLAGS="$RPM_LD_FLAGS"
+%meson -Dconvert_mandocs=enabled -Dtest_abi_compat=enabled
+%meson_build
 
 %install
-%makeinstall
+%meson_install
 install -m 0644 src/abignore %{buildroot}%{_includedir}/efivar/.abignore
 
 %check
 %ifarch x86_64
-make abicheck
+%meson_test
 %endif
 
 %ldconfig_scriptlets libs
