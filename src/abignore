@@ -51,3 +51,9 @@
   change_kind = added-variable
   soname_regexp = libefi(var|boot|sec)\\.so\\..*
   symbol_name_regexp = ^(efidp_|efi_)[[:alnum:]_]+
+
+# suppress efi_well_known_*_end variables
+[suppress_variable]
+  change_kind = deleted-variable
+  soname_regexp = libefivar\\.so\\..*
+  symbol_name_regexp = ^efi_well_known_[[:alnum:]_]+_end$
