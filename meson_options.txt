@@ -1,1 +1,2 @@
 option('convert_mandocs', type : 'feature', value : 'auto', description : 'Convert man pages in mdoc format to man format.')
+option('generate_abi_xml', type : 'feature', value : 'auto', description : 'Generate ABI XML files with abidw')
