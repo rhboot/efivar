@@ -4,10 +4,17 @@ incdir = include_directories('include')
 makeguids_sources = ['makeguids.c', 'util.c']
 makeguids = executable('makeguids', makeguids_sources, c_args : ['-DEFIVAR_BUILD_ENVIRONMENT'], native : true, include_directories : incdir)
 
+headers = files('include/efivar/efiboot-creator.h', 'include/efivar/efiboot.h', 'include/efivar/efiboot-loadopt.h', 'include/efivar/efisec.h', 'include/efivar/efisec-secdb.h', 'include/efivar/efisec-types.h', 'include/efivar/efivar-dp.h', 'include/efivar/efivar.h', 'include/efivar/efivar-time.h', 'include/efivar/efivar-types.h')
+
 gen_guids = custom_target('gen-guids',
                           input : ['guids.txt'],
                           output : ['guid-symbols.c', 'efivar-guids.h'],
-                          command : [makeguids, '@INPUT@', '@OUTPUT0@', '@OUTPUT1@'])
+                          command : [makeguids, '@INPUT@', '@OUTPUT0@', '@OUTPUT1@'],
+                          install : true,
+                          install_dir : [false, join_paths(get_option('includedir'), 'efivar')])
+
+
+install_headers(headers, subdir : 'efivar')
 
 
 abidw = find_program('abidw', required : get_option('generate_abi_xml'))
