@@ -21,8 +21,9 @@ abidw = find_program('abidw', required : get_option('generate_abi_xml'))
 abidw_command = [abidw, '--headers-dir', join_paths(meson.source_root(), 'src/include/efivar/'),
                  '--out-file', '@OUTPUT@', '@INPUT@']
 
+abidiff_wrapper = find_program('../tests/abidiff_wrapper.py', required : get_option('test_abi_compat'))
 abidiff = find_program('abidiff', required : get_option('test_abi_compat'))
-abidiff_args = ['--suppr', files('abignore'), '--headers-dir2', join_paths(meson.source_root(), 'src/include/efivar/')]
+abidiff_wrapper_args = [abidiff.full_path(), '--suppr', files('abignore'), '--headers-dir2', join_paths(meson.source_root(), 'src/include/efivar/')]
 
 
 c = meson.get_compiler('c')
@@ -45,7 +46,7 @@ lib_efivar = library('efivar', lib_efivar_sources, gen_guids, version : lib_ver,
 lib_efivar_xml = custom_target('efivar_xml', input : [lib_efivar], output: ['libefivar.abixml'],
                                command : abidw_command)
 if can_test_abi
-  test('efivar_abi', abidiff, args : abidiff_args + [files('libefivar.abixml'), lib_efivar])
+  test('efivar_abi', abidiff_wrapper, args : abidiff_wrapper_args + [files('libefivar.abixml'), lib_efivar])
 endif
 
 lib_efiboot_sources = ['crc32.c', 'creator.c', 'disk.c', 'gpt.c', 'loadopt.c', 'path-helpers.c', 'linux.c', 'linux-acpi.c', 'linux-acpi-root.c', 'linux-ata.c', 'linux-emmc.c', 'linux-i2o.c', 'linux-md.c', 'linux-nvme.c', 'linux-pci.c', 'linux-pci-root.c', 'linux-pmem.c', 'linux-sas.c', 'linux-sata.c', 'linux-scsi.c', 'linux-soc-root.c', 'linux-virtblk.c', 'linux-virtual-root.c']
@@ -53,7 +54,7 @@ lib_efiboot = library('efiboot', lib_efiboot_sources, gen_guids, version : lib_v
 lib_efiboot_xml = custom_target('efiboot_xml', input : [lib_efiboot], output: ['libefiboot.abixml'],
                                command : abidw_command)
 if can_test_abi
-  test('efiboot_abi', abidiff, args : abidiff_args + [files('libefiboot.abixml'), lib_efiboot])
+  test('efiboot_abi', abidiff_wrapper, args : abidiff_wrapper_args + [files('libefiboot.abixml'), lib_efiboot])
 endif
 
 lib_efisec_sources = ['sec.c', 'secdb.c', 'esl-iter.c', 'util.c']
@@ -61,7 +62,7 @@ lib_efisec = library('efisec', lib_efisec_sources, gen_guids, version : lib_ver,
 lib_efisec_xml = custom_target('efisec_xml', input : [lib_efisec], output: ['libefisec.abixml'],
                                command : abidw_command)
 if can_test_abi
-  test('efisec_abi', abidiff, args : abidiff_args + [files('libefisec.abixml'), lib_efisec])
+  test('efisec_abi', abidiff_wrapper, args : abidiff_wrapper_args + [files('libefisec.abixml'), lib_efisec])
 endif
 
 
