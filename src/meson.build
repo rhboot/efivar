@@ -17,28 +17,32 @@ gen_guids = custom_target('gen-guids',
 install_headers(headers, subdir : 'efivar')
 
 
-abidw = find_program('abidw', required : get_option('generate_abi_xml'))
+abidw = find_program('abidw', disabler : true, required : get_option('generate_abi_xml'))
 abidw_command = [abidw, '--headers-dir', join_paths(meson.source_root(), 'src/include/efivar/'),
                  '--out-file', '@OUTPUT@', '@INPUT@']
-
-abidiff_wrapper = find_program('../tests/abidiff_wrapper.py', required : get_option('test_abi_compat'))
-abidiff = find_program('abidiff', required : get_option('test_abi_compat'))
-abidiff_wrapper_args = [abidiff.full_path(), '--suppr', files('abignore'), '--headers-dir2', join_paths(meson.source_root(), 'src/include/efivar/')]
 
 
 c = meson.get_compiler('c')
 
 has_ver_script = c.has_link_argument('-Wl,--version-script=' + join_paths(meson.source_root(), 'src/libefivar.map'))
-can_test_abi = has_ver_script and abidiff.found()
+
+abidiff = find_program('abidiff', disabler : true, required : get_option('test_abi_compat'))
+abidiff_wrapper = find_program('../tests/abidiff_wrapper.py', required : get_option('test_abi_compat'))
+abidiff_wrapper_args = [abidiff.full_path(), '--suppr', files('abignore'), '--headers-dir2', join_paths(meson.source_root(), 'src/include/efivar/')]
+
+if abidiff.found()
+  if has_ver_script
+  else
+    warning('The test_abi_compat option was enabled but the linker doesn\'t support --version-script! Skipping...')
+    abidiff = disabler()
+  endif
+endif
+
 
 if has_ver_script
   link_arg = '-Wl,--version-script=' + join_paths(meson.source_root(), 'src/lib@0@.map')
 else
   link_arg = ''
-endif
-
-if abidiff.found() and not has_ver_script
-  warning('The test_abi_compat option was enabled but the linker doesn\'t support --version-script! Skipping...')
 endif
 
 
@@ -56,9 +60,7 @@ foreach libname : ['efivar', 'efiboot', 'efisec']
   lib = library(libname, lib_sources[libname], gen_guids, version : lib_ver, link_with : lib_targets.get('efivar', []), install : true, link_args : link_arg.format(libname), include_directories : incdir)
   lib_xml = custom_target(libname + '_xml', input : [lib], output: ['lib' + libname + '.abixml'],
                                  command : abidw_command)
-  if can_test_abi
-    test(libname + '_abi', abidiff_wrapper, args : abidiff_wrapper_args + [files('lib' + libname + '.abixml'), lib])
-  endif
+  test(libname + '_abi', abidiff_wrapper, args : abidiff_wrapper_args + [files('lib' + libname + '.abixml'), lib])
   lib_targets += {libname : lib}
   xml_targets += lib_xml
 endforeach
