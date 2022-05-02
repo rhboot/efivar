@@ -45,6 +45,12 @@ else
   link_arg = ''
 endif
 
+if meson.version().version_compare('>=0.62.0')
+  dl = dependency('dl')
+else
+  dl = c.find_library('dl', required : false)
+endif
+
 
 lib_targets = {}
 xml_targets = []
@@ -53,11 +59,17 @@ lib_sources = {
   'efiboot' : ['crc32.c', 'creator.c', 'disk.c', 'gpt.c', 'loadopt.c', 'path-helpers.c', 'linux.c', 'linux-acpi.c', 'linux-acpi-root.c', 'linux-ata.c', 'linux-emmc.c', 'linux-i2o.c', 'linux-md.c', 'linux-nvme.c', 'linux-pci.c', 'linux-pci-root.c', 'linux-pmem.c', 'linux-sas.c', 'linux-sata.c', 'linux-scsi.c', 'linux-soc-root.c', 'linux-virtblk.c', 'linux-virtual-root.c'],
   'efisec' : ['sec.c', 'secdb.c', 'esl-iter.c', 'util.c']
 }
+lib_deps = {
+  'efivar' : dl
+}
 
 
 
 foreach libname : ['efivar', 'efiboot', 'efisec']
-  lib = library(libname, lib_sources[libname], gen_guids, version : lib_ver, link_with : lib_targets.get('efivar', []), install : true, link_args : link_arg.format(libname), include_directories : incdir)
+  lib = library(libname, lib_sources[libname], gen_guids, version : lib_ver,
+                link_with : lib_targets.get('efivar', []), install : true,
+                link_args : link_arg.format(libname), include_directories : incdir,
+                dependencies : lib_deps.get(libname, []))
   lib_xml = custom_target(libname + '_xml', input : [lib], output: ['lib' + libname + '.abixml'],
                                  command : abidw_command)
   test(libname + '_abi', abidiff_wrapper, args : abidiff_wrapper_args + [files('lib' + libname + '.abixml'), lib])
