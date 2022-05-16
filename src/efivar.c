@@ -447,7 +447,7 @@ usage(int ret)
 		"  -a, --append                      append to variable specified by --name\n"
 		"  -f, --datafile=<file>             load or save variable contents from <file>\n"
 		"  -e, --export=<file>               export variable to <file>\n"
-		"  -i, --import=<file>               import variable from <file\n"
+		"  -i, --import=<file>               import variable from <file>\n"
 		"  -L, --list-guids                  show internal guid list\n"
 		"  -w, --write                       write to variable specified by --name\n\n"
 		"Help options:\n"
