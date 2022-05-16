@@ -638,6 +638,25 @@ efidp_make_mac_addr(uint8_t *buf, ssize_t size, uint8_t if_type,
 	return sz;
 }
 
+ssize_t NONNULL(3) PUBLIC
+efidp_make_uri(uint8_t *buf, ssize_t size, const char * const uristring)
+{
+	efidp_uri *uri = (efidp_uri *)buf;
+	size_t urilen = strlen(uristring);
+	ssize_t req = offsetof(efidp_uri, uri) + urilen;
+
+	ssize_t sz = efidp_make_generic(buf, size, EFIDP_MESSAGE_TYPE,
+					EFIDP_MSG_URI, req);
+	if (size && sz == req) {
+		memcpy(uri->uri, (uint8_t *)uristring, urilen);
+	}
+
+	if (sz < 0)
+		efi_error("efidp_make_generic failed");
+
+	return sz;
+}
+
 ssize_t PUBLIC
 efidp_make_ipv4(uint8_t *buf, ssize_t size, uint32_t local, uint32_t remote,
 		uint32_t gateway, uint32_t netmask,
