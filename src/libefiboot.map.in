@@ -37,3 +37,7 @@ LIBEFIBOOT_1.30 {
 LIBEFIBOOT_1.31 {
 	global:	efi_get_libefiboot_version;
 } LIBEFIBOOT_1.30;
+
+LIBEFIBOOT_1.32 {
+	global:	efi_generate_ipv4_device_path_with_uri;
+} LIBEFIBOOT_1.31;
