@@ -88,6 +88,8 @@ efivar = executable('efivar', efivar_sources, gen_guids, install : true, link_wi
 efisecdb_sources = ['efisecdb.c', 'secdb-dump.c', 'util.c']
 efisecdb = executable('efisecdb', efisecdb_sources, gen_guids, install : true, link_with : [lib_targets['efivar'], lib_targets['efisec']], include_directories : incdir)
 
+tester_sources = ['test/tester.c']
+tester = executable('tester', tester_sources, gen_guids, link_with : lib_targets['efivar'], include_directories : incdir)
 
 pkg = import('pkgconfig')
 

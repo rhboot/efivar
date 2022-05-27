@@ -7,3 +7,4 @@ configure_file(input : 'efivar.spec.in', output : 'efivar.spec', configuration :
 
 subdir('src')
 subdir('docs')
+subdir('tests')
