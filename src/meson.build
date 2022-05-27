@@ -83,7 +83,7 @@ alias_target('abixml', xml_targets)
 
 
 efivar_sources = ['efivar.c', 'guid.c', 'util.c']
-efivar = executable('efivar', efivar_sources, gen_guids, install : true, link_with : [lib_targets['efivar']], include_directories : incdir)
+efivar = executable('efivar', efivar_sources, gen_guids, install : true, link_with : [lib_targets['efivar']], include_directories : incdir, dependencies : dl)
 
 efisecdb_sources = ['efisecdb.c', 'secdb-dump.c', 'util.c']
 efisecdb = executable('efisecdb', efisecdb_sources, gen_guids, install : true, link_with : [lib_targets['efivar'], lib_targets['efisec']], include_directories : incdir)
