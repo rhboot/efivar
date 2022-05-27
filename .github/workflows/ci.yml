@@ -6,10 +6,20 @@ on:
     paths:
       - "**.c"
       - "**.h"
+      - "tests/**"
+      - "**/meson.build"
+      - "src/abignore"
+      - "src/*.abixml"
+      - "src/*.map"
   pull_request:
     paths:
       - "**.c"
       - "**.h"
+      - "tests/**"
+      - "**/meson.build"
+      - "src/abignore"
+      - "src/*.abixml"
+      - "src/*.map"
 
 jobs:
   main:
