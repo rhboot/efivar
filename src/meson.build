@@ -19,6 +19,7 @@ install_headers(headers, subdir : 'efivar')
 
 abidw = find_program('abidw', disabler : true, required : get_option('generate_abi_xml'))
 abidw_command = [abidw, '--headers-dir', join_paths(meson.source_root(), 'src/include/efivar/'),
+                 '--suppr', files('abignore'),
                  '--out-file', '@OUTPUT@', '@INPUT@']
 
 
