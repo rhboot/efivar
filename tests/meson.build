@@ -31,7 +31,7 @@ foreach grubtest, testinfo : grubenv_tests
   # TODO full_path should not be needed for either, report upstream
   # "You should not need to use this method. Passing the object itself should work in all cases."
   # and "In most cases using the object itself will do the same job as this and will also allow Meson to setup inter-target dependencies correctly. Please file a bug if that doesn't work for you."
-  test(testinfo[0], grub_wrapper, args: [grub_editenv.full_path(), meson.current_source_dir(), grubtest, testinfo[1].format(efivar.full_path())])
+  test(testinfo[0], grub_wrapper, args : [grub_editenv.full_path(), meson.current_source_dir(), grubtest, testinfo[1].format(efivar.full_path())])
 endforeach
 
 
@@ -157,11 +157,6 @@ foreach efisectest, testinfo : efisecdb_tests
   test(testinfo[0], secdb_wrapper, args: [files(efisectest + '.goal'), testinfo[1], efisecdb])
 endforeach
 
+tester_wrapper = find_program('test-threading')
 
-efissdfasdfecdb_tests = {
-  #'test.esl.cert.addition.esl' : 'testing ESL entry addition with x509 cert',
-  #'test.esl.cert.removal.esl' : 'testing ESL entry removal with x509 cert'
-}
-
-# Threading
-# tester.c
+test('Test threading', tester_wrapper, args : [thread_test])

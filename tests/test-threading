@@ -2,29 +2,26 @@
 # SPDX-License-Identifier: LGPL-2.1-or-later
 # test (some) efivar thread safety
 #
-# Copyright Jonathan Marler
+# Copyright Jonathan Marler and contributors
 
-set -e
-
-if [ "x$TOPDIR" = "x" ] ; then
-	TOPDIR="$(realpath "$(dirname "$0")/../")"
+if [ "$#" -ne 1 ] ; then
+	echo "Usage: ${0} <path to thread test>"
+	exit 1
 fi
 
 rm -rf scratch
 mkdir scratch
 
-EFIVARFS_PATH=""
-LD_LIBRARY_PATH=""
-LIBEFIVAR_OPS=""
+set -eu
 
+TESTERPATH="$1"
 EFIVARFS_PATH=$(realpath scratch)/
-LD_LIBRARY_PATH="${TOPDIR}/src/"
 LIBEFIVAR_OPS=efivarfs
-export EFIVARFS_PATH LD_LIBRARY_PATH LIBEFIVAR_OPS
+export EFIVARFS_PATH LIBEFIVAR_OPS
 
 test() {
 	echo -n "testing $1 thread..."
-	"${TOPDIR}/src/thread-test" -t "$1"
+	"$TESTERPATH" -t "$1"
 }
 
 test 1
