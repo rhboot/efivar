@@ -1,0 +1,4 @@
+option('convert_mandocs', type : 'feature', value : 'auto', description : 'Convert man pages in mdoc format to man format.')
+option('generate_abi_xml', type : 'feature', value : 'disabled', description : 'Generate ABI XML files with abidw')
+option('test_abi_compat', type : 'feature', value : 'disabled', description : 'Test ABI compatibility with abidiff')
+option('test_with_grubenv', type : 'feature', value : 'auto', description : 'Enable testing with grubenv')

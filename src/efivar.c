@@ -24,7 +24,7 @@ extern char *optarg;
 extern int optind, opterr, optopt;
 
 #include "efivar.h"
-#include "efivar/efivar-guids.h"
+#include "efivar-guids.h"
 
 #define ACTION_USAGE		0x00
 #define ACTION_LIST		0x01

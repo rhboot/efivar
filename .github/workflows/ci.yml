@@ -1,26 +1,42 @@
-{
-    "name": "pull-request",
-    "on": {
-        "push": { "branches": "main" },
-        "pull_request": { "branches": "main" },
-    },
-    "jobs": {
-        "linux": {
-            "runs-on": "ubuntu-latest",
-            "strategy": {
-                "fail-fast": false,
-                "matrix": {
-                    "container": [
-                        "f33", "f34", "f35", "f36", "centos8", "centos9",
-                    ],
-                },
-            },
-            "container": "vathpela/efi-ci:${{ matrix.container }}-x64",
-            "steps": [
-                { "uses": "actions/checkout@v2" },
-                { "run": "make all test" },
-                { "run": "make abicheck" },
-            ],
-        },
-    },
-}
+name: ci_meson
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - "**.c"
+      - "**.h"
+      - "tests/**"
+      - "**/meson.build"
+      - "src/abignore"
+      - "src/*.abixml"
+      - "src/*.map"
+  pull_request:
+    paths:
+      - "**.c"
+      - "**.h"
+      - "tests/**"
+      - "**/meson.build"
+      - "src/abignore"
+      - "src/*.abixml"
+      - "src/*.map"
+
+jobs:
+  main:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v3
+    - uses: actions/setup-python@v1
+      with:
+        python-version: '3.x'
+    - run: sudo apt-get update && sudo apt-get install -y abigail-tools
+    - run: pip install meson ninja
+    - run: meson setup -Dtest_abi_compat=enabled -Dgenerate_abi_xml=enabled -Dconvert_mandocs=disabled builddir/
+      env:
+        CC: gcc
+    - run: meson test -C builddir/ -v
+    - uses: actions/upload-artifact@v1
+      with:
+        name: Linux_Meson_Testlog
+        path: builddir/meson-logs/testlog.txt
+

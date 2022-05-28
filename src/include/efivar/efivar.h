@@ -21,7 +21,7 @@
 #include <efivar/efivar-types.h>
 
 #ifndef EFIVAR_BUILD_ENVIRONMENT
-#include <efivar/efivar-guids.h>
+#include <efivar-guids.h>
 #endif
 
 #ifdef __cplusplus
