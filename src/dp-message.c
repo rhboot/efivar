@@ -628,6 +628,7 @@ efidp_make_mac_addr(uint8_t *buf, ssize_t size, uint8_t if_type,
 	ssize_t req = sizeof (*mac);
 	if (size && sz == req) {
 		mac->if_type = if_type;
+		memset(mac->mac_addr, 0, 32);
 		memcpy(mac->mac_addr, mac_addr,
 		       mac_addr_size > 32 ? 32 : mac_addr_size);
 	}
