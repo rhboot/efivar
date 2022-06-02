@@ -354,6 +354,7 @@ extern struct dev_probe sas_parser;
 extern struct dev_probe sata_parser;
 extern struct dev_probe nvme_parser;
 extern struct dev_probe virtblk_parser;
+extern struct dev_probe virtnet_parser;
 extern struct dev_probe i2o_parser;
 extern struct dev_probe scsi_parser;
 extern struct dev_probe ata_parser;
