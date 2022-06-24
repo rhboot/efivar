@@ -2,8 +2,8 @@
 #
 # workarounds.mk - workarounds for weird stuff behavior
 
-LD_FLAVOR := $(shell $(LD) --version | grep -E '^(LLD|GNU ld)'|sed 's/ .*//g')
-LD_VERSION := $(shell $(LD) --version | grep -E '^(LLD|GNU ld)'|sed 's/.* //')
+LD_FLAVOR := $(shell LC_ALL=C $(LD) --version | grep -E '^(LLD|GNU ld)'|sed 's/ .*//g')
+LD_VERSION := $(shell LC_ALL=C $(LD) --version | grep -E '^(LLD|GNU ld)'|sed 's/.* //')
 # 2.35 is definitely broken and 2.36 seems to work
 LD_DASH_T := $(shell \
 	if [ "x${LD_FLAVOR}" = xLLD ] ; then \
