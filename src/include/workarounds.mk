@@ -2,12 +2,12 @@
 #
 # workarounds.mk - workarounds for weird stuff behavior
 
-LD_FLAVOR := $(shell LC_ALL=C $(LD) --version | grep -E '^(LLD|GNU ld)'|sed 's/ .*//g')
-LD_VERSION := $(shell LC_ALL=C $(LD) --version | grep -E '^(LLD|GNU ld)'|sed 's/.* //')
+LD_FLAVOR := $(shell LC_ALL=C $(LD) --version | grep -E '^((.* )?LLD|GNU ld)'|sed 's/.* LLD/LLD/;s/ .*//g')
+LD_VERSION := $(shell LC_ALL=C $(LD) --version | grep -E '^((.* )?LLD|GNU ld)'|sed 's/.* LLD/LLD/;s/.* //')
 # 2.35 is definitely broken and 2.36 seems to work
 LD_DASH_T := $(shell \
 	if [ "x${LD_FLAVOR}" = xLLD ] ; then \
-		echo '-T' ; \
+		echo "" ; \
 	elif [ "x${LD_FLAVOR}" = xGNU ] ; then \
 		if echo "${LD_VERSION}" | grep -q -E '^2\.3[6789]|^2\.[456789]|^[3456789]|^[[:digit:]][[:digit:]]' ; then \
 			echo '-T' ; \
@@ -15,7 +15,7 @@ LD_DASH_T := $(shell \
 			echo "" ; \
 		fi ; \
 	else \
-		echo "Your linker is not supported" ; \
+		echo "Your linker ${LD_FLAVOR} version ${LD_VERSION} is not supported" ; \
 		exit 1 ; \
 	fi)
 
