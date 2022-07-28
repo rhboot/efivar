@@ -20,6 +20,7 @@
 #include <stdbool.h>
 #include <stdio.h>
 #include <sys/ioctl.h>
+#include <sys/mount.h>
 #include <sys/socket.h>
 #include <sys/sysmacros.h>
 #include <sys/types.h>
