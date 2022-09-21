@@ -16,7 +16,6 @@
 #include <sys/types.h>
 #include <time.h>
 #include <unistd.h>
-#include <byteswap.h>
 
 #include <efivar/efivar-types.h>
 

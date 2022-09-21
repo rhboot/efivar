@@ -17,9 +17,9 @@
 #include "include/efivar/efivar.h"
 
 #define GUID_FORMAT "%08x-%04x-%04x-%04x-%02x%02x%02x%02x%02x%02x"
-#define GUID_FORMAT_ARGS(guidp)						\
-	(guidp)->a, (guidp)->b, (guidp)->c, bswap_16((guidp)->d),	\
-	(guidp)->e[0], (guidp)->e[1], (guidp)->e[2], (guidp)->e[3],	\
+#define GUID_FORMAT_ARGS(guidp)							\
+	(guidp)->a, (guidp)->b, (guidp)->c, __builtin_bswap16((guidp)->d),	\
+	(guidp)->e[0], (guidp)->e[1], (guidp)->e[2], (guidp)->e[3],		\
 	(guidp)->e[4], (guidp)->e[5]
 
 static inline int
