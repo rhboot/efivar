@@ -9,6 +9,11 @@
 
 #include <dirent.h>
 #include <limits.h>
+#include <sys/types.h>
+
+#include <stddef.h>
+
+#include <efivar/efivar-types.h>
 
 struct efi_variable {
 	uint64_t attrs;
