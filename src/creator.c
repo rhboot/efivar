@@ -60,7 +60,7 @@ find_file(const char * const filepath, char **devicep, char **relpathp)
 		}
 	} while (1);
 
-	mounts = fopen("/proc/self/mounts", "r");
+	mounts = setmntent("/proc/self/mounts", "r");
 	if (mounts == NULL) {
 		efi_error("couldn not open /proc/self/mounts");
 		return -1;
