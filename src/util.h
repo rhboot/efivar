@@ -289,6 +289,8 @@ debug_markers_(const char * const file, int line,
 
 	efi_set_loglevel(level);
 	logfile = efi_get_logfile();
+	if (!logfile)
+		return;
 	fprintf(logfile, "%s:%d %s(): %s", file, line, func, prefix ? prefix : "");
 	va_start(ap, prefix);
 	while ((pos = va_arg(ap, int)) >= 0) {
@@ -311,6 +313,9 @@ log_(char *file, int line, const char *func, int level, char *fmt, ...)
 	va_list ap;
 	int rc = 0;
 	int sz;
+
+	if (!logfile)
+		return 0;
 
 	sz = fprintf(logfile, "%s:%d %s(): ", file, line, func);
 	if (sz < 0)
