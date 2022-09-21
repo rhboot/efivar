@@ -14,7 +14,6 @@
 #include <sys/stat.h>
 #include <sys/types.h>
 #include <unistd.h>
-#include <byteswap.h>
 
 #include <efivar/efivar.h>
 
