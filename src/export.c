@@ -9,7 +9,6 @@
 #include <inttypes.h>
 #include <stdint.h>
 #include <stdlib.h>
-#include <uchar.h>
 
 #include "efivar.h"
 
@@ -26,7 +25,7 @@
  *	efi_guid_t guid;
  *	uint32_t name_len;
  *	uint32_t data_len;
- *	char16_t name[];
+ *	uint16_t name[];
  *	uint8_t data[];
  *	uint32_t crc32;
  * }
@@ -35,7 +34,7 @@
  * struct {
  *	uint32_t name_size; // in bytes
  *	uint32_t data_size; // in bytes
- *	char16_t name[];
+ *	uint16_t name[];
  *	efi_guid_t guid;
  *	uint32_t attr;
  *	unit8_t data[];
@@ -56,7 +55,7 @@ efi_variable_import_dmpstore(uint8_t *data, size_t size,
 	uint32_t datasz;
 	size_t min = sizeof (uint32_t)		/* name size */
 		   + sizeof (uint32_t)		/* data size */
-		   + sizeof (char16_t)		/* two bytes of name */
+		   + sizeof (uint16_t)		/* two bytes of name */
 		   + sizeof (efi_guid_t)	/* guid */
 		   + sizeof (uint32_t)		/* attr */
 		   + 1				/* one byte of data */
@@ -195,7 +194,7 @@ efi_variable_import_efivar(uint8_t *data, size_t datasz, efi_variable_t **var_ou
 		   + sizeof (uint64_t)		/* attr */
 		   + sizeof (efi_guid_t)	/* guid */
 		   + sizeof (uint32_t) * 2	/* name_len and data_len */
-		   + sizeof (char16_t)		/* two bytes of name */
+		   + sizeof (uint16_t)		/* two bytes of name */
 		   + 1				/* one byte of data */
 		   + 4;				/* crc32 */
 	uint32_t crc;
@@ -276,7 +275,7 @@ efi_variable_import_efivar(uint8_t *data, size_t datasz, efi_variable_t **var_ou
 			return -1;
 		}
 
-		char16_t *wname = (char16_t *)ptr;
+		uint16_t *wname = (uint16_t *)ptr;
 		for (uint32_t i = 0; i < name_len; i++)
 			var.name[i] = wname[i] & 0xff;
 		ptr += name_len;
