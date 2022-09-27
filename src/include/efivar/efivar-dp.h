@@ -469,7 +469,7 @@ typedef struct {
 	uint16_t	protocol;
 	uint8_t		ip_addr_origin;
 	uint8_t		prefix_length;
-	uint8_t		gateway_ipv6_addr;
+	uint8_t		gateway_ipv6_addr[16];
 } EFIVAR_PACKED efidp_ipv6_addr;
 
 #define EFIDP_IPv6_ORIGIN_MANUAL	0x00
