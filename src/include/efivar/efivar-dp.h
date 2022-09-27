@@ -473,6 +473,7 @@ typedef struct {
 } EFIVAR_PACKED efidp_ipv6_addr;
 
 #define EFIDP_IPv6_ORIGIN_MANUAL	0x00
+#define EFIDP_IPv6_ORIGIN_STATIC	0x00
 #define EFIDP_IPv6_ORIGIN_AUTOCONF	0x01
 #define EFIDP_IPv6_ORIGIN_STATEFUL	0x02
 

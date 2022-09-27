@@ -100,6 +100,21 @@ format_ipv6_addr_helper(unsigned char *buf, size_t size, const char *dp_type,
 	return off;
 }
 
+#define format_ip_protocol(buf, size, off, dp_type, proto)	\
+({								\
+	switch(proto) {						\
+	case 6:							\
+		format(buf, size, off, dp_type, "TCP");		\
+		break;						\
+	case 17:						\
+		format(buf, size, off, dp_type, "UDP");		\
+		break;						\
+	default:						\
+		format(buf, size, off, dp_type, "%u", proto);	\
+		break;						\
+	}							\
+})
+
 #define format_ipv4_addr(buf, size, off, addr, port)		\
 	format_helper(format_ipv4_addr_helper, buf, size, off,	\
 		      "IPv4", addr, port)
@@ -353,11 +368,18 @@ _format_message_dn(unsigned char *buf, size_t size, const_efidp dp)
 		efidp_ipv4_addr const *a = &dp->ipv4_addr;
 		format(buf, size, off, "IPv4", "IPv4(");
 		format_ipv4_addr(buf, size, off,
-				 a->local_ipv4_addr, a->local_port);
-		format_ipv4_addr(buf, size, off,
 				 a->remote_ipv4_addr, a->remote_port);
-		format(buf, size, off, "IPv4", ",%hx,%hhx)",
-		       a->protocol, a->static_ip_addr);
+		format(buf, size, off, "IPv4", ",");
+		format_ip_protocol(buf, size, off, "IPv4", a->protocol);
+		format(buf, size, off, "IPv4", ",%s,", a->static_ip_addr
+						      ?"Static" :"DHCP");
+		format_ipv4_addr(buf, size, off,
+				 a->local_ipv4_addr, a->local_port);
+		format(buf, size, off, "IPv4", ",");
+		format_ipv4_addr(buf, size, off, a->gateway, 0);
+		format(buf, size, off, "IPv4", ",");
+		format_ipv4_addr(buf, size, off, a->netmask, 0);
+		format(buf, size, off, "IPv4", ")");
 		break;
 			     }
 	case EFIDP_MSG_VENDOR: {
@@ -426,33 +448,37 @@ _format_message_dn(unsigned char *buf, size_t size, const_efidp dp)
 			       }
 	case EFIDP_MSG_IPv6: {
 		efidp_ipv6_addr const *a = &dp->ipv6_addr;
-		unsigned char *addr0 = NULL;
-		unsigned char *addr1 = NULL;
-		ssize_t tmpoff = 0;
-		ssize_t sz;
 
-		sz = format_ipv6_addr(addr0, 0, tmpoff, a->local_ipv6_addr,
-				      a->local_port);
-		if (sz < 0)
-			return -1;
-		addr0 = alloca(sz+1);
-		tmpoff = 0;
-		sz = format_ipv6_addr(addr1, 0, tmpoff, a->remote_ipv6_addr,
-				      a->remote_port);
-		if (sz < 0)
-			return -1;
-		addr1 = alloca(sz+1);
-
-		tmpoff = 0;
-		format_ipv6_addr(addr0, sz, tmpoff, a->local_ipv6_addr,
-				 a->local_port);
-
-		tmpoff = 0;
-		format_ipv6_addr(addr1, sz, tmpoff, a->remote_ipv6_addr,
+		format(buf, size, off, "IPv6", "IPv6(");
+		format_ipv6_addr(buf, size, off, a->remote_ipv6_addr,
 				 a->remote_port);
+		format(buf, size, off, "IPv6",",");
+		format_ip_protocol(buf, size, off, "IPv6", a->protocol);
+		format(buf, size, off, "IPv6",",");
+		switch (a->ip_addr_origin) {
+		case EFIDP_IPv6_ORIGIN_STATIC:
+			format(buf, size, off, "IPv6", "Static,");
+			break;
+		case EFIDP_IPv6_ORIGIN_AUTOCONF:
+			format(buf, size, off, "IPv6",
+			       "StatelessAutoConfigure,");
+			break;
+		case EFIDP_IPv6_ORIGIN_STATEFUL:
+			format(buf, size, off, "IPv6",
+			       "StatefulAutoConfigure,");
+			break;
+		default:
+			format(buf, size, off, "IPv6",
+			       "0x%hx,", a->ip_addr_origin);
+			break;
+		}
 
-		format(buf, size, off, "IPv6", "IPv6(%s<->%s,%hx,%hhx)",
-		       addr0, addr1, a->protocol, a->ip_addr_origin);
+		format_ipv6_addr(buf, size, off, a->local_ipv6_addr,
+				 a->local_port);
+		format(buf, size, off, "IPv6",",");
+		format_ipv6_addr(buf, size, off, a->gateway_ipv6_addr, 0);
+		format(buf, size, off, "IPv6",",%u)", a->prefix_length);
+
 		break;
 			     }
 	case EFIDP_MSG_UART: {
