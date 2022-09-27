@@ -83,19 +83,19 @@ format_ipv6_addr_helper(unsigned char *buf, size_t size, const char *dp_type,
 
 	for (i = 0; i < 8; i++) {
 		if (largest_zero_block_offset == i) {
-			format(buf, size, off, "dp_type", "::");
+			format(buf, size, off, dp_type, "::");
 			i += largest_zero_block_size -1;
 			continue;
 		} else if (i > 0) {
-			format(buf, size, off, "dp_type", ":");
+			format(buf, size, off, dp_type, ":");
 		}
 
-		format(buf, size, off, "dp_type", "%x", ip[i]);
+		format(buf, size, off, dp_type, "%x", ip[i]);
 	}
 
-	format(buf, size, off, "dp_type", "]");
+	format(buf, size, off, dp_type, "]");
 	if (port >= 0)
-		format(buf, size, off, "Ipv6", ":%hu", (uint16_t)port);
+		format(buf, size, off, dp_type, ":%hu", (uint16_t)port);
 
 	return off;
 }
