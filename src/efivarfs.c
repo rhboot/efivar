@@ -456,7 +456,8 @@ err:
 	if (ret == -1 && rfd == -1 && wfd != -1 && unlink(path) == -1)
 		efi_error("failed to unlink %s", path);
 
-	ioctl(restore_immutable_fd, FS_IOC_SETFLAGS, &orig_attrs);
+	if (restore_immutable_fd >= 0)
+		ioctl(restore_immutable_fd, FS_IOC_SETFLAGS, &orig_attrs);
 
 	if (wfd >= 0)
 		close(wfd);
