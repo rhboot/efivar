@@ -7,4 +7,9 @@ configure_file(input : 'efivar.spec.in', output : 'efivar.spec', configuration :
 
 subdir('src')
 subdir('docs')
-subdir('tests')
+
+if meson.can_run_host_binaries()
+  subdir('tests')
+else
+  warning('Your build machine cannot run target binaries: Disabling tests.\n\tIf you are cross compiling, ensure the exe_wrapper option is set.')
+endif
