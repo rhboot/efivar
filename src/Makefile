@@ -4,7 +4,6 @@ include $(TOPDIR)/src/include/deprecated.mk
 include $(TOPDIR)/src/include/version.mk
 include $(TOPDIR)/src/include/rules.mk
 include $(TOPDIR)/src/include/defaults.mk
-include $(TOPDIR)/src/include/workarounds.mk
 
 LIBTARGETS=libefivar.so libefiboot.so libefisec.so
 STATICLIBTARGETS=libefivar.a libefiboot.a libefisec.a
@@ -30,7 +29,7 @@ EFISECDB_OBJECTS = $(patsubst %.S,%.o,$(patsubst %.c,%.o,$(EFISECDB_SOURCES)))
 GENERATED_SOURCES = include/efivar/efivar-guids.h guid-symbols.c
 MAKEGUIDS_SOURCES = makeguids.c util-makeguids.c
 MAKEGUIDS_OBJECTS = $(patsubst %.S,%.o,$(patsubst %.c,%.o,$(MAKEGUIDS_SOURCES)))
-MAKEGUIDS_OUTPUT = $(GENERATED_SOURCES) guids.lds
+MAKEGUIDS_OUTPUT = $(GENERATED_SOURCES)
 
 util-makeguids.c : util.c
 	cp util.c util-makeguids.c
@@ -84,7 +83,7 @@ $(MAKEGUIDS_OUTPUT) : guids.txt
 	if [ "$${missing}" != "no" ]; then \
 		exit 1 ; \
 	fi
-	./makeguids $(LD_DASH_T) guids.txt guid-symbols.c include/efivar/efivar-guids.h guids.lds
+	./makeguids guids.txt guid-symbols.c include/efivar/efivar-guids.h
 
 prep : makeguids $(GENERATED_SOURCES)
 
@@ -96,7 +95,6 @@ libefivar.a : $(patsubst %.o,%.static.o,$(LIBEFIVAR_OBJECTS))
 libefivar.so : $(LIBEFIVAR_OBJECTS)
 libefivar.so : | $(GENERATED_SOURCES) libefivar.map
 libefivar.so : LIBS=dl
-libefivar.so : LDSCRIPTS=guids.lds
 libefivar.so : MAP=libefivar.map
 
 efivar : $(EFIVAR_OBJECTS) | libefivar.so
@@ -137,7 +135,6 @@ deps : $(ALL_SOURCES)
 clean : 
 	@rm -rfv *~ *.o *.a *.E *.so *.so.* *.pc *.bin .*.d *.map \
 		makeguids guid-symbols.c include/efivar/efivar-guids.h \
-		guids.lds \
 		$(TARGETS) $(STATICTARGETS)
 	@# remove the deps files we used to create, as well.
 	@rm -rfv .*.P .*.h.P *.S.P include/efivar/.*.h.P
