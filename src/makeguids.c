@@ -107,51 +107,46 @@ write_guidnames(FILE *out, const char *listname,
 			gn->symbol, gn->name, gn->description);
 	}
 	fprintf(out, "};\n");
+        fprintf(out, "const struct efivar_guidname\n"
+			"\t__attribute__((__visibility__ (\"default\")))\n"
+			"\t* const %s = %s_;\n", listname, listname);
+        fprintf(out, "const struct efivar_guidname\n"
+			"\t__attribute__((__visibility__ (\"default\")))\n"
+                        "\t* const %s_end = %s_\n\t+ %zd;\n",
+                        listname, listname, n - 1);
 }
 
 int
 main(int argc, char *argv[])
 {
 	int rc;
-	int argstart = 0;
-	FILE *symout, *header, *ldsout;
-	int dash_t = 0;
+	FILE *symout, *header;
 
-	if (argc < 5) {
+	if (argc < 4) {
 		errx(1, "Not enough arguments.\n");
-	} else if (argc > 5 && !strcmp(argv[1],"-T")) {
-		argstart = 1;
-		dash_t = 1;
-	} else if (argc > 5) {
+	} else if (argc > 4) {
 		errx(1, "Too many arguments.\n");
 	}
 
-	symout = fopen(argv[argstart + 2], "w");
+	symout = fopen(argv[2], "w");
 	if (symout == NULL)
-		err(1, "could not open \"%s\"", argv[argstart + 2]);
-	rc = chmod(argv[argstart + 2], 0644);
+		err(1, "could not open \"%s\"", argv[2]);
+	rc = chmod(argv[2], 0644);
 	if (rc < 0)
-		warn("chmod(%s, 0644)", argv[argstart + 2]);
+		warn("chmod(%s, 0644)", argv[2]);
 
-	header = fopen(argv[argstart + 3], "w");
+	header = fopen(argv[3], "w");
 	if (header == NULL)
-		err(1, "could not open \"%s\"", argv[argstart + 3]);
-	rc = chmod(argv[argstart + 3], 0644);
+		err(1, "could not open \"%s\"", argv[3]);
+	rc = chmod(argv[3], 0644);
 	if (rc < 0)
-		warn("chmod(%s, 0644)", argv[argstart + 3]);
-
-	ldsout = fopen(argv[argstart + 4], "w");
-	if (ldsout == NULL)
-		err(1, "could not open \"%s\"", argv[argstart + 4]);
-	rc = chmod(argv[argstart + 4], 0644);
-	if (rc < 0)
-		warn("chmod(%s, 0644)", argv[argstart + 4]);
+		warn("chmod(%s, 0644)", argv[3]);
 
 	struct guidname_index *guidnames = NULL;
 
-	rc = read_guids_at(AT_FDCWD, argv[argstart + 1], &guidnames);
+	rc = read_guids_at(AT_FDCWD, argv[1], &guidnames);
 	if (rc < 0)
-		err(1, "could not read \"%s\"", argv[argstart + 1]);
+		err(1, "could not read \"%s\"", argv[1]);
 
 	struct efivar_guidname *outbuf;
 
@@ -243,12 +238,11 @@ struct efivar_guidname {\n\
 	fprintf(header,
 		"extern const struct efivar_guidname\n"
 			"\t__attribute__((__visibility__ (\"default\")))\n"
-			"\tefi_well_known_guids[%d];\n",
-		i);
+			"\t* const efi_well_known_guids;\n");
 	fprintf(header,
 		"extern const struct efivar_guidname\n"
 			"\t__attribute__((__visibility__ (\"default\")))\n"
-			"\tefi_well_known_guids_end;\n");
+			"\t* const efi_well_known_guids_end;\n");
 	fprintf(header,
 		"extern const uint64_t\n"
 			"\t__attribute__((__visibility__ (\"default\")))\n"
@@ -256,12 +250,11 @@ struct efivar_guidname {\n\
 	fprintf(header,
 		"extern const struct efivar_guidname\n"
 			"\t__attribute__((__visibility__ (\"default\")))\n"
-			"\tefi_well_known_names[%d];\n",
-		i);
+			"\t* const efi_well_known_names;\n");
 	fprintf(header,
 		"extern const struct efivar_guidname\n"
 			"\t__attribute__((__visibility__ (\"default\")))\n"
-			"\tefi_well_known_names_end;\n");
+			"\t* const efi_well_known_names_end;\n");
 	fprintf(header,
 		"extern const uint64_t\n"
 			"\t__attribute__((__visibility__ (\"default\")))\n"
@@ -309,23 +302,6 @@ struct efivar_guidname {\n\
 	write_guidnames(symout, "efi_well_known_names", outbuf, line, "LIBEFIVAR_1.38");
 
 	fclose(symout);
-
-	fprintf(ldsout,
-		"SECTIONS\n"
-		"{\n"
-		"  .data :\n"
-		"  {\n"
-		"    efi_well_known_guids = efi_well_known_guids_;\n"
-		"    efi_well_known_guids_end = efi_well_known_guids_ + %zd;\n"
-		"    efi_well_known_names = efi_well_known_names_;\n"
-		"    efi_well_known_names_end = efi_well_known_names_ + %zd;\n"
-		"  }\n"
-		"}%s;\n",
-		(line - 1) * sizeof(struct efivar_guidname),
-		(line - 1) * sizeof(struct efivar_guidname),
-		dash_t ? " INSERT AFTER .data" : "");
-
-	fclose(ldsout);
 
 	free(guidnames->strtab);
 	free(guidnames);
