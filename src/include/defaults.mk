@@ -106,7 +106,7 @@ override HOST_LDFLAGS = $(HOST_CFLAGS) -L. \
 			$(call pkg-config-ccldflags)
 override HOST_CCLDFLAGS = $(HOST_LDFLAGS)
 
-PKG_CONFIG = $(shell if [ -e "$$(env $(CROSS_COMPILE)pkg-config 2>&1)" ]; then echo $(CROSS_COMPILE)pkg-config ; else echo pkg-config ; fi)
+PKG_CONFIG ?= $(shell if [ -e "$$(env $(CROSS_COMPILE)pkg-config 2>&1)" ]; then echo $(CROSS_COMPILE)pkg-config ; else echo pkg-config ; fi)
 INSTALL ?= install
 AR	:= $(CROSS_COMPILE)$(COMPILER)-ar
 NM	:= $(CROSS_COMPILE)$(COMPILER)-nm
