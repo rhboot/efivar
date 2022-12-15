@@ -34,6 +34,7 @@ CPPFLAGS ?=
 override _CPPFLAGS := $(CPPFLAGS)
 override CPPFLAGS = $(_CPPFLAGS) -DLIBEFIVAR_VERSION=$(VERSION) \
 	    -D_GNU_SOURCE \
+	    -D_FILE_OFFSET_BITS=64 \
 	    -I$(TOPDIR)/src/include/
 CFLAGS ?= $(OPTIMIZE) $(DEBUGINFO) $(WARNINGS) $(ERRORS)
 CFLAGS_GCC ?= -specs=$(TOPDIR)/src/include/gcc.specs \

@@ -191,7 +191,7 @@ dbglog_write(void *cookie, const char *buf, size_t size)
 }
 
 static int
-dbglog_seek(void *cookie UNUSED, off64_t *offset, int whence)
+dbglog_seek(void *cookie UNUSED, off_t *offset, int whence)
 {
 	FILE *log = efi_errlog ? efi_errlog : stderr;
 	int rc;
