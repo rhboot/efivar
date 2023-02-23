@@ -8,6 +8,7 @@ BINDIR	?= $(EXEC_PREFIX)/bin
 PCDIR	?= $(LIBDIR)/pkgconfig
 DESTDIR	?=
 PKGS	?=
+NO_THREADS ?=
 
 CROSS_COMPILE	?=
 COMPILER 	?= gcc

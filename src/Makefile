@@ -7,7 +7,10 @@ include $(TOPDIR)/src/include/defaults.mk
 
 LIBTARGETS=libefivar.so libefiboot.so libefisec.so
 STATICLIBTARGETS=libefivar.a libefiboot.a libefisec.a
-BINTARGETS=efivar efisecdb thread-test
+BINTARGETS=efivar efisecdb
+ifeq ($(NO_THREADS),)
+BINTARGETS += thread-test
+endif
 STATICBINTARGETS=efivar-static efisecdb-static
 PCTARGETS=efivar.pc efiboot.pc efisec.pc
 TARGETS=$(LIBTARGETS) $(BINTARGETS) $(PCTARGETS)
