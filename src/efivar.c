@@ -496,7 +496,7 @@ int main(int argc, char *argv[])
 	while ((c = getopt_long(argc, argv, sopts, lopts, &i)) != -1) {
 		switch (c) {
 			case 'A':
-				attributes = strtoul(optarg, NULL, 10);
+				attributes = strtoul(optarg, NULL, 0);
 				if (errno == ERANGE || errno == EINVAL)
 					err(1, "invalid argument for -A: %s",
 					    optarg);
