@@ -122,4 +122,8 @@ COMMIT_ID=$(shell git log -1 --pretty=%H 2>/dev/null || echo master)
 
 NAME=efivar
 
+# Docs are enabled by default. Set ENABLE_DOCS=0 to disable
+# building/installing docs.
+ENABLE_DOCS ?= 1
+
 # vim:ft=make
