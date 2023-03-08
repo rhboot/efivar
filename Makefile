@@ -7,7 +7,10 @@ include $(TOPDIR)/src/include/defaults.mk
 include $(TOPDIR)/src/include/coverity.mk
 include $(TOPDIR)/src/include/scan-build.mk
 
-SUBDIRS := src docs
+SUBDIRS := src
+ifeq ($(ENABLE_DOCS), 1)
+SUBDIRS += docs
+endif
 
 all : | efivar.spec src/include/version.mk prep
 all clean install prep :
