@@ -58,7 +58,7 @@ extern esl_iter_status_t esl_iter_next(esl_iter *iter, efi_guid_t *type,
         __attribute__((__nonnull__(1, 2, 3, 4, 5)));
 
 
-extern int esl_iter_next_with_size_correction(esl_iter *iter, efi_guid_t *type,
+extern esl_iter_status_t esl_iter_next_with_size_correction(esl_iter *iter, efi_guid_t *type,
 					      efi_guid_t *owner, uint8_t **data,
 					      size_t *len, bool correct_size)
         __attribute__((__nonnull__(1, 2, 3, 4, 5)));
