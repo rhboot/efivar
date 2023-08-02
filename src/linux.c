@@ -526,8 +526,8 @@ struct device HIDDEN
 	        debug("trying %s", probe->name);
 	        pos = probe->parse(dev, current, dev->link);
 	        if (pos < 0) {
-	                efi_error("parsing %s failed", probe->name);
-	                goto err;
+	                debug("parsing %s failed", probe->name);
+	                continue;
 	        } else if (pos > 0) {
 			char match[pos+1];
 
