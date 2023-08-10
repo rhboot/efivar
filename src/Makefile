@@ -94,40 +94,41 @@ libefivar.a : $(patsubst %.o,%.static.o,$(LIBEFIVAR_OBJECTS))
 
 libefivar.so : $(LIBEFIVAR_OBJECTS)
 libefivar.so : | $(GENERATED_SOURCES) libefivar.map
-libefivar.so : LIBS=dl
-libefivar.so : MAP=libefivar.map
+libefivar.so : private LIBS=dl
+libefivar.so : private MAP=libefivar.map
 
 efivar : $(EFIVAR_OBJECTS) | libefivar.so
-efivar : LIBS=efivar dl
+efivar : private LIBS=efivar dl
 
 efivar-static : $(EFIVAR_OBJECTS) $(patsubst %.o,%.static.o,$(LIBEFIVAR_OBJECTS))
 efivar-static : | $(GENERATED_SOURCES)
-efivar-static : LIBS=dl
+efivar-static : private LIBS=dl
 
 libefiboot.a : $(patsubst %.o,%.static.o,$(LIBEFIBOOT_OBJECTS))
 
 libefiboot.so : $(LIBEFIBOOT_OBJECTS)
 libefiboot.so : | libefiboot.map libefivar.so
-libefiboot.so : LIBS=efivar
-libefiboot.so : MAP=libefiboot.map
+libefiboot.so : private LIBS=efivar
+libefiboot.so : private MAP=libefiboot.map
 
 libefisec.a : $(patsubst %.o,%.static.o,$(LIBEFISEC_OBJECTS))
 
 libefisec.so : $(LIBEFISEC_OBJECTS)
 libefisec.so : | libefisec.map
-libefisec.so : MAP=libefisec.map
+libefisec.so : private MAP=libefisec.map
 
 efisecdb : $(EFISECDB_OBJECTS) | libefisec.so
-efisecdb : LIBS=efivar efisec dl
+efisecdb : private LIBS=efivar efisec dl
 
 efisecdb-static : $(EFISECDB_OBJECTS)
 efisecdb-static : $(patsubst %.o,%.static.o,$(LIBEFISEC_OBJECTS) $(LIBEFIVAR_OBJECTS))
 efisecdb-static : | $(GENERATED_SOURCES)
-efisecdb-static : LIBS=dl
+efisecdb-static : private LIBS=dl
 
 thread-test : libefivar.so
-thread-test : CFLAGS=$(HOST_CFLAGS) -I$(TOPDIR)/src/include/efivar
-thread-test : LIBS=pthread efivar
+# make sure we don't propagate CFLAGS to object files used by 'libefivar.so'
+thread-test.o : private CFLAGS=$(HOST_CFLAGS) -I$(TOPDIR)/src/include/efivar
+thread-test : private LIBS=pthread efivar
 
 deps : $(ALL_SOURCES)
 	@$(MAKE) -f $(SRCDIR)/include/deps.mk deps SOURCES="$(ALL_SOURCES)"
