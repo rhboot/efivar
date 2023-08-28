@@ -135,8 +135,9 @@ deps : $(ALL_SOURCES)
 
 clean : 
 	@rm -rfv *~ *.o *.a *.E *.so *.so.* *.pc *.bin .*.d *.map \
-		makeguids guid-symbols.c include/efivar/efivar-guids.h \
-		$(TARGETS) $(STATICTARGETS)
+		makeguids guid-symbols.c util-makeguids.c	\
+		include/efivar/efivar-guids.h $(TARGETS)	\
+		$(STATICTARGETS)
 	@# remove the deps files we used to create, as well.
 	@rm -rfv .*.P .*.h.P *.S.P include/efivar/.*.h.P
 
