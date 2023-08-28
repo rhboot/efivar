@@ -9,3 +9,4 @@ makeguids
 guid-symbols.c
 guids.lds
 thread-test
+util-makeguids.c
