@@ -119,7 +119,7 @@ close_dir(void)
  * -- pjones */
 static int UNUSED FLATTEN
 generic_append_variable(efi_guid_t guid, const char *name,
-		       uint8_t *new_data, size_t new_data_size,
+		       const uint8_t *new_data, size_t new_data_size,
 		       uint32_t new_attributes)
 {
 	int rc;
@@ -157,10 +157,8 @@ generic_append_variable(efi_guid_t guid, const char *name,
 		free(d);
 		free(data);
 	} else if (rc < 0 && errno == ENOENT) {
-		data = new_data;
-		data_size = new_data_size;
 		attributes = new_attributes & ~EFI_VARIABLE_APPEND_WRITE;
-		rc = efi_set_variable(guid, name, data, data_size,
+		rc = efi_set_variable(guid, name, new_data, new_data_size,
 				      attributes, 0600);
 	}
 	if (rc < 0)

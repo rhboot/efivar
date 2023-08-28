@@ -324,7 +324,7 @@ efivarfs_del_variable(efi_guid_t guid, const char *name)
 }
 
 static int
-efivarfs_set_variable(efi_guid_t guid, const char *name, uint8_t *data,
+efivarfs_set_variable(efi_guid_t guid, const char *name, const uint8_t *data,
 		      size_t data_size, uint32_t attributes, mode_t mode)
 {
 	char *path;
@@ -471,7 +471,7 @@ err:
 }
 
 static int
-efivarfs_append_variable(efi_guid_t guid, const char *name, uint8_t *data,
+efivarfs_append_variable(efi_guid_t guid, const char *name, const uint8_t *data,
 	size_t data_size, uint32_t attributes)
 {
 	int rc;
