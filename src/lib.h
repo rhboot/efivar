@@ -26,7 +26,7 @@ struct efi_variable {
 struct efi_var_operations {
 	char name[NAME_MAX];
 	int (*probe)(void);
-	int (*set_variable)(efi_guid_t guid, const char *name, uint8_t *data,
+	int (*set_variable)(efi_guid_t guid, const char *name, const uint8_t *data,
 			    size_t data_size, uint32_t attributes, mode_t mode);
 	int (*del_variable)(efi_guid_t guid, const char *name);
 	int (*get_variable)(efi_guid_t guid, const char *name, uint8_t **data,
@@ -37,7 +37,7 @@ struct efi_var_operations {
 				 size_t *size);
 	int (*get_next_variable_name)(efi_guid_t **guid, char **name);
 	int (*append_variable)(efi_guid_t guid, const char *name,
-			       uint8_t *data, size_t data_size,
+			       const uint8_t *data, size_t data_size,
 			       uint32_t attributes);
 	int (*chmod_variable)(efi_guid_t guid, const char *name, mode_t mode);
 };

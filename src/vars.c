@@ -511,7 +511,7 @@ vars_chmod_variable(efi_guid_t guid, const char *name, mode_t mode)
 }
 
 static int
-vars_set_variable(efi_guid_t guid, const char *name, uint8_t *data,
+vars_set_variable(efi_guid_t guid, const char *name, const uint8_t *data,
 		 size_t data_size, uint32_t attributes, mode_t mode)
 {
 	int errno_value;
