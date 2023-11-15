@@ -677,7 +677,7 @@ efi_variable_set_data(efi_variable_t *var, uint8_t *data, size_t size)
 ssize_t NONNULL(1, 2, 3) PUBLIC
 efi_variable_get_data(efi_variable_t *var, uint8_t **data, size_t *size)
 {
-	if (var->data || !var->data_size) {
+	if (!var->data || !var->data_size) {
 		errno = ENOENT;
 		return -1;
 	}
