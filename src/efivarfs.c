@@ -246,16 +246,6 @@ efivarfs_get_variable(efi_guid_t guid, const char *name, uint8_t **data,
 	int fd = -1;
 	char *path = NULL;
 	int rc;
-	int ratelimit;
-
-	/*
-	 * The kernel rate limiter hits us if we go faster than 100 efi
-	 * variable reads per second as non-root.  So if we're not root, just
-	 * delay this long after each read.  The user is not going to notice.
-	 *
-	 * 1s / 100 = 10000us.
-	 */
-	ratelimit = geteuid() == 0 ? 0 : 10000;
 
 	rc = make_efivarfs_path(&path, guid, name);
 	if (rc < 0) {
@@ -269,14 +259,12 @@ efivarfs_get_variable(efi_guid_t guid, const char *name, uint8_t **data,
 		goto err;
 	}
 
-	usleep(ratelimit);
 	rc = read(fd, &ret_attributes, sizeof (ret_attributes));
 	if (rc < 0) {
 		efi_error("read failed");
 		goto err;
 	}
 
-	usleep(ratelimit);
 	rc = read_file(fd, &ret_data, &size);
 	if (rc < 0) {
 		efi_error("read_file failed");
