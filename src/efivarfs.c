@@ -69,30 +69,26 @@ efivarfs_probe(void)
 {
 	const char *path = get_efivarfs_path();
 
-	if (!access(path, F_OK)) {
-		int rc = 0;
-		struct statfs buf;
+	int rc = 0;
+	struct statfs buf;
 
-		memset(&buf, '\0', sizeof (buf));
-		rc = statfs(path, &buf);
-		if (rc == 0) {
-			char *tmp;
-			__typeof__(buf.f_type) magic = EFIVARFS_MAGIC;
-			if (!memcmp(&buf.f_type, &magic, sizeof (magic)))
-				return 1;
-			else
-				efi_error("bad fs type for %s", path);
+	memset(&buf, '\0', sizeof (buf));
+	rc = statfs(path, &buf);
+	if (rc == 0) {
+		char *tmp;
+		__typeof__(buf.f_type) magic = EFIVARFS_MAGIC;
+		if (!memcmp(&buf.f_type, &magic, sizeof (magic)))
+			return 1;
+		else
+			efi_error("bad fs type for %s", path);
 
-			tmp = getenv("EFIVARFS_PATH");
-			if (tmp && !strcmp(tmp, path)) {
-				efi_error_clear();
-				return 1;
-			}
-		} else {
-			efi_error("statfs(%s) failed", path);
+		tmp = getenv("EFIVARFS_PATH");
+		if (tmp && !strcmp(tmp, path)) {
+			efi_error_clear();
+			return 1;
 		}
 	} else {
-		efi_error("access(%s, F_OK) failed", path);
+		efi_error("statfs(%s) failed", path);
 	}
 
 	return 0;
