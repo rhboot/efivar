@@ -458,16 +458,17 @@ make_ipv4_path(uint8_t *buf, ssize_t size,
 }
 
 ssize_t NONNULL(3, 4, 5, 6, 7) PUBLIC
-efi_generate_ipv4_device_path(uint8_t *buf, ssize_t size,
-			      const char * const ifname,
-			      const char * const local_addr,
-			      const char * const remote_addr,
-			      const char * const gateway_addr,
-			      const char * const netmask,
-			      uint16_t local_port,
-			      uint16_t remote_port,
-			      uint16_t protocol,
-			      uint8_t addr_origin)
+efi_generate_ipv4_device_path_with_uri(uint8_t *buf, ssize_t size,
+				       const char * const ifname,
+				       const char * const local_addr,
+				       const char * const remote_addr,
+				       const char * const gateway_addr,
+				       const char * const netmask,
+				       uint16_t local_port,
+				       uint16_t remote_port,
+				       uint16_t protocol,
+				       uint8_t addr_origin,
+				       const char * const uri)
 {
 	ssize_t off = 0;
 	ssize_t sz;
@@ -488,6 +489,15 @@ efi_generate_ipv4_device_path(uint8_t *buf, ssize_t size,
 	}
 	off += sz;
 
+	if (uri) {
+		sz = efidp_make_uri(buf+off, size?size-off:0, uri);
+		if (sz < 0) {
+			efi_error("could not make URI DP node");
+			return -1;
+		}
+		off += sz;
+	}
+
 	sz = efidp_make_end_entire(buf+off, size?size-off:0);
 	if (sz < 0) {
 		efi_error("could not make EndEntire DP node");
@@ -496,6 +506,24 @@ efi_generate_ipv4_device_path(uint8_t *buf, ssize_t size,
 	off += sz;
 
 	return off;
+}
+
+ssize_t NONNULL(3, 4, 5, 6, 7) PUBLIC
+efi_generate_ipv4_device_path(uint8_t *buf, ssize_t size,
+			      const char * const ifname,
+			      const char * const local_addr,
+			      const char * const remote_addr,
+			      const char * const gateway_addr,
+			      const char * const netmask,
+			      uint16_t local_port,
+			      uint16_t remote_port,
+			      uint16_t protocol,
+			      uint8_t addr_origin)
+{
+	return efi_generate_ipv4_device_path_with_uri(buf, size, ifname,
+			local_addr, remote_addr, gateway_addr, netmask,
+			local_port, remote_port, protocol, addr_origin,
+			NULL);
 }
 
 uint32_t PUBLIC

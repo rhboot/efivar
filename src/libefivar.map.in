@@ -164,3 +164,7 @@ LIBEFIVAR_1.38 {
 		efi_strptime;
 		efi_strftime;
 } LIBEFIVAR_1.37;
+
+LIBEFIVAR_1.39 {
+	global: efidp_make_uri;
+} LIBEFIVAR_1.38;

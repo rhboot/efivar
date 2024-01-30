@@ -652,6 +652,8 @@ typedef struct {
 	efidp_header	header;
 	uint8_t		uri[];
 } EFIVAR_PACKED efidp_uri;
+extern ssize_t efidp_make_uri(uint8_t *buf, ssize_t size,
+			      const char * const uristring);
 
 #define EFIDP_MSG_UFS		0x19
 typedef struct {

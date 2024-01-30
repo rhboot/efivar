@@ -268,6 +268,7 @@ static struct dev_probe *dev_probes[] = {
 	&virtual_root_parser,
 	&pci_parser,
 	&virtblk_parser,
+	&virtnet_parser,
 	&sas_parser,
 	&sata_parser,
 	&nvme_parser,
@@ -602,6 +603,7 @@ err:
 }
 
 int HIDDEN
+/* FIXME Rename */
 make_blockdev_path(uint8_t *buf, ssize_t size, struct device *dev)
 {
 	ssize_t off = 0;
@@ -635,23 +637,25 @@ make_mac_path(uint8_t *buf, ssize_t size, const char * const ifname)
 {
 	struct ifreq ifr;
 	struct ethtool_drvinfo drvinfo = { 0, };
-	int fd = -1, rc;
+	int fd = -1, rc, i;
+	unsigned int n = 0;
 	ssize_t ret = -1, sz, off = 0;
-	char busname[PATH_MAX+1] = "";
-	struct device dev;
+	struct device devbuf;
+	struct device *dev = &devbuf;
 
-	memset(&dev, 0, sizeof (dev));
-	dev.interface_type = network;
-	dev.ifname = strdupa(ifname);
-	if (!dev.ifname)
+	memset(dev, 0, sizeof (*dev));
+	dev->interface_type = network;
+	dev->ifname = strdupa(ifname);
+	if (!dev->ifname)
 	        return -1;
+	dev->driver = "";
 
 	/*
 	 * find the device link, which looks like:
 	 * ../../devices/$PCI_STUFF/net/$IFACE
 	 */
-	rc = sysfs_readlink(&dev.link, "class/net/%s", ifname);
-	if (rc < 0 || !dev.link)
+	rc = sysfs_readlink(&(dev->link), "class/net/%s", ifname);
+	if (rc < 0 || !dev->link)
 	        goto err;
 
 	memset(&ifr, 0, sizeof (ifr));
@@ -668,13 +672,106 @@ make_mac_path(uint8_t *buf, ssize_t size, const char * const ifname)
 	if (rc < 0)
 	        goto err;
 
-	strncpy(busname, drvinfo.bus_info, PATH_MAX);
+	/*
+	 * FIXME: copy/paste of device_get()
+	 */
+	size_t nmemb = (sizeof(dev_probes)
+			/ sizeof(dev_probes[0])) + 1;
+
+	dev->probes = calloc(nmemb, sizeof(struct dev_probe *));
+	if (!dev->probes) {
+		efi_error("could not allocate %zd bytes",
+			  nmemb * sizeof(struct dev_probe *));
+		goto err;
+	}
+
+	const char *current = dev->link;
+	bool needs_root = true;
+	int last_successful_probe = -1;
+
+	debug("searching for device nodes in %s", dev->link);
+	for (i = 0;
+	     dev_probes[i] && dev_probes[i]->parse && *current;
+	     i++) {
+		struct dev_probe *probe = dev_probes[i];
+		int pos;
+
+		if (!needs_root &&
+		    (probe->flags & DEV_PROVIDES_ROOT)) {
+			debug("not testing %s because flags is 0x%x",
+			      probe->name, probe->flags);
+			continue;
+		}
+
+	        debug("trying %s", probe->name);
+	        pos = probe->parse(dev, current, dev->link);
+	        if (pos < 0) {
+	                efi_error("parsing %s failed", probe->name);
+	                goto err;
+	        } else if (pos > 0) {
+			char match[pos+1];
+
+			strncpy(match, current, pos);
+			match[pos] = '\0';
+	                debug("%s matched '%s'", probe->name, match);
+	                dev->flags |= probe->flags;
+
+	                if (probe->flags & DEV_PROVIDES_ROOT ||
+	                    probe->flags & DEV_ABBREV_ONLY)
+	                        needs_root = false;
+
+			/* FIXME: useless code */
+			if (probe->create)
+				print_dev_dp_node(dev, probe);
+
+	                dev->probes[n++] = dev_probes[i];
+	                current += pos;
+			if (current[0] == '\0')
+				debug("finished");
+			else
+				debug("current:'%s'", current);
+	                last_successful_probe = i;
+
+	                if (!*current || !strncmp(current, "net/", 4))
+	                        break;
+
+	                continue;
+	        }
+
+	        debug("dev_probes[%d]: %p dev->interface_type: %d\n",
+	              i+1, dev_probes[i+1], dev->interface_type);
+	        if (dev_probes[i+1] == NULL && dev->interface_type == unknown) {
+	                pos = 0;
+	                rc = sscanf(current, "%*[^/]/%n", &pos);
+	                if (rc < 0) {
+slash_err:
+	                        efi_error("Cannot parse device link segment \"%s\"", current);
+	                        goto err;
+	                }
+
+	                while (current[pos] == '/')
+	                        pos += 1;
+
+	                if (!current[pos])
+	                        goto slash_err;
+
+	                debug("Cannot parse device link segment '%s'", current);
+	                debug("Skipping to '%s'", current + pos);
+	                debug("This means we can only create abbreviated paths");
+	                dev->flags |= DEV_ABBREV_ONLY;
+	                i = last_successful_probe;
+	                current += pos;
+
+	                if (!*current || !strncmp(current, "net/", 4))
+	                        break;
+	        }
+	}
 
 	rc = ioctl(fd, SIOCGIFHWADDR, &ifr);
 	if (rc < 0)
 	        goto err;
 
-	sz = pci_parser.create(&dev, buf, size, off);
+	sz = make_blockdev_path(buf, size, dev);
 	if (sz < 0)
 	        goto err;
 	off += sz;
@@ -687,10 +784,13 @@ make_mac_path(uint8_t *buf, ssize_t size, const char * const ifname)
 	        goto err;
 
 	off += sz;
+
 	ret = off;
 err:
 	if (fd >= 0)
 	        close(fd);
+	if (dev->probes)
+		free(dev->probes);
 	return ret;
 }
 

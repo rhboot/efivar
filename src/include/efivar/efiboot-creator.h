@@ -47,6 +47,21 @@ extern ssize_t efi_generate_ipv4_device_path(uint8_t *buf, ssize_t size,
 	__attribute__((__nonnull__ (3,4,5,6,7)))
 	__attribute__((__visibility__ ("default")));
 
+extern ssize_t efi_generate_ipv4_device_path_with_uri(
+				     uint8_t *buf, ssize_t size,
+				     const char * const ifname,
+				     const char * const local_addr,
+				     const char * const remote_addr,
+				     const char * const gateway_addr,
+				     const char * const netmask,
+				     uint16_t local_port,
+				     uint16_t remote_port,
+				     uint16_t protocol,
+				     uint8_t addr_origin,
+				     const char * const uri)
+	__attribute__((__nonnull__ (3,4,5,6,7)))
+	__attribute__((__visibility__ ("default")));
+
 #ifdef __cplusplus
 } /* extern "C" */
 #endif

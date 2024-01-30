@@ -35,19 +35,19 @@ parse_virtblk(struct device *dev, const char *path, const char *root UNUSED)
 {
 	const char *current = path;
 	uint32_t tosser;
-	int pos0 = -1, pos1 = -1;
+	int pos0 = -1, pos1 = -1, pos2 = -1;
 	int rc;
 
 	debug("entry");
 
 	debug("searching for virtio0/");
-	rc = sscanf(current, "%nvirtio%x/%n", &pos0, &tosser, &pos1);
-	debug("current:'%s' rc:%d pos0:%d pos1:%d\n", current, rc, pos0, pos1);
-	dbgmk("         ", pos0, pos1);
+	rc = sscanf(current, "%nvirtio%x/%nblock/%n", &pos0, &tosser, &pos1, &pos2);
+	debug("current:'%s' rc:%d pos0:%d pos1:%d pos2:%d\n", current, rc, pos0, pos1, pos2);
+	dbgmk("         ", pos0, pos1, pos2);
 	/*
-	 * If we couldn't find virtioX/ then it isn't a virtio device.
+	 * If we couldn't find virtioX/block/ then it isn't a virtio device.
 	 */
-	if (rc < 1)
+	if ((rc < 1) || (pos2 == -1))
 	        return 0;
 
 	dev->interface_type = virtblk;
