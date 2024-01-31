@@ -17,12 +17,12 @@
   </elf-variable-symbols>
   <abi-instr address-size='64' path='esl-iter.c' comp-dir-path='src' language='LANG_C11'>
     <class-decl name='__dirstream' is-struct='yes' visibility='default' is-declaration-only='yes' id='type-id-1'/>
-    <function-decl name='efi_guid_cmp' filepath='src/include/efivar/efivar.h' line='76' column='1' visibility='default' binding='global' size-in-bits='64'>
+    <function-decl name='efi_guid_cmp' filepath='src/include/efivar/efivar.h' line='79' column='1' visibility='default' binding='global' size-in-bits='64'>
       <parameter type-id='type-id-2'/>
       <parameter type-id='type-id-2'/>
       <return type-id='type-id-3'/>
     </function-decl>
-    <function-decl name='efi_error_set' filepath='src/include/efivar/efivar.h' line='129' column='1' visibility='default' binding='global' size-in-bits='64'>
+    <function-decl name='efi_error_set' filepath='src/include/efivar/efivar.h' line='132' column='1' visibility='default' binding='global' size-in-bits='64'>
       <parameter type-id='type-id-4'/>
       <parameter type-id='type-id-4'/>
       <parameter type-id='type-id-3'/>
@@ -31,11 +31,11 @@
       <parameter is-variadic='yes'/>
       <return type-id='type-id-3'/>
     </function-decl>
-    <function-decl name='efi_set_loglevel' filepath='src/include/efivar/efivar.h' line='139' column='1' visibility='default' binding='global' size-in-bits='64'>
+    <function-decl name='efi_set_loglevel' filepath='src/include/efivar/efivar.h' line='142' column='1' visibility='default' binding='global' size-in-bits='64'>
       <parameter type-id='type-id-3'/>
       <return type-id='type-id-5'/>
     </function-decl>
-    <function-decl name='efi_get_logfile' filepath='src/include/efivar/efivar.h' line='197' column='1' visibility='default' binding='global' size-in-bits='64'>
+    <function-decl name='efi_get_logfile' filepath='src/include/efivar/efivar.h' line='200' column='1' visibility='default' binding='global' size-in-bits='64'>
       <return type-id='type-id-6'/>
     </function-decl>
     <function-decl name='closedir' filepath='/usr/include/dirent.h' line='134' column='1' visibility='default' binding='global' size-in-bits='64'>
@@ -116,13 +116,13 @@
     <array-type-def dimensions='1' type-id='type-id-26' size-in-bits='4608' id='type-id-27'>
       <subrange length='12' type-id='type-id-22' id='type-id-28'/>
     </array-type-def>
-    <enum-decl name='efi_secdb_flag_t' naming-typedef-id='type-id-29' filepath='src/include/efivar/efisec-secdb.h' line='43' column='1' id='type-id-30'>
+    <enum-decl name='efi_secdb_flag_t' naming-typedef-id='type-id-29' filepath='src/include/efivar/efisec-secdb.h' line='47' column='1' id='type-id-30'>
       <underlying-type type-id='type-id-31'/>
       <enumerator name='EFI_SECDB_SORT' value='0'/>
       <enumerator name='EFI_SECDB_SORT_DATA' value='1'/>
       <enumerator name='EFI_SECDB_SORT_DESCENDING' value='2'/>
     </enum-decl>
-    <enum-decl name='efi_secdb_type_t' naming-typedef-id='type-id-32' filepath='src/include/efivar/efisec-secdb.h' line='27' column='1' id='type-id-33'>
+    <enum-decl name='efi_secdb_type_t' naming-typedef-id='type-id-32' filepath='src/include/efivar/efisec-secdb.h' line='31' column='1' id='type-id-33'>
       <underlying-type type-id='type-id-31'/>
       <enumerator name='X509_CERT' value='0'/>
       <enumerator name='X509_SHA256' value='1'/>
@@ -259,45 +259,45 @@
         <var-decl name='reg_save_area' type-id='type-id-13' visibility='default'/>
       </data-member>
     </class-decl>
-    <class-decl name='efi_cert_x509_sha256_t' size-in-bits='384' is-struct='yes' naming-typedef-id='type-id-51' visibility='default' filepath='src/include/efivar/efisec-types.h' line='35' column='1' id='type-id-52'>
+    <class-decl name='efi_cert_x509_sha256_t' size-in-bits='384' is-struct='yes' naming-typedef-id='type-id-51' visibility='default' filepath='src/include/efivar/efisec-types.h' line='39' column='1' id='type-id-52'>
       <data-member access='public' layout-offset-in-bits='0'>
-        <var-decl name='to_be_signed_hash' type-id='type-id-53' visibility='default' filepath='src/include/efivar/efisec-types.h' line='36' column='1'/>
+        <var-decl name='to_be_signed_hash' type-id='type-id-53' visibility='default' filepath='src/include/efivar/efisec-types.h' line='40' column='1'/>
       </data-member>
       <data-member access='public' layout-offset-in-bits='256'>
-        <var-decl name='time_of_revocation' type-id='type-id-54' visibility='default' filepath='src/include/efivar/efisec-types.h' line='37' column='1'/>
+        <var-decl name='time_of_revocation' type-id='type-id-54' visibility='default' filepath='src/include/efivar/efisec-types.h' line='41' column='1'/>
       </data-member>
     </class-decl>
-    <class-decl name='efi_cert_x509_sha384_t' size-in-bits='512' is-struct='yes' naming-typedef-id='type-id-55' visibility='default' filepath='src/include/efivar/efisec-types.h' line='40' column='1' id='type-id-56'>
+    <class-decl name='efi_cert_x509_sha384_t' size-in-bits='512' is-struct='yes' naming-typedef-id='type-id-55' visibility='default' filepath='src/include/efivar/efisec-types.h' line='44' column='1' id='type-id-56'>
       <data-member access='public' layout-offset-in-bits='0'>
-        <var-decl name='to_be_signed_hash' type-id='type-id-57' visibility='default' filepath='src/include/efivar/efisec-types.h' line='41' column='1'/>
+        <var-decl name='to_be_signed_hash' type-id='type-id-57' visibility='default' filepath='src/include/efivar/efisec-types.h' line='45' column='1'/>
       </data-member>
       <data-member access='public' layout-offset-in-bits='384'>
-        <var-decl name='time_of_revocation' type-id='type-id-54' visibility='default' filepath='src/include/efivar/efisec-types.h' line='42' column='1'/>
+        <var-decl name='time_of_revocation' type-id='type-id-54' visibility='default' filepath='src/include/efivar/efisec-types.h' line='46' column='1'/>
       </data-member>
     </class-decl>
-    <class-decl name='efi_cert_x509_sha512_t' size-in-bits='640' is-struct='yes' naming-typedef-id='type-id-58' visibility='default' filepath='src/include/efivar/efisec-types.h' line='45' column='1' id='type-id-59'>
+    <class-decl name='efi_cert_x509_sha512_t' size-in-bits='640' is-struct='yes' naming-typedef-id='type-id-58' visibility='default' filepath='src/include/efivar/efisec-types.h' line='49' column='1' id='type-id-59'>
       <data-member access='public' layout-offset-in-bits='0'>
-        <var-decl name='to_be_signed_hash' type-id='type-id-60' visibility='default' filepath='src/include/efivar/efisec-types.h' line='46' column='1'/>
+        <var-decl name='to_be_signed_hash' type-id='type-id-60' visibility='default' filepath='src/include/efivar/efisec-types.h' line='50' column='1'/>
       </data-member>
       <data-member access='public' layout-offset-in-bits='512'>
-        <var-decl name='time_of_revocation' type-id='type-id-54' visibility='default' filepath='src/include/efivar/efisec-types.h' line='47' column='1'/>
+        <var-decl name='time_of_revocation' type-id='type-id-54' visibility='default' filepath='src/include/efivar/efisec-types.h' line='51' column='1'/>
       </data-member>
     </class-decl>
-    <class-decl name='efi_guid_t' size-in-bits='128' is-struct='yes' naming-typedef-id='type-id-61' visibility='default' filepath='src/include/efivar/efivar-types.h' line='13' column='1' id='type-id-62'>
+    <class-decl name='efi_guid_t' size-in-bits='128' is-struct='yes' naming-typedef-id='type-id-61' visibility='default' filepath='src/include/efivar/efivar-types.h' line='17' column='1' id='type-id-62'>
       <data-member access='public' layout-offset-in-bits='0'>
-        <var-decl name='a' type-id='type-id-18' visibility='default' filepath='src/include/efivar/efivar-types.h' line='14' column='1'/>
+        <var-decl name='a' type-id='type-id-18' visibility='default' filepath='src/include/efivar/efivar-types.h' line='18' column='1'/>
       </data-member>
       <data-member access='public' layout-offset-in-bits='32'>
-        <var-decl name='b' type-id='type-id-63' visibility='default' filepath='src/include/efivar/efivar-types.h' line='15' column='1'/>
+        <var-decl name='b' type-id='type-id-63' visibility='default' filepath='src/include/efivar/efivar-types.h' line='19' column='1'/>
       </data-member>
       <data-member access='public' layout-offset-in-bits='48'>
-        <var-decl name='c' type-id='type-id-63' visibility='default' filepath='src/include/efivar/efivar-types.h' line='16' column='1'/>
+        <var-decl name='c' type-id='type-id-63' visibility='default' filepath='src/include/efivar/efivar-types.h' line='20' column='1'/>
       </data-member>
       <data-member access='public' layout-offset-in-bits='64'>
-        <var-decl name='d' type-id='type-id-63' visibility='default' filepath='src/include/efivar/efivar-types.h' line='17' column='1'/>
+        <var-decl name='d' type-id='type-id-63' visibility='default' filepath='src/include/efivar/efivar-types.h' line='21' column='1'/>
       </data-member>
       <data-member access='public' layout-offset-in-bits='80'>
-        <var-decl name='e' type-id='type-id-64' visibility='default' filepath='src/include/efivar/efivar-types.h' line='18' column='1'/>
+        <var-decl name='e' type-id='type-id-64' visibility='default' filepath='src/include/efivar/efivar-types.h' line='22' column='1'/>
       </data-member>
     </class-decl>
     <class-decl name='efi_secdb' size-in-bits='576' is-struct='yes' visibility='default' filepath='src/secdb.h' line='43' column='1' id='type-id-65'>
@@ -329,39 +329,39 @@
         <var-decl name='entries' type-id='type-id-66' visibility='default' filepath='src/secdb.h' line='53' column='1'/>
       </data-member>
     </class-decl>
-    <class-decl name='efi_time_t' size-in-bits='128' is-struct='yes' naming-typedef-id='type-id-54' visibility='default' filepath='src/include/efivar/efivar-types.h' line='69' column='1' id='type-id-68'>
+    <class-decl name='efi_time_t' size-in-bits='128' is-struct='yes' naming-typedef-id='type-id-54' visibility='default' filepath='src/include/efivar/efivar-types.h' line='73' column='1' id='type-id-68'>
       <data-member access='public' layout-offset-in-bits='0'>
-        <var-decl name='year' type-id='type-id-63' visibility='default' filepath='src/include/efivar/efivar-types.h' line='70' column='1'/>
+        <var-decl name='year' type-id='type-id-63' visibility='default' filepath='src/include/efivar/efivar-types.h' line='74' column='1'/>
       </data-member>
       <data-member access='public' layout-offset-in-bits='16'>
-        <var-decl name='month' type-id='type-id-69' visibility='default' filepath='src/include/efivar/efivar-types.h' line='71' column='1'/>
+        <var-decl name='month' type-id='type-id-69' visibility='default' filepath='src/include/efivar/efivar-types.h' line='75' column='1'/>
       </data-member>
       <data-member access='public' layout-offset-in-bits='24'>
-        <var-decl name='day' type-id='type-id-69' visibility='default' filepath='src/include/efivar/efivar-types.h' line='72' column='1'/>
+        <var-decl name='day' type-id='type-id-69' visibility='default' filepath='src/include/efivar/efivar-types.h' line='76' column='1'/>
       </data-member>
       <data-member access='public' layout-offset-in-bits='32'>
-        <var-decl name='hour' type-id='type-id-69' visibility='default' filepath='src/include/efivar/efivar-types.h' line='73' column='1'/>
+        <var-decl name='hour' type-id='type-id-69' visibility='default' filepath='src/include/efivar/efivar-types.h' line='77' column='1'/>
       </data-member>
       <data-member access='public' layout-offset-in-bits='40'>
-        <var-decl name='minute' type-id='type-id-69' visibility='default' filepath='src/include/efivar/efivar-types.h' line='74' column='1'/>
+        <var-decl name='minute' type-id='type-id-69' visibility='default' filepath='src/include/efivar/efivar-types.h' line='78' column='1'/>
       </data-member>
       <data-member access='public' layout-offset-in-bits='48'>
-        <var-decl name='second' type-id='type-id-69' visibility='default' filepath='src/include/efivar/efivar-types.h' line='75' column='1'/>
+        <var-decl name='second' type-id='type-id-69' visibility='default' filepath='src/include/efivar/efivar-types.h' line='79' column='1'/>
       </data-member>
       <data-member access='public' layout-offset-in-bits='56'>
-        <var-decl name='pad1' type-id='type-id-69' visibility='default' filepath='src/include/efivar/efivar-types.h' line='76' column='1'/>
+        <var-decl name='pad1' type-id='type-id-69' visibility='default' filepath='src/include/efivar/efivar-types.h' line='80' column='1'/>
       </data-member>
       <data-member access='public' layout-offset-in-bits='64'>
-        <var-decl name='nanosecond' type-id='type-id-18' visibility='default' filepath='src/include/efivar/efivar-types.h' line='77' column='1'/>
+        <var-decl name='nanosecond' type-id='type-id-18' visibility='default' filepath='src/include/efivar/efivar-types.h' line='81' column='1'/>
       </data-member>
       <data-member access='public' layout-offset-in-bits='96'>
-        <var-decl name='timezone' type-id='type-id-70' visibility='default' filepath='src/include/efivar/efivar-types.h' line='78' column='1'/>
+        <var-decl name='timezone' type-id='type-id-70' visibility='default' filepath='src/include/efivar/efivar-types.h' line='82' column='1'/>
       </data-member>
       <data-member access='public' layout-offset-in-bits='112'>
-        <var-decl name='daylight' type-id='type-id-69' visibility='default' filepath='src/include/efivar/efivar-types.h' line='79' column='1'/>
+        <var-decl name='daylight' type-id='type-id-69' visibility='default' filepath='src/include/efivar/efivar-types.h' line='83' column='1'/>
       </data-member>
       <data-member access='public' layout-offset-in-bits='120'>
-        <var-decl name='pad2' type-id='type-id-69' visibility='default' filepath='src/include/efivar/efivar-types.h' line='80' column='1'/>
+        <var-decl name='pad2' type-id='type-id-69' visibility='default' filepath='src/include/efivar/efivar-types.h' line='84' column='1'/>
       </data-member>
     </class-decl>
     <class-decl name='list_head' size-in-bits='128' is-struct='yes' visibility='default' filepath='src/list.h' line='17' column='1' id='type-id-71'>
@@ -401,21 +401,21 @@
     <typedef-decl name='__uint16_t' type-id='type-id-45' filepath='/usr/include/bits/types.h' line='40' column='1' id='type-id-84'/>
     <typedef-decl name='__uint64_t' type-id='type-id-22' filepath='/usr/include/bits/types.h' line='45' column='1' id='type-id-85'/>
     <typedef-decl name='__uint8_t' type-id='type-id-86' filepath='/usr/include/bits/types.h' line='38' column='1' id='type-id-87'/>
-    <typedef-decl name='efi_cert_x509_sha256_t' type-id='type-id-52' filepath='src/include/efivar/efisec-types.h' line='38' column='1' id='type-id-51'/>
-    <typedef-decl name='efi_cert_x509_sha384_t' type-id='type-id-56' filepath='src/include/efivar/efisec-types.h' line='43' column='1' id='type-id-55'/>
-    <typedef-decl name='efi_cert_x509_sha512_t' type-id='type-id-59' filepath='src/include/efivar/efisec-types.h' line='48' column='1' id='type-id-58'/>
-    <typedef-decl name='efi_guid_t' type-id='type-id-62' filepath='src/include/efivar/efivar-types.h' line='19' column='1' id='type-id-61'/>
-    <typedef-decl name='efi_rsa2048_sig_t' type-id='type-id-88' filepath='src/include/efivar/efisec-types.h' line='22' column='1' id='type-id-89'/>
-    <typedef-decl name='efi_secdb_data_t' type-id='type-id-90' filepath='src/include/efivar/efisec-secdb.h' line='25' column='1' id='type-id-91'/>
-    <typedef-decl name='efi_secdb_flag_t' type-id='type-id-30' filepath='src/include/efivar/efisec-secdb.h' line='47' column='1' id='type-id-29'/>
-    <typedef-decl name='efi_secdb_t' type-id='type-id-65' filepath='src/include/efivar/efisec-secdb.h' line='10' column='1' id='type-id-92'/>
-    <typedef-decl name='efi_secdb_type_t' type-id='type-id-33' filepath='src/include/efivar/efisec-secdb.h' line='41' column='1' id='type-id-32'/>
-    <typedef-decl name='efi_sha1_hash_t' type-id='type-id-93' filepath='src/include/efivar/efisec-types.h' line='17' column='1' id='type-id-94'/>
-    <typedef-decl name='efi_sha224_hash_t' type-id='type-id-95' filepath='src/include/efivar/efisec-types.h' line='18' column='1' id='type-id-96'/>
-    <typedef-decl name='efi_sha256_hash_t' type-id='type-id-97' filepath='src/include/efivar/efisec-types.h' line='19' column='1' id='type-id-53'/>
-    <typedef-decl name='efi_sha384_hash_t' type-id='type-id-98' filepath='src/include/efivar/efisec-types.h' line='20' column='1' id='type-id-57'/>
-    <typedef-decl name='efi_sha512_hash_t' type-id='type-id-99' filepath='src/include/efivar/efisec-types.h' line='21' column='1' id='type-id-60'/>
-    <typedef-decl name='efi_time_t' type-id='type-id-68' filepath='src/include/efivar/efivar-types.h' line='81' column='1' id='type-id-54'/>
+    <typedef-decl name='efi_cert_x509_sha256_t' type-id='type-id-52' filepath='src/include/efivar/efisec-types.h' line='42' column='1' id='type-id-51'/>
+    <typedef-decl name='efi_cert_x509_sha384_t' type-id='type-id-56' filepath='src/include/efivar/efisec-types.h' line='47' column='1' id='type-id-55'/>
+    <typedef-decl name='efi_cert_x509_sha512_t' type-id='type-id-59' filepath='src/include/efivar/efisec-types.h' line='52' column='1' id='type-id-58'/>
+    <typedef-decl name='efi_guid_t' type-id='type-id-62' filepath='src/include/efivar/efivar-types.h' line='23' column='1' id='type-id-61'/>
+    <typedef-decl name='efi_rsa2048_sig_t' type-id='type-id-88' filepath='src/include/efivar/efisec-types.h' line='26' column='1' id='type-id-89'/>
+    <typedef-decl name='efi_secdb_data_t' type-id='type-id-90' filepath='src/include/efivar/efisec-secdb.h' line='29' column='1' id='type-id-91'/>
+    <typedef-decl name='efi_secdb_flag_t' type-id='type-id-30' filepath='src/include/efivar/efisec-secdb.h' line='51' column='1' id='type-id-29'/>
+    <typedef-decl name='efi_secdb_t' type-id='type-id-65' filepath='src/include/efivar/efisec-secdb.h' line='14' column='1' id='type-id-92'/>
+    <typedef-decl name='efi_secdb_type_t' type-id='type-id-33' filepath='src/include/efivar/efisec-secdb.h' line='45' column='1' id='type-id-32'/>
+    <typedef-decl name='efi_sha1_hash_t' type-id='type-id-93' filepath='src/include/efivar/efisec-types.h' line='21' column='1' id='type-id-94'/>
+    <typedef-decl name='efi_sha224_hash_t' type-id='type-id-95' filepath='src/include/efivar/efisec-types.h' line='22' column='1' id='type-id-96'/>
+    <typedef-decl name='efi_sha256_hash_t' type-id='type-id-97' filepath='src/include/efivar/efisec-types.h' line='23' column='1' id='type-id-53'/>
+    <typedef-decl name='efi_sha384_hash_t' type-id='type-id-98' filepath='src/include/efivar/efisec-types.h' line='24' column='1' id='type-id-57'/>
+    <typedef-decl name='efi_sha512_hash_t' type-id='type-id-99' filepath='src/include/efivar/efisec-types.h' line='25' column='1' id='type-id-60'/>
+    <typedef-decl name='efi_time_t' type-id='type-id-68' filepath='src/include/efivar/efivar-types.h' line='85' column='1' id='type-id-54'/>
     <typedef-decl name='esl_iter' type-id='type-id-100' filepath='src/esl-iter.h' line='13' column='1' id='type-id-101'/>
     <typedef-decl name='esl_iter_status_t' type-id='type-id-34' filepath='src/esl-iter.h' line='40' column='1' id='type-id-102'/>
     <typedef-decl name='int16_t' type-id='type-id-83' filepath='/usr/include/bits/stdint-intn.h' line='25' column='1' id='type-id-70'/>
@@ -451,42 +451,42 @@
     <array-type-def dimensions='1' type-id='type-id-69' size-in-bits='infinite' id='type-id-110'>
       <subrange length='infinite' type-id='type-id-22' id='type-id-111'/>
     </array-type-def>
-    <union-decl name='efi_secdb_data_t' size-in-bits='2048' naming-typedef-id='type-id-91' visibility='default' filepath='src/include/efivar/efisec-secdb.h' line='12' column='1' id='type-id-90'>
+    <union-decl name='efi_secdb_data_t' size-in-bits='2048' naming-typedef-id='type-id-91' visibility='default' filepath='src/include/efivar/efisec-secdb.h' line='16' column='1' id='type-id-90'>
       <data-member access='public'>
-        <var-decl name='sha1' type-id='type-id-94' visibility='default' filepath='src/include/efivar/efisec-secdb.h' line='13' column='1'/>
+        <var-decl name='sha1' type-id='type-id-94' visibility='default' filepath='src/include/efivar/efisec-secdb.h' line='17' column='1'/>
       </data-member>
       <data-member access='public'>
-        <var-decl name='sha224' type-id='type-id-96' visibility='default' filepath='src/include/efivar/efisec-secdb.h' line='14' column='1'/>
+        <var-decl name='sha224' type-id='type-id-96' visibility='default' filepath='src/include/efivar/efisec-secdb.h' line='18' column='1'/>
       </data-member>
       <data-member access='public'>
-        <var-decl name='sha256' type-id='type-id-53' visibility='default' filepath='src/include/efivar/efisec-secdb.h' line='15' column='1'/>
+        <var-decl name='sha256' type-id='type-id-53' visibility='default' filepath='src/include/efivar/efisec-secdb.h' line='19' column='1'/>
       </data-member>
       <data-member access='public'>
-        <var-decl name='sha384' type-id='type-id-57' visibility='default' filepath='src/include/efivar/efisec-secdb.h' line='16' column='1'/>
+        <var-decl name='sha384' type-id='type-id-57' visibility='default' filepath='src/include/efivar/efisec-secdb.h' line='20' column='1'/>
       </data-member>
       <data-member access='public'>
-        <var-decl name='sha512' type-id='type-id-60' visibility='default' filepath='src/include/efivar/efisec-secdb.h' line='17' column='1'/>
+        <var-decl name='sha512' type-id='type-id-60' visibility='default' filepath='src/include/efivar/efisec-secdb.h' line='21' column='1'/>
       </data-member>
       <data-member access='public'>
-        <var-decl name='rsa2048' type-id='type-id-89' visibility='default' filepath='src/include/efivar/efisec-secdb.h' line='18' column='1'/>
+        <var-decl name='rsa2048' type-id='type-id-89' visibility='default' filepath='src/include/efivar/efisec-secdb.h' line='22' column='1'/>
       </data-member>
       <data-member access='public'>
-        <var-decl name='rsa2048_sha1' type-id='type-id-89' visibility='default' filepath='src/include/efivar/efisec-secdb.h' line='19' column='1'/>
+        <var-decl name='rsa2048_sha1' type-id='type-id-89' visibility='default' filepath='src/include/efivar/efisec-secdb.h' line='23' column='1'/>
       </data-member>
       <data-member access='public'>
-        <var-decl name='rsa2048_sha256' type-id='type-id-89' visibility='default' filepath='src/include/efivar/efisec-secdb.h' line='20' column='1'/>
+        <var-decl name='rsa2048_sha256' type-id='type-id-89' visibility='default' filepath='src/include/efivar/efisec-secdb.h' line='24' column='1'/>
       </data-member>
       <data-member access='public'>
-        <var-decl name='x509_sha256_t' type-id='type-id-51' visibility='default' filepath='src/include/efivar/efisec-secdb.h' line='21' column='1'/>
+        <var-decl name='x509_sha256_t' type-id='type-id-51' visibility='default' filepath='src/include/efivar/efisec-secdb.h' line='25' column='1'/>
       </data-member>
       <data-member access='public'>
-        <var-decl name='x509_sha384_t' type-id='type-id-55' visibility='default' filepath='src/include/efivar/efisec-secdb.h' line='22' column='1'/>
+        <var-decl name='x509_sha384_t' type-id='type-id-55' visibility='default' filepath='src/include/efivar/efisec-secdb.h' line='26' column='1'/>
       </data-member>
       <data-member access='public'>
-        <var-decl name='x509_sha512_t' type-id='type-id-58' visibility='default' filepath='src/include/efivar/efisec-secdb.h' line='23' column='1'/>
+        <var-decl name='x509_sha512_t' type-id='type-id-58' visibility='default' filepath='src/include/efivar/efisec-secdb.h' line='27' column='1'/>
       </data-member>
       <data-member access='public'>
-        <var-decl name='raw' type-id='type-id-110' visibility='default' filepath='src/include/efivar/efisec-secdb.h' line='24' column='1'/>
+        <var-decl name='raw' type-id='type-id-110' visibility='default' filepath='src/include/efivar/efisec-secdb.h' line='28' column='1'/>
       </data-member>
     </union-decl>
     <type-decl name='unnamed-enum-underlying-type-32' is-anonymous='yes' size-in-bits='32' alignment-in-bits='32' id='type-id-31'/>
@@ -559,13 +559,13 @@
       <parameter type-id='type-id-127'/>
       <parameter type-id='type-id-125'/>
       <parameter type-id='type-id-19'/>
-      <return type-id='type-id-3'/>
+      <return type-id='type-id-102'/>
     </function-decl>
     <function-decl name='esd_get_esl_offset' filepath='src/esl-iter.h' line='79' column='1' visibility='default' binding='global' size-in-bits='64'>
       <parameter type-id='type-id-122'/>
       <return type-id='type-id-103'/>
     </function-decl>
-    <function-decl name='efi_guid_to_id_guid' filepath='src/include/efivar/efivar.h' line='61' column='1' visibility='default' binding='global' size-in-bits='64'>
+    <function-decl name='efi_guid_to_id_guid' filepath='src/include/efivar/efivar.h' line='64' column='1' visibility='default' binding='global' size-in-bits='64'>
       <parameter type-id='type-id-2'/>
       <parameter type-id='type-id-115'/>
       <return type-id='type-id-3'/>
@@ -639,7 +639,8 @@
     </function-type>
   </abi-instr>
   <abi-instr address-size='64' path='util.c' comp-dir-path='src' language='LANG_C11'>
-    <var-decl name='page_size' type-id='type-id-12' visibility='default' filepath='src/util.h' line='205' column='1'/>
+    <class-decl name='__dirstream' is-struct='yes' visibility='default' is-declaration-only='yes' id='type-id-131'/>
+    <var-decl name='page_size' type-id='type-id-12' visibility='default' filepath='src/util.h' line='204' column='1'/>
     <function-decl name='sysconf' filepath='/usr/include/unistd.h' line='640' column='1' visibility='default' binding='global' size-in-bits='64'>
       <parameter type-id='type-id-3'/>
       <return type-id='type-id-37'/>

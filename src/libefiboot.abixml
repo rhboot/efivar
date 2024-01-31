@@ -248,21 +248,21 @@
         <var-decl name='' type-id='type-id-41' visibility='default'/>
       </data-member>
     </class-decl>
-    <class-decl name='efi_guid_t' size-in-bits='128' is-struct='yes' naming-typedef-id='type-id-42' visibility='default' filepath='src/include/efivar/efivar-types.h' line='13' column='1' id='type-id-43'>
+    <class-decl name='efi_guid_t' size-in-bits='128' is-struct='yes' naming-typedef-id='type-id-42' visibility='default' filepath='src/include/efivar/efivar-types.h' line='17' column='1' id='type-id-43'>
       <data-member access='public' layout-offset-in-bits='0'>
-        <var-decl name='a' type-id='type-id-31' visibility='default' filepath='src/include/efivar/efivar-types.h' line='14' column='1'/>
+        <var-decl name='a' type-id='type-id-31' visibility='default' filepath='src/include/efivar/efivar-types.h' line='18' column='1'/>
       </data-member>
       <data-member access='public' layout-offset-in-bits='32'>
-        <var-decl name='b' type-id='type-id-44' visibility='default' filepath='src/include/efivar/efivar-types.h' line='15' column='1'/>
+        <var-decl name='b' type-id='type-id-44' visibility='default' filepath='src/include/efivar/efivar-types.h' line='19' column='1'/>
       </data-member>
       <data-member access='public' layout-offset-in-bits='48'>
-        <var-decl name='c' type-id='type-id-44' visibility='default' filepath='src/include/efivar/efivar-types.h' line='16' column='1'/>
+        <var-decl name='c' type-id='type-id-44' visibility='default' filepath='src/include/efivar/efivar-types.h' line='20' column='1'/>
       </data-member>
       <data-member access='public' layout-offset-in-bits='64'>
-        <var-decl name='d' type-id='type-id-44' visibility='default' filepath='src/include/efivar/efivar-types.h' line='17' column='1'/>
+        <var-decl name='d' type-id='type-id-44' visibility='default' filepath='src/include/efivar/efivar-types.h' line='21' column='1'/>
       </data-member>
       <data-member access='public' layout-offset-in-bits='80'>
-        <var-decl name='e' type-id='type-id-45' visibility='default' filepath='src/include/efivar/efivar-types.h' line='18' column='1'/>
+        <var-decl name='e' type-id='type-id-45' visibility='default' filepath='src/include/efivar/efivar-types.h' line='22' column='1'/>
       </data-member>
     </class-decl>
     <class-decl name='emmc_info' size-in-bits='32' is-struct='yes' visibility='default' filepath='src/linux.h' line='90' column='1' id='type-id-46'>
@@ -514,7 +514,7 @@
     <typedef-decl name='__uint32_t' type-id='type-id-29' filepath='/usr/include/bits/types.h' line='42' column='1' id='type-id-80'/>
     <typedef-decl name='__uint64_t' type-id='type-id-3' filepath='/usr/include/bits/types.h' line='45' column='1' id='type-id-81'/>
     <typedef-decl name='__uint8_t' type-id='type-id-82' filepath='/usr/include/bits/types.h' line='38' column='1' id='type-id-83'/>
-    <typedef-decl name='efi_guid_t' type-id='type-id-43' filepath='src/include/efivar/efivar-types.h' line='19' column='1' id='type-id-42'/>
+    <typedef-decl name='efi_guid_t' type-id='type-id-43' filepath='src/include/efivar/efivar-types.h' line='23' column='1' id='type-id-42'/>
     <typedef-decl name='int32_t' type-id='type-id-77' filepath='/usr/include/bits/stdint-intn.h' line='26' column='1' id='type-id-47'/>
     <typedef-decl name='size_t' type-id='type-id-3' filepath='/usr/lib/gcc/x86_64-redhat-linux/13/include/stddef.h' line='214' column='1' id='type-id-27'/>
     <typedef-decl name='ssize_t' type-id='type-id-78' filepath='/usr/include/sys/types.h' line='108' column='1' id='type-id-84'/>
@@ -648,13 +648,13 @@
       <parameter type-id='type-id-31'/>
       <return type-id='type-id-84'/>
     </function-decl>
-    <function-decl name='efidp_make_edd10' filepath='src/include/efivar/efivar-dp.h' line='82' column='1' visibility='default' binding='global' size-in-bits='64'>
+    <function-decl name='efidp_make_edd10' filepath='src/include/efivar/efivar-dp.h' line='86' column='1' visibility='default' binding='global' size-in-bits='64'>
       <parameter type-id='type-id-110'/>
       <parameter type-id='type-id-84'/>
       <parameter type-id='type-id-31'/>
       <return type-id='type-id-84'/>
     </function-decl>
-    <function-decl name='efidp_make_ipv4' filepath='src/include/efivar/efivar-dp.h' line='449' column='1' visibility='default' binding='global' size-in-bits='64'>
+    <function-decl name='efidp_make_ipv4' filepath='src/include/efivar/efivar-dp.h' line='453' column='1' visibility='default' binding='global' size-in-bits='64'>
       <parameter type-id='type-id-110'/>
       <parameter type-id='type-id-84'/>
       <parameter type-id='type-id-31'/>
@@ -667,13 +667,13 @@
       <parameter type-id='type-id-13'/>
       <return type-id='type-id-84'/>
     </function-decl>
-    <function-decl name='efidp_make_file' filepath='src/include/efivar/efivar-dp.h' line='758' column='1' visibility='default' binding='global' size-in-bits='64'>
+    <function-decl name='efidp_make_file' filepath='src/include/efivar/efivar-dp.h' line='763' column='1' visibility='default' binding='global' size-in-bits='64'>
       <parameter type-id='type-id-110'/>
       <parameter type-id='type-id-84'/>
       <parameter type-id='type-id-17'/>
       <return type-id='type-id-84'/>
     </function-decl>
-    <function-decl name='efidp_make_generic' filepath='src/include/efivar/efivar-dp.h' line='1204' column='1' visibility='default' binding='global' size-in-bits='64'>
+    <function-decl name='efidp_make_generic' filepath='src/include/efivar/efivar-dp.h' line='1209' column='1' visibility='default' binding='global' size-in-bits='64'>
       <parameter type-id='type-id-110'/>
       <parameter type-id='type-id-84'/>
       <parameter type-id='type-id-53'/>
@@ -681,7 +681,7 @@
       <parameter type-id='type-id-84'/>
       <return type-id='type-id-84'/>
     </function-decl>
-    <function-decl name='efi_error_set' filepath='src/include/efivar/efivar.h' line='129' column='1' visibility='default' binding='global' size-in-bits='64'>
+    <function-decl name='efi_error_set' filepath='src/include/efivar/efivar.h' line='132' column='1' visibility='default' binding='global' size-in-bits='64'>
       <parameter type-id='type-id-99'/>
       <parameter type-id='type-id-99'/>
       <parameter type-id='type-id-13'/>
@@ -690,14 +690,14 @@
       <parameter is-variadic='yes'/>
       <return type-id='type-id-13'/>
     </function-decl>
-    <function-decl name='efi_error_clear' filepath='src/include/efivar/efivar.h' line='137' column='1' visibility='default' binding='global' size-in-bits='64'>
+    <function-decl name='efi_error_clear' filepath='src/include/efivar/efivar.h' line='140' column='1' visibility='default' binding='global' size-in-bits='64'>
       <return type-id='type-id-75'/>
     </function-decl>
-    <function-decl name='efi_set_loglevel' filepath='src/include/efivar/efivar.h' line='139' column='1' visibility='default' binding='global' size-in-bits='64'>
+    <function-decl name='efi_set_loglevel' filepath='src/include/efivar/efivar.h' line='142' column='1' visibility='default' binding='global' size-in-bits='64'>
       <parameter type-id='type-id-13'/>
       <return type-id='type-id-75'/>
     </function-decl>
-    <function-decl name='efi_get_logfile' filepath='src/include/efivar/efivar.h' line='197' column='1' visibility='default' binding='global' size-in-bits='64'>
+    <function-decl name='efi_get_logfile' filepath='src/include/efivar/efivar.h' line='200' column='1' visibility='default' binding='global' size-in-bits='64'>
       <return type-id='type-id-88'/>
     </function-decl>
     <function-decl name='device_get' filepath='src/linux.h' line='150' column='1' visibility='default' binding='global' size-in-bits='64'>
@@ -738,11 +738,10 @@
     <function-decl name='__errno_location' filepath='/usr/include/errno.h' line='37' column='1' visibility='default' binding='global' size-in-bits='64'>
       <return type-id='type-id-104'/>
     </function-decl>
-    <function-decl name='open' filepath='/usr/include/fcntl.h' line='209' column='1' visibility='default' binding='global' size-in-bits='64'>
+    <function-decl name='setmntent' filepath='/usr/include/mntent.h' line='64' column='1' visibility='default' binding='global' size-in-bits='64'>
       <parameter type-id='type-id-99'/>
-      <parameter type-id='type-id-13'/>
-      <parameter is-variadic='yes'/>
-      <return type-id='type-id-13'/>
+      <parameter type-id='type-id-99'/>
+      <return type-id='type-id-88'/>
     </function-decl>
     <function-decl name='getmntent' filepath='/usr/include/mntent.h' line='69' column='1' visibility='default' binding='global' size-in-bits='64'>
       <parameter type-id='type-id-88'/>
@@ -755,11 +754,6 @@
     <function-decl name='fflush' filepath='/usr/include/stdio.h' line='235' column='1' visibility='default' binding='global' size-in-bits='64'>
       <parameter type-id='type-id-88'/>
       <return type-id='type-id-13'/>
-    </function-decl>
-    <function-decl name='fopen' filepath='/usr/include/stdio.h' line='263' column='1' visibility='default' binding='global' size-in-bits='64'>
-      <parameter type-id='type-id-101'/>
-      <parameter type-id='type-id-101'/>
-      <return type-id='type-id-88'/>
     </function-decl>
     <function-decl name='fprintf' filepath='/usr/include/stdio.h' line='355' column='1' visibility='default' binding='global' size-in-bits='64'>
       <parameter type-id='type-id-89'/>
@@ -823,11 +817,6 @@
       <parameter type-id='type-id-99'/>
       <return type-id='type-id-27'/>
     </function-decl>
-    <function-decl name='stat' filepath='/usr/include/sys/stat.h' line='205' column='1' visibility='default' binding='global' size-in-bits='64'>
-      <parameter type-id='type-id-101'/>
-      <parameter type-id='type-id-107'/>
-      <return type-id='type-id-13'/>
-    </function-decl>
     <function-decl name='close' filepath='/usr/include/unistd.h' line='358' column='1' visibility='default' binding='global' size-in-bits='64'>
       <parameter type-id='type-id-13'/>
       <return type-id='type-id-13'/>
@@ -885,7 +874,7 @@
       <parameter type-id='type-id-13'/>
       <return type-id='type-id-13'/>
     </function-decl>
-    <function-decl name='efidp_make_hd' filepath='src/include/efivar/efivar-dp.h' line='722' column='1' visibility='default' binding='global' size-in-bits='64'>
+    <function-decl name='efidp_make_hd' filepath='src/include/efivar/efivar-dp.h' line='727' column='1' visibility='default' binding='global' size-in-bits='64'>
       <parameter type-id='type-id-110'/>
       <parameter type-id='type-id-84'/>
       <parameter type-id='type-id-31'/>
@@ -912,21 +901,10 @@
       <parameter is-variadic='yes'/>
       <return type-id='type-id-13'/>
     </function-decl>
-    <function-decl name='fstat' filepath='/usr/include/sys/stat.h' line='210' column='1' visibility='default' binding='global' size-in-bits='64'>
-      <parameter type-id='type-id-13'/>
-      <parameter type-id='type-id-106'/>
-      <return type-id='type-id-13'/>
-    </function-decl>
     <function-decl name='gettimeofday' filepath='/usr/include/sys/time.h' line='67' column='1' visibility='default' binding='global' size-in-bits='64'>
       <parameter type-id='type-id-116'/>
       <parameter type-id='type-id-118'/>
       <return type-id='type-id-13'/>
-    </function-decl>
-    <function-decl name='lseek' filepath='/usr/include/unistd.h' line='339' column='1' visibility='default' binding='global' size-in-bits='64'>
-      <parameter type-id='type-id-13'/>
-      <parameter type-id='type-id-20'/>
-      <parameter type-id='type-id-13'/>
-      <return type-id='type-id-20'/>
     </function-decl>
     <function-decl name='read' filepath='/usr/include/unistd.h' line='371' column='1' visibility='default' binding='global' size-in-bits='64'>
       <parameter type-id='type-id-13'/>
@@ -994,14 +972,14 @@
   </abi-instr>
   <abi-instr address-size='64' path='linux-acpi-root.c' comp-dir-path='src' language='LANG_C11'>
     <class-decl name='__dirstream' is-struct='yes' visibility='default' is-declaration-only='yes' id='type-id-126'/>
-    <function-decl name='efidp_make_acpi_hid' filepath='src/include/efivar/efivar-dp.h' line='111' column='1' visibility='default' binding='global' size-in-bits='64'>
+    <function-decl name='efidp_make_acpi_hid' filepath='src/include/efivar/efivar-dp.h' line='115' column='1' visibility='default' binding='global' size-in-bits='64'>
       <parameter type-id='type-id-110'/>
       <parameter type-id='type-id-84'/>
       <parameter type-id='type-id-31'/>
       <parameter type-id='type-id-31'/>
       <return type-id='type-id-84'/>
     </function-decl>
-    <function-decl name='efidp_make_acpi_hid_ex' filepath='src/include/efivar/efivar-dp.h' line='124' column='1' visibility='default' binding='global' size-in-bits='64'>
+    <function-decl name='efidp_make_acpi_hid_ex' filepath='src/include/efivar/efivar-dp.h' line='128' column='1' visibility='default' binding='global' size-in-bits='64'>
       <parameter type-id='type-id-110'/>
       <parameter type-id='type-id-84'/>
       <parameter type-id='type-id-31'/>
@@ -1060,7 +1038,7 @@
   <abi-instr address-size='64' path='linux-ata.c' comp-dir-path='src' language='LANG_C11'>
     <pointer-type-def type-id='type-id-31' size-in-bits='64' id='type-id-128'/>
     <class-decl name='__dirstream' is-struct='yes' visibility='default' is-declaration-only='yes' id='type-id-129'/>
-    <function-decl name='efidp_make_atapi' filepath='src/include/efivar/efivar-dp.h' line='323' column='1' visibility='default' binding='global' size-in-bits='64'>
+    <function-decl name='efidp_make_atapi' filepath='src/include/efivar/efivar-dp.h' line='327' column='1' visibility='default' binding='global' size-in-bits='64'>
       <parameter type-id='type-id-110'/>
       <parameter type-id='type-id-84'/>
       <parameter type-id='type-id-44'/>
@@ -1094,7 +1072,7 @@
   </abi-instr>
   <abi-instr address-size='64' path='linux-emmc.c' comp-dir-path='src' language='LANG_C11'>
     <class-decl name='__dirstream' is-struct='yes' visibility='default' is-declaration-only='yes' id='type-id-130'/>
-    <function-decl name='efidp_make_emmc' filepath='src/include/efivar/efivar-dp.h' line='682' column='1' visibility='default' binding='global' size-in-bits='64'>
+    <function-decl name='efidp_make_emmc' filepath='src/include/efivar/efivar-dp.h' line='687' column='1' visibility='default' binding='global' size-in-bits='64'>
       <parameter type-id='type-id-110'/>
       <parameter type-id='type-id-84'/>
       <parameter type-id='type-id-31'/>
@@ -1111,14 +1089,14 @@
   </abi-instr>
   <abi-instr address-size='64' path='linux-nvme.c' comp-dir-path='src' language='LANG_C11'>
     <class-decl name='__dirstream' is-struct='yes' visibility='default' is-declaration-only='yes' id='type-id-133'/>
-    <function-decl name='efidp_make_nvme' filepath='src/include/efivar/efivar-dp.h' line='642' column='1' visibility='default' binding='global' size-in-bits='64'>
+    <function-decl name='efidp_make_nvme' filepath='src/include/efivar/efivar-dp.h' line='647' column='1' visibility='default' binding='global' size-in-bits='64'>
       <parameter type-id='type-id-110'/>
       <parameter type-id='type-id-84'/>
       <parameter type-id='type-id-31'/>
       <parameter type-id='type-id-110'/>
       <return type-id='type-id-84'/>
     </function-decl>
-    <function-decl name='efi_error_pop' filepath='src/include/efivar/efivar.h' line='138' column='1' visibility='default' binding='global' size-in-bits='64'>
+    <function-decl name='efi_error_pop' filepath='src/include/efivar/efivar.h' line='141' column='1' visibility='default' binding='global' size-in-bits='64'>
       <return type-id='type-id-75'/>
     </function-decl>
     <var-decl name='nvme_parser' type-id='type-id-34' visibility='default' filepath='src/linux.h' line='355' column='1'/>
@@ -1134,7 +1112,7 @@
   </abi-instr>
   <abi-instr address-size='64' path='linux-pci.c' comp-dir-path='src' language='LANG_C11'>
     <class-decl name='__dirstream' is-struct='yes' visibility='default' is-declaration-only='yes' id='type-id-135'/>
-    <function-decl name='efidp_make_pci' filepath='src/include/efivar/efivar-dp.h' line='47' column='1' visibility='default' binding='global' size-in-bits='64'>
+    <function-decl name='efidp_make_pci' filepath='src/include/efivar/efivar-dp.h' line='51' column='1' visibility='default' binding='global' size-in-bits='64'>
       <parameter type-id='type-id-110'/>
       <parameter type-id='type-id-84'/>
       <parameter type-id='type-id-53'/>
@@ -1145,13 +1123,13 @@
   </abi-instr>
   <abi-instr address-size='64' path='linux-pmem.c' comp-dir-path='src' language='LANG_C11'>
     <class-decl name='__dirstream' is-struct='yes' visibility='default' is-declaration-only='yes' id='type-id-136'/>
-    <function-decl name='efidp_make_nvdimm' filepath='src/include/efivar/efivar-dp.h' line='706' column='1' visibility='default' binding='global' size-in-bits='64'>
+    <function-decl name='efidp_make_nvdimm' filepath='src/include/efivar/efivar-dp.h' line='711' column='1' visibility='default' binding='global' size-in-bits='64'>
       <parameter type-id='type-id-110'/>
       <parameter type-id='type-id-84'/>
       <parameter type-id='type-id-114'/>
       <return type-id='type-id-84'/>
     </function-decl>
-    <function-decl name='efi_str_to_guid' filepath='src/include/efivar/efivar.h' line='57' column='1' visibility='default' binding='global' size-in-bits='64'>
+    <function-decl name='efi_str_to_guid' filepath='src/include/efivar/efivar.h' line='60' column='1' visibility='default' binding='global' size-in-bits='64'>
       <parameter type-id='type-id-99'/>
       <parameter type-id='type-id-114'/>
       <return type-id='type-id-13'/>
@@ -1164,7 +1142,7 @@
   </abi-instr>
   <abi-instr address-size='64' path='linux-sas.c' comp-dir-path='src' language='LANG_C11'>
     <class-decl name='__dirstream' is-struct='yes' visibility='default' is-declaration-only='yes' id='type-id-137'/>
-    <function-decl name='efidp_make_sas' filepath='src/include/efivar/efivar-dp.h' line='566' column='1' visibility='default' binding='global' size-in-bits='64'>
+    <function-decl name='efidp_make_sas' filepath='src/include/efivar/efivar-dp.h' line='571' column='1' visibility='default' binding='global' size-in-bits='64'>
       <parameter type-id='type-id-110'/>
       <parameter type-id='type-id-84'/>
       <parameter type-id='type-id-32'/>
@@ -1179,10 +1157,10 @@
     <type-decl name='short int' size-in-bits='16' id='type-id-140'/>
     <class-decl name='dirent' size-in-bits='2240' is-struct='yes' visibility='default' filepath='/usr/include/bits/dirent.h' line='22' column='1' id='type-id-141'>
       <data-member access='public' layout-offset-in-bits='0'>
-        <var-decl name='d_ino' type-id='type-id-60' visibility='default' filepath='/usr/include/bits/dirent.h' line='25' column='1'/>
+        <var-decl name='d_ino' type-id='type-id-142' visibility='default' filepath='/usr/include/bits/dirent.h' line='28' column='1'/>
       </data-member>
       <data-member access='public' layout-offset-in-bits='64'>
-        <var-decl name='d_off' type-id='type-id-20' visibility='default' filepath='/usr/include/bits/dirent.h' line='26' column='1'/>
+        <var-decl name='d_off' type-id='type-id-23' visibility='default' filepath='/usr/include/bits/dirent.h' line='29' column='1'/>
       </data-member>
       <data-member access='public' layout-offset-in-bits='128'>
         <var-decl name='d_reclen' type-id='type-id-21' visibility='default' filepath='/usr/include/bits/dirent.h' line='31' column='1'/>
@@ -1194,15 +1172,16 @@
         <var-decl name='d_name' type-id='type-id-138' visibility='default' filepath='/usr/include/bits/dirent.h' line='33' column='1'/>
       </data-member>
     </class-decl>
-    <typedef-decl name='__int16_t' type-id='type-id-140' filepath='/usr/include/bits/types.h' line='39' column='1' id='type-id-142'/>
-    <typedef-decl name='int16_t' type-id='type-id-142' filepath='/usr/include/bits/stdint-intn.h' line='25' column='1' id='type-id-143'/>
-    <pointer-type-def type-id='type-id-141' size-in-bits='64' id='type-id-144'/>
-    <class-decl name='__dirstream' is-struct='yes' visibility='default' is-declaration-only='yes' id='type-id-145'/>
-    <function-decl name='efidp_make_sata' filepath='src/include/efivar/efivar-dp.h' line='415' column='1' visibility='default' binding='global' size-in-bits='64'>
+    <typedef-decl name='__ino64_t' type-id='type-id-3' filepath='/usr/include/bits/types.h' line='149' column='1' id='type-id-142'/>
+    <typedef-decl name='__int16_t' type-id='type-id-140' filepath='/usr/include/bits/types.h' line='39' column='1' id='type-id-143'/>
+    <typedef-decl name='int16_t' type-id='type-id-143' filepath='/usr/include/bits/stdint-intn.h' line='25' column='1' id='type-id-144'/>
+    <pointer-type-def type-id='type-id-141' size-in-bits='64' id='type-id-145'/>
+    <class-decl name='__dirstream' is-struct='yes' visibility='default' is-declaration-only='yes' id='type-id-146'/>
+    <function-decl name='efidp_make_sata' filepath='src/include/efivar/efivar-dp.h' line='419' column='1' visibility='default' binding='global' size-in-bits='64'>
       <parameter type-id='type-id-110'/>
       <parameter type-id='type-id-84'/>
       <parameter type-id='type-id-44'/>
-      <parameter type-id='type-id-143'/>
+      <parameter type-id='type-id-144'/>
       <parameter type-id='type-id-44'/>
       <return type-id='type-id-84'/>
     </function-decl>
@@ -1215,14 +1194,10 @@
       <parameter type-id='type-id-99'/>
       <return type-id='type-id-87'/>
     </function-decl>
-    <function-decl name='readdir' filepath='/usr/include/dirent.h' line='164' column='1' visibility='default' binding='global' size-in-bits='64'>
-      <parameter type-id='type-id-87'/>
-      <return type-id='type-id-144'/>
-    </function-decl>
   </abi-instr>
   <abi-instr address-size='64' path='linux-scsi.c' comp-dir-path='src' language='LANG_C11'>
-    <class-decl name='__dirstream' is-struct='yes' visibility='default' is-declaration-only='yes' id='type-id-146'/>
-    <function-decl name='efidp_make_scsi' filepath='src/include/efivar/efivar-dp.h' line='332' column='1' visibility='default' binding='global' size-in-bits='64'>
+    <class-decl name='__dirstream' is-struct='yes' visibility='default' is-declaration-only='yes' id='type-id-147'/>
+    <function-decl name='efidp_make_scsi' filepath='src/include/efivar/efivar-dp.h' line='336' column='1' visibility='default' binding='global' size-in-bits='64'>
       <parameter type-id='type-id-110'/>
       <parameter type-id='type-id-84'/>
       <parameter type-id='type-id-44'/>
@@ -1232,46 +1207,46 @@
     <var-decl name='scsi_parser' type-id='type-id-34' visibility='default' filepath='src/linux.h' line='358' column='1'/>
   </abi-instr>
   <abi-instr address-size='64' path='linux-soc-root.c' comp-dir-path='src' language='LANG_C11'>
-    <class-decl name='__dirstream' is-struct='yes' visibility='default' is-declaration-only='yes' id='type-id-147'/>
+    <class-decl name='__dirstream' is-struct='yes' visibility='default' is-declaration-only='yes' id='type-id-148'/>
     <var-decl name='soc_root_parser' type-id='type-id-34' visibility='default' filepath='src/linux.h' line='350' column='1'/>
   </abi-instr>
   <abi-instr address-size='64' path='linux-virtblk.c' comp-dir-path='src' language='LANG_C11'>
-    <class-decl name='__dirstream' is-struct='yes' visibility='default' is-declaration-only='yes' id='type-id-148'/>
+    <class-decl name='__dirstream' is-struct='yes' visibility='default' is-declaration-only='yes' id='type-id-149'/>
     <var-decl name='virtblk_parser' type-id='type-id-34' visibility='default' filepath='src/linux.h' line='356' column='1'/>
   </abi-instr>
   <abi-instr address-size='64' path='linux-virtual-root.c' comp-dir-path='src' language='LANG_C11'>
-    <class-decl name='__dirstream' is-struct='yes' visibility='default' is-declaration-only='yes' id='type-id-149'/>
+    <class-decl name='__dirstream' is-struct='yes' visibility='default' is-declaration-only='yes' id='type-id-150'/>
     <var-decl name='virtual_root_parser' type-id='type-id-34' visibility='default' filepath='src/linux.h' line='351' column='1'/>
   </abi-instr>
   <abi-instr address-size='64' path='linux.c' comp-dir-path='src' language='LANG_C11'>
-    <typedef-decl name='const_efidp' type-id='type-id-150' filepath='src/include/efivar/efivar-dp.h' line='885' column='1' id='type-id-151'/>
-    <pointer-type-def type-id='type-id-99' size-in-bits='64' id='type-id-152'/>
-    <qualified-type-def type-id='type-id-153' const='yes' id='type-id-154'/>
-    <pointer-type-def type-id='type-id-154' size-in-bits='64' id='type-id-150'/>
-    <qualified-type-def type-id='type-id-53' const='yes' id='type-id-155'/>
-    <pointer-type-def type-id='type-id-155' size-in-bits='64' id='type-id-156'/>
-    <qualified-type-def type-id='type-id-156' const='yes' id='type-id-157'/>
-    <class-decl name='__dirstream' is-struct='yes' visibility='default' is-declaration-only='yes' id='type-id-158'/>
-    <function-decl name='efidp_make_mac_addr' filepath='src/include/efivar/efivar-dp.h' line='430' column='1' visibility='default' binding='global' size-in-bits='64'>
+    <typedef-decl name='const_efidp' type-id='type-id-151' filepath='src/include/efivar/efivar-dp.h' line='890' column='1' id='type-id-152'/>
+    <pointer-type-def type-id='type-id-99' size-in-bits='64' id='type-id-153'/>
+    <qualified-type-def type-id='type-id-154' const='yes' id='type-id-155'/>
+    <pointer-type-def type-id='type-id-155' size-in-bits='64' id='type-id-151'/>
+    <qualified-type-def type-id='type-id-53' const='yes' id='type-id-156'/>
+    <pointer-type-def type-id='type-id-156' size-in-bits='64' id='type-id-157'/>
+    <qualified-type-def type-id='type-id-157' const='yes' id='type-id-158'/>
+    <class-decl name='__dirstream' is-struct='yes' visibility='default' is-declaration-only='yes' id='type-id-159'/>
+    <function-decl name='efidp_make_mac_addr' filepath='src/include/efivar/efivar-dp.h' line='434' column='1' visibility='default' binding='global' size-in-bits='64'>
       <parameter type-id='type-id-110'/>
       <parameter type-id='type-id-84'/>
       <parameter type-id='type-id-53'/>
-      <parameter type-id='type-id-157'/>
+      <parameter type-id='type-id-158'/>
       <parameter type-id='type-id-84'/>
       <return type-id='type-id-84'/>
     </function-decl>
-    <function-decl name='efidp_format_device_path' filepath='src/include/efivar/efivar-dp.h' line='1199' column='1' visibility='default' binding='global' size-in-bits='64'>
-      <parameter type-id='type-id-159'/>
+    <function-decl name='efidp_format_device_path' filepath='src/include/efivar/efivar-dp.h' line='1204' column='1' visibility='default' binding='global' size-in-bits='64'>
+      <parameter type-id='type-id-160'/>
       <parameter type-id='type-id-27'/>
-      <parameter type-id='type-id-151'/>
+      <parameter type-id='type-id-152'/>
       <parameter type-id='type-id-84'/>
       <return type-id='type-id-84'/>
     </function-decl>
     <function-decl name='find_path_segment' filepath='src/path-helpers.h' line='12' column='1' visibility='default' binding='global' size-in-bits='64'>
       <parameter type-id='type-id-99'/>
       <parameter type-id='type-id-13'/>
-      <parameter type-id='type-id-152'/>
-      <parameter type-id='type-id-160'/>
+      <parameter type-id='type-id-153'/>
+      <parameter type-id='type-id-161'/>
       <return type-id='type-id-13'/>
     </function-decl>
     <function-decl name='strncpy' filepath='/usr/include/string.h' line='144' column='1' visibility='default' binding='global' size-in-bits='64'>
@@ -1288,23 +1263,23 @@
     </function-decl>
   </abi-instr>
   <abi-instr address-size='64' path='loadopt.c' comp-dir-path='src' language='LANG_C11'>
-    <array-type-def dimensions='1' type-id='type-id-6' size-in-bits='infinite' id='type-id-161'>
-      <subrange length='infinite' type-id='type-id-3' id='type-id-162'/>
+    <array-type-def dimensions='1' type-id='type-id-6' size-in-bits='infinite' id='type-id-162'>
+      <subrange length='infinite' type-id='type-id-3' id='type-id-163'/>
     </array-type-def>
-    <array-type-def dimensions='1' type-id='type-id-163' size-in-bits='infinite' id='type-id-164'>
-      <subrange length='infinite' type-id='type-id-3' id='type-id-162'/>
+    <array-type-def dimensions='1' type-id='type-id-164' size-in-bits='infinite' id='type-id-165'>
+      <subrange length='infinite' type-id='type-id-3' id='type-id-163'/>
     </array-type-def>
-    <class-decl name='efi_ipv4_addr_t' size-in-bits='32' is-struct='yes' naming-typedef-id='type-id-165' visibility='default' filepath='src/include/efivar/efivar-types.h' line='31' column='1' id='type-id-166'>
+    <class-decl name='efi_ipv4_addr_t' size-in-bits='32' is-struct='yes' naming-typedef-id='type-id-166' visibility='default' filepath='src/include/efivar/efivar-types.h' line='35' column='1' id='type-id-167'>
       <data-member access='public' layout-offset-in-bits='0'>
-        <var-decl name='addr' type-id='type-id-167' visibility='default' filepath='src/include/efivar/efivar-types.h' line='32' column='1'/>
+        <var-decl name='addr' type-id='type-id-168' visibility='default' filepath='src/include/efivar/efivar-types.h' line='36' column='1'/>
       </data-member>
     </class-decl>
-    <class-decl name='efi_ipv6_addr_t' size-in-bits='128' is-struct='yes' naming-typedef-id='type-id-168' visibility='default' filepath='src/include/efivar/efivar-types.h' line='35' column='1' id='type-id-169'>
+    <class-decl name='efi_ipv6_addr_t' size-in-bits='128' is-struct='yes' naming-typedef-id='type-id-169' visibility='default' filepath='src/include/efivar/efivar-types.h' line='39' column='1' id='type-id-170'>
       <data-member access='public' layout-offset-in-bits='0'>
-        <var-decl name='addr' type-id='type-id-170' visibility='default' filepath='src/include/efivar/efivar-types.h' line='36' column='1'/>
+        <var-decl name='addr' type-id='type-id-171' visibility='default' filepath='src/include/efivar/efivar-types.h' line='40' column='1'/>
       </data-member>
     </class-decl>
-    <class-decl name='efi_load_option_s' size-in-bits='48' is-struct='yes' visibility='default' filepath='src/loadopt.c' line='17' column='1' id='type-id-171'>
+    <class-decl name='efi_load_option_s' size-in-bits='48' is-struct='yes' visibility='default' filepath='src/loadopt.c' line='17' column='1' id='type-id-172'>
       <data-member access='public' layout-offset-in-bits='0'>
         <var-decl name='attributes' type-id='type-id-31' visibility='default' filepath='src/loadopt.c' line='18' column='1'/>
       </data-member>
@@ -1312,1022 +1287,1022 @@
         <var-decl name='file_path_list_length' type-id='type-id-44' visibility='default' filepath='src/loadopt.c' line='19' column='1'/>
       </data-member>
       <data-member access='public' layout-offset-in-bits='48'>
-        <var-decl name='description' type-id='type-id-172' visibility='default' filepath='src/loadopt.c' line='20' column='1'/>
+        <var-decl name='description' type-id='type-id-173' visibility='default' filepath='src/loadopt.c' line='20' column='1'/>
       </data-member>
     </class-decl>
-    <class-decl name='efidp_1394' size-in-bits='128' is-struct='yes' naming-typedef-id='type-id-173' visibility='default' filepath='src/include/efivar/efivar-dp.h' line='352' column='1' id='type-id-174'>
+    <class-decl name='efidp_1394' size-in-bits='128' is-struct='yes' naming-typedef-id='type-id-174' visibility='default' filepath='src/include/efivar/efivar-dp.h' line='356' column='1' id='type-id-175'>
       <data-member access='public' layout-offset-in-bits='0'>
-        <var-decl name='header' type-id='type-id-175' visibility='default' filepath='src/include/efivar/efivar-dp.h' line='353' column='1'/>
+        <var-decl name='header' type-id='type-id-176' visibility='default' filepath='src/include/efivar/efivar-dp.h' line='357' column='1'/>
       </data-member>
       <data-member access='public' layout-offset-in-bits='32'>
-        <var-decl name='reserved' type-id='type-id-31' visibility='default' filepath='src/include/efivar/efivar-dp.h' line='354' column='1'/>
+        <var-decl name='reserved' type-id='type-id-31' visibility='default' filepath='src/include/efivar/efivar-dp.h' line='358' column='1'/>
       </data-member>
       <data-member access='public' layout-offset-in-bits='64'>
-        <var-decl name='guid' type-id='type-id-32' visibility='default' filepath='src/include/efivar/efivar-dp.h' line='355' column='1'/>
+        <var-decl name='guid' type-id='type-id-32' visibility='default' filepath='src/include/efivar/efivar-dp.h' line='359' column='1'/>
       </data-member>
     </class-decl>
-    <class-decl name='efidp_acpi_adr' size-in-bits='32' is-struct='yes' naming-typedef-id='type-id-176' visibility='default' filepath='src/include/efivar/efivar-dp.h' line='156' column='1' id='type-id-177'>
+    <class-decl name='efidp_acpi_adr' size-in-bits='32' is-struct='yes' naming-typedef-id='type-id-177' visibility='default' filepath='src/include/efivar/efivar-dp.h' line='160' column='1' id='type-id-178'>
       <data-member access='public' layout-offset-in-bits='0'>
-        <var-decl name='header' type-id='type-id-175' visibility='default' filepath='src/include/efivar/efivar-dp.h' line='157' column='1'/>
+        <var-decl name='header' type-id='type-id-176' visibility='default' filepath='src/include/efivar/efivar-dp.h' line='161' column='1'/>
       </data-member>
       <data-member access='public' layout-offset-in-bits='32'>
-        <var-decl name='adr' type-id='type-id-178' visibility='default' filepath='src/include/efivar/efivar-dp.h' line='158' column='1'/>
+        <var-decl name='adr' type-id='type-id-179' visibility='default' filepath='src/include/efivar/efivar-dp.h' line='162' column='1'/>
       </data-member>
     </class-decl>
-    <class-decl name='efidp_acpi_hid' size-in-bits='96' is-struct='yes' naming-typedef-id='type-id-179' visibility='default' filepath='src/include/efivar/efivar-dp.h' line='106' column='1' id='type-id-180'>
+    <class-decl name='efidp_acpi_hid' size-in-bits='96' is-struct='yes' naming-typedef-id='type-id-180' visibility='default' filepath='src/include/efivar/efivar-dp.h' line='110' column='1' id='type-id-181'>
       <data-member access='public' layout-offset-in-bits='0'>
-        <var-decl name='header' type-id='type-id-175' visibility='default' filepath='src/include/efivar/efivar-dp.h' line='107' column='1'/>
+        <var-decl name='header' type-id='type-id-176' visibility='default' filepath='src/include/efivar/efivar-dp.h' line='111' column='1'/>
       </data-member>
       <data-member access='public' layout-offset-in-bits='32'>
-        <var-decl name='hid' type-id='type-id-31' visibility='default' filepath='src/include/efivar/efivar-dp.h' line='108' column='1'/>
+        <var-decl name='hid' type-id='type-id-31' visibility='default' filepath='src/include/efivar/efivar-dp.h' line='112' column='1'/>
       </data-member>
       <data-member access='public' layout-offset-in-bits='64'>
-        <var-decl name='uid' type-id='type-id-31' visibility='default' filepath='src/include/efivar/efivar-dp.h' line='109' column='1'/>
+        <var-decl name='uid' type-id='type-id-31' visibility='default' filepath='src/include/efivar/efivar-dp.h' line='113' column='1'/>
       </data-member>
     </class-decl>
-    <class-decl name='efidp_acpi_hid_ex' size-in-bits='128' is-struct='yes' naming-typedef-id='type-id-181' visibility='default' filepath='src/include/efivar/efivar-dp.h' line='115' column='1' id='type-id-182'>
+    <class-decl name='efidp_acpi_hid_ex' size-in-bits='128' is-struct='yes' naming-typedef-id='type-id-182' visibility='default' filepath='src/include/efivar/efivar-dp.h' line='119' column='1' id='type-id-183'>
       <data-member access='public' layout-offset-in-bits='0'>
-        <var-decl name='header' type-id='type-id-175' visibility='default' filepath='src/include/efivar/efivar-dp.h' line='116' column='1'/>
+        <var-decl name='header' type-id='type-id-176' visibility='default' filepath='src/include/efivar/efivar-dp.h' line='120' column='1'/>
       </data-member>
       <data-member access='public' layout-offset-in-bits='32'>
-        <var-decl name='hid' type-id='type-id-31' visibility='default' filepath='src/include/efivar/efivar-dp.h' line='117' column='1'/>
+        <var-decl name='hid' type-id='type-id-31' visibility='default' filepath='src/include/efivar/efivar-dp.h' line='121' column='1'/>
       </data-member>
       <data-member access='public' layout-offset-in-bits='64'>
-        <var-decl name='uid' type-id='type-id-31' visibility='default' filepath='src/include/efivar/efivar-dp.h' line='118' column='1'/>
+        <var-decl name='uid' type-id='type-id-31' visibility='default' filepath='src/include/efivar/efivar-dp.h' line='122' column='1'/>
       </data-member>
       <data-member access='public' layout-offset-in-bits='96'>
-        <var-decl name='cid' type-id='type-id-31' visibility='default' filepath='src/include/efivar/efivar-dp.h' line='119' column='1'/>
+        <var-decl name='cid' type-id='type-id-31' visibility='default' filepath='src/include/efivar/efivar-dp.h' line='123' column='1'/>
       </data-member>
       <data-member access='public' layout-offset-in-bits='128'>
-        <var-decl name='hidstr' type-id='type-id-161' visibility='default' filepath='src/include/efivar/efivar-dp.h' line='121' column='1'/>
+        <var-decl name='hidstr' type-id='type-id-162' visibility='default' filepath='src/include/efivar/efivar-dp.h' line='125' column='1'/>
       </data-member>
     </class-decl>
-    <class-decl name='efidp_atapi' size-in-bits='64' is-struct='yes' naming-typedef-id='type-id-183' visibility='default' filepath='src/include/efivar/efivar-dp.h' line='317' column='1' id='type-id-184'>
+    <class-decl name='efidp_atapi' size-in-bits='64' is-struct='yes' naming-typedef-id='type-id-184' visibility='default' filepath='src/include/efivar/efivar-dp.h' line='321' column='1' id='type-id-185'>
       <data-member access='public' layout-offset-in-bits='0'>
-        <var-decl name='header' type-id='type-id-175' visibility='default' filepath='src/include/efivar/efivar-dp.h' line='318' column='1'/>
+        <var-decl name='header' type-id='type-id-176' visibility='default' filepath='src/include/efivar/efivar-dp.h' line='322' column='1'/>
       </data-member>
       <data-member access='public' layout-offset-in-bits='32'>
-        <var-decl name='primary' type-id='type-id-53' visibility='default' filepath='src/include/efivar/efivar-dp.h' line='319' column='1'/>
+        <var-decl name='primary' type-id='type-id-53' visibility='default' filepath='src/include/efivar/efivar-dp.h' line='323' column='1'/>
       </data-member>
       <data-member access='public' layout-offset-in-bits='40'>
-        <var-decl name='slave' type-id='type-id-53' visibility='default' filepath='src/include/efivar/efivar-dp.h' line='320' column='1'/>
+        <var-decl name='slave' type-id='type-id-53' visibility='default' filepath='src/include/efivar/efivar-dp.h' line='324' column='1'/>
       </data-member>
       <data-member access='public' layout-offset-in-bits='48'>
-        <var-decl name='lun' type-id='type-id-44' visibility='default' filepath='src/include/efivar/efivar-dp.h' line='321' column='1'/>
+        <var-decl name='lun' type-id='type-id-44' visibility='default' filepath='src/include/efivar/efivar-dp.h' line='325' column='1'/>
       </data-member>
     </class-decl>
-    <class-decl name='efidp_bios_boot' size-in-bits='64' is-struct='yes' naming-typedef-id='type-id-185' visibility='default' filepath='src/include/efivar/efivar-dp.h' line='806' column='1' id='type-id-186'>
+    <class-decl name='efidp_bios_boot' size-in-bits='64' is-struct='yes' naming-typedef-id='type-id-186' visibility='default' filepath='src/include/efivar/efivar-dp.h' line='811' column='1' id='type-id-187'>
       <data-member access='public' layout-offset-in-bits='0'>
-        <var-decl name='header' type-id='type-id-175' visibility='default' filepath='src/include/efivar/efivar-dp.h' line='807' column='1'/>
+        <var-decl name='header' type-id='type-id-176' visibility='default' filepath='src/include/efivar/efivar-dp.h' line='812' column='1'/>
       </data-member>
       <data-member access='public' layout-offset-in-bits='32'>
-        <var-decl name='device_type' type-id='type-id-44' visibility='default' filepath='src/include/efivar/efivar-dp.h' line='808' column='1'/>
+        <var-decl name='device_type' type-id='type-id-44' visibility='default' filepath='src/include/efivar/efivar-dp.h' line='813' column='1'/>
       </data-member>
       <data-member access='public' layout-offset-in-bits='48'>
-        <var-decl name='status' type-id='type-id-44' visibility='default' filepath='src/include/efivar/efivar-dp.h' line='809' column='1'/>
+        <var-decl name='status' type-id='type-id-44' visibility='default' filepath='src/include/efivar/efivar-dp.h' line='814' column='1'/>
       </data-member>
       <data-member access='public' layout-offset-in-bits='64'>
-        <var-decl name='description' type-id='type-id-187' visibility='default' filepath='src/include/efivar/efivar-dp.h' line='810' column='1'/>
+        <var-decl name='description' type-id='type-id-188' visibility='default' filepath='src/include/efivar/efivar-dp.h' line='815' column='1'/>
       </data-member>
     </class-decl>
-    <class-decl name='efidp_bmc' size-in-bits='104' is-struct='yes' naming-typedef-id='type-id-188' visibility='default' filepath='src/include/efivar/efivar-dp.h' line='92' column='1' id='type-id-189'>
+    <class-decl name='efidp_bmc' size-in-bits='104' is-struct='yes' naming-typedef-id='type-id-189' visibility='default' filepath='src/include/efivar/efivar-dp.h' line='96' column='1' id='type-id-190'>
       <data-member access='public' layout-offset-in-bits='0'>
-        <var-decl name='header' type-id='type-id-175' visibility='default' filepath='src/include/efivar/efivar-dp.h' line='93' column='1'/>
+        <var-decl name='header' type-id='type-id-176' visibility='default' filepath='src/include/efivar/efivar-dp.h' line='97' column='1'/>
       </data-member>
       <data-member access='public' layout-offset-in-bits='32'>
-        <var-decl name='interface_type' type-id='type-id-53' visibility='default' filepath='src/include/efivar/efivar-dp.h' line='94' column='1'/>
+        <var-decl name='interface_type' type-id='type-id-53' visibility='default' filepath='src/include/efivar/efivar-dp.h' line='98' column='1'/>
       </data-member>
       <data-member access='public' layout-offset-in-bits='40'>
-        <var-decl name='base_addr' type-id='type-id-32' visibility='default' filepath='src/include/efivar/efivar-dp.h' line='95' column='1'/>
+        <var-decl name='base_addr' type-id='type-id-32' visibility='default' filepath='src/include/efivar/efivar-dp.h' line='99' column='1'/>
       </data-member>
     </class-decl>
-    <class-decl name='efidp_bt' size-in-bits='80' is-struct='yes' naming-typedef-id='type-id-190' visibility='default' filepath='src/include/efivar/efivar-dp.h' line='665' column='1' id='type-id-191'>
+    <class-decl name='efidp_bt' size-in-bits='80' is-struct='yes' naming-typedef-id='type-id-191' visibility='default' filepath='src/include/efivar/efivar-dp.h' line='670' column='1' id='type-id-192'>
       <data-member access='public' layout-offset-in-bits='0'>
-        <var-decl name='header' type-id='type-id-175' visibility='default' filepath='src/include/efivar/efivar-dp.h' line='666' column='1'/>
+        <var-decl name='header' type-id='type-id-176' visibility='default' filepath='src/include/efivar/efivar-dp.h' line='671' column='1'/>
       </data-member>
       <data-member access='public' layout-offset-in-bits='32'>
-        <var-decl name='addr' type-id='type-id-45' visibility='default' filepath='src/include/efivar/efivar-dp.h' line='667' column='1'/>
+        <var-decl name='addr' type-id='type-id-45' visibility='default' filepath='src/include/efivar/efivar-dp.h' line='672' column='1'/>
       </data-member>
     </class-decl>
-    <class-decl name='efidp_btle' size-in-bits='88' is-struct='yes' naming-typedef-id='type-id-192' visibility='default' filepath='src/include/efivar/efivar-dp.h' line='685' column='1' id='type-id-193'>
+    <class-decl name='efidp_btle' size-in-bits='88' is-struct='yes' naming-typedef-id='type-id-193' visibility='default' filepath='src/include/efivar/efivar-dp.h' line='690' column='1' id='type-id-194'>
       <data-member access='public' layout-offset-in-bits='0'>
-        <var-decl name='header' type-id='type-id-175' visibility='default' filepath='src/include/efivar/efivar-dp.h' line='686' column='1'/>
+        <var-decl name='header' type-id='type-id-176' visibility='default' filepath='src/include/efivar/efivar-dp.h' line='691' column='1'/>
       </data-member>
       <data-member access='public' layout-offset-in-bits='32'>
-        <var-decl name='addr' type-id='type-id-45' visibility='default' filepath='src/include/efivar/efivar-dp.h' line='687' column='1'/>
+        <var-decl name='addr' type-id='type-id-45' visibility='default' filepath='src/include/efivar/efivar-dp.h' line='692' column='1'/>
       </data-member>
       <data-member access='public' layout-offset-in-bits='80'>
-        <var-decl name='addr_type' type-id='type-id-53' visibility='default' filepath='src/include/efivar/efivar-dp.h' line='688' column='1'/>
+        <var-decl name='addr_type' type-id='type-id-53' visibility='default' filepath='src/include/efivar/efivar-dp.h' line='693' column='1'/>
       </data-member>
     </class-decl>
-    <class-decl name='efidp_cdrom' size-in-bits='192' is-struct='yes' naming-typedef-id='type-id-194' visibility='default' filepath='src/include/efivar/efivar-dp.h' line='735' column='1' id='type-id-195'>
+    <class-decl name='efidp_cdrom' size-in-bits='192' is-struct='yes' naming-typedef-id='type-id-195' visibility='default' filepath='src/include/efivar/efivar-dp.h' line='740' column='1' id='type-id-196'>
       <data-member access='public' layout-offset-in-bits='0'>
-        <var-decl name='header' type-id='type-id-175' visibility='default' filepath='src/include/efivar/efivar-dp.h' line='736' column='1'/>
+        <var-decl name='header' type-id='type-id-176' visibility='default' filepath='src/include/efivar/efivar-dp.h' line='741' column='1'/>
       </data-member>
       <data-member access='public' layout-offset-in-bits='32'>
-        <var-decl name='boot_catalog_entry' type-id='type-id-31' visibility='default' filepath='src/include/efivar/efivar-dp.h' line='737' column='1'/>
+        <var-decl name='boot_catalog_entry' type-id='type-id-31' visibility='default' filepath='src/include/efivar/efivar-dp.h' line='742' column='1'/>
       </data-member>
       <data-member access='public' layout-offset-in-bits='64'>
-        <var-decl name='partition_rba' type-id='type-id-32' visibility='default' filepath='src/include/efivar/efivar-dp.h' line='738' column='1'/>
+        <var-decl name='partition_rba' type-id='type-id-32' visibility='default' filepath='src/include/efivar/efivar-dp.h' line='743' column='1'/>
       </data-member>
       <data-member access='public' layout-offset-in-bits='128'>
-        <var-decl name='sectors' type-id='type-id-32' visibility='default' filepath='src/include/efivar/efivar-dp.h' line='739' column='1'/>
+        <var-decl name='sectors' type-id='type-id-32' visibility='default' filepath='src/include/efivar/efivar-dp.h' line='744' column='1'/>
       </data-member>
     </class-decl>
-    <class-decl name='efidp_controller' size-in-bits='64' is-struct='yes' naming-typedef-id='type-id-196' visibility='default' filepath='src/include/efivar/efivar-dp.h' line='86' column='1' id='type-id-197'>
+    <class-decl name='efidp_controller' size-in-bits='64' is-struct='yes' naming-typedef-id='type-id-197' visibility='default' filepath='src/include/efivar/efivar-dp.h' line='90' column='1' id='type-id-198'>
       <data-member access='public' layout-offset-in-bits='0'>
-        <var-decl name='header' type-id='type-id-175' visibility='default' filepath='src/include/efivar/efivar-dp.h' line='87' column='1'/>
+        <var-decl name='header' type-id='type-id-176' visibility='default' filepath='src/include/efivar/efivar-dp.h' line='91' column='1'/>
       </data-member>
       <data-member access='public' layout-offset-in-bits='32'>
-        <var-decl name='controller' type-id='type-id-31' visibility='default' filepath='src/include/efivar/efivar-dp.h' line='88' column='1'/>
+        <var-decl name='controller' type-id='type-id-31' visibility='default' filepath='src/include/efivar/efivar-dp.h' line='92' column='1'/>
       </data-member>
     </class-decl>
-    <class-decl name='efidp_dns' size-in-bits='40' is-struct='yes' naming-typedef-id='type-id-198' visibility='default' filepath='src/include/efivar/efivar-dp.h' line='695' column='1' id='type-id-199'>
+    <class-decl name='efidp_dns' size-in-bits='40' is-struct='yes' naming-typedef-id='type-id-199' visibility='default' filepath='src/include/efivar/efivar-dp.h' line='700' column='1' id='type-id-200'>
       <data-member access='public' layout-offset-in-bits='0'>
-        <var-decl name='header' type-id='type-id-175' visibility='default' filepath='src/include/efivar/efivar-dp.h' line='696' column='1'/>
+        <var-decl name='header' type-id='type-id-176' visibility='default' filepath='src/include/efivar/efivar-dp.h' line='701' column='1'/>
       </data-member>
       <data-member access='public' layout-offset-in-bits='32'>
-        <var-decl name='is_ipv6' type-id='type-id-53' visibility='default' filepath='src/include/efivar/efivar-dp.h' line='697' column='1'/>
+        <var-decl name='is_ipv6' type-id='type-id-53' visibility='default' filepath='src/include/efivar/efivar-dp.h' line='702' column='1'/>
       </data-member>
       <data-member access='public' layout-offset-in-bits='40'>
-        <var-decl name='addrs' type-id='type-id-164' visibility='default' filepath='src/include/efivar/efivar-dp.h' line='698' column='1'/>
+        <var-decl name='addrs' type-id='type-id-165' visibility='default' filepath='src/include/efivar/efivar-dp.h' line='703' column='1'/>
       </data-member>
     </class-decl>
-    <class-decl name='efidp_emmc' size-in-bits='40' is-struct='yes' naming-typedef-id='type-id-200' visibility='default' filepath='src/include/efivar/efivar-dp.h' line='677' column='1' id='type-id-201'>
+    <class-decl name='efidp_emmc' size-in-bits='40' is-struct='yes' naming-typedef-id='type-id-201' visibility='default' filepath='src/include/efivar/efivar-dp.h' line='682' column='1' id='type-id-202'>
       <data-member access='public' layout-offset-in-bits='0'>
-        <var-decl name='header' type-id='type-id-175' visibility='default' filepath='src/include/efivar/efivar-dp.h' line='678' column='1'/>
+        <var-decl name='header' type-id='type-id-176' visibility='default' filepath='src/include/efivar/efivar-dp.h' line='683' column='1'/>
       </data-member>
       <data-member access='public' layout-offset-in-bits='32'>
-        <var-decl name='slot' type-id='type-id-53' visibility='default' filepath='src/include/efivar/efivar-dp.h' line='679' column='1'/>
+        <var-decl name='slot' type-id='type-id-53' visibility='default' filepath='src/include/efivar/efivar-dp.h' line='684' column='1'/>
       </data-member>
     </class-decl>
-    <class-decl name='efidp_fc' size-in-bits='192' is-struct='yes' naming-typedef-id='type-id-202' visibility='default' filepath='src/include/efivar/efivar-dp.h' line='336' column='1' id='type-id-203'>
+    <class-decl name='efidp_fc' size-in-bits='192' is-struct='yes' naming-typedef-id='type-id-203' visibility='default' filepath='src/include/efivar/efivar-dp.h' line='340' column='1' id='type-id-204'>
       <data-member access='public' layout-offset-in-bits='0'>
-        <var-decl name='header' type-id='type-id-175' visibility='default' filepath='src/include/efivar/efivar-dp.h' line='337' column='1'/>
+        <var-decl name='header' type-id='type-id-176' visibility='default' filepath='src/include/efivar/efivar-dp.h' line='341' column='1'/>
       </data-member>
       <data-member access='public' layout-offset-in-bits='32'>
-        <var-decl name='reserved' type-id='type-id-31' visibility='default' filepath='src/include/efivar/efivar-dp.h' line='338' column='1'/>
+        <var-decl name='reserved' type-id='type-id-31' visibility='default' filepath='src/include/efivar/efivar-dp.h' line='342' column='1'/>
       </data-member>
       <data-member access='public' layout-offset-in-bits='64'>
-        <var-decl name='wwn' type-id='type-id-32' visibility='default' filepath='src/include/efivar/efivar-dp.h' line='339' column='1'/>
+        <var-decl name='wwn' type-id='type-id-32' visibility='default' filepath='src/include/efivar/efivar-dp.h' line='343' column='1'/>
       </data-member>
       <data-member access='public' layout-offset-in-bits='128'>
-        <var-decl name='lun' type-id='type-id-32' visibility='default' filepath='src/include/efivar/efivar-dp.h' line='340' column='1'/>
+        <var-decl name='lun' type-id='type-id-32' visibility='default' filepath='src/include/efivar/efivar-dp.h' line='344' column='1'/>
       </data-member>
     </class-decl>
-    <class-decl name='efidp_fcex' size-in-bits='192' is-struct='yes' naming-typedef-id='type-id-204' visibility='default' filepath='src/include/efivar/efivar-dp.h' line='344' column='1' id='type-id-205'>
+    <class-decl name='efidp_fcex' size-in-bits='192' is-struct='yes' naming-typedef-id='type-id-205' visibility='default' filepath='src/include/efivar/efivar-dp.h' line='348' column='1' id='type-id-206'>
       <data-member access='public' layout-offset-in-bits='0'>
-        <var-decl name='header' type-id='type-id-175' visibility='default' filepath='src/include/efivar/efivar-dp.h' line='345' column='1'/>
+        <var-decl name='header' type-id='type-id-176' visibility='default' filepath='src/include/efivar/efivar-dp.h' line='349' column='1'/>
       </data-member>
       <data-member access='public' layout-offset-in-bits='32'>
-        <var-decl name='reserved' type-id='type-id-31' visibility='default' filepath='src/include/efivar/efivar-dp.h' line='346' column='1'/>
+        <var-decl name='reserved' type-id='type-id-31' visibility='default' filepath='src/include/efivar/efivar-dp.h' line='350' column='1'/>
       </data-member>
       <data-member access='public' layout-offset-in-bits='64'>
-        <var-decl name='wwn' type-id='type-id-51' visibility='default' filepath='src/include/efivar/efivar-dp.h' line='347' column='1'/>
+        <var-decl name='wwn' type-id='type-id-51' visibility='default' filepath='src/include/efivar/efivar-dp.h' line='351' column='1'/>
       </data-member>
       <data-member access='public' layout-offset-in-bits='128'>
-        <var-decl name='lun' type-id='type-id-51' visibility='default' filepath='src/include/efivar/efivar-dp.h' line='348' column='1'/>
+        <var-decl name='lun' type-id='type-id-51' visibility='default' filepath='src/include/efivar/efivar-dp.h' line='352' column='1'/>
       </data-member>
     </class-decl>
-    <class-decl name='efidp_file' size-in-bits='32' is-struct='yes' naming-typedef-id='type-id-206' visibility='default' filepath='src/include/efivar/efivar-dp.h' line='754' column='1' id='type-id-207'>
+    <class-decl name='efidp_file' size-in-bits='32' is-struct='yes' naming-typedef-id='type-id-207' visibility='default' filepath='src/include/efivar/efivar-dp.h' line='759' column='1' id='type-id-208'>
       <data-member access='public' layout-offset-in-bits='0'>
-        <var-decl name='header' type-id='type-id-175' visibility='default' filepath='src/include/efivar/efivar-dp.h' line='755' column='1'/>
+        <var-decl name='header' type-id='type-id-176' visibility='default' filepath='src/include/efivar/efivar-dp.h' line='760' column='1'/>
       </data-member>
       <data-member access='public' layout-offset-in-bits='32'>
-        <var-decl name='name' type-id='type-id-172' visibility='default' filepath='src/include/efivar/efivar-dp.h' line='756' column='1'/>
+        <var-decl name='name' type-id='type-id-173' visibility='default' filepath='src/include/efivar/efivar-dp.h' line='761' column='1'/>
       </data-member>
     </class-decl>
-    <class-decl name='efidp_firmware_file' size-in-bits='32' is-struct='yes' naming-typedef-id='type-id-208' visibility='default' filepath='src/include/efivar/efivar-dp.h' line='767' column='1' id='type-id-209'>
+    <class-decl name='efidp_firmware_file' size-in-bits='32' is-struct='yes' naming-typedef-id='type-id-209' visibility='default' filepath='src/include/efivar/efivar-dp.h' line='772' column='1' id='type-id-210'>
       <data-member access='public' layout-offset-in-bits='0'>
-        <var-decl name='header' type-id='type-id-175' visibility='default' filepath='src/include/efivar/efivar-dp.h' line='768' column='1'/>
+        <var-decl name='header' type-id='type-id-176' visibility='default' filepath='src/include/efivar/efivar-dp.h' line='773' column='1'/>
       </data-member>
       <data-member access='public' layout-offset-in-bits='32'>
-        <var-decl name='pi_info' type-id='type-id-187' visibility='default' filepath='src/include/efivar/efivar-dp.h' line='769' column='1'/>
+        <var-decl name='pi_info' type-id='type-id-188' visibility='default' filepath='src/include/efivar/efivar-dp.h' line='774' column='1'/>
       </data-member>
     </class-decl>
-    <class-decl name='efidp_firmware_volume' size-in-bits='32' is-struct='yes' naming-typedef-id='type-id-210' visibility='default' filepath='src/include/efivar/efivar-dp.h' line='773' column='1' id='type-id-211'>
+    <class-decl name='efidp_firmware_volume' size-in-bits='32' is-struct='yes' naming-typedef-id='type-id-211' visibility='default' filepath='src/include/efivar/efivar-dp.h' line='778' column='1' id='type-id-212'>
       <data-member access='public' layout-offset-in-bits='0'>
-        <var-decl name='header' type-id='type-id-175' visibility='default' filepath='src/include/efivar/efivar-dp.h' line='774' column='1'/>
+        <var-decl name='header' type-id='type-id-176' visibility='default' filepath='src/include/efivar/efivar-dp.h' line='779' column='1'/>
       </data-member>
       <data-member access='public' layout-offset-in-bits='32'>
-        <var-decl name='pi_info' type-id='type-id-187' visibility='default' filepath='src/include/efivar/efivar-dp.h' line='775' column='1'/>
+        <var-decl name='pi_info' type-id='type-id-188' visibility='default' filepath='src/include/efivar/efivar-dp.h' line='780' column='1'/>
       </data-member>
     </class-decl>
-    <class-decl name='efidp_hd' size-in-bits='336' is-struct='yes' naming-typedef-id='type-id-212' visibility='default' filepath='src/include/efivar/efivar-dp.h' line='710' column='1' id='type-id-213'>
+    <class-decl name='efidp_hd' size-in-bits='336' is-struct='yes' naming-typedef-id='type-id-213' visibility='default' filepath='src/include/efivar/efivar-dp.h' line='715' column='1' id='type-id-214'>
       <data-member access='public' layout-offset-in-bits='0'>
-        <var-decl name='header' type-id='type-id-175' visibility='default' filepath='src/include/efivar/efivar-dp.h' line='711' column='1'/>
+        <var-decl name='header' type-id='type-id-176' visibility='default' filepath='src/include/efivar/efivar-dp.h' line='716' column='1'/>
       </data-member>
       <data-member access='public' layout-offset-in-bits='32'>
-        <var-decl name='partition_number' type-id='type-id-31' visibility='default' filepath='src/include/efivar/efivar-dp.h' line='712' column='1'/>
+        <var-decl name='partition_number' type-id='type-id-31' visibility='default' filepath='src/include/efivar/efivar-dp.h' line='717' column='1'/>
       </data-member>
       <data-member access='public' layout-offset-in-bits='64'>
-        <var-decl name='start' type-id='type-id-32' visibility='default' filepath='src/include/efivar/efivar-dp.h' line='713' column='1'/>
+        <var-decl name='start' type-id='type-id-32' visibility='default' filepath='src/include/efivar/efivar-dp.h' line='718' column='1'/>
       </data-member>
       <data-member access='public' layout-offset-in-bits='128'>
-        <var-decl name='size' type-id='type-id-32' visibility='default' filepath='src/include/efivar/efivar-dp.h' line='714' column='1'/>
+        <var-decl name='size' type-id='type-id-32' visibility='default' filepath='src/include/efivar/efivar-dp.h' line='719' column='1'/>
       </data-member>
       <data-member access='public' layout-offset-in-bits='192'>
-        <var-decl name='signature' type-id='type-id-170' visibility='default' filepath='src/include/efivar/efivar-dp.h' line='715' column='1'/>
+        <var-decl name='signature' type-id='type-id-171' visibility='default' filepath='src/include/efivar/efivar-dp.h' line='720' column='1'/>
       </data-member>
       <data-member access='public' layout-offset-in-bits='320'>
-        <var-decl name='format' type-id='type-id-53' visibility='default' filepath='src/include/efivar/efivar-dp.h' line='716' column='1'/>
+        <var-decl name='format' type-id='type-id-53' visibility='default' filepath='src/include/efivar/efivar-dp.h' line='721' column='1'/>
       </data-member>
       <data-member access='public' layout-offset-in-bits='328'>
-        <var-decl name='signature_type' type-id='type-id-53' visibility='default' filepath='src/include/efivar/efivar-dp.h' line='717' column='1'/>
+        <var-decl name='signature_type' type-id='type-id-53' visibility='default' filepath='src/include/efivar/efivar-dp.h' line='722' column='1'/>
       </data-member>
     </class-decl>
-    <class-decl name='efidp_header' size-in-bits='32' is-struct='yes' naming-typedef-id='type-id-175' visibility='default' filepath='src/include/efivar/efivar-dp.h' line='23' column='1' id='type-id-214'>
+    <class-decl name='efidp_header' size-in-bits='32' is-struct='yes' naming-typedef-id='type-id-176' visibility='default' filepath='src/include/efivar/efivar-dp.h' line='27' column='1' id='type-id-215'>
       <data-member access='public' layout-offset-in-bits='0'>
-        <var-decl name='type' type-id='type-id-53' visibility='default' filepath='src/include/efivar/efivar-dp.h' line='24' column='1'/>
+        <var-decl name='type' type-id='type-id-53' visibility='default' filepath='src/include/efivar/efivar-dp.h' line='28' column='1'/>
       </data-member>
       <data-member access='public' layout-offset-in-bits='8'>
-        <var-decl name='subtype' type-id='type-id-53' visibility='default' filepath='src/include/efivar/efivar-dp.h' line='25' column='1'/>
+        <var-decl name='subtype' type-id='type-id-53' visibility='default' filepath='src/include/efivar/efivar-dp.h' line='29' column='1'/>
       </data-member>
       <data-member access='public' layout-offset-in-bits='16'>
-        <var-decl name='length' type-id='type-id-44' visibility='default' filepath='src/include/efivar/efivar-dp.h' line='26' column='1'/>
+        <var-decl name='length' type-id='type-id-44' visibility='default' filepath='src/include/efivar/efivar-dp.h' line='30' column='1'/>
       </data-member>
     </class-decl>
-    <class-decl name='efidp_hw_vendor' size-in-bits='160' is-struct='yes' naming-typedef-id='type-id-215' visibility='default' filepath='src/include/efivar/efivar-dp.h' line='65' column='1' id='type-id-216'>
+    <class-decl name='efidp_hw_vendor' size-in-bits='160' is-struct='yes' naming-typedef-id='type-id-216' visibility='default' filepath='src/include/efivar/efivar-dp.h' line='69' column='1' id='type-id-217'>
       <data-member access='public' layout-offset-in-bits='0'>
-        <var-decl name='header' type-id='type-id-175' visibility='default' filepath='src/include/efivar/efivar-dp.h' line='66' column='1'/>
+        <var-decl name='header' type-id='type-id-176' visibility='default' filepath='src/include/efivar/efivar-dp.h' line='70' column='1'/>
       </data-member>
       <data-member access='public' layout-offset-in-bits='32'>
-        <var-decl name='vendor_guid' type-id='type-id-42' visibility='default' filepath='src/include/efivar/efivar-dp.h' line='67' column='1'/>
+        <var-decl name='vendor_guid' type-id='type-id-42' visibility='default' filepath='src/include/efivar/efivar-dp.h' line='71' column='1'/>
       </data-member>
       <data-member access='public' layout-offset-in-bits='160'>
-        <var-decl name='vendor_data' type-id='type-id-187' visibility='default' filepath='src/include/efivar/efivar-dp.h' line='68' column='1'/>
+        <var-decl name='vendor_data' type-id='type-id-188' visibility='default' filepath='src/include/efivar/efivar-dp.h' line='72' column='1'/>
       </data-member>
     </class-decl>
-    <class-decl name='efidp_i2o' size-in-bits='64' is-struct='yes' naming-typedef-id='type-id-217' visibility='default' filepath='src/include/efivar/efivar-dp.h' line='419' column='1' id='type-id-218'>
+    <class-decl name='efidp_i2o' size-in-bits='64' is-struct='yes' naming-typedef-id='type-id-218' visibility='default' filepath='src/include/efivar/efivar-dp.h' line='423' column='1' id='type-id-219'>
       <data-member access='public' layout-offset-in-bits='0'>
-        <var-decl name='header' type-id='type-id-175' visibility='default' filepath='src/include/efivar/efivar-dp.h' line='420' column='1'/>
+        <var-decl name='header' type-id='type-id-176' visibility='default' filepath='src/include/efivar/efivar-dp.h' line='424' column='1'/>
       </data-member>
       <data-member access='public' layout-offset-in-bits='32'>
-        <var-decl name='target' type-id='type-id-31' visibility='default' filepath='src/include/efivar/efivar-dp.h' line='421' column='1'/>
+        <var-decl name='target' type-id='type-id-31' visibility='default' filepath='src/include/efivar/efivar-dp.h' line='425' column='1'/>
       </data-member>
     </class-decl>
-    <class-decl name='efidp_infiniband' size-in-bits='384' is-struct='yes' naming-typedef-id='type-id-219' visibility='default' filepath='src/include/efivar/efivar-dp.h' line='482' column='1' id='type-id-220'>
+    <class-decl name='efidp_infiniband' size-in-bits='384' is-struct='yes' naming-typedef-id='type-id-220' visibility='default' filepath='src/include/efivar/efivar-dp.h' line='487' column='1' id='type-id-221'>
       <data-member access='public' layout-offset-in-bits='0'>
-        <var-decl name='header' type-id='type-id-175' visibility='default' filepath='src/include/efivar/efivar-dp.h' line='483' column='1'/>
+        <var-decl name='header' type-id='type-id-176' visibility='default' filepath='src/include/efivar/efivar-dp.h' line='488' column='1'/>
       </data-member>
       <data-member access='public' layout-offset-in-bits='32'>
-        <var-decl name='resource_flags' type-id='type-id-31' visibility='default' filepath='src/include/efivar/efivar-dp.h' line='484' column='1'/>
+        <var-decl name='resource_flags' type-id='type-id-31' visibility='default' filepath='src/include/efivar/efivar-dp.h' line='489' column='1'/>
       </data-member>
       <data-member access='public' layout-offset-in-bits='64'>
-        <var-decl name='port_gid' type-id='type-id-221' visibility='default' filepath='src/include/efivar/efivar-dp.h' line='485' column='1'/>
+        <var-decl name='port_gid' type-id='type-id-222' visibility='default' filepath='src/include/efivar/efivar-dp.h' line='490' column='1'/>
       </data-member>
       <data-member access='public' layout-offset-in-bits='192'>
-        <var-decl name='' type-id='type-id-222' visibility='default'/>
+        <var-decl name='' type-id='type-id-223' visibility='default'/>
       </data-member>
       <data-member access='public' layout-offset-in-bits='256'>
-        <var-decl name='target_port_id' type-id='type-id-32' visibility='default' filepath='src/include/efivar/efivar-dp.h' line='490' column='1'/>
+        <var-decl name='target_port_id' type-id='type-id-32' visibility='default' filepath='src/include/efivar/efivar-dp.h' line='495' column='1'/>
       </data-member>
       <data-member access='public' layout-offset-in-bits='320'>
-        <var-decl name='device_id' type-id='type-id-32' visibility='default' filepath='src/include/efivar/efivar-dp.h' line='491' column='1'/>
+        <var-decl name='device_id' type-id='type-id-32' visibility='default' filepath='src/include/efivar/efivar-dp.h' line='496' column='1'/>
       </data-member>
     </class-decl>
-    <class-decl name='efidp_ipv4_addr' size-in-bits='216' is-struct='yes' naming-typedef-id='type-id-223' visibility='default' filepath='src/include/efivar/efivar-dp.h' line='437' column='1' id='type-id-224'>
+    <class-decl name='efidp_ipv4_addr' size-in-bits='216' is-struct='yes' naming-typedef-id='type-id-224' visibility='default' filepath='src/include/efivar/efivar-dp.h' line='441' column='1' id='type-id-225'>
       <data-member access='public' layout-offset-in-bits='0'>
-        <var-decl name='header' type-id='type-id-175' visibility='default' filepath='src/include/efivar/efivar-dp.h' line='438' column='1'/>
+        <var-decl name='header' type-id='type-id-176' visibility='default' filepath='src/include/efivar/efivar-dp.h' line='442' column='1'/>
       </data-member>
       <data-member access='public' layout-offset-in-bits='32'>
-        <var-decl name='local_ipv4_addr' type-id='type-id-167' visibility='default' filepath='src/include/efivar/efivar-dp.h' line='439' column='1'/>
+        <var-decl name='local_ipv4_addr' type-id='type-id-168' visibility='default' filepath='src/include/efivar/efivar-dp.h' line='443' column='1'/>
       </data-member>
       <data-member access='public' layout-offset-in-bits='64'>
-        <var-decl name='remote_ipv4_addr' type-id='type-id-167' visibility='default' filepath='src/include/efivar/efivar-dp.h' line='440' column='1'/>
+        <var-decl name='remote_ipv4_addr' type-id='type-id-168' visibility='default' filepath='src/include/efivar/efivar-dp.h' line='444' column='1'/>
       </data-member>
       <data-member access='public' layout-offset-in-bits='96'>
-        <var-decl name='local_port' type-id='type-id-44' visibility='default' filepath='src/include/efivar/efivar-dp.h' line='441' column='1'/>
+        <var-decl name='local_port' type-id='type-id-44' visibility='default' filepath='src/include/efivar/efivar-dp.h' line='445' column='1'/>
       </data-member>
       <data-member access='public' layout-offset-in-bits='112'>
-        <var-decl name='remote_port' type-id='type-id-44' visibility='default' filepath='src/include/efivar/efivar-dp.h' line='442' column='1'/>
+        <var-decl name='remote_port' type-id='type-id-44' visibility='default' filepath='src/include/efivar/efivar-dp.h' line='446' column='1'/>
       </data-member>
       <data-member access='public' layout-offset-in-bits='128'>
-        <var-decl name='protocol' type-id='type-id-44' visibility='default' filepath='src/include/efivar/efivar-dp.h' line='443' column='1'/>
+        <var-decl name='protocol' type-id='type-id-44' visibility='default' filepath='src/include/efivar/efivar-dp.h' line='447' column='1'/>
       </data-member>
       <data-member access='public' layout-offset-in-bits='144'>
-        <var-decl name='static_ip_addr' type-id='type-id-225' visibility='default' filepath='src/include/efivar/efivar-dp.h' line='444' column='1'/>
+        <var-decl name='static_ip_addr' type-id='type-id-226' visibility='default' filepath='src/include/efivar/efivar-dp.h' line='448' column='1'/>
       </data-member>
       <data-member access='public' layout-offset-in-bits='152'>
-        <var-decl name='gateway' type-id='type-id-167' visibility='default' filepath='src/include/efivar/efivar-dp.h' line='445' column='1'/>
+        <var-decl name='gateway' type-id='type-id-168' visibility='default' filepath='src/include/efivar/efivar-dp.h' line='449' column='1'/>
       </data-member>
       <data-member access='public' layout-offset-in-bits='184'>
-        <var-decl name='netmask' type-id='type-id-167' visibility='default' filepath='src/include/efivar/efivar-dp.h' line='446' column='1'/>
+        <var-decl name='netmask' type-id='type-id-168' visibility='default' filepath='src/include/efivar/efivar-dp.h' line='450' column='1'/>
       </data-member>
     </class-decl>
-    <class-decl name='efidp_ipv6_addr' size-in-bits='360' is-struct='yes' naming-typedef-id='type-id-226' visibility='default' filepath='src/include/efivar/efivar-dp.h' line='459' column='1' id='type-id-227'>
+    <class-decl name='efidp_ipv6_addr' size-in-bits='480' is-struct='yes' naming-typedef-id='type-id-227' visibility='default' filepath='src/include/efivar/efivar-dp.h' line='463' column='1' id='type-id-228'>
       <data-member access='public' layout-offset-in-bits='0'>
-        <var-decl name='header' type-id='type-id-175' visibility='default' filepath='src/include/efivar/efivar-dp.h' line='460' column='1'/>
+        <var-decl name='header' type-id='type-id-176' visibility='default' filepath='src/include/efivar/efivar-dp.h' line='464' column='1'/>
       </data-member>
       <data-member access='public' layout-offset-in-bits='32'>
-        <var-decl name='local_ipv6_addr' type-id='type-id-170' visibility='default' filepath='src/include/efivar/efivar-dp.h' line='461' column='1'/>
+        <var-decl name='local_ipv6_addr' type-id='type-id-171' visibility='default' filepath='src/include/efivar/efivar-dp.h' line='465' column='1'/>
       </data-member>
       <data-member access='public' layout-offset-in-bits='160'>
-        <var-decl name='remote_ipv6_addr' type-id='type-id-170' visibility='default' filepath='src/include/efivar/efivar-dp.h' line='462' column='1'/>
+        <var-decl name='remote_ipv6_addr' type-id='type-id-171' visibility='default' filepath='src/include/efivar/efivar-dp.h' line='466' column='1'/>
       </data-member>
       <data-member access='public' layout-offset-in-bits='288'>
-        <var-decl name='local_port' type-id='type-id-44' visibility='default' filepath='src/include/efivar/efivar-dp.h' line='463' column='1'/>
+        <var-decl name='local_port' type-id='type-id-44' visibility='default' filepath='src/include/efivar/efivar-dp.h' line='467' column='1'/>
       </data-member>
       <data-member access='public' layout-offset-in-bits='304'>
-        <var-decl name='remote_port' type-id='type-id-44' visibility='default' filepath='src/include/efivar/efivar-dp.h' line='464' column='1'/>
+        <var-decl name='remote_port' type-id='type-id-44' visibility='default' filepath='src/include/efivar/efivar-dp.h' line='468' column='1'/>
       </data-member>
       <data-member access='public' layout-offset-in-bits='320'>
-        <var-decl name='protocol' type-id='type-id-44' visibility='default' filepath='src/include/efivar/efivar-dp.h' line='465' column='1'/>
+        <var-decl name='protocol' type-id='type-id-44' visibility='default' filepath='src/include/efivar/efivar-dp.h' line='469' column='1'/>
       </data-member>
       <data-member access='public' layout-offset-in-bits='336'>
-        <var-decl name='ip_addr_origin' type-id='type-id-53' visibility='default' filepath='src/include/efivar/efivar-dp.h' line='466' column='1'/>
+        <var-decl name='ip_addr_origin' type-id='type-id-53' visibility='default' filepath='src/include/efivar/efivar-dp.h' line='470' column='1'/>
       </data-member>
       <data-member access='public' layout-offset-in-bits='344'>
-        <var-decl name='prefix_length' type-id='type-id-53' visibility='default' filepath='src/include/efivar/efivar-dp.h' line='467' column='1'/>
+        <var-decl name='prefix_length' type-id='type-id-53' visibility='default' filepath='src/include/efivar/efivar-dp.h' line='471' column='1'/>
       </data-member>
       <data-member access='public' layout-offset-in-bits='352'>
-        <var-decl name='gateway_ipv6_addr' type-id='type-id-53' visibility='default' filepath='src/include/efivar/efivar-dp.h' line='468' column='1'/>
+        <var-decl name='gateway_ipv6_addr' type-id='type-id-171' visibility='default' filepath='src/include/efivar/efivar-dp.h' line='472' column='1'/>
       </data-member>
     </class-decl>
-    <class-decl name='efidp_iscsi' size-in-bits='144' is-struct='yes' naming-typedef-id='type-id-228' visibility='default' filepath='src/include/efivar/efivar-dp.h' line='602' column='1' id='type-id-229'>
+    <class-decl name='efidp_iscsi' size-in-bits='144' is-struct='yes' naming-typedef-id='type-id-229' visibility='default' filepath='src/include/efivar/efivar-dp.h' line='607' column='1' id='type-id-230'>
       <data-member access='public' layout-offset-in-bits='0'>
-        <var-decl name='header' type-id='type-id-175' visibility='default' filepath='src/include/efivar/efivar-dp.h' line='603' column='1'/>
+        <var-decl name='header' type-id='type-id-176' visibility='default' filepath='src/include/efivar/efivar-dp.h' line='608' column='1'/>
       </data-member>
       <data-member access='public' layout-offset-in-bits='32'>
-        <var-decl name='protocol' type-id='type-id-44' visibility='default' filepath='src/include/efivar/efivar-dp.h' line='604' column='1'/>
+        <var-decl name='protocol' type-id='type-id-44' visibility='default' filepath='src/include/efivar/efivar-dp.h' line='609' column='1'/>
       </data-member>
       <data-member access='public' layout-offset-in-bits='48'>
-        <var-decl name='options' type-id='type-id-44' visibility='default' filepath='src/include/efivar/efivar-dp.h' line='605' column='1'/>
+        <var-decl name='options' type-id='type-id-44' visibility='default' filepath='src/include/efivar/efivar-dp.h' line='610' column='1'/>
       </data-member>
       <data-member access='public' layout-offset-in-bits='64'>
-        <var-decl name='lun' type-id='type-id-51' visibility='default' filepath='src/include/efivar/efivar-dp.h' line='606' column='1'/>
+        <var-decl name='lun' type-id='type-id-51' visibility='default' filepath='src/include/efivar/efivar-dp.h' line='611' column='1'/>
       </data-member>
       <data-member access='public' layout-offset-in-bits='128'>
-        <var-decl name='tpgt' type-id='type-id-44' visibility='default' filepath='src/include/efivar/efivar-dp.h' line='607' column='1'/>
+        <var-decl name='tpgt' type-id='type-id-44' visibility='default' filepath='src/include/efivar/efivar-dp.h' line='612' column='1'/>
       </data-member>
       <data-member access='public' layout-offset-in-bits='144'>
-        <var-decl name='target_name' type-id='type-id-187' visibility='default' filepath='src/include/efivar/efivar-dp.h' line='608' column='1'/>
+        <var-decl name='target_name' type-id='type-id-188' visibility='default' filepath='src/include/efivar/efivar-dp.h' line='613' column='1'/>
       </data-member>
     </class-decl>
-    <class-decl name='efidp_lun' size-in-bits='40' is-struct='yes' naming-typedef-id='type-id-230' visibility='default' filepath='src/include/efivar/efivar-dp.h' line='402' column='1' id='type-id-231'>
+    <class-decl name='efidp_lun' size-in-bits='40' is-struct='yes' naming-typedef-id='type-id-231' visibility='default' filepath='src/include/efivar/efivar-dp.h' line='406' column='1' id='type-id-232'>
       <data-member access='public' layout-offset-in-bits='0'>
-        <var-decl name='header' type-id='type-id-175' visibility='default' filepath='src/include/efivar/efivar-dp.h' line='403' column='1'/>
+        <var-decl name='header' type-id='type-id-176' visibility='default' filepath='src/include/efivar/efivar-dp.h' line='407' column='1'/>
       </data-member>
       <data-member access='public' layout-offset-in-bits='32'>
-        <var-decl name='lun' type-id='type-id-53' visibility='default' filepath='src/include/efivar/efivar-dp.h' line='404' column='1'/>
+        <var-decl name='lun' type-id='type-id-53' visibility='default' filepath='src/include/efivar/efivar-dp.h' line='408' column='1'/>
       </data-member>
     </class-decl>
-    <class-decl name='efidp_mac_addr' size-in-bits='296' is-struct='yes' naming-typedef-id='type-id-232' visibility='default' filepath='src/include/efivar/efivar-dp.h' line='425' column='1' id='type-id-233'>
+    <class-decl name='efidp_mac_addr' size-in-bits='296' is-struct='yes' naming-typedef-id='type-id-233' visibility='default' filepath='src/include/efivar/efivar-dp.h' line='429' column='1' id='type-id-234'>
       <data-member access='public' layout-offset-in-bits='0'>
-        <var-decl name='header' type-id='type-id-175' visibility='default' filepath='src/include/efivar/efivar-dp.h' line='426' column='1'/>
+        <var-decl name='header' type-id='type-id-176' visibility='default' filepath='src/include/efivar/efivar-dp.h' line='430' column='1'/>
       </data-member>
       <data-member access='public' layout-offset-in-bits='32'>
-        <var-decl name='mac_addr' type-id='type-id-234' visibility='default' filepath='src/include/efivar/efivar-dp.h' line='427' column='1'/>
+        <var-decl name='mac_addr' type-id='type-id-235' visibility='default' filepath='src/include/efivar/efivar-dp.h' line='431' column='1'/>
       </data-member>
       <data-member access='public' layout-offset-in-bits='288'>
-        <var-decl name='if_type' type-id='type-id-53' visibility='default' filepath='src/include/efivar/efivar-dp.h' line='428' column='1'/>
+        <var-decl name='if_type' type-id='type-id-53' visibility='default' filepath='src/include/efivar/efivar-dp.h' line='432' column='1'/>
       </data-member>
     </class-decl>
-    <class-decl name='efidp_media_vendor' size-in-bits='160' is-struct='yes' naming-typedef-id='type-id-235' visibility='default' filepath='src/include/efivar/efivar-dp.h' line='743' column='1' id='type-id-236'>
+    <class-decl name='efidp_media_vendor' size-in-bits='160' is-struct='yes' naming-typedef-id='type-id-236' visibility='default' filepath='src/include/efivar/efivar-dp.h' line='748' column='1' id='type-id-237'>
       <data-member access='public' layout-offset-in-bits='0'>
-        <var-decl name='header' type-id='type-id-175' visibility='default' filepath='src/include/efivar/efivar-dp.h' line='744' column='1'/>
+        <var-decl name='header' type-id='type-id-176' visibility='default' filepath='src/include/efivar/efivar-dp.h' line='749' column='1'/>
       </data-member>
       <data-member access='public' layout-offset-in-bits='32'>
-        <var-decl name='vendor_guid' type-id='type-id-42' visibility='default' filepath='src/include/efivar/efivar-dp.h' line='745' column='1'/>
+        <var-decl name='vendor_guid' type-id='type-id-42' visibility='default' filepath='src/include/efivar/efivar-dp.h' line='750' column='1'/>
       </data-member>
       <data-member access='public' layout-offset-in-bits='160'>
-        <var-decl name='vendor_data' type-id='type-id-187' visibility='default' filepath='src/include/efivar/efivar-dp.h' line='746' column='1'/>
+        <var-decl name='vendor_data' type-id='type-id-188' visibility='default' filepath='src/include/efivar/efivar-dp.h' line='751' column='1'/>
       </data-member>
     </class-decl>
-    <class-decl name='efidp_mmio' size-in-bits='192' is-struct='yes' naming-typedef-id='type-id-237' visibility='default' filepath='src/include/efivar/efivar-dp.h' line='57' column='1' id='type-id-238'>
+    <class-decl name='efidp_mmio' size-in-bits='192' is-struct='yes' naming-typedef-id='type-id-238' visibility='default' filepath='src/include/efivar/efivar-dp.h' line='61' column='1' id='type-id-239'>
       <data-member access='public' layout-offset-in-bits='0'>
-        <var-decl name='header' type-id='type-id-175' visibility='default' filepath='src/include/efivar/efivar-dp.h' line='58' column='1'/>
+        <var-decl name='header' type-id='type-id-176' visibility='default' filepath='src/include/efivar/efivar-dp.h' line='62' column='1'/>
       </data-member>
       <data-member access='public' layout-offset-in-bits='32'>
-        <var-decl name='memory_type' type-id='type-id-31' visibility='default' filepath='src/include/efivar/efivar-dp.h' line='59' column='1'/>
+        <var-decl name='memory_type' type-id='type-id-31' visibility='default' filepath='src/include/efivar/efivar-dp.h' line='63' column='1'/>
       </data-member>
       <data-member access='public' layout-offset-in-bits='64'>
-        <var-decl name='starting_address' type-id='type-id-32' visibility='default' filepath='src/include/efivar/efivar-dp.h' line='60' column='1'/>
+        <var-decl name='starting_address' type-id='type-id-32' visibility='default' filepath='src/include/efivar/efivar-dp.h' line='64' column='1'/>
       </data-member>
       <data-member access='public' layout-offset-in-bits='128'>
-        <var-decl name='ending_address' type-id='type-id-32' visibility='default' filepath='src/include/efivar/efivar-dp.h' line='61' column='1'/>
+        <var-decl name='ending_address' type-id='type-id-32' visibility='default' filepath='src/include/efivar/efivar-dp.h' line='65' column='1'/>
       </data-member>
     </class-decl>
-    <class-decl name='efidp_msg_vendor' size-in-bits='160' is-struct='yes' naming-typedef-id='type-id-239' visibility='default' filepath='src/include/efivar/efivar-dp.h' line='532' column='1' id='type-id-240'>
+    <class-decl name='efidp_msg_vendor' size-in-bits='160' is-struct='yes' naming-typedef-id='type-id-240' visibility='default' filepath='src/include/efivar/efivar-dp.h' line='537' column='1' id='type-id-241'>
       <data-member access='public' layout-offset-in-bits='0'>
-        <var-decl name='header' type-id='type-id-175' visibility='default' filepath='src/include/efivar/efivar-dp.h' line='533' column='1'/>
+        <var-decl name='header' type-id='type-id-176' visibility='default' filepath='src/include/efivar/efivar-dp.h' line='538' column='1'/>
       </data-member>
       <data-member access='public' layout-offset-in-bits='32'>
-        <var-decl name='vendor_guid' type-id='type-id-42' visibility='default' filepath='src/include/efivar/efivar-dp.h' line='534' column='1'/>
+        <var-decl name='vendor_guid' type-id='type-id-42' visibility='default' filepath='src/include/efivar/efivar-dp.h' line='539' column='1'/>
       </data-member>
       <data-member access='public' layout-offset-in-bits='160'>
-        <var-decl name='vendor_data' type-id='type-id-187' visibility='default' filepath='src/include/efivar/efivar-dp.h' line='535' column='1'/>
+        <var-decl name='vendor_data' type-id='type-id-188' visibility='default' filepath='src/include/efivar/efivar-dp.h' line='540' column='1'/>
       </data-member>
     </class-decl>
-    <class-decl name='efidp_nvdimm' size-in-bits='160' is-struct='yes' naming-typedef-id='type-id-241' visibility='default' filepath='src/include/efivar/efivar-dp.h' line='702' column='1' id='type-id-242'>
+    <class-decl name='efidp_nvdimm' size-in-bits='160' is-struct='yes' naming-typedef-id='type-id-242' visibility='default' filepath='src/include/efivar/efivar-dp.h' line='707' column='1' id='type-id-243'>
       <data-member access='public' layout-offset-in-bits='0'>
-        <var-decl name='header' type-id='type-id-175' visibility='default' filepath='src/include/efivar/efivar-dp.h' line='703' column='1'/>
+        <var-decl name='header' type-id='type-id-176' visibility='default' filepath='src/include/efivar/efivar-dp.h' line='708' column='1'/>
       </data-member>
       <data-member access='public' layout-offset-in-bits='32'>
-        <var-decl name='uuid' type-id='type-id-42' visibility='default' filepath='src/include/efivar/efivar-dp.h' line='704' column='1'/>
+        <var-decl name='uuid' type-id='type-id-42' visibility='default' filepath='src/include/efivar/efivar-dp.h' line='709' column='1'/>
       </data-member>
     </class-decl>
-    <class-decl name='efidp_nvme' size-in-bits='128' is-struct='yes' naming-typedef-id='type-id-243' visibility='default' filepath='src/include/efivar/efivar-dp.h' line='637' column='1' id='type-id-244'>
+    <class-decl name='efidp_nvme' size-in-bits='128' is-struct='yes' naming-typedef-id='type-id-244' visibility='default' filepath='src/include/efivar/efivar-dp.h' line='642' column='1' id='type-id-245'>
       <data-member access='public' layout-offset-in-bits='0'>
-        <var-decl name='header' type-id='type-id-175' visibility='default' filepath='src/include/efivar/efivar-dp.h' line='638' column='1'/>
+        <var-decl name='header' type-id='type-id-176' visibility='default' filepath='src/include/efivar/efivar-dp.h' line='643' column='1'/>
       </data-member>
       <data-member access='public' layout-offset-in-bits='32'>
-        <var-decl name='namespace_id' type-id='type-id-31' visibility='default' filepath='src/include/efivar/efivar-dp.h' line='639' column='1'/>
+        <var-decl name='namespace_id' type-id='type-id-31' visibility='default' filepath='src/include/efivar/efivar-dp.h' line='644' column='1'/>
       </data-member>
       <data-member access='public' layout-offset-in-bits='64'>
-        <var-decl name='ieee_eui_64' type-id='type-id-51' visibility='default' filepath='src/include/efivar/efivar-dp.h' line='640' column='1'/>
+        <var-decl name='ieee_eui_64' type-id='type-id-51' visibility='default' filepath='src/include/efivar/efivar-dp.h' line='645' column='1'/>
       </data-member>
     </class-decl>
-    <class-decl name='efidp_pccard' size-in-bits='40' is-struct='yes' naming-typedef-id='type-id-245' visibility='default' filepath='src/include/efivar/efivar-dp.h' line='51' column='1' id='type-id-246'>
+    <class-decl name='efidp_pccard' size-in-bits='40' is-struct='yes' naming-typedef-id='type-id-246' visibility='default' filepath='src/include/efivar/efivar-dp.h' line='55' column='1' id='type-id-247'>
       <data-member access='public' layout-offset-in-bits='0'>
-        <var-decl name='header' type-id='type-id-175' visibility='default' filepath='src/include/efivar/efivar-dp.h' line='52' column='1'/>
+        <var-decl name='header' type-id='type-id-176' visibility='default' filepath='src/include/efivar/efivar-dp.h' line='56' column='1'/>
       </data-member>
       <data-member access='public' layout-offset-in-bits='32'>
-        <var-decl name='function' type-id='type-id-53' visibility='default' filepath='src/include/efivar/efivar-dp.h' line='53' column='1'/>
+        <var-decl name='function' type-id='type-id-53' visibility='default' filepath='src/include/efivar/efivar-dp.h' line='57' column='1'/>
       </data-member>
     </class-decl>
-    <class-decl name='efidp_pci' size-in-bits='48' is-struct='yes' naming-typedef-id='type-id-247' visibility='default' filepath='src/include/efivar/efivar-dp.h' line='42' column='1' id='type-id-248'>
+    <class-decl name='efidp_pci' size-in-bits='48' is-struct='yes' naming-typedef-id='type-id-248' visibility='default' filepath='src/include/efivar/efivar-dp.h' line='46' column='1' id='type-id-249'>
       <data-member access='public' layout-offset-in-bits='0'>
-        <var-decl name='header' type-id='type-id-175' visibility='default' filepath='src/include/efivar/efivar-dp.h' line='43' column='1'/>
+        <var-decl name='header' type-id='type-id-176' visibility='default' filepath='src/include/efivar/efivar-dp.h' line='47' column='1'/>
       </data-member>
       <data-member access='public' layout-offset-in-bits='32'>
-        <var-decl name='function' type-id='type-id-53' visibility='default' filepath='src/include/efivar/efivar-dp.h' line='44' column='1'/>
+        <var-decl name='function' type-id='type-id-53' visibility='default' filepath='src/include/efivar/efivar-dp.h' line='48' column='1'/>
       </data-member>
       <data-member access='public' layout-offset-in-bits='40'>
-        <var-decl name='device' type-id='type-id-53' visibility='default' filepath='src/include/efivar/efivar-dp.h' line='45' column='1'/>
+        <var-decl name='device' type-id='type-id-53' visibility='default' filepath='src/include/efivar/efivar-dp.h' line='49' column='1'/>
       </data-member>
     </class-decl>
-    <class-decl name='efidp_protocol' size-in-bits='160' is-struct='yes' naming-typedef-id='type-id-249' visibility='default' filepath='src/include/efivar/efivar-dp.h' line='761' column='1' id='type-id-250'>
+    <class-decl name='efidp_protocol' size-in-bits='160' is-struct='yes' naming-typedef-id='type-id-250' visibility='default' filepath='src/include/efivar/efivar-dp.h' line='766' column='1' id='type-id-251'>
       <data-member access='public' layout-offset-in-bits='0'>
-        <var-decl name='header' type-id='type-id-175' visibility='default' filepath='src/include/efivar/efivar-dp.h' line='762' column='1'/>
+        <var-decl name='header' type-id='type-id-176' visibility='default' filepath='src/include/efivar/efivar-dp.h' line='767' column='1'/>
       </data-member>
       <data-member access='public' layout-offset-in-bits='32'>
-        <var-decl name='protocol_guid' type-id='type-id-42' visibility='default' filepath='src/include/efivar/efivar-dp.h' line='763' column='1'/>
+        <var-decl name='protocol_guid' type-id='type-id-42' visibility='default' filepath='src/include/efivar/efivar-dp.h' line='768' column='1'/>
       </data-member>
     </class-decl>
-    <class-decl name='efidp_ramdisk' size-in-bits='304' is-struct='yes' naming-typedef-id='type-id-251' visibility='default' filepath='src/include/efivar/efivar-dp.h' line='787' column='1' id='type-id-252'>
+    <class-decl name='efidp_ramdisk' size-in-bits='304' is-struct='yes' naming-typedef-id='type-id-252' visibility='default' filepath='src/include/efivar/efivar-dp.h' line='792' column='1' id='type-id-253'>
       <data-member access='public' layout-offset-in-bits='0'>
-        <var-decl name='header' type-id='type-id-175' visibility='default' filepath='src/include/efivar/efivar-dp.h' line='788' column='1'/>
+        <var-decl name='header' type-id='type-id-176' visibility='default' filepath='src/include/efivar/efivar-dp.h' line='793' column='1'/>
       </data-member>
       <data-member access='public' layout-offset-in-bits='32'>
-        <var-decl name='start_addr' type-id='type-id-32' visibility='default' filepath='src/include/efivar/efivar-dp.h' line='789' column='1'/>
+        <var-decl name='start_addr' type-id='type-id-32' visibility='default' filepath='src/include/efivar/efivar-dp.h' line='794' column='1'/>
       </data-member>
       <data-member access='public' layout-offset-in-bits='96'>
-        <var-decl name='end_addr' type-id='type-id-32' visibility='default' filepath='src/include/efivar/efivar-dp.h' line='790' column='1'/>
+        <var-decl name='end_addr' type-id='type-id-32' visibility='default' filepath='src/include/efivar/efivar-dp.h' line='795' column='1'/>
       </data-member>
       <data-member access='public' layout-offset-in-bits='160'>
-        <var-decl name='disk_type_guid' type-id='type-id-42' visibility='default' filepath='src/include/efivar/efivar-dp.h' line='791' column='1'/>
+        <var-decl name='disk_type_guid' type-id='type-id-42' visibility='default' filepath='src/include/efivar/efivar-dp.h' line='796' column='1'/>
       </data-member>
       <data-member access='public' layout-offset-in-bits='288'>
-        <var-decl name='instance_number' type-id='type-id-44' visibility='default' filepath='src/include/efivar/efivar-dp.h' line='792' column='1'/>
+        <var-decl name='instance_number' type-id='type-id-44' visibility='default' filepath='src/include/efivar/efivar-dp.h' line='797' column='1'/>
       </data-member>
     </class-decl>
-    <class-decl name='efidp_relative_offset' size-in-bits='192' is-struct='yes' naming-typedef-id='type-id-253' visibility='default' filepath='src/include/efivar/efivar-dp.h' line='779' column='1' id='type-id-254'>
+    <class-decl name='efidp_relative_offset' size-in-bits='192' is-struct='yes' naming-typedef-id='type-id-254' visibility='default' filepath='src/include/efivar/efivar-dp.h' line='784' column='1' id='type-id-255'>
       <data-member access='public' layout-offset-in-bits='0'>
-        <var-decl name='header' type-id='type-id-175' visibility='default' filepath='src/include/efivar/efivar-dp.h' line='780' column='1'/>
+        <var-decl name='header' type-id='type-id-176' visibility='default' filepath='src/include/efivar/efivar-dp.h' line='785' column='1'/>
       </data-member>
       <data-member access='public' layout-offset-in-bits='32'>
-        <var-decl name='reserved' type-id='type-id-31' visibility='default' filepath='src/include/efivar/efivar-dp.h' line='781' column='1'/>
+        <var-decl name='reserved' type-id='type-id-31' visibility='default' filepath='src/include/efivar/efivar-dp.h' line='786' column='1'/>
       </data-member>
       <data-member access='public' layout-offset-in-bits='64'>
-        <var-decl name='first_byte' type-id='type-id-32' visibility='default' filepath='src/include/efivar/efivar-dp.h' line='782' column='1'/>
+        <var-decl name='first_byte' type-id='type-id-32' visibility='default' filepath='src/include/efivar/efivar-dp.h' line='787' column='1'/>
       </data-member>
       <data-member access='public' layout-offset-in-bits='128'>
-        <var-decl name='last_byte' type-id='type-id-32' visibility='default' filepath='src/include/efivar/efivar-dp.h' line='783' column='1'/>
+        <var-decl name='last_byte' type-id='type-id-32' visibility='default' filepath='src/include/efivar/efivar-dp.h' line='788' column='1'/>
       </data-member>
     </class-decl>
-    <class-decl name='efidp_sas' size-in-bits='352' is-struct='yes' naming-typedef-id='type-id-255' visibility='default' filepath='src/include/efivar/efivar-dp.h' line='556' column='1' id='type-id-256'>
+    <class-decl name='efidp_sas' size-in-bits='352' is-struct='yes' naming-typedef-id='type-id-256' visibility='default' filepath='src/include/efivar/efivar-dp.h' line='561' column='1' id='type-id-257'>
       <data-member access='public' layout-offset-in-bits='0'>
-        <var-decl name='header' type-id='type-id-175' visibility='default' filepath='src/include/efivar/efivar-dp.h' line='557' column='1'/>
+        <var-decl name='header' type-id='type-id-176' visibility='default' filepath='src/include/efivar/efivar-dp.h' line='562' column='1'/>
       </data-member>
       <data-member access='public' layout-offset-in-bits='32'>
-        <var-decl name='vendor_guid' type-id='type-id-42' visibility='default' filepath='src/include/efivar/efivar-dp.h' line='558' column='1'/>
+        <var-decl name='vendor_guid' type-id='type-id-42' visibility='default' filepath='src/include/efivar/efivar-dp.h' line='563' column='1'/>
       </data-member>
       <data-member access='public' layout-offset-in-bits='160'>
-        <var-decl name='reserved' type-id='type-id-31' visibility='default' filepath='src/include/efivar/efivar-dp.h' line='559' column='1'/>
+        <var-decl name='reserved' type-id='type-id-31' visibility='default' filepath='src/include/efivar/efivar-dp.h' line='564' column='1'/>
       </data-member>
       <data-member access='public' layout-offset-in-bits='192'>
-        <var-decl name='sas_address' type-id='type-id-32' visibility='default' filepath='src/include/efivar/efivar-dp.h' line='560' column='1'/>
+        <var-decl name='sas_address' type-id='type-id-32' visibility='default' filepath='src/include/efivar/efivar-dp.h' line='565' column='1'/>
       </data-member>
       <data-member access='public' layout-offset-in-bits='256'>
-        <var-decl name='lun' type-id='type-id-32' visibility='default' filepath='src/include/efivar/efivar-dp.h' line='561' column='1'/>
+        <var-decl name='lun' type-id='type-id-32' visibility='default' filepath='src/include/efivar/efivar-dp.h' line='566' column='1'/>
       </data-member>
       <data-member access='public' layout-offset-in-bits='320'>
-        <var-decl name='device_topology_info' type-id='type-id-53' visibility='default' filepath='src/include/efivar/efivar-dp.h' line='562' column='1'/>
+        <var-decl name='device_topology_info' type-id='type-id-53' visibility='default' filepath='src/include/efivar/efivar-dp.h' line='567' column='1'/>
       </data-member>
       <data-member access='public' layout-offset-in-bits='328'>
-        <var-decl name='drive_bay_id' type-id='type-id-53' visibility='default' filepath='src/include/efivar/efivar-dp.h' line='563' column='1'/>
+        <var-decl name='drive_bay_id' type-id='type-id-53' visibility='default' filepath='src/include/efivar/efivar-dp.h' line='568' column='1'/>
       </data-member>
       <data-member access='public' layout-offset-in-bits='336'>
-        <var-decl name='rtp' type-id='type-id-44' visibility='default' filepath='src/include/efivar/efivar-dp.h' line='564' column='1'/>
+        <var-decl name='rtp' type-id='type-id-44' visibility='default' filepath='src/include/efivar/efivar-dp.h' line='569' column='1'/>
       </data-member>
     </class-decl>
-    <class-decl name='efidp_sas_ex' size-in-bits='192' is-struct='yes' naming-typedef-id='type-id-257' visibility='default' filepath='src/include/efivar/efivar-dp.h' line='589' column='1' id='type-id-258'>
+    <class-decl name='efidp_sas_ex' size-in-bits='192' is-struct='yes' naming-typedef-id='type-id-258' visibility='default' filepath='src/include/efivar/efivar-dp.h' line='594' column='1' id='type-id-259'>
       <data-member access='public' layout-offset-in-bits='0'>
-        <var-decl name='header' type-id='type-id-175' visibility='default' filepath='src/include/efivar/efivar-dp.h' line='590' column='1'/>
+        <var-decl name='header' type-id='type-id-176' visibility='default' filepath='src/include/efivar/efivar-dp.h' line='595' column='1'/>
       </data-member>
       <data-member access='public' layout-offset-in-bits='32'>
-        <var-decl name='sas_address' type-id='type-id-51' visibility='default' filepath='src/include/efivar/efivar-dp.h' line='591' column='1'/>
+        <var-decl name='sas_address' type-id='type-id-51' visibility='default' filepath='src/include/efivar/efivar-dp.h' line='596' column='1'/>
       </data-member>
       <data-member access='public' layout-offset-in-bits='96'>
-        <var-decl name='lun' type-id='type-id-51' visibility='default' filepath='src/include/efivar/efivar-dp.h' line='592' column='1'/>
+        <var-decl name='lun' type-id='type-id-51' visibility='default' filepath='src/include/efivar/efivar-dp.h' line='597' column='1'/>
       </data-member>
       <data-member access='public' layout-offset-in-bits='160'>
-        <var-decl name='device_topology_info' type-id='type-id-53' visibility='default' filepath='src/include/efivar/efivar-dp.h' line='593' column='1'/>
+        <var-decl name='device_topology_info' type-id='type-id-53' visibility='default' filepath='src/include/efivar/efivar-dp.h' line='598' column='1'/>
       </data-member>
       <data-member access='public' layout-offset-in-bits='168'>
-        <var-decl name='drive_bay_id' type-id='type-id-53' visibility='default' filepath='src/include/efivar/efivar-dp.h' line='594' column='1'/>
+        <var-decl name='drive_bay_id' type-id='type-id-53' visibility='default' filepath='src/include/efivar/efivar-dp.h' line='599' column='1'/>
       </data-member>
       <data-member access='public' layout-offset-in-bits='176'>
-        <var-decl name='rtp' type-id='type-id-44' visibility='default' filepath='src/include/efivar/efivar-dp.h' line='595' column='1'/>
+        <var-decl name='rtp' type-id='type-id-44' visibility='default' filepath='src/include/efivar/efivar-dp.h' line='600' column='1'/>
       </data-member>
     </class-decl>
-    <class-decl name='efidp_sata' size-in-bits='80' is-struct='yes' naming-typedef-id='type-id-259' visibility='default' filepath='src/include/efivar/efivar-dp.h' line='408' column='1' id='type-id-260'>
+    <class-decl name='efidp_sata' size-in-bits='80' is-struct='yes' naming-typedef-id='type-id-260' visibility='default' filepath='src/include/efivar/efivar-dp.h' line='412' column='1' id='type-id-261'>
       <data-member access='public' layout-offset-in-bits='0'>
-        <var-decl name='header' type-id='type-id-175' visibility='default' filepath='src/include/efivar/efivar-dp.h' line='409' column='1'/>
+        <var-decl name='header' type-id='type-id-176' visibility='default' filepath='src/include/efivar/efivar-dp.h' line='413' column='1'/>
       </data-member>
       <data-member access='public' layout-offset-in-bits='32'>
-        <var-decl name='hba_port' type-id='type-id-44' visibility='default' filepath='src/include/efivar/efivar-dp.h' line='410' column='1'/>
+        <var-decl name='hba_port' type-id='type-id-44' visibility='default' filepath='src/include/efivar/efivar-dp.h' line='414' column='1'/>
       </data-member>
       <data-member access='public' layout-offset-in-bits='48'>
-        <var-decl name='port_multiplier_port' type-id='type-id-44' visibility='default' filepath='src/include/efivar/efivar-dp.h' line='411' column='1'/>
+        <var-decl name='port_multiplier_port' type-id='type-id-44' visibility='default' filepath='src/include/efivar/efivar-dp.h' line='415' column='1'/>
       </data-member>
       <data-member access='public' layout-offset-in-bits='64'>
-        <var-decl name='lun' type-id='type-id-44' visibility='default' filepath='src/include/efivar/efivar-dp.h' line='412' column='1'/>
+        <var-decl name='lun' type-id='type-id-44' visibility='default' filepath='src/include/efivar/efivar-dp.h' line='416' column='1'/>
       </data-member>
     </class-decl>
-    <class-decl name='efidp_scsi' size-in-bits='64' is-struct='yes' naming-typedef-id='type-id-261' visibility='default' filepath='src/include/efivar/efivar-dp.h' line='327' column='1' id='type-id-262'>
+    <class-decl name='efidp_scsi' size-in-bits='64' is-struct='yes' naming-typedef-id='type-id-262' visibility='default' filepath='src/include/efivar/efivar-dp.h' line='331' column='1' id='type-id-263'>
       <data-member access='public' layout-offset-in-bits='0'>
-        <var-decl name='header' type-id='type-id-175' visibility='default' filepath='src/include/efivar/efivar-dp.h' line='328' column='1'/>
+        <var-decl name='header' type-id='type-id-176' visibility='default' filepath='src/include/efivar/efivar-dp.h' line='332' column='1'/>
       </data-member>
       <data-member access='public' layout-offset-in-bits='32'>
-        <var-decl name='target' type-id='type-id-44' visibility='default' filepath='src/include/efivar/efivar-dp.h' line='329' column='1'/>
+        <var-decl name='target' type-id='type-id-44' visibility='default' filepath='src/include/efivar/efivar-dp.h' line='333' column='1'/>
       </data-member>
       <data-member access='public' layout-offset-in-bits='48'>
-        <var-decl name='lun' type-id='type-id-44' visibility='default' filepath='src/include/efivar/efivar-dp.h' line='330' column='1'/>
+        <var-decl name='lun' type-id='type-id-44' visibility='default' filepath='src/include/efivar/efivar-dp.h' line='334' column='1'/>
       </data-member>
     </class-decl>
-    <class-decl name='efidp_sd' size-in-bits='40' is-struct='yes' naming-typedef-id='type-id-263' visibility='default' filepath='src/include/efivar/efivar-dp.h' line='659' column='1' id='type-id-264'>
+    <class-decl name='efidp_sd' size-in-bits='40' is-struct='yes' naming-typedef-id='type-id-264' visibility='default' filepath='src/include/efivar/efivar-dp.h' line='664' column='1' id='type-id-265'>
       <data-member access='public' layout-offset-in-bits='0'>
-        <var-decl name='header' type-id='type-id-175' visibility='default' filepath='src/include/efivar/efivar-dp.h' line='660' column='1'/>
+        <var-decl name='header' type-id='type-id-176' visibility='default' filepath='src/include/efivar/efivar-dp.h' line='665' column='1'/>
       </data-member>
       <data-member access='public' layout-offset-in-bits='32'>
-        <var-decl name='slot_number' type-id='type-id-53' visibility='default' filepath='src/include/efivar/efivar-dp.h' line='661' column='1'/>
+        <var-decl name='slot_number' type-id='type-id-53' visibility='default' filepath='src/include/efivar/efivar-dp.h' line='666' column='1'/>
       </data-member>
     </class-decl>
-    <class-decl name='efidp_uart' size-in-bits='152' is-struct='yes' naming-typedef-id='type-id-265' visibility='default' filepath='src/include/efivar/efivar-dp.h' line='501' column='1' id='type-id-266'>
+    <class-decl name='efidp_uart' size-in-bits='152' is-struct='yes' naming-typedef-id='type-id-266' visibility='default' filepath='src/include/efivar/efivar-dp.h' line='506' column='1' id='type-id-267'>
       <data-member access='public' layout-offset-in-bits='0'>
-        <var-decl name='header' type-id='type-id-175' visibility='default' filepath='src/include/efivar/efivar-dp.h' line='502' column='1'/>
+        <var-decl name='header' type-id='type-id-176' visibility='default' filepath='src/include/efivar/efivar-dp.h' line='507' column='1'/>
       </data-member>
       <data-member access='public' layout-offset-in-bits='32'>
-        <var-decl name='reserved' type-id='type-id-31' visibility='default' filepath='src/include/efivar/efivar-dp.h' line='503' column='1'/>
+        <var-decl name='reserved' type-id='type-id-31' visibility='default' filepath='src/include/efivar/efivar-dp.h' line='508' column='1'/>
       </data-member>
       <data-member access='public' layout-offset-in-bits='64'>
-        <var-decl name='baud_rate' type-id='type-id-32' visibility='default' filepath='src/include/efivar/efivar-dp.h' line='504' column='1'/>
+        <var-decl name='baud_rate' type-id='type-id-32' visibility='default' filepath='src/include/efivar/efivar-dp.h' line='509' column='1'/>
       </data-member>
       <data-member access='public' layout-offset-in-bits='128'>
-        <var-decl name='data_bits' type-id='type-id-53' visibility='default' filepath='src/include/efivar/efivar-dp.h' line='505' column='1'/>
+        <var-decl name='data_bits' type-id='type-id-53' visibility='default' filepath='src/include/efivar/efivar-dp.h' line='510' column='1'/>
       </data-member>
       <data-member access='public' layout-offset-in-bits='136'>
-        <var-decl name='parity' type-id='type-id-53' visibility='default' filepath='src/include/efivar/efivar-dp.h' line='506' column='1'/>
+        <var-decl name='parity' type-id='type-id-53' visibility='default' filepath='src/include/efivar/efivar-dp.h' line='511' column='1'/>
       </data-member>
       <data-member access='public' layout-offset-in-bits='144'>
-        <var-decl name='stop_bits' type-id='type-id-53' visibility='default' filepath='src/include/efivar/efivar-dp.h' line='507' column='1'/>
+        <var-decl name='stop_bits' type-id='type-id-53' visibility='default' filepath='src/include/efivar/efivar-dp.h' line='512' column='1'/>
       </data-member>
     </class-decl>
-    <class-decl name='efidp_uart_flow_control' size-in-bits='192' is-struct='yes' naming-typedef-id='type-id-267' visibility='default' filepath='src/include/efivar/efivar-dp.h' line='545' column='1' id='type-id-268'>
+    <class-decl name='efidp_uart_flow_control' size-in-bits='192' is-struct='yes' naming-typedef-id='type-id-268' visibility='default' filepath='src/include/efivar/efivar-dp.h' line='550' column='1' id='type-id-269'>
       <data-member access='public' layout-offset-in-bits='0'>
-        <var-decl name='header' type-id='type-id-175' visibility='default' filepath='src/include/efivar/efivar-dp.h' line='546' column='1'/>
+        <var-decl name='header' type-id='type-id-176' visibility='default' filepath='src/include/efivar/efivar-dp.h' line='551' column='1'/>
       </data-member>
       <data-member access='public' layout-offset-in-bits='32'>
-        <var-decl name='vendor_guid' type-id='type-id-42' visibility='default' filepath='src/include/efivar/efivar-dp.h' line='547' column='1'/>
+        <var-decl name='vendor_guid' type-id='type-id-42' visibility='default' filepath='src/include/efivar/efivar-dp.h' line='552' column='1'/>
       </data-member>
       <data-member access='public' layout-offset-in-bits='160'>
-        <var-decl name='flow_control_map' type-id='type-id-31' visibility='default' filepath='src/include/efivar/efivar-dp.h' line='548' column='1'/>
+        <var-decl name='flow_control_map' type-id='type-id-31' visibility='default' filepath='src/include/efivar/efivar-dp.h' line='553' column='1'/>
       </data-member>
     </class-decl>
-    <class-decl name='efidp_ufs' size-in-bits='48' is-struct='yes' naming-typedef-id='type-id-269' visibility='default' filepath='src/include/efivar/efivar-dp.h' line='652' column='1' id='type-id-270'>
+    <class-decl name='efidp_ufs' size-in-bits='48' is-struct='yes' naming-typedef-id='type-id-270' visibility='default' filepath='src/include/efivar/efivar-dp.h' line='657' column='1' id='type-id-271'>
       <data-member access='public' layout-offset-in-bits='0'>
-        <var-decl name='header' type-id='type-id-175' visibility='default' filepath='src/include/efivar/efivar-dp.h' line='653' column='1'/>
+        <var-decl name='header' type-id='type-id-176' visibility='default' filepath='src/include/efivar/efivar-dp.h' line='658' column='1'/>
       </data-member>
       <data-member access='public' layout-offset-in-bits='32'>
-        <var-decl name='target_id' type-id='type-id-53' visibility='default' filepath='src/include/efivar/efivar-dp.h' line='654' column='1'/>
+        <var-decl name='target_id' type-id='type-id-53' visibility='default' filepath='src/include/efivar/efivar-dp.h' line='659' column='1'/>
       </data-member>
       <data-member access='public' layout-offset-in-bits='40'>
-        <var-decl name='lun' type-id='type-id-53' visibility='default' filepath='src/include/efivar/efivar-dp.h' line='655' column='1'/>
+        <var-decl name='lun' type-id='type-id-53' visibility='default' filepath='src/include/efivar/efivar-dp.h' line='660' column='1'/>
       </data-member>
     </class-decl>
-    <class-decl name='efidp_uri' size-in-bits='32' is-struct='yes' naming-typedef-id='type-id-271' visibility='default' filepath='src/include/efivar/efivar-dp.h' line='646' column='1' id='type-id-272'>
+    <class-decl name='efidp_uri' size-in-bits='32' is-struct='yes' naming-typedef-id='type-id-272' visibility='default' filepath='src/include/efivar/efivar-dp.h' line='651' column='1' id='type-id-273'>
       <data-member access='public' layout-offset-in-bits='0'>
-        <var-decl name='header' type-id='type-id-175' visibility='default' filepath='src/include/efivar/efivar-dp.h' line='647' column='1'/>
+        <var-decl name='header' type-id='type-id-176' visibility='default' filepath='src/include/efivar/efivar-dp.h' line='652' column='1'/>
       </data-member>
       <data-member access='public' layout-offset-in-bits='32'>
-        <var-decl name='uri' type-id='type-id-187' visibility='default' filepath='src/include/efivar/efivar-dp.h' line='648' column='1'/>
+        <var-decl name='uri' type-id='type-id-188' visibility='default' filepath='src/include/efivar/efivar-dp.h' line='653' column='1'/>
       </data-member>
     </class-decl>
-    <class-decl name='efidp_usb' size-in-bits='48' is-struct='yes' naming-typedef-id='type-id-273' visibility='default' filepath='src/include/efivar/efivar-dp.h' line='359' column='1' id='type-id-274'>
+    <class-decl name='efidp_usb' size-in-bits='48' is-struct='yes' naming-typedef-id='type-id-274' visibility='default' filepath='src/include/efivar/efivar-dp.h' line='363' column='1' id='type-id-275'>
       <data-member access='public' layout-offset-in-bits='0'>
-        <var-decl name='header' type-id='type-id-175' visibility='default' filepath='src/include/efivar/efivar-dp.h' line='360' column='1'/>
+        <var-decl name='header' type-id='type-id-176' visibility='default' filepath='src/include/efivar/efivar-dp.h' line='364' column='1'/>
       </data-member>
       <data-member access='public' layout-offset-in-bits='32'>
-        <var-decl name='parent_port' type-id='type-id-53' visibility='default' filepath='src/include/efivar/efivar-dp.h' line='361' column='1'/>
+        <var-decl name='parent_port' type-id='type-id-53' visibility='default' filepath='src/include/efivar/efivar-dp.h' line='365' column='1'/>
       </data-member>
       <data-member access='public' layout-offset-in-bits='40'>
-        <var-decl name='interface' type-id='type-id-53' visibility='default' filepath='src/include/efivar/efivar-dp.h' line='362' column='1'/>
+        <var-decl name='interface' type-id='type-id-53' visibility='default' filepath='src/include/efivar/efivar-dp.h' line='366' column='1'/>
       </data-member>
     </class-decl>
-    <class-decl name='efidp_usb_class' size-in-bits='88' is-struct='yes' naming-typedef-id='type-id-275' visibility='default' filepath='src/include/efivar/efivar-dp.h' line='366' column='1' id='type-id-276'>
+    <class-decl name='efidp_usb_class' size-in-bits='88' is-struct='yes' naming-typedef-id='type-id-276' visibility='default' filepath='src/include/efivar/efivar-dp.h' line='370' column='1' id='type-id-277'>
       <data-member access='public' layout-offset-in-bits='0'>
-        <var-decl name='header' type-id='type-id-175' visibility='default' filepath='src/include/efivar/efivar-dp.h' line='367' column='1'/>
+        <var-decl name='header' type-id='type-id-176' visibility='default' filepath='src/include/efivar/efivar-dp.h' line='371' column='1'/>
       </data-member>
       <data-member access='public' layout-offset-in-bits='32'>
-        <var-decl name='vendor_id' type-id='type-id-44' visibility='default' filepath='src/include/efivar/efivar-dp.h' line='368' column='1'/>
+        <var-decl name='vendor_id' type-id='type-id-44' visibility='default' filepath='src/include/efivar/efivar-dp.h' line='372' column='1'/>
       </data-member>
       <data-member access='public' layout-offset-in-bits='48'>
-        <var-decl name='product_id' type-id='type-id-44' visibility='default' filepath='src/include/efivar/efivar-dp.h' line='369' column='1'/>
+        <var-decl name='product_id' type-id='type-id-44' visibility='default' filepath='src/include/efivar/efivar-dp.h' line='373' column='1'/>
       </data-member>
       <data-member access='public' layout-offset-in-bits='64'>
-        <var-decl name='device_class' type-id='type-id-53' visibility='default' filepath='src/include/efivar/efivar-dp.h' line='370' column='1'/>
+        <var-decl name='device_class' type-id='type-id-53' visibility='default' filepath='src/include/efivar/efivar-dp.h' line='374' column='1'/>
       </data-member>
       <data-member access='public' layout-offset-in-bits='72'>
-        <var-decl name='device_subclass' type-id='type-id-53' visibility='default' filepath='src/include/efivar/efivar-dp.h' line='371' column='1'/>
+        <var-decl name='device_subclass' type-id='type-id-53' visibility='default' filepath='src/include/efivar/efivar-dp.h' line='375' column='1'/>
       </data-member>
       <data-member access='public' layout-offset-in-bits='80'>
-        <var-decl name='device_protocol' type-id='type-id-53' visibility='default' filepath='src/include/efivar/efivar-dp.h' line='372' column='1'/>
+        <var-decl name='device_protocol' type-id='type-id-53' visibility='default' filepath='src/include/efivar/efivar-dp.h' line='376' column='1'/>
       </data-member>
     </class-decl>
-    <class-decl name='efidp_usb_wwid' size-in-bits='80' is-struct='yes' naming-typedef-id='type-id-277' visibility='default' filepath='src/include/efivar/efivar-dp.h' line='393' column='1' id='type-id-278'>
+    <class-decl name='efidp_usb_wwid' size-in-bits='80' is-struct='yes' naming-typedef-id='type-id-278' visibility='default' filepath='src/include/efivar/efivar-dp.h' line='397' column='1' id='type-id-279'>
       <data-member access='public' layout-offset-in-bits='0'>
-        <var-decl name='header' type-id='type-id-175' visibility='default' filepath='src/include/efivar/efivar-dp.h' line='394' column='1'/>
+        <var-decl name='header' type-id='type-id-176' visibility='default' filepath='src/include/efivar/efivar-dp.h' line='398' column='1'/>
       </data-member>
       <data-member access='public' layout-offset-in-bits='32'>
-        <var-decl name='interface' type-id='type-id-44' visibility='default' filepath='src/include/efivar/efivar-dp.h' line='395' column='1'/>
+        <var-decl name='interface' type-id='type-id-44' visibility='default' filepath='src/include/efivar/efivar-dp.h' line='399' column='1'/>
       </data-member>
       <data-member access='public' layout-offset-in-bits='48'>
-        <var-decl name='vendor_id' type-id='type-id-44' visibility='default' filepath='src/include/efivar/efivar-dp.h' line='396' column='1'/>
+        <var-decl name='vendor_id' type-id='type-id-44' visibility='default' filepath='src/include/efivar/efivar-dp.h' line='400' column='1'/>
       </data-member>
       <data-member access='public' layout-offset-in-bits='64'>
-        <var-decl name='product_id' type-id='type-id-44' visibility='default' filepath='src/include/efivar/efivar-dp.h' line='397' column='1'/>
+        <var-decl name='product_id' type-id='type-id-44' visibility='default' filepath='src/include/efivar/efivar-dp.h' line='401' column='1'/>
       </data-member>
       <data-member access='public' layout-offset-in-bits='80'>
-        <var-decl name='serial_number' type-id='type-id-172' visibility='default' filepath='src/include/efivar/efivar-dp.h' line='398' column='1'/>
+        <var-decl name='serial_number' type-id='type-id-173' visibility='default' filepath='src/include/efivar/efivar-dp.h' line='402' column='1'/>
       </data-member>
     </class-decl>
-    <class-decl name='efidp_vlan' size-in-bits='48' is-struct='yes' naming-typedef-id='type-id-279' visibility='default' filepath='src/include/efivar/efivar-dp.h' line='476' column='1' id='type-id-280'>
+    <class-decl name='efidp_vlan' size-in-bits='48' is-struct='yes' naming-typedef-id='type-id-280' visibility='default' filepath='src/include/efivar/efivar-dp.h' line='481' column='1' id='type-id-281'>
       <data-member access='public' layout-offset-in-bits='0'>
-        <var-decl name='header' type-id='type-id-175' visibility='default' filepath='src/include/efivar/efivar-dp.h' line='477' column='1'/>
+        <var-decl name='header' type-id='type-id-176' visibility='default' filepath='src/include/efivar/efivar-dp.h' line='482' column='1'/>
       </data-member>
       <data-member access='public' layout-offset-in-bits='32'>
-        <var-decl name='vlan_id' type-id='type-id-44' visibility='default' filepath='src/include/efivar/efivar-dp.h' line='478' column='1'/>
+        <var-decl name='vlan_id' type-id='type-id-44' visibility='default' filepath='src/include/efivar/efivar-dp.h' line='483' column='1'/>
       </data-member>
     </class-decl>
-    <class-decl name='efidp_wifi' size-in-bits='288' is-struct='yes' naming-typedef-id='type-id-281' visibility='default' filepath='src/include/efivar/efivar-dp.h' line='671' column='1' id='type-id-282'>
+    <class-decl name='efidp_wifi' size-in-bits='288' is-struct='yes' naming-typedef-id='type-id-282' visibility='default' filepath='src/include/efivar/efivar-dp.h' line='676' column='1' id='type-id-283'>
       <data-member access='public' layout-offset-in-bits='0'>
-        <var-decl name='header' type-id='type-id-175' visibility='default' filepath='src/include/efivar/efivar-dp.h' line='672' column='1'/>
+        <var-decl name='header' type-id='type-id-176' visibility='default' filepath='src/include/efivar/efivar-dp.h' line='677' column='1'/>
       </data-member>
       <data-member access='public' layout-offset-in-bits='32'>
-        <var-decl name='ssid' type-id='type-id-234' visibility='default' filepath='src/include/efivar/efivar-dp.h' line='673' column='1'/>
+        <var-decl name='ssid' type-id='type-id-235' visibility='default' filepath='src/include/efivar/efivar-dp.h' line='678' column='1'/>
       </data-member>
     </class-decl>
-    <class-decl name='__anonymous_struct__' size-in-bits='32' is-struct='yes' is-anonymous='yes' visibility='default' filepath='src/include/efivar/efivar-dp.h' line='826' column='1' id='type-id-283'>
+    <class-decl name='__anonymous_struct__' size-in-bits='32' is-struct='yes' is-anonymous='yes' visibility='default' filepath='src/include/efivar/efivar-dp.h' line='831' column='1' id='type-id-284'>
       <data-member access='public' layout-offset-in-bits='0'>
-        <var-decl name='type' type-id='type-id-53' visibility='default' filepath='src/include/efivar/efivar-dp.h' line='827' column='1'/>
+        <var-decl name='type' type-id='type-id-53' visibility='default' filepath='src/include/efivar/efivar-dp.h' line='832' column='1'/>
       </data-member>
       <data-member access='public' layout-offset-in-bits='8'>
-        <var-decl name='subtype' type-id='type-id-53' visibility='default' filepath='src/include/efivar/efivar-dp.h' line='828' column='1'/>
+        <var-decl name='subtype' type-id='type-id-53' visibility='default' filepath='src/include/efivar/efivar-dp.h' line='833' column='1'/>
       </data-member>
       <data-member access='public' layout-offset-in-bits='16'>
-        <var-decl name='length' type-id='type-id-44' visibility='default' filepath='src/include/efivar/efivar-dp.h' line='829' column='1'/>
+        <var-decl name='length' type-id='type-id-44' visibility='default' filepath='src/include/efivar/efivar-dp.h' line='834' column='1'/>
       </data-member>
     </class-decl>
-    <typedef-decl name='efi_ip_addr_t' type-id='type-id-284' filepath='src/include/efivar/efivar-types.h' line='43' column='1' id='type-id-163'/>
-    <typedef-decl name='efi_ipv4_addr_t' type-id='type-id-166' filepath='src/include/efivar/efivar-types.h' line='33' column='1' id='type-id-165'/>
-    <typedef-decl name='efi_ipv6_addr_t' type-id='type-id-169' filepath='src/include/efivar/efivar-types.h' line='37' column='1' id='type-id-168'/>
-    <typedef-decl name='efi_load_option' type-id='type-id-171' filepath='src/include/efivar/efiboot-loadopt.h' line='10' column='1' id='type-id-285'/>
-    <typedef-decl name='efidp' type-id='type-id-286' filepath='src/include/efivar/efivar-dp.h' line='884' column='1' id='type-id-287'/>
-    <typedef-decl name='efidp_1394' type-id='type-id-174' filepath='src/include/efivar/efivar-dp.h' line='356' column='1' id='type-id-173'/>
-    <typedef-decl name='efidp_acpi_adr' type-id='type-id-177' filepath='src/include/efivar/efivar-dp.h' line='159' column='1' id='type-id-176'/>
-    <typedef-decl name='efidp_acpi_hid' type-id='type-id-180' filepath='src/include/efivar/efivar-dp.h' line='110' column='1' id='type-id-179'/>
-    <typedef-decl name='efidp_acpi_hid_ex' type-id='type-id-182' filepath='src/include/efivar/efivar-dp.h' line='122' column='1' id='type-id-181'/>
-    <typedef-decl name='efidp_atapi' type-id='type-id-184' filepath='src/include/efivar/efivar-dp.h' line='322' column='1' id='type-id-183'/>
-    <typedef-decl name='efidp_bios_boot' type-id='type-id-186' filepath='src/include/efivar/efivar-dp.h' line='811' column='1' id='type-id-185'/>
-    <typedef-decl name='efidp_bmc' type-id='type-id-189' filepath='src/include/efivar/efivar-dp.h' line='96' column='1' id='type-id-188'/>
-    <typedef-decl name='efidp_boolean' type-id='type-id-53' filepath='src/include/efivar/efivar-dp.h' line='30' column='1' id='type-id-225'/>
-    <typedef-decl name='efidp_bt' type-id='type-id-191' filepath='src/include/efivar/efivar-dp.h' line='668' column='1' id='type-id-190'/>
-    <typedef-decl name='efidp_btle' type-id='type-id-193' filepath='src/include/efivar/efivar-dp.h' line='689' column='1' id='type-id-192'/>
-    <typedef-decl name='efidp_cdrom' type-id='type-id-195' filepath='src/include/efivar/efivar-dp.h' line='740' column='1' id='type-id-194'/>
-    <typedef-decl name='efidp_controller' type-id='type-id-197' filepath='src/include/efivar/efivar-dp.h' line='89' column='1' id='type-id-196'/>
-    <typedef-decl name='efidp_data' type-id='type-id-288' filepath='src/include/efivar/efivar-dp.h' line='883' column='1' id='type-id-153'/>
-    <typedef-decl name='efidp_dns' type-id='type-id-199' filepath='src/include/efivar/efivar-dp.h' line='699' column='1' id='type-id-198'/>
-    <typedef-decl name='efidp_emmc' type-id='type-id-201' filepath='src/include/efivar/efivar-dp.h' line='680' column='1' id='type-id-200'/>
-    <typedef-decl name='efidp_fc' type-id='type-id-203' filepath='src/include/efivar/efivar-dp.h' line='341' column='1' id='type-id-202'/>
-    <typedef-decl name='efidp_fcex' type-id='type-id-205' filepath='src/include/efivar/efivar-dp.h' line='349' column='1' id='type-id-204'/>
-    <typedef-decl name='efidp_file' type-id='type-id-207' filepath='src/include/efivar/efivar-dp.h' line='757' column='1' id='type-id-206'/>
-    <typedef-decl name='efidp_firmware_file' type-id='type-id-209' filepath='src/include/efivar/efivar-dp.h' line='770' column='1' id='type-id-208'/>
-    <typedef-decl name='efidp_firmware_volume' type-id='type-id-211' filepath='src/include/efivar/efivar-dp.h' line='776' column='1' id='type-id-210'/>
-    <typedef-decl name='efidp_hd' type-id='type-id-213' filepath='src/include/efivar/efivar-dp.h' line='721' column='1' id='type-id-212'/>
-    <typedef-decl name='efidp_header' type-id='type-id-214' filepath='src/include/efivar/efivar-dp.h' line='27' column='1' id='type-id-175'/>
-    <typedef-decl name='efidp_hw_vendor' type-id='type-id-216' filepath='src/include/efivar/efivar-dp.h' line='69' column='1' id='type-id-215'/>
-    <typedef-decl name='efidp_i2o' type-id='type-id-218' filepath='src/include/efivar/efivar-dp.h' line='422' column='1' id='type-id-217'/>
-    <typedef-decl name='efidp_infiniband' type-id='type-id-220' filepath='src/include/efivar/efivar-dp.h' line='492' column='1' id='type-id-219'/>
-    <typedef-decl name='efidp_ipv4_addr' type-id='type-id-224' filepath='src/include/efivar/efivar-dp.h' line='447' column='1' id='type-id-223'/>
-    <typedef-decl name='efidp_ipv6_addr' type-id='type-id-227' filepath='src/include/efivar/efivar-dp.h' line='469' column='1' id='type-id-226'/>
-    <typedef-decl name='efidp_iscsi' type-id='type-id-229' filepath='src/include/efivar/efivar-dp.h' line='609' column='1' id='type-id-228'/>
-    <typedef-decl name='efidp_lun' type-id='type-id-231' filepath='src/include/efivar/efivar-dp.h' line='405' column='1' id='type-id-230'/>
-    <typedef-decl name='efidp_mac_addr' type-id='type-id-233' filepath='src/include/efivar/efivar-dp.h' line='429' column='1' id='type-id-232'/>
-    <typedef-decl name='efidp_media_vendor' type-id='type-id-236' filepath='src/include/efivar/efivar-dp.h' line='747' column='1' id='type-id-235'/>
-    <typedef-decl name='efidp_mmio' type-id='type-id-238' filepath='src/include/efivar/efivar-dp.h' line='62' column='1' id='type-id-237'/>
-    <typedef-decl name='efidp_msg_vendor' type-id='type-id-240' filepath='src/include/efivar/efivar-dp.h' line='536' column='1' id='type-id-239'/>
-    <typedef-decl name='efidp_nvdimm' type-id='type-id-242' filepath='src/include/efivar/efivar-dp.h' line='705' column='1' id='type-id-241'/>
-    <typedef-decl name='efidp_nvme' type-id='type-id-244' filepath='src/include/efivar/efivar-dp.h' line='641' column='1' id='type-id-243'/>
-    <typedef-decl name='efidp_pccard' type-id='type-id-246' filepath='src/include/efivar/efivar-dp.h' line='54' column='1' id='type-id-245'/>
-    <typedef-decl name='efidp_pci' type-id='type-id-248' filepath='src/include/efivar/efivar-dp.h' line='46' column='1' id='type-id-247'/>
-    <typedef-decl name='efidp_protocol' type-id='type-id-250' filepath='src/include/efivar/efivar-dp.h' line='764' column='1' id='type-id-249'/>
-    <typedef-decl name='efidp_ramdisk' type-id='type-id-252' filepath='src/include/efivar/efivar-dp.h' line='793' column='1' id='type-id-251'/>
-    <typedef-decl name='efidp_relative_offset' type-id='type-id-254' filepath='src/include/efivar/efivar-dp.h' line='784' column='1' id='type-id-253'/>
-    <typedef-decl name='efidp_sas' type-id='type-id-256' filepath='src/include/efivar/efivar-dp.h' line='565' column='1' id='type-id-255'/>
-    <typedef-decl name='efidp_sas_ex' type-id='type-id-258' filepath='src/include/efivar/efivar-dp.h' line='596' column='1' id='type-id-257'/>
-    <typedef-decl name='efidp_sata' type-id='type-id-260' filepath='src/include/efivar/efivar-dp.h' line='413' column='1' id='type-id-259'/>
-    <typedef-decl name='efidp_scsi' type-id='type-id-262' filepath='src/include/efivar/efivar-dp.h' line='331' column='1' id='type-id-261'/>
-    <typedef-decl name='efidp_sd' type-id='type-id-264' filepath='src/include/efivar/efivar-dp.h' line='662' column='1' id='type-id-263'/>
-    <typedef-decl name='efidp_uart' type-id='type-id-266' filepath='src/include/efivar/efivar-dp.h' line='508' column='1' id='type-id-265'/>
-    <typedef-decl name='efidp_uart_flow_control' type-id='type-id-268' filepath='src/include/efivar/efivar-dp.h' line='549' column='1' id='type-id-267'/>
-    <typedef-decl name='efidp_ufs' type-id='type-id-270' filepath='src/include/efivar/efivar-dp.h' line='656' column='1' id='type-id-269'/>
-    <typedef-decl name='efidp_uri' type-id='type-id-272' filepath='src/include/efivar/efivar-dp.h' line='649' column='1' id='type-id-271'/>
-    <typedef-decl name='efidp_usb' type-id='type-id-274' filepath='src/include/efivar/efivar-dp.h' line='363' column='1' id='type-id-273'/>
-    <typedef-decl name='efidp_usb_class' type-id='type-id-276' filepath='src/include/efivar/efivar-dp.h' line='373' column='1' id='type-id-275'/>
-    <typedef-decl name='efidp_usb_wwid' type-id='type-id-278' filepath='src/include/efivar/efivar-dp.h' line='399' column='1' id='type-id-277'/>
-    <typedef-decl name='efidp_vlan' type-id='type-id-280' filepath='src/include/efivar/efivar-dp.h' line='479' column='1' id='type-id-279'/>
-    <typedef-decl name='efidp_wifi' type-id='type-id-282' filepath='src/include/efivar/efivar-dp.h' line='674' column='1' id='type-id-281'/>
-    <array-type-def dimensions='1' type-id='type-id-44' size-in-bits='infinite' id='type-id-172'>
-      <subrange length='infinite' type-id='type-id-3' id='type-id-162'/>
+    <typedef-decl name='efi_ip_addr_t' type-id='type-id-285' filepath='src/include/efivar/efivar-types.h' line='47' column='1' id='type-id-164'/>
+    <typedef-decl name='efi_ipv4_addr_t' type-id='type-id-167' filepath='src/include/efivar/efivar-types.h' line='37' column='1' id='type-id-166'/>
+    <typedef-decl name='efi_ipv6_addr_t' type-id='type-id-170' filepath='src/include/efivar/efivar-types.h' line='41' column='1' id='type-id-169'/>
+    <typedef-decl name='efi_load_option' type-id='type-id-172' filepath='src/include/efivar/efiboot-loadopt.h' line='14' column='1' id='type-id-286'/>
+    <typedef-decl name='efidp' type-id='type-id-287' filepath='src/include/efivar/efivar-dp.h' line='889' column='1' id='type-id-288'/>
+    <typedef-decl name='efidp_1394' type-id='type-id-175' filepath='src/include/efivar/efivar-dp.h' line='360' column='1' id='type-id-174'/>
+    <typedef-decl name='efidp_acpi_adr' type-id='type-id-178' filepath='src/include/efivar/efivar-dp.h' line='163' column='1' id='type-id-177'/>
+    <typedef-decl name='efidp_acpi_hid' type-id='type-id-181' filepath='src/include/efivar/efivar-dp.h' line='114' column='1' id='type-id-180'/>
+    <typedef-decl name='efidp_acpi_hid_ex' type-id='type-id-183' filepath='src/include/efivar/efivar-dp.h' line='126' column='1' id='type-id-182'/>
+    <typedef-decl name='efidp_atapi' type-id='type-id-185' filepath='src/include/efivar/efivar-dp.h' line='326' column='1' id='type-id-184'/>
+    <typedef-decl name='efidp_bios_boot' type-id='type-id-187' filepath='src/include/efivar/efivar-dp.h' line='816' column='1' id='type-id-186'/>
+    <typedef-decl name='efidp_bmc' type-id='type-id-190' filepath='src/include/efivar/efivar-dp.h' line='100' column='1' id='type-id-189'/>
+    <typedef-decl name='efidp_boolean' type-id='type-id-53' filepath='src/include/efivar/efivar-dp.h' line='34' column='1' id='type-id-226'/>
+    <typedef-decl name='efidp_bt' type-id='type-id-192' filepath='src/include/efivar/efivar-dp.h' line='673' column='1' id='type-id-191'/>
+    <typedef-decl name='efidp_btle' type-id='type-id-194' filepath='src/include/efivar/efivar-dp.h' line='694' column='1' id='type-id-193'/>
+    <typedef-decl name='efidp_cdrom' type-id='type-id-196' filepath='src/include/efivar/efivar-dp.h' line='745' column='1' id='type-id-195'/>
+    <typedef-decl name='efidp_controller' type-id='type-id-198' filepath='src/include/efivar/efivar-dp.h' line='93' column='1' id='type-id-197'/>
+    <typedef-decl name='efidp_data' type-id='type-id-289' filepath='src/include/efivar/efivar-dp.h' line='888' column='1' id='type-id-154'/>
+    <typedef-decl name='efidp_dns' type-id='type-id-200' filepath='src/include/efivar/efivar-dp.h' line='704' column='1' id='type-id-199'/>
+    <typedef-decl name='efidp_emmc' type-id='type-id-202' filepath='src/include/efivar/efivar-dp.h' line='685' column='1' id='type-id-201'/>
+    <typedef-decl name='efidp_fc' type-id='type-id-204' filepath='src/include/efivar/efivar-dp.h' line='345' column='1' id='type-id-203'/>
+    <typedef-decl name='efidp_fcex' type-id='type-id-206' filepath='src/include/efivar/efivar-dp.h' line='353' column='1' id='type-id-205'/>
+    <typedef-decl name='efidp_file' type-id='type-id-208' filepath='src/include/efivar/efivar-dp.h' line='762' column='1' id='type-id-207'/>
+    <typedef-decl name='efidp_firmware_file' type-id='type-id-210' filepath='src/include/efivar/efivar-dp.h' line='775' column='1' id='type-id-209'/>
+    <typedef-decl name='efidp_firmware_volume' type-id='type-id-212' filepath='src/include/efivar/efivar-dp.h' line='781' column='1' id='type-id-211'/>
+    <typedef-decl name='efidp_hd' type-id='type-id-214' filepath='src/include/efivar/efivar-dp.h' line='726' column='1' id='type-id-213'/>
+    <typedef-decl name='efidp_header' type-id='type-id-215' filepath='src/include/efivar/efivar-dp.h' line='31' column='1' id='type-id-176'/>
+    <typedef-decl name='efidp_hw_vendor' type-id='type-id-217' filepath='src/include/efivar/efivar-dp.h' line='73' column='1' id='type-id-216'/>
+    <typedef-decl name='efidp_i2o' type-id='type-id-219' filepath='src/include/efivar/efivar-dp.h' line='426' column='1' id='type-id-218'/>
+    <typedef-decl name='efidp_infiniband' type-id='type-id-221' filepath='src/include/efivar/efivar-dp.h' line='497' column='1' id='type-id-220'/>
+    <typedef-decl name='efidp_ipv4_addr' type-id='type-id-225' filepath='src/include/efivar/efivar-dp.h' line='451' column='1' id='type-id-224'/>
+    <typedef-decl name='efidp_ipv6_addr' type-id='type-id-228' filepath='src/include/efivar/efivar-dp.h' line='473' column='1' id='type-id-227'/>
+    <typedef-decl name='efidp_iscsi' type-id='type-id-230' filepath='src/include/efivar/efivar-dp.h' line='614' column='1' id='type-id-229'/>
+    <typedef-decl name='efidp_lun' type-id='type-id-232' filepath='src/include/efivar/efivar-dp.h' line='409' column='1' id='type-id-231'/>
+    <typedef-decl name='efidp_mac_addr' type-id='type-id-234' filepath='src/include/efivar/efivar-dp.h' line='433' column='1' id='type-id-233'/>
+    <typedef-decl name='efidp_media_vendor' type-id='type-id-237' filepath='src/include/efivar/efivar-dp.h' line='752' column='1' id='type-id-236'/>
+    <typedef-decl name='efidp_mmio' type-id='type-id-239' filepath='src/include/efivar/efivar-dp.h' line='66' column='1' id='type-id-238'/>
+    <typedef-decl name='efidp_msg_vendor' type-id='type-id-241' filepath='src/include/efivar/efivar-dp.h' line='541' column='1' id='type-id-240'/>
+    <typedef-decl name='efidp_nvdimm' type-id='type-id-243' filepath='src/include/efivar/efivar-dp.h' line='710' column='1' id='type-id-242'/>
+    <typedef-decl name='efidp_nvme' type-id='type-id-245' filepath='src/include/efivar/efivar-dp.h' line='646' column='1' id='type-id-244'/>
+    <typedef-decl name='efidp_pccard' type-id='type-id-247' filepath='src/include/efivar/efivar-dp.h' line='58' column='1' id='type-id-246'/>
+    <typedef-decl name='efidp_pci' type-id='type-id-249' filepath='src/include/efivar/efivar-dp.h' line='50' column='1' id='type-id-248'/>
+    <typedef-decl name='efidp_protocol' type-id='type-id-251' filepath='src/include/efivar/efivar-dp.h' line='769' column='1' id='type-id-250'/>
+    <typedef-decl name='efidp_ramdisk' type-id='type-id-253' filepath='src/include/efivar/efivar-dp.h' line='798' column='1' id='type-id-252'/>
+    <typedef-decl name='efidp_relative_offset' type-id='type-id-255' filepath='src/include/efivar/efivar-dp.h' line='789' column='1' id='type-id-254'/>
+    <typedef-decl name='efidp_sas' type-id='type-id-257' filepath='src/include/efivar/efivar-dp.h' line='570' column='1' id='type-id-256'/>
+    <typedef-decl name='efidp_sas_ex' type-id='type-id-259' filepath='src/include/efivar/efivar-dp.h' line='601' column='1' id='type-id-258'/>
+    <typedef-decl name='efidp_sata' type-id='type-id-261' filepath='src/include/efivar/efivar-dp.h' line='417' column='1' id='type-id-260'/>
+    <typedef-decl name='efidp_scsi' type-id='type-id-263' filepath='src/include/efivar/efivar-dp.h' line='335' column='1' id='type-id-262'/>
+    <typedef-decl name='efidp_sd' type-id='type-id-265' filepath='src/include/efivar/efivar-dp.h' line='667' column='1' id='type-id-264'/>
+    <typedef-decl name='efidp_uart' type-id='type-id-267' filepath='src/include/efivar/efivar-dp.h' line='513' column='1' id='type-id-266'/>
+    <typedef-decl name='efidp_uart_flow_control' type-id='type-id-269' filepath='src/include/efivar/efivar-dp.h' line='554' column='1' id='type-id-268'/>
+    <typedef-decl name='efidp_ufs' type-id='type-id-271' filepath='src/include/efivar/efivar-dp.h' line='661' column='1' id='type-id-270'/>
+    <typedef-decl name='efidp_uri' type-id='type-id-273' filepath='src/include/efivar/efivar-dp.h' line='654' column='1' id='type-id-272'/>
+    <typedef-decl name='efidp_usb' type-id='type-id-275' filepath='src/include/efivar/efivar-dp.h' line='367' column='1' id='type-id-274'/>
+    <typedef-decl name='efidp_usb_class' type-id='type-id-277' filepath='src/include/efivar/efivar-dp.h' line='377' column='1' id='type-id-276'/>
+    <typedef-decl name='efidp_usb_wwid' type-id='type-id-279' filepath='src/include/efivar/efivar-dp.h' line='403' column='1' id='type-id-278'/>
+    <typedef-decl name='efidp_vlan' type-id='type-id-281' filepath='src/include/efivar/efivar-dp.h' line='484' column='1' id='type-id-280'/>
+    <typedef-decl name='efidp_wifi' type-id='type-id-283' filepath='src/include/efivar/efivar-dp.h' line='679' column='1' id='type-id-282'/>
+    <array-type-def dimensions='1' type-id='type-id-44' size-in-bits='infinite' id='type-id-173'>
+      <subrange length='infinite' type-id='type-id-3' id='type-id-163'/>
     </array-type-def>
-    <array-type-def dimensions='1' type-id='type-id-31' size-in-bits='128' id='type-id-289'>
-      <subrange length='4' type-id='type-id-3' id='type-id-290'/>
+    <array-type-def dimensions='1' type-id='type-id-31' size-in-bits='128' id='type-id-290'>
+      <subrange length='4' type-id='type-id-3' id='type-id-291'/>
     </array-type-def>
-    <array-type-def dimensions='1' type-id='type-id-31' size-in-bits='infinite' id='type-id-178'>
-      <subrange length='infinite' type-id='type-id-3' id='type-id-162'/>
+    <array-type-def dimensions='1' type-id='type-id-31' size-in-bits='infinite' id='type-id-179'>
+      <subrange length='infinite' type-id='type-id-3' id='type-id-163'/>
     </array-type-def>
-    <array-type-def dimensions='1' type-id='type-id-32' size-in-bits='128' id='type-id-221'>
-      <subrange length='2' type-id='type-id-3' id='type-id-291'/>
+    <array-type-def dimensions='1' type-id='type-id-32' size-in-bits='128' id='type-id-222'>
+      <subrange length='2' type-id='type-id-3' id='type-id-292'/>
     </array-type-def>
-    <array-type-def dimensions='1' type-id='type-id-53' size-in-bits='128' id='type-id-170'>
-      <subrange length='16' type-id='type-id-3' id='type-id-292'/>
+    <array-type-def dimensions='1' type-id='type-id-53' size-in-bits='128' id='type-id-171'>
+      <subrange length='16' type-id='type-id-3' id='type-id-293'/>
     </array-type-def>
-    <array-type-def dimensions='1' type-id='type-id-53' size-in-bits='256' id='type-id-234'>
-      <subrange length='32' type-id='type-id-3' id='type-id-293'/>
+    <array-type-def dimensions='1' type-id='type-id-53' size-in-bits='256' id='type-id-235'>
+      <subrange length='32' type-id='type-id-3' id='type-id-294'/>
     </array-type-def>
-    <array-type-def dimensions='1' type-id='type-id-53' size-in-bits='32' id='type-id-167'>
-      <subrange length='4' type-id='type-id-3' id='type-id-290'/>
+    <array-type-def dimensions='1' type-id='type-id-53' size-in-bits='32' id='type-id-168'>
+      <subrange length='4' type-id='type-id-3' id='type-id-291'/>
     </array-type-def>
-    <array-type-def dimensions='1' type-id='type-id-53' size-in-bits='infinite' id='type-id-187'>
-      <subrange length='infinite' type-id='type-id-3' id='type-id-162'/>
+    <array-type-def dimensions='1' type-id='type-id-53' size-in-bits='infinite' id='type-id-188'>
+      <subrange length='infinite' type-id='type-id-3' id='type-id-163'/>
     </array-type-def>
-    <union-decl name='efi_ip_addr_t' size-in-bits='128' naming-typedef-id='type-id-163' visibility='default' filepath='src/include/efivar/efivar-types.h' line='39' column='1' id='type-id-284'>
+    <union-decl name='efi_ip_addr_t' size-in-bits='128' naming-typedef-id='type-id-164' visibility='default' filepath='src/include/efivar/efivar-types.h' line='43' column='1' id='type-id-285'>
       <data-member access='public'>
-        <var-decl name='addr' type-id='type-id-289' visibility='default' filepath='src/include/efivar/efivar-types.h' line='40' column='1'/>
+        <var-decl name='addr' type-id='type-id-290' visibility='default' filepath='src/include/efivar/efivar-types.h' line='44' column='1'/>
       </data-member>
       <data-member access='public'>
-        <var-decl name='v4' type-id='type-id-165' visibility='default' filepath='src/include/efivar/efivar-types.h' line='41' column='1'/>
+        <var-decl name='v4' type-id='type-id-166' visibility='default' filepath='src/include/efivar/efivar-types.h' line='45' column='1'/>
       </data-member>
       <data-member access='public'>
-        <var-decl name='v6' type-id='type-id-168' visibility='default' filepath='src/include/efivar/efivar-types.h' line='42' column='1'/>
+        <var-decl name='v6' type-id='type-id-169' visibility='default' filepath='src/include/efivar/efivar-types.h' line='46' column='1'/>
       </data-member>
     </union-decl>
-    <union-decl name='efidp_data' size-in-bits='384' naming-typedef-id='type-id-153' visibility='default' filepath='src/include/efivar/efivar-dp.h' line='825' column='1' id='type-id-288'>
+    <union-decl name='efidp_data' size-in-bits='480' naming-typedef-id='type-id-154' visibility='default' filepath='src/include/efivar/efivar-dp.h' line='830' column='1' id='type-id-289'>
       <data-member access='public'>
-        <var-decl name='' type-id='type-id-283' visibility='default'/>
+        <var-decl name='' type-id='type-id-284' visibility='default'/>
       </data-member>
       <data-member access='public'>
-        <var-decl name='header' type-id='type-id-175' visibility='default' filepath='src/include/efivar/efivar-dp.h' line='831' column='1'/>
+        <var-decl name='header' type-id='type-id-176' visibility='default' filepath='src/include/efivar/efivar-dp.h' line='836' column='1'/>
       </data-member>
       <data-member access='public'>
-        <var-decl name='pci' type-id='type-id-247' visibility='default' filepath='src/include/efivar/efivar-dp.h' line='832' column='1'/>
+        <var-decl name='pci' type-id='type-id-248' visibility='default' filepath='src/include/efivar/efivar-dp.h' line='837' column='1'/>
       </data-member>
       <data-member access='public'>
-        <var-decl name='pccard' type-id='type-id-245' visibility='default' filepath='src/include/efivar/efivar-dp.h' line='833' column='1'/>
+        <var-decl name='pccard' type-id='type-id-246' visibility='default' filepath='src/include/efivar/efivar-dp.h' line='838' column='1'/>
       </data-member>
       <data-member access='public'>
-        <var-decl name='mmio' type-id='type-id-237' visibility='default' filepath='src/include/efivar/efivar-dp.h' line='834' column='1'/>
+        <var-decl name='mmio' type-id='type-id-238' visibility='default' filepath='src/include/efivar/efivar-dp.h' line='839' column='1'/>
       </data-member>
       <data-member access='public'>
-        <var-decl name='hw_vendor' type-id='type-id-215' visibility='default' filepath='src/include/efivar/efivar-dp.h' line='835' column='1'/>
+        <var-decl name='hw_vendor' type-id='type-id-216' visibility='default' filepath='src/include/efivar/efivar-dp.h' line='840' column='1'/>
       </data-member>
       <data-member access='public'>
-        <var-decl name='controller' type-id='type-id-196' visibility='default' filepath='src/include/efivar/efivar-dp.h' line='836' column='1'/>
+        <var-decl name='controller' type-id='type-id-197' visibility='default' filepath='src/include/efivar/efivar-dp.h' line='841' column='1'/>
       </data-member>
       <data-member access='public'>
-        <var-decl name='bmc' type-id='type-id-188' visibility='default' filepath='src/include/efivar/efivar-dp.h' line='837' column='1'/>
+        <var-decl name='bmc' type-id='type-id-189' visibility='default' filepath='src/include/efivar/efivar-dp.h' line='842' column='1'/>
       </data-member>
       <data-member access='public'>
-        <var-decl name='acpi_hid' type-id='type-id-179' visibility='default' filepath='src/include/efivar/efivar-dp.h' line='838' column='1'/>
+        <var-decl name='acpi_hid' type-id='type-id-180' visibility='default' filepath='src/include/efivar/efivar-dp.h' line='843' column='1'/>
       </data-member>
       <data-member access='public'>
-        <var-decl name='acpi_hid_ex' type-id='type-id-181' visibility='default' filepath='src/include/efivar/efivar-dp.h' line='839' column='1'/>
+        <var-decl name='acpi_hid_ex' type-id='type-id-182' visibility='default' filepath='src/include/efivar/efivar-dp.h' line='844' column='1'/>
       </data-member>
       <data-member access='public'>
-        <var-decl name='acpi_adr' type-id='type-id-176' visibility='default' filepath='src/include/efivar/efivar-dp.h' line='840' column='1'/>
+        <var-decl name='acpi_adr' type-id='type-id-177' visibility='default' filepath='src/include/efivar/efivar-dp.h' line='845' column='1'/>
       </data-member>
       <data-member access='public'>
-        <var-decl name='atapi' type-id='type-id-183' visibility='default' filepath='src/include/efivar/efivar-dp.h' line='841' column='1'/>
+        <var-decl name='atapi' type-id='type-id-184' visibility='default' filepath='src/include/efivar/efivar-dp.h' line='846' column='1'/>
       </data-member>
       <data-member access='public'>
-        <var-decl name='scsi' type-id='type-id-261' visibility='default' filepath='src/include/efivar/efivar-dp.h' line='842' column='1'/>
+        <var-decl name='scsi' type-id='type-id-262' visibility='default' filepath='src/include/efivar/efivar-dp.h' line='847' column='1'/>
       </data-member>
       <data-member access='public'>
-        <var-decl name='fc' type-id='type-id-202' visibility='default' filepath='src/include/efivar/efivar-dp.h' line='843' column='1'/>
+        <var-decl name='fc' type-id='type-id-203' visibility='default' filepath='src/include/efivar/efivar-dp.h' line='848' column='1'/>
       </data-member>
       <data-member access='public'>
-        <var-decl name='fcex' type-id='type-id-204' visibility='default' filepath='src/include/efivar/efivar-dp.h' line='844' column='1'/>
+        <var-decl name='fcex' type-id='type-id-205' visibility='default' filepath='src/include/efivar/efivar-dp.h' line='849' column='1'/>
       </data-member>
       <data-member access='public'>
-        <var-decl name='firewire' type-id='type-id-173' visibility='default' filepath='src/include/efivar/efivar-dp.h' line='845' column='1'/>
+        <var-decl name='firewire' type-id='type-id-174' visibility='default' filepath='src/include/efivar/efivar-dp.h' line='850' column='1'/>
       </data-member>
       <data-member access='public'>
-        <var-decl name='usb' type-id='type-id-273' visibility='default' filepath='src/include/efivar/efivar-dp.h' line='846' column='1'/>
+        <var-decl name='usb' type-id='type-id-274' visibility='default' filepath='src/include/efivar/efivar-dp.h' line='851' column='1'/>
       </data-member>
       <data-member access='public'>
-        <var-decl name='usb_class' type-id='type-id-275' visibility='default' filepath='src/include/efivar/efivar-dp.h' line='847' column='1'/>
+        <var-decl name='usb_class' type-id='type-id-276' visibility='default' filepath='src/include/efivar/efivar-dp.h' line='852' column='1'/>
       </data-member>
       <data-member access='public'>
-        <var-decl name='usb_wwid' type-id='type-id-277' visibility='default' filepath='src/include/efivar/efivar-dp.h' line='848' column='1'/>
+        <var-decl name='usb_wwid' type-id='type-id-278' visibility='default' filepath='src/include/efivar/efivar-dp.h' line='853' column='1'/>
       </data-member>
       <data-member access='public'>
-        <var-decl name='lun' type-id='type-id-230' visibility='default' filepath='src/include/efivar/efivar-dp.h' line='849' column='1'/>
+        <var-decl name='lun' type-id='type-id-231' visibility='default' filepath='src/include/efivar/efivar-dp.h' line='854' column='1'/>
       </data-member>
       <data-member access='public'>
-        <var-decl name='sata' type-id='type-id-259' visibility='default' filepath='src/include/efivar/efivar-dp.h' line='850' column='1'/>
+        <var-decl name='sata' type-id='type-id-260' visibility='default' filepath='src/include/efivar/efivar-dp.h' line='855' column='1'/>
       </data-member>
       <data-member access='public'>
-        <var-decl name='i2o' type-id='type-id-217' visibility='default' filepath='src/include/efivar/efivar-dp.h' line='851' column='1'/>
+        <var-decl name='i2o' type-id='type-id-218' visibility='default' filepath='src/include/efivar/efivar-dp.h' line='856' column='1'/>
       </data-member>
       <data-member access='public'>
-        <var-decl name='mac_addr' type-id='type-id-232' visibility='default' filepath='src/include/efivar/efivar-dp.h' line='852' column='1'/>
+        <var-decl name='mac_addr' type-id='type-id-233' visibility='default' filepath='src/include/efivar/efivar-dp.h' line='857' column='1'/>
       </data-member>
       <data-member access='public'>
-        <var-decl name='ipv4_addr' type-id='type-id-223' visibility='default' filepath='src/include/efivar/efivar-dp.h' line='853' column='1'/>
+        <var-decl name='ipv4_addr' type-id='type-id-224' visibility='default' filepath='src/include/efivar/efivar-dp.h' line='858' column='1'/>
       </data-member>
       <data-member access='public'>
-        <var-decl name='ipv6_addr' type-id='type-id-226' visibility='default' filepath='src/include/efivar/efivar-dp.h' line='854' column='1'/>
+        <var-decl name='ipv6_addr' type-id='type-id-227' visibility='default' filepath='src/include/efivar/efivar-dp.h' line='859' column='1'/>
       </data-member>
       <data-member access='public'>
-        <var-decl name='vlan' type-id='type-id-279' visibility='default' filepath='src/include/efivar/efivar-dp.h' line='855' column='1'/>
+        <var-decl name='vlan' type-id='type-id-280' visibility='default' filepath='src/include/efivar/efivar-dp.h' line='860' column='1'/>
       </data-member>
       <data-member access='public'>
-        <var-decl name='infiniband' type-id='type-id-219' visibility='default' filepath='src/include/efivar/efivar-dp.h' line='856' column='1'/>
+        <var-decl name='infiniband' type-id='type-id-220' visibility='default' filepath='src/include/efivar/efivar-dp.h' line='861' column='1'/>
       </data-member>
       <data-member access='public'>
-        <var-decl name='uart' type-id='type-id-265' visibility='default' filepath='src/include/efivar/efivar-dp.h' line='857' column='1'/>
+        <var-decl name='uart' type-id='type-id-266' visibility='default' filepath='src/include/efivar/efivar-dp.h' line='862' column='1'/>
       </data-member>
       <data-member access='public'>
-        <var-decl name='msg_vendor' type-id='type-id-239' visibility='default' filepath='src/include/efivar/efivar-dp.h' line='858' column='1'/>
+        <var-decl name='msg_vendor' type-id='type-id-240' visibility='default' filepath='src/include/efivar/efivar-dp.h' line='863' column='1'/>
       </data-member>
       <data-member access='public'>
-        <var-decl name='uart_flow_control' type-id='type-id-267' visibility='default' filepath='src/include/efivar/efivar-dp.h' line='859' column='1'/>
+        <var-decl name='uart_flow_control' type-id='type-id-268' visibility='default' filepath='src/include/efivar/efivar-dp.h' line='864' column='1'/>
       </data-member>
       <data-member access='public'>
-        <var-decl name='sas' type-id='type-id-255' visibility='default' filepath='src/include/efivar/efivar-dp.h' line='860' column='1'/>
+        <var-decl name='sas' type-id='type-id-256' visibility='default' filepath='src/include/efivar/efivar-dp.h' line='865' column='1'/>
       </data-member>
       <data-member access='public'>
-        <var-decl name='sas_ex' type-id='type-id-257' visibility='default' filepath='src/include/efivar/efivar-dp.h' line='861' column='1'/>
+        <var-decl name='sas_ex' type-id='type-id-258' visibility='default' filepath='src/include/efivar/efivar-dp.h' line='866' column='1'/>
       </data-member>
       <data-member access='public'>
-        <var-decl name='iscsi' type-id='type-id-228' visibility='default' filepath='src/include/efivar/efivar-dp.h' line='862' column='1'/>
+        <var-decl name='iscsi' type-id='type-id-229' visibility='default' filepath='src/include/efivar/efivar-dp.h' line='867' column='1'/>
       </data-member>
       <data-member access='public'>
-        <var-decl name='nvme' type-id='type-id-243' visibility='default' filepath='src/include/efivar/efivar-dp.h' line='863' column='1'/>
+        <var-decl name='nvme' type-id='type-id-244' visibility='default' filepath='src/include/efivar/efivar-dp.h' line='868' column='1'/>
       </data-member>
       <data-member access='public'>
-        <var-decl name='uri' type-id='type-id-271' visibility='default' filepath='src/include/efivar/efivar-dp.h' line='864' column='1'/>
+        <var-decl name='uri' type-id='type-id-272' visibility='default' filepath='src/include/efivar/efivar-dp.h' line='869' column='1'/>
       </data-member>
       <data-member access='public'>
-        <var-decl name='ufs' type-id='type-id-269' visibility='default' filepath='src/include/efivar/efivar-dp.h' line='865' column='1'/>
+        <var-decl name='ufs' type-id='type-id-270' visibility='default' filepath='src/include/efivar/efivar-dp.h' line='870' column='1'/>
       </data-member>
       <data-member access='public'>
-        <var-decl name='sd' type-id='type-id-263' visibility='default' filepath='src/include/efivar/efivar-dp.h' line='866' column='1'/>
+        <var-decl name='sd' type-id='type-id-264' visibility='default' filepath='src/include/efivar/efivar-dp.h' line='871' column='1'/>
       </data-member>
       <data-member access='public'>
-        <var-decl name='bt' type-id='type-id-190' visibility='default' filepath='src/include/efivar/efivar-dp.h' line='867' column='1'/>
+        <var-decl name='bt' type-id='type-id-191' visibility='default' filepath='src/include/efivar/efivar-dp.h' line='872' column='1'/>
       </data-member>
       <data-member access='public'>
-        <var-decl name='wifi' type-id='type-id-281' visibility='default' filepath='src/include/efivar/efivar-dp.h' line='868' column='1'/>
+        <var-decl name='wifi' type-id='type-id-282' visibility='default' filepath='src/include/efivar/efivar-dp.h' line='873' column='1'/>
       </data-member>
       <data-member access='public'>
-        <var-decl name='emmc' type-id='type-id-200' visibility='default' filepath='src/include/efivar/efivar-dp.h' line='869' column='1'/>
+        <var-decl name='emmc' type-id='type-id-201' visibility='default' filepath='src/include/efivar/efivar-dp.h' line='874' column='1'/>
       </data-member>
       <data-member access='public'>
-        <var-decl name='btle' type-id='type-id-192' visibility='default' filepath='src/include/efivar/efivar-dp.h' line='870' column='1'/>
+        <var-decl name='btle' type-id='type-id-193' visibility='default' filepath='src/include/efivar/efivar-dp.h' line='875' column='1'/>
       </data-member>
       <data-member access='public'>
-        <var-decl name='dns' type-id='type-id-198' visibility='default' filepath='src/include/efivar/efivar-dp.h' line='871' column='1'/>
+        <var-decl name='dns' type-id='type-id-199' visibility='default' filepath='src/include/efivar/efivar-dp.h' line='876' column='1'/>
       </data-member>
       <data-member access='public'>
-        <var-decl name='nvdimm' type-id='type-id-241' visibility='default' filepath='src/include/efivar/efivar-dp.h' line='872' column='1'/>
+        <var-decl name='nvdimm' type-id='type-id-242' visibility='default' filepath='src/include/efivar/efivar-dp.h' line='877' column='1'/>
       </data-member>
       <data-member access='public'>
-        <var-decl name='hd' type-id='type-id-212' visibility='default' filepath='src/include/efivar/efivar-dp.h' line='873' column='1'/>
+        <var-decl name='hd' type-id='type-id-213' visibility='default' filepath='src/include/efivar/efivar-dp.h' line='878' column='1'/>
       </data-member>
       <data-member access='public'>
-        <var-decl name='cdrom' type-id='type-id-194' visibility='default' filepath='src/include/efivar/efivar-dp.h' line='874' column='1'/>
+        <var-decl name='cdrom' type-id='type-id-195' visibility='default' filepath='src/include/efivar/efivar-dp.h' line='879' column='1'/>
       </data-member>
       <data-member access='public'>
-        <var-decl name='media_vendor' type-id='type-id-235' visibility='default' filepath='src/include/efivar/efivar-dp.h' line='875' column='1'/>
+        <var-decl name='media_vendor' type-id='type-id-236' visibility='default' filepath='src/include/efivar/efivar-dp.h' line='880' column='1'/>
       </data-member>
       <data-member access='public'>
-        <var-decl name='file' type-id='type-id-206' visibility='default' filepath='src/include/efivar/efivar-dp.h' line='876' column='1'/>
+        <var-decl name='file' type-id='type-id-207' visibility='default' filepath='src/include/efivar/efivar-dp.h' line='881' column='1'/>
       </data-member>
       <data-member access='public'>
-        <var-decl name='protocol' type-id='type-id-249' visibility='default' filepath='src/include/efivar/efivar-dp.h' line='877' column='1'/>
+        <var-decl name='protocol' type-id='type-id-250' visibility='default' filepath='src/include/efivar/efivar-dp.h' line='882' column='1'/>
       </data-member>
       <data-member access='public'>
-        <var-decl name='firmware_file' type-id='type-id-208' visibility='default' filepath='src/include/efivar/efivar-dp.h' line='878' column='1'/>
+        <var-decl name='firmware_file' type-id='type-id-209' visibility='default' filepath='src/include/efivar/efivar-dp.h' line='883' column='1'/>
       </data-member>
       <data-member access='public'>
-        <var-decl name='firmware_volume' type-id='type-id-210' visibility='default' filepath='src/include/efivar/efivar-dp.h' line='879' column='1'/>
+        <var-decl name='firmware_volume' type-id='type-id-211' visibility='default' filepath='src/include/efivar/efivar-dp.h' line='884' column='1'/>
       </data-member>
       <data-member access='public'>
-        <var-decl name='relative_offset' type-id='type-id-253' visibility='default' filepath='src/include/efivar/efivar-dp.h' line='880' column='1'/>
+        <var-decl name='relative_offset' type-id='type-id-254' visibility='default' filepath='src/include/efivar/efivar-dp.h' line='885' column='1'/>
       </data-member>
       <data-member access='public'>
-        <var-decl name='ramdisk' type-id='type-id-251' visibility='default' filepath='src/include/efivar/efivar-dp.h' line='881' column='1'/>
+        <var-decl name='ramdisk' type-id='type-id-252' visibility='default' filepath='src/include/efivar/efivar-dp.h' line='886' column='1'/>
       </data-member>
       <data-member access='public'>
-        <var-decl name='bios_boot' type-id='type-id-185' visibility='default' filepath='src/include/efivar/efivar-dp.h' line='882' column='1'/>
-      </data-member>
-    </union-decl>
-    <union-decl name='__anonymous_union__1' size-in-bits='64' is-anonymous='yes' visibility='default' filepath='src/include/efivar/efivar-dp.h' line='486' column='1' id='type-id-222'>
-      <data-member access='public'>
-        <var-decl name='ioc_guid' type-id='type-id-32' visibility='default' filepath='src/include/efivar/efivar-dp.h' line='487' column='1'/>
-      </data-member>
-      <data-member access='public'>
-        <var-decl name='service_id' type-id='type-id-32' visibility='default' filepath='src/include/efivar/efivar-dp.h' line='488' column='1'/>
+        <var-decl name='bios_boot' type-id='type-id-186' visibility='default' filepath='src/include/efivar/efivar-dp.h' line='887' column='1'/>
       </data-member>
     </union-decl>
-    <qualified-type-def type-id='type-id-82' const='yes' id='type-id-294'/>
-    <pointer-type-def type-id='type-id-294' size-in-bits='64' id='type-id-295'/>
-    <qualified-type-def type-id='type-id-21' const='yes' id='type-id-296'/>
-    <pointer-type-def type-id='type-id-296' size-in-bits='64' id='type-id-297'/>
+    <union-decl name='__anonymous_union__1' size-in-bits='64' is-anonymous='yes' visibility='default' filepath='src/include/efivar/efivar-dp.h' line='491' column='1' id='type-id-223'>
+      <data-member access='public'>
+        <var-decl name='ioc_guid' type-id='type-id-32' visibility='default' filepath='src/include/efivar/efivar-dp.h' line='492' column='1'/>
+      </data-member>
+      <data-member access='public'>
+        <var-decl name='service_id' type-id='type-id-32' visibility='default' filepath='src/include/efivar/efivar-dp.h' line='493' column='1'/>
+      </data-member>
+    </union-decl>
+    <qualified-type-def type-id='type-id-82' const='yes' id='type-id-295'/>
+    <pointer-type-def type-id='type-id-295' size-in-bits='64' id='type-id-296'/>
+    <qualified-type-def type-id='type-id-21' const='yes' id='type-id-297'/>
     <pointer-type-def type-id='type-id-297' size-in-bits='64' id='type-id-298'/>
-    <pointer-type-def type-id='type-id-285' size-in-bits='64' id='type-id-299'/>
-    <pointer-type-def type-id='type-id-153' size-in-bits='64' id='type-id-286'/>
-    <pointer-type-def type-id='type-id-27' size-in-bits='64' id='type-id-160'/>
-    <pointer-type-def type-id='type-id-44' size-in-bits='64' id='type-id-300'/>
-    <pointer-type-def type-id='type-id-82' size-in-bits='64' id='type-id-159'/>
-    <pointer-type-def type-id='type-id-159' size-in-bits='64' id='type-id-301'/>
-    <class-decl name='__dirstream' is-struct='yes' visibility='default' is-declaration-only='yes' id='type-id-302'/>
-    <function-decl name='efi_get_verbose' filepath='src/include/efivar/efivar.h' line='195' column='1' visibility='default' binding='global' size-in-bits='64'>
+    <pointer-type-def type-id='type-id-298' size-in-bits='64' id='type-id-299'/>
+    <pointer-type-def type-id='type-id-286' size-in-bits='64' id='type-id-300'/>
+    <pointer-type-def type-id='type-id-154' size-in-bits='64' id='type-id-287'/>
+    <pointer-type-def type-id='type-id-27' size-in-bits='64' id='type-id-161'/>
+    <pointer-type-def type-id='type-id-44' size-in-bits='64' id='type-id-301'/>
+    <pointer-type-def type-id='type-id-82' size-in-bits='64' id='type-id-160'/>
+    <pointer-type-def type-id='type-id-160' size-in-bits='64' id='type-id-302'/>
+    <class-decl name='__dirstream' is-struct='yes' visibility='default' is-declaration-only='yes' id='type-id-303'/>
+    <function-decl name='efi_get_verbose' filepath='src/include/efivar/efivar.h' line='198' column='1' visibility='default' binding='global' size-in-bits='64'>
       <return type-id='type-id-13'/>
     </function-decl>
     <function-decl name='efi_loadopt_create' mangled-name='efi_loadopt_create' filepath='src/loadopt.c' line='26' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='efi_loadopt_create@@libefiboot.so.0'>
       <parameter type-id='type-id-110' name='buf' filepath='src/loadopt.c' line='26' column='1'/>
       <parameter type-id='type-id-84' name='size' filepath='src/loadopt.c' line='26' column='1'/>
       <parameter type-id='type-id-31' name='attributes' filepath='src/loadopt.c' line='26' column='1'/>
-      <parameter type-id='type-id-287' name='dp' filepath='src/loadopt.c' line='27' column='1'/>
+      <parameter type-id='type-id-288' name='dp' filepath='src/loadopt.c' line='27' column='1'/>
       <parameter type-id='type-id-84' name='dp_size' filepath='src/loadopt.c' line='27' column='1'/>
-      <parameter type-id='type-id-159' name='description' filepath='src/loadopt.c' line='27' column='1'/>
+      <parameter type-id='type-id-160' name='description' filepath='src/loadopt.c' line='27' column='1'/>
       <parameter type-id='type-id-110' name='optional_data' filepath='src/loadopt.c' line='28' column='1'/>
       <parameter type-id='type-id-27' name='optional_data_size' filepath='src/loadopt.c' line='28' column='1'/>
       <return type-id='type-id-84'/>
     </function-decl>
     <function-decl name='efi_loadopt_optional_data_size' mangled-name='efi_loadopt_optional_data_size' filepath='src/loadopt.c' line='102' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='efi_loadopt_optional_data_size@@libefiboot.so.0'>
-      <parameter type-id='type-id-299' name='opt' filepath='src/loadopt.c' line='102' column='1'/>
+      <parameter type-id='type-id-300' name='opt' filepath='src/loadopt.c' line='102' column='1'/>
       <parameter type-id='type-id-27' name='size' filepath='src/loadopt.c' line='102' column='1'/>
       <return type-id='type-id-84'/>
     </function-decl>
     <function-decl name='efi_loadopt_is_valid' mangled-name='efi_loadopt_is_valid' filepath='src/loadopt.c' line='152' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='efi_loadopt_is_valid@@libefiboot.so.0'>
-      <parameter type-id='type-id-299' name='opt' filepath='src/loadopt.c' line='152' column='1'/>
+      <parameter type-id='type-id-300' name='opt' filepath='src/loadopt.c' line='152' column='1'/>
       <parameter type-id='type-id-27' name='size' filepath='src/loadopt.c' line='152' column='1'/>
       <return type-id='type-id-13'/>
     </function-decl>
     <function-decl name='efi_loadopt_attrs' mangled-name='efi_loadopt_attrs' filepath='src/loadopt.c' line='161' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='efi_loadopt_attrs@@libefiboot.so.0'>
-      <parameter type-id='type-id-299' name='opt' filepath='src/loadopt.c' line='161' column='1'/>
+      <parameter type-id='type-id-300' name='opt' filepath='src/loadopt.c' line='161' column='1'/>
       <return type-id='type-id-31'/>
     </function-decl>
     <function-decl name='efi_loadopt_attr_set' mangled-name='efi_loadopt_attr_set' filepath='src/loadopt.c' line='167' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='efi_loadopt_attr_set@@libefiboot.so.0'>
-      <parameter type-id='type-id-299' name='opt' filepath='src/loadopt.c' line='167' column='1'/>
+      <parameter type-id='type-id-300' name='opt' filepath='src/loadopt.c' line='167' column='1'/>
       <parameter type-id='type-id-44' name='attr' filepath='src/loadopt.c' line='167' column='1'/>
       <return type-id='type-id-75'/>
     </function-decl>
     <function-decl name='efi_loadopt_attr_clear' mangled-name='efi_loadopt_attr_clear' filepath='src/loadopt.c' line='173' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='efi_loadopt_attr_clear@@libefiboot.so.0'>
-      <parameter type-id='type-id-299' name='opt' filepath='src/loadopt.c' line='173' column='1'/>
+      <parameter type-id='type-id-300' name='opt' filepath='src/loadopt.c' line='173' column='1'/>
       <parameter type-id='type-id-44' name='attr' filepath='src/loadopt.c' line='173' column='1'/>
       <return type-id='type-id-75'/>
     </function-decl>
     <function-decl name='efi_loadopt_pathlen' mangled-name='efi_loadopt_pathlen' filepath='src/loadopt.c' line='180' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='efi_loadopt_pathlen@@libefiboot.so.0'>
-      <parameter type-id='type-id-299' name='opt' filepath='src/loadopt.c' line='180' column='1'/>
+      <parameter type-id='type-id-300' name='opt' filepath='src/loadopt.c' line='180' column='1'/>
       <parameter type-id='type-id-84' name='limit' filepath='src/loadopt.c' line='180' column='1'/>
       <return type-id='type-id-44'/>
     </function-decl>
     <function-decl name='efi_loadopt_path' mangled-name='efi_loadopt_path' filepath='src/loadopt.c' line='194' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='efi_loadopt_path@@libefiboot.so.0'>
-      <parameter type-id='type-id-299' name='opt' filepath='src/loadopt.c' line='194' column='1'/>
+      <parameter type-id='type-id-300' name='opt' filepath='src/loadopt.c' line='194' column='1'/>
       <parameter type-id='type-id-84' name='limit' filepath='src/loadopt.c' line='194' column='1'/>
-      <return type-id='type-id-287'/>
+      <return type-id='type-id-288'/>
     </function-decl>
     <function-decl name='efi_loadopt_optional_data' mangled-name='efi_loadopt_optional_data' filepath='src/loadopt.c' line='223' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='efi_loadopt_optional_data@@libefiboot.so.0'>
-      <parameter type-id='type-id-299' name='opt' filepath='src/loadopt.c' line='223' column='1'/>
+      <parameter type-id='type-id-300' name='opt' filepath='src/loadopt.c' line='223' column='1'/>
       <parameter type-id='type-id-27' name='opt_size' filepath='src/loadopt.c' line='223' column='1'/>
-      <parameter type-id='type-id-301' name='datap' filepath='src/loadopt.c' line='224' column='1'/>
-      <parameter type-id='type-id-160' name='len' filepath='src/loadopt.c' line='224' column='1'/>
+      <parameter type-id='type-id-302' name='datap' filepath='src/loadopt.c' line='224' column='1'/>
+      <parameter type-id='type-id-161' name='len' filepath='src/loadopt.c' line='224' column='1'/>
       <return type-id='type-id-13'/>
     </function-decl>
     <function-decl name='efi_loadopt_args_from_file' mangled-name='efi_loadopt_args_from_file' filepath='src/loadopt.c' line='256' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='efi_loadopt_args_from_file@@libefiboot.so.0'>
@@ -2343,18 +2318,18 @@
       <return type-id='type-id-84'/>
     </function-decl>
     <function-decl name='efi_loadopt_args_as_ucs2' mangled-name='efi_loadopt_args_as_ucs2' filepath='src/loadopt.c' line='324' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='efi_loadopt_args_as_ucs2@@libefiboot.so.0'>
-      <parameter type-id='type-id-300' name='buf' filepath='src/loadopt.c' line='324' column='1'/>
+      <parameter type-id='type-id-301' name='buf' filepath='src/loadopt.c' line='324' column='1'/>
       <parameter type-id='type-id-84' name='size' filepath='src/loadopt.c' line='324' column='1'/>
       <parameter type-id='type-id-110' name='utf8' filepath='src/loadopt.c' line='324' column='1'/>
       <return type-id='type-id-84'/>
     </function-decl>
     <function-decl name='efi_loadopt_desc' mangled-name='efi_loadopt_desc' filepath='src/loadopt.c' line='355' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='efi_loadopt_desc@@libefiboot.so.0'>
-      <parameter type-id='type-id-299' name='opt' filepath='src/loadopt.c' line='355' column='1'/>
+      <parameter type-id='type-id-300' name='opt' filepath='src/loadopt.c' line='355' column='1'/>
       <parameter type-id='type-id-84' name='limit' filepath='src/loadopt.c' line='355' column='1'/>
-      <return type-id='type-id-295'/>
+      <return type-id='type-id-296'/>
     </function-decl>
     <function-decl name='__ctype_b_loc' filepath='/usr/include/ctype.h' line='79' column='1' visibility='default' binding='global' size-in-bits='64'>
-      <return type-id='type-id-298'/>
+      <return type-id='type-id-299'/>
     </function-decl>
     <function-decl name='fclose' filepath='/usr/include/stdio.h' line='183' column='1' visibility='default' binding='global' size-in-bits='64'>
       <parameter type-id='type-id-88'/>
@@ -2373,7 +2348,7 @@
     </function-decl>
   </abi-instr>
   <abi-instr address-size='64' path='path-helpers.c' comp-dir-path='src' language='LANG_C11'>
-    <class-decl name='__dirstream' is-struct='yes' visibility='default' is-declaration-only='yes' id='type-id-303'/>
+    <class-decl name='__dirstream' is-struct='yes' visibility='default' is-declaration-only='yes' id='type-id-304'/>
     <function-decl name='strcspn' filepath='/usr/include/string.h' line='293' column='1' visibility='default' binding='global' size-in-bits='64'>
       <parameter type-id='type-id-99'/>
       <parameter type-id='type-id-99'/>
