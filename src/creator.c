@@ -221,12 +221,7 @@ efi_va_generate_file_device_path_from_esp(uint8_t *buf, ssize_t size,
 		debug("EFIBOOT_ABBREV_EDD10");
 
 	if (options & EFIBOOT_ABBREV_EDD10) {
-		va_list aq;
-		va_copy(aq, ap);
-
-		dev->edd10_devicenum = va_arg(aq, uint32_t);
-
-		va_end(aq);
+		dev->edd10_devicenum = va_arg(ap, uint32_t);
 	}
 
 	if (!(options & (EFIBOOT_ABBREV_FILE|EFIBOOT_ABBREV_HD))
