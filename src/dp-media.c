@@ -58,9 +58,14 @@ _format_media_dn(unsigned char *buf, size_t size, const_efidp dp)
 		format_vendor(buf, size, off, "VenMedia", dp);
 		break;
 	case EFIDP_MEDIA_FILE: {
-		size_t limit = (efidp_node_size(dp)
-				- offsetof(efidp_file, name)) / 2;
-		format_ucs2(buf, size, off, "File", dp->file.name, limit);
+		ssize_t node_size = efidp_node_size(dp);
+		if (node_size > 0) {
+			size_t limit = ((size_t) node_size
+					- offsetof(efidp_file, name)) / 2;
+			format_ucs2(buf, size, off, "File", dp->file.name, limit);
+		} else {
+			efi_error("Invalid node size");
+		}
 		break;
 			       }
 	case EFIDP_MEDIA_PROTOCOL:
