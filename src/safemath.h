@@ -32,7 +32,7 @@
 #define DIV(a, b, res) ({						\
 	bool ret_ = true;						\
 	if ((b) != 0) {							\
-		if (!is_null(res))					\
+		if (!(res == NULL))					\
 			(*(res)) = (a) / (b);				\
 		ret_ = false;						\
 	} else {							\
@@ -44,7 +44,7 @@
  * These really just exists for chaining results easily with || in an expr
  */
 #define MOD(a, b, res) ({						\
-	if (!is_null(res))						\
+	if (!(res == NULL))						\
 		(*(res)) = (a) % (b);					\
 	false;								\
 })
