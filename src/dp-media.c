@@ -58,14 +58,15 @@ _format_media_dn(unsigned char *buf, size_t size, const_efidp dp)
 		format_vendor(buf, size, off, "VenMedia", dp);
 		break;
 	case EFIDP_MEDIA_FILE: {
-		ssize_t node_size = efidp_node_size(dp);
-		if (node_size > 0) {
-			size_t limit = ((size_t) node_size
-					- offsetof(efidp_file, name)) / 2;
-			format_ucs2(buf, size, off, "File", dp->file.name, limit);
-		} else {
-			efi_error("Invalid node size");
+		ssize_t limit = efidp_node_size(dp);
+		size_t offset = offsetof(efidp_usb_wwid, serial_number);
+		if (limit < 0 ||
+		    SUB(limit,  offset, &limit) ||
+		    DIV(limit, 2, &limit)) {
+			efi_error("bad DP node size");
+			return -1;
 		}
+		format_ucs2(buf, size, off, "File", dp->file.name, limit);
 		break;
 			       }
 	case EFIDP_MEDIA_PROTOCOL:
@@ -131,12 +132,19 @@ _format_media_dn(unsigned char *buf, size_t size, const_efidp dp)
 		format(buf, size, off, "Ramdisk", ")");
 		break;
 					   }
-	default:
+	default: {
+		ssize_t limit = efidp_node_size(dp);
+		if (limit < 0 ||
+		    SUB(limit,  4, &limit) ||
+		    DIV(limit, 2, &limit)) {
+			efi_error("bad DP node size");
+			return -1;
+		}
 		format(buf, size, off, "Media", "MediaPath(%d,", dp->subtype);
-		format_hex(buf, size, off, "Media", (uint8_t *)dp+4,
-				(efidp_node_size(dp)-4) / 2);
+		format_hex(buf, size, off, "Media", (uint8_t *)dp+4, limit);
 		format(buf,size,off, "Media",")");
 		break;
+		 }
 	}
 	return off;
 }
