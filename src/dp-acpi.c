@@ -101,10 +101,17 @@ _format_acpi_dn(unsigned char *buf, size_t size, const_efidp dp)
 		return off;
 	} else if (dp->subtype != EFIDP_ACPI_HID_EX &&
 		   dp->subtype != EFIDP_ACPI_HID) {
+		ssize_t limit = efidp_node_size(dp);
+
 		debug("DP subtype %d, formatting as ACPI Path", dp->subtype);
+		if (SUB(limit, 4, &limit) ||
+		    DIV(limit, 2, &limit) ||
+		    limit < 0) {
+			efi_error("bad DP node size");
+			return -1;
+		}
 		format(buf, size, off, "AcpiPath", "AcpiPath(%d,", dp->subtype);
-		format_hex(buf, size, off, "AcpiPath", (uint8_t *)dp+4,
-			   (efidp_node_size(dp)-4) / 2);
+		format_hex(buf, size, off, "AcpiPath", (uint8_t *)dp+4, limit);
 		format(buf, size, off, "AcpiPath", ")");
 		return off;
 	} else if (dp->subtype == EFIDP_ACPI_HID_EX) {
