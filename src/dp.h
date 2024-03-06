@@ -101,9 +101,14 @@ format_vendor_helper(unsigned char *buf, size_t size, char *label,
 		     const_efidp dp)
 {
 	ssize_t off = 0;
-	ssize_t bytes = efidp_node_size(dp)
-			- sizeof (efidp_header)
-			- sizeof (efi_guid_t);
+	ssize_t bytes = efidp_node_size(dp);
+
+	if (SUB(bytes, sizeof (efidp_header), &bytes) ||
+	    SUB(bytes, sizeof (efi_guid_t), &bytes) ||
+	    bytes < 0) {
+		efi_error("bad DP node size");
+		return -1;
+	}
 
 	format(buf, size, off, label, "%s(", label);
 	format_guid(buf, size, off, label, &dp->hw_vendor.vendor_guid);
