@@ -504,9 +504,14 @@ _format_message_dn(unsigned char *buf, size_t size, const_efidp dp)
 		format_helper(format_usb_class, buf, size, off, "UsbClass", dp);
 		break;
 	case EFIDP_MSG_USB_WWID: {
-		size_t limit = (efidp_node_size(dp)
-				- offsetof(efidp_usb_wwid, serial_number))
-				/ 2;
+		ssize_t limit = efidp_node_size(dp);
+		size_t offset = offsetof(efidp_usb_wwid, serial_number);
+		if (limit <= 0 ||
+		    SUB(limit,  offset, &limit) ||
+		    DIV(limit, 2, &limit)) {
+			efi_error("bad DP node size");
+			return -1;
+		}
 		format(buf, size, off, "UsbWwid",
 			    "UsbWwid(%"PRIx16",%"PRIx16",%d,",
 			    dp->usb_wwid.vendor_id, dp->usb_wwid.product_id,
@@ -633,12 +638,18 @@ _format_message_dn(unsigned char *buf, size_t size, const_efidp dp)
 		format_guid(buf, size, off, "NVDIMM", &dp->nvdimm.uuid);
 		format(buf, size, off, "NVDIMM", ")");
 		break;
-	default:
+	default: {
+		ssize_t limit = efidp_node_size(dp);
+		if (SUB(limit, 4, &limit) ||
+		    limit < 0) {
+			efi_error("bad DP node size");
+			return -1;
+		}
 		format(buf, size, off, "Msg", "Msg(%d,", dp->subtype);
-		format_hex(buf, size, off, "Msg", (uint8_t *)dp+4,
-				efidp_node_size(dp)-4);
+		format_hex(buf, size, off, "Msg", (uint8_t *)dp+4, limit);
 		format(buf, size, off, "Msg", ")");
 		break;
+		 }
 	}
 	return off;
 }
