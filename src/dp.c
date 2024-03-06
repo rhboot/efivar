@@ -298,6 +298,12 @@ efidp_format_device_path(unsigned char *buf, size_t size, const_efidp dp,
 		memset(buf, 0, size);
 
 	while (limit) {
+		ssize_t sz = efidp_node_size(dp);
+		if (SUB(sz, 4, &sz) ||
+		    sz < 0) {
+			efi_error("bad DP node size");
+			return -1;
+		}
 		if (limit >= 0 && (limit < 4 || efidp_node_size(dp) > limit)) {
 			if (off)
 				return off;
@@ -339,9 +345,9 @@ efidp_format_device_path(unsigned char *buf, size_t size, const_efidp dp,
 			if (dp->subtype != EFIDP_BIOS_BOOT) {
 				format(buf, size, off, "BbsPath",
 				       "BbsPath(%d,", dp->subtype);
-				format_hex(buf, size, off, "BbsPath",
-					   (uint8_t *)dp+4,
-					   efidp_node_size(dp)-4);
+				if (sz > 0)
+					format_hex(buf, size, off, "BbsPath",
+						   (uint8_t *)dp+4, sz);
 				format(buf, size, off, "BbsPath", ")");
 				break;
 			}
@@ -371,8 +377,9 @@ efidp_format_device_path(unsigned char *buf, size_t size, const_efidp dp,
 		default:
 			format(buf, size, off, "Path",
 				    "Path(%d,%d,", dp->type, dp->subtype);
+			if (sz > 0)
 			format_hex(buf, size, off, "Path", (uint8_t *)dp + 4,
-				   efidp_node_size(dp) - 4);
+				   sz);
 			format(buf, size, off, "Path", ")");
 			break;
 		}
