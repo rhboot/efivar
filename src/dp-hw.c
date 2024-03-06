@@ -58,13 +58,20 @@ _format_hw_dn(unsigned char *buf, size_t size, const_efidp dp)
 		format(buf, size, off, "BMC", "BMC(%d,0x%"PRIx64")",
 		       dp->bmc.interface_type, dp->bmc.base_addr);
 		break;
-	default:
+	default: {
+		ssize_t sz = efidp_node_size(dp);
+
+		if (SUB(sz, 4, &sz) ||
+		    sz < 0) {
+			efi_error("bad DP node size");
+			return -1;
+		}
 		format(buf, size, off, "Hardware",
 		       "HardwarePath(%d,", dp->subtype);
-		format_hex(buf, size, off, "Hardware", (uint8_t *)dp+4,
-			   efidp_node_size(dp)-4);
+		format_hex(buf, size, off, "Hardware", (uint8_t *)dp+4, sz);
 		format(buf, size, off, "Hardware", ")");
 		break;
+		 }
 	}
 	return off;
 }
