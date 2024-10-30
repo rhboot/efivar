@@ -435,8 +435,10 @@ vars_del_variable(efi_guid_t guid, const char *name)
 	}
 
 	rc = write(fd, buf, buf_size);
-	if (rc >= 0)
+	if (rc >= 0) {
+		efi_save_esp_filename();
 		ret = 0;
+	}
 	else
 		efi_error("write() failed");
 err:
@@ -594,8 +596,10 @@ vars_set_variable(efi_guid_t guid, const char *name, const uint8_t *data,
 		rc = write(fd, &var32, sizeof(var32));
 	}
 
-	if (rc >= 0)
+	if (rc >= 0) {
+		efi_save_esp_filename();
 		ret = 0;
+	}
 	else
 		efi_error("write() failed");
 

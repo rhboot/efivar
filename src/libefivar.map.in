@@ -90,6 +90,8 @@ libefivar.so.0 {
 		efi_guid_x509_sha384;
 		efi_guid_x509_sha512;
 		efi_guid_zero;
+
+		efi_save_esp_filename;
 	local:	*;
 };
 

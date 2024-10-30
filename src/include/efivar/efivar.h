@@ -121,6 +121,8 @@ extern int efi_variable_get_attributes(efi_variable_t *var, uint64_t *attrs)
 extern int efi_variable_realize(efi_variable_t *var)
 			__attribute__((__nonnull__ (1)));
 
+extern void efi_save_esp_filename(void);
+
 #ifndef EFIVAR_BUILD_ENVIRONMENT
 extern int efi_error_get(unsigned int n,
 			 char ** const filename,

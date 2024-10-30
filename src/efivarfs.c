@@ -312,6 +312,8 @@ efivarfs_del_variable(efi_guid_t guid, const char *name)
 	if (rc < 0)
 		efi_error("unlink failed");
 
+	efi_save_esp_filename();
+
 	__typeof__(errno) errno_value = errno;
 	free(path);
 	errno = errno_value;
@@ -441,6 +443,8 @@ efivarfs_set_variable(efi_guid_t guid, const char *name, const uint8_t *data,
 		efi_error("writing to fd %d failed", wfd);
 		goto err;
 	}
+
+	efi_save_esp_filename();
 
 	/* we're done */
 	ret = 0;

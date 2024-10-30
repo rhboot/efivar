@@ -16,6 +16,19 @@
 
 #include "efivar.h"
 
+#define VAR2FILE	"/sys/firmware/efi/efivars/VarToFile-b2ac5fc9-92b7-4acd-aeac-11e818c3130c"
+
+// RTStorageVolatile-b2ac5fc9-92b7-4acd-aeac-11e818c3130c
+#define NAME_RTSV	"RTStorageVolatile"
+#define GUID_RTSV \
+	EFI_GUID(0xB2AC5FC9,0x92B7,0x4ACD,0xAEAC,0x11,0xE8,0x18,0xC3,0x13,0x0C)
+
+static const char *esp_paths[] = {
+	"/boot",
+	"/boot/efi",
+	"/efi"
+};
+
 static int default_probe(void)
 {
 	return 1;
@@ -225,6 +238,122 @@ efi_variables_supported(void)
 	if (ops == &default_ops)
 		return 0;
 	return 1;
+}
+
+static void
+search_esp_filename(const char *filename, char **esp_filename)
+{
+	size_t num_paths = sizeof(esp_paths) / sizeof(esp_paths[0]);
+	size_t esp_filename_size = 0;
+
+	for (size_t i = 0; i < num_paths; ++i) {
+		esp_filename_size = strlen(esp_paths[i]) + strlen(filename) + 2;
+		*esp_filename = malloc(esp_filename_size);
+		if (!*esp_filename) {
+			fprintf(stderr, "Error: Failed to allocate memory for '%s' esp_filename\n", *esp_filename);
+			exit(1);
+		}
+		snprintf(*esp_filename, esp_filename_size, "%s/%s", esp_paths[i], filename);
+
+		struct stat buffer;
+		if (stat(*esp_filename, &buffer) == 0) {
+			return;
+		}
+
+		free(*esp_filename);
+		*esp_filename = NULL;
+	}
+}
+
+static int
+get_esp_filename(char **esp_filename)
+{
+	size_t file_size;
+	uint32_t file_attr;
+	uint8_t *file_data = NULL;
+	int rc = 0;
+
+	rc = efi_get_variable(GUID_RTSV, NAME_RTSV, &file_data, &file_size, &file_attr);
+	if (rc < 0) {
+		// No error print here. The checking should only happen if
+		// RTStorageVolatile is there to begin with. i.e., systems, like x86,
+		// that don't need to store variables in an ESP file
+		return rc;
+	}
+
+	*esp_filename = (char *)file_data;
+
+	return 0;
+}
+
+static void
+save_esp_filename(const char *esp_filename) {
+    FILE *var2file = NULL;
+    FILE *output_file = NULL;
+    unsigned char buffer[1024];
+    size_t bytes_read, bytes_written;
+    bool fail = false;
+
+    var2file = fopen(VAR2FILE, "rb");
+    if (!var2file) {
+        fprintf(stderr, "Error: Could not open file '%s'\n", VAR2FILE);
+        exit(1);
+    }
+
+    output_file = fopen(esp_filename, "wb");
+    if (!output_file) {
+        fprintf(stderr, "Error: Could not open file '%s'\n", esp_filename);
+        fclose(var2file);
+        exit(1);
+    }
+
+    if (fread(buffer, 1, 4, var2file) < 4) {
+        fprintf(stderr, "Error: Could not skip first 4 bytes or '%s' file is too small\n", esp_filename);
+        fail = true;
+        goto clean;
+    }
+
+    while ((bytes_read = fread(buffer, 1, sizeof(buffer), var2file)) > 0) {
+        bytes_written = fwrite(buffer, 1, bytes_read, output_file);
+        if (bytes_written != bytes_read) {
+            fprintf(stderr, "Error: Could not write data to ESP '%s' file\n", esp_filename);
+            fail = true;
+            goto clean;
+        }
+    }
+
+clean:
+    fclose(var2file);
+    fclose(output_file);
+
+    if (fail)
+        exit(1);
+}
+
+void PUBLIC
+efi_save_esp_filename(void)
+{
+	int rc = 0;
+	char *esp_filename = NULL;
+	char *esp_filename_path = NULL;
+
+	rc = get_esp_filename(&esp_filename);
+	if (rc < 0 || !esp_filename) {
+		goto cleanup;
+	}
+
+	search_esp_filename(esp_filename, &esp_filename_path);
+	if (esp_filename_path) {
+		save_esp_filename(esp_filename_path);
+	}
+	else {
+		fprintf(stderr, "Error: no ESP '%s' file found in ESP partitions to save VarToFile\n", esp_filename);
+		goto cleanup;
+	}
+
+cleanup:
+	free(esp_filename);
+	free(esp_filename_path);
 }
 
 static void CONSTRUCTOR libefivar_init(void);
