@@ -194,6 +194,10 @@ efidp_append_node(const_efidp dp, const_efidp dn, efidp *out)
 			if (efidp_type(le) == EFIDP_END_TYPE &&
 			    efidp_subtype(le) == EFIDP_END_ENTIRE) {
 				ssize_t lesz = efidp_size(le);
+				if (lesz < 0) {
+					efi_error("efidp_size(dp) returned error");
+					return lesz;
+				}
 				lsz -= lesz;
 				break;
 			}
