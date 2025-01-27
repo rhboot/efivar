@@ -315,7 +315,7 @@ efidp_format_device_path(unsigned char *buf, size_t size, const_efidp dp,
 			first = 0;
 		} else {
 			if (dp->type == EFIDP_END_TYPE) {
-				if (dp->type == EFIDP_END_INSTANCE) {
+				if (dp->subtype == EFIDP_END_INSTANCE) {
 					format(buf, size, off, "\b", ",");
 				} else {
 					return off+1;
