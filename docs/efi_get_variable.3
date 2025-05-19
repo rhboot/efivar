@@ -55,7 +55,7 @@ tests if the UEFI variable facility is supported on the current machine.
 deletes the variable specified by \fIguid\fR and \fIname\fR.
 .PP
 .BR efi_get_variable ()
-gets the variable specified by \fIguid\fR and \fIname\fR. The value is stored in \fIdata\fR, its size in \fIdata_size\fR, and its attributes are stored in \fIattributes\fR.
+gets the variable specified by \fIguid\fR and \fIname\fR. The value is stored in \fIdata\fR, its size in \fIdata_size\fR, and its attributes are stored in \fIattributes\fR, and those pointers are only valid if the function is successful. \fIdata\fR pointer is allocated by the library and caller is responsible for freeing it using \fIfree\fR.
 .PP
 .BR efi_get_variable_attributes ()
 gets attributes for the variable specified by \fIguid\fR and \fIname\fR.
