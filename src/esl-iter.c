@@ -337,7 +337,7 @@ esl_list_iter_next_with_size_correction(esl_list_iter *iter, efi_guid_t *type,
 			if (correct_size && (iter->len - iter->offset) > 0) {
 				warnx("correcting ESL size from %d to %jd at %lx",
 				      iter->esl->signature_list_size,
-				      (intmax_t)(iter->len - iter->offset), iter->offset);
+				      (intmax_t)(iter->len - iter->offset), (unsigned long)iter->offset);
 				debug("correcting ESL size from %d to %zd at %lx",
 				      iter->esl->signature_list_size,
 				      iter->len - iter->offset, iter->offset);
@@ -362,7 +362,7 @@ esl_list_iter_next_with_size_correction(esl_list_iter *iter, efi_guid_t *type,
 			if (correct_size && (iter->len - iter->offset) > 0) {
 				warnx("correcting ESL size from %d to %jd at 0x%lx",
 				      iter->esl->signature_list_size,
-				      (intmax_t)(iter->len - iter->offset), iter->offset);
+				      (intmax_t)(iter->len - iter->offset), (unsigned long)iter->offset);
 				debug("correcting ESL size from %d to %zd at 0x%lx",
 				      iter->esl->signature_list_size,
 				      iter->len - iter->offset, iter->offset);
@@ -394,7 +394,7 @@ esl_list_iter_next_with_size_correction(esl_list_iter *iter, efi_guid_t *type,
 		if ((uint32_t)iter->offset >= iter->len)
 			return 0;
 		iter->esl = (efi_signature_list_t *)((intptr_t)iter->buf
-						+ iter->offset);
+						+ (unsigned long)iter->offset);
 	}
 
 	efi_signature_list_t esl;
@@ -413,7 +413,7 @@ esl_list_iter_next_with_size_correction(esl_list_iter *iter, efi_guid_t *type,
 		if (correct_size && (iter->len - iter->offset) > 0) {
 			warnx("correcting ESL size from %d to %jd at 0x%lx",
 			      iter->esl->signature_list_size,
-			      (intmax_t)(iter->len - iter->offset), iter->offset);
+			      (intmax_t)(iter->len - iter->offset), (unsigned long)iter->offset);
 			debug("correcting ESL size from %d to %zd at 0x%lx",
 			      iter->esl->signature_list_size,
 			      iter->len - iter->offset, iter->offset);
