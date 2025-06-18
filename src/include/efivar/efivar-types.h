@@ -20,7 +20,7 @@ typedef struct {
 	uint16_t	c;
 	uint16_t	d;
 	uint8_t		e[6];
-} efi_guid_t __attribute__((__aligned__(1)));
+} efi_guid_t __attribute__((__aligned__(4)));
 
 #if BYTE_ORDER == LITTLE_ENDIAN
 #define EFI_GUID(a,b,c,d,e0,e1,e2,e3,e4,e5) \
