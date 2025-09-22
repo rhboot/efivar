@@ -8,5 +8,6 @@ efisecdb-static
 makeguids
 guid-symbols.c
 guids.lds
+sbchooser
 thread-test
 util-makeguids.c
