@@ -36,6 +36,7 @@ util-makeguids.c : util.c
 
 ALL_SOURCES=$(LIBEFISEC_SOURCES) $(LIBEFIBOOT_SOURCES) $(LIBEFIVAR_SOURCES) \
 	    $(MAKEGUIDS_SOURCES) $(GENERATED_SOURCES) $(EFIVAR_SOURCES) \
+	    $(EFISECDB_SOURCES) \
 	    $(sort $(wildcard include/efivar/*.h))
 
 ifneq ($(MAKECMDGOALS),clean)
