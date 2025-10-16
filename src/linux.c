@@ -19,6 +19,9 @@
 #include <scsi/scsi.h>
 #include <stdbool.h>
 #include <stdio.h>
+#if defined(__FreeBSD__)
+#  include <sys/disk.h>
+#endif
 #include <sys/ioctl.h>
 #include <sys/mount.h>
 #include <sys/socket.h>
@@ -707,7 +710,11 @@ get_sector_size(int filedes)
 {
 	int rc, sector_size = 512;
 
+#if defined(__linux__)
 	rc = ioctl(filedes, BLKSSZGET, &sector_size);
+#elif defined(__FreeBSD__)
+	rc = ioctl(filedes, DIOCGSECTORSIZE, &sector_size);
+#endif
 	if (rc)
 	        sector_size = 512;
 	return sector_size;
