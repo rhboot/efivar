@@ -33,6 +33,7 @@ enum {
 	ERR_BAD_PE,
 };
 
+typedef struct sbchooser_context sbchooser_context_t;
 typedef struct pe_file pe_file_t;
 
 #include "compiler.h" // IWYU pragma: export
@@ -40,5 +41,16 @@ typedef struct pe_file pe_file_t;
 #include "sbchooser-pe.h" // IWYU pragma: export
 #include "sbchooser-db.h" // IWYU pragma: export
 #include "sbchooser-x509.h" // IWYU pragma: export
+
+/*
+ * sbchooser's main context
+ */
+struct sbchooser_context {
+	/*
+	 * our input pe files
+	 */
+	size_t n_files;
+	pe_file_t **files;
+};
 
 // vim:fenc=utf-8:tw=75:noet
