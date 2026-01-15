@@ -24,12 +24,15 @@
 #include <sys/types.h>
 #include <unistd.h>
 
+#include "efivar/efisec.h" // IWYU pragma: export
+
 /*
  * exit status codes from sbchooser
  */
 enum {
 	ERR_SUCCESS = 0,
 	ERR_USAGE,
+	ERR_SECDB,
 };
 
 typedef struct sbchooser_context sbchooser_context_t;
@@ -44,6 +47,9 @@ typedef struct sbchooser_context sbchooser_context_t;
  * sbchooser's main context
  */
 struct sbchooser_context {
+	efi_secdb_t *db;
+
+	efi_secdb_t *dbx;
 };
 
 // vim:fenc=utf-8:tw=75:noet

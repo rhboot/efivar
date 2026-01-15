@@ -128,10 +128,11 @@ efisecdb-static : $(patsubst %.o,%.static.o,$(LIBEFISEC_OBJECTS) $(LIBEFIVAR_OBJ
 efisecdb-static : | $(GENERATED_SOURCES)
 efisecdb-static : private LIBS=crypto dl
 
-sbchooser : private LIBS=efivar
+sbchooser : private LIBS=efisec efivar
 sbchooser : $(SBCHOOSER_OBJECTS)
+sbchooser : | $(GENERATED_SOURCES)
 
-sbchooser-static : private LIBS=efivar
+sbchooser-static : private LIBS=efisec efivar
 sbchooser-static : $(SBCHOOSER_OBJECTS)
 sbchooser-static : | $(GENERATED_SOURCES)
 
