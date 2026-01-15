@@ -23,6 +23,7 @@ usage(int status)
 		"  -X, --no-system-dbx               Do not load the UEFI revoked key database\n"
 		"  -S, --system-dbx                  Load the UEFI revoked key database from\n"
 		"                                    this system (default)\n"
+		"  -i, --input=<efi file>            EFI binary for sorting\n"
 		"Help options:\n"
 		"  -?, --help                        Show this help message\n"
 		"      --usage                       Display brief usage message\n",
@@ -35,7 +36,52 @@ clean_up_context(sbchooser_context_t *ctxp)
 {
 	free_secdb_info(ctxp);
 
+	for (size_t i = 0; i < ctxp->n_files; i++) {
+		if (ctxp->files[i] != NULL)
+			free_pe(&ctxp->files[i]);
+	}
+	free(ctxp->files);
+	ctxp->n_files = 0;
+	ctxp->files = NULL;
+
 	memset(ctxp, 0, sizeof (*ctxp));
+}
+
+static int
+add_file_to_ctx(sbchooser_context_t *ctxp, pe_file_t *pe)
+{
+	size_t n_files = ctxp->n_files + 1;
+	pe_file_t **files;
+
+	files = reallocarray(ctxp->files, n_files, sizeof (*files));
+	if (!files)
+		return -1;
+
+	files[ctxp->n_files] = pe;
+
+	ctxp->files = files;
+	ctxp->n_files = n_files;
+
+	return 0;
+}
+
+static void
+add_one_pe_to_ctx(sbchooser_context_t *ctx, const char *filename)
+{
+	int rc;
+	pe_file_t *pe = NULL;
+
+	rc = load_pe(ctx, filename, &pe);
+	if (rc < 0) {
+		if (filename[0] == '-') {
+			warnx("Unknown argument:\"%s\"", filename);
+			usage(ERR_USAGE);
+		}
+		err(ERR_BAD_PE, "Could not open \"%s\"", filename);
+	}
+	rc = add_file_to_ctx(ctx, pe);
+	if (rc < 0)
+		err(ERR_BAD_PE, "Could not add \"%s\" to context", filename);
 }
 
 int
@@ -49,6 +95,7 @@ main(int argc, char *argv[])
 		{"dbx", required_argument, NULL, 'x' },
 		{"no-system-dbx", no_argument, NULL, 'X' },
 		{"system-dbx", no_argument, NULL, 'S' },
+		{"in", required_argument, NULL, 'i' },
 		{"verbose", no_argument, NULL, 'v' },
 		{"usage", no_argument, NULL, 'h' },
 		{"help", no_argument, NULL, 'h' },
@@ -124,6 +171,9 @@ main(int argc, char *argv[])
 				    argv[optind-1]);
 			needs_dbx = false;
 			break;
+		case 'i':
+			add_one_pe_to_ctx(&ctx, argv[optind-1]);
+			break;
 		case 'v':
 			verbose += 1;
 			efi_set_verbose(verbose, stderr);
@@ -140,9 +190,16 @@ main(int argc, char *argv[])
 		default:
 			if (strcmp(argv[optind-1], "-?") == 0)
 				usage(ERR_SUCCESS);
-			warnx("Unknown argument:\"%s\"", argv[optind-1]);
-			usage(ERR_USAGE);
+
+			add_one_pe_to_ctx(&ctx, argv[optind-1]);
 			break;
+		}
+	}
+
+	if (optind > 0 && !strcmp(argv[optind-1], "--")) {
+		while (optind < argc) {
+			add_one_pe_to_ctx(&ctx, argv[optind]);
+			optind += 1;
 		}
 	}
 
@@ -166,6 +223,16 @@ main(int argc, char *argv[])
 	rc = parse_secdb_info(&ctx);
 	if (rc < 0) {
 		errx(ERR_SECDB, "couldn't parse secdb info");
+	}
+
+	if (ctx.n_files == 0) {
+		warnx("no input files!");
+		exit(ERR_USAGE);
+	}
+
+	for (size_t i = 0; i < ctx.n_files; i++) {
+		pe_file_t *pe = ctx.files[i];
+		printf("%s\n", pe->filename);
 	}
 
 	clean_up_context(&ctx);

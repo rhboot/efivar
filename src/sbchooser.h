@@ -60,6 +60,12 @@ typedef struct pe_file pe_file_t;
  * sbchooser's main context
  */
 struct sbchooser_context {
+	/*
+	 * our input pe files
+	 */
+	size_t n_files;
+	pe_file_t **files;
+
 	efi_secdb_t *db;
 	size_t n_db_digests;
 	digest_data_t **db_digests;
