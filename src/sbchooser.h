@@ -36,6 +36,7 @@ enum {
 	ERR_SUCCESS = 0,
 	ERR_USAGE,
 	ERR_SECDB,
+	ERR_BAD_PE,
 };
 
 typedef struct sbchooser_context sbchooser_context_t;
@@ -46,6 +47,8 @@ struct digest_data {
 	size_t datasz;
 };
 typedef struct digest_data digest_data_t;
+
+typedef struct pe_file pe_file_t;
 
 #include "compiler.h" // IWYU pragma: export
 #include "util.h" // IWYU pragma: export
