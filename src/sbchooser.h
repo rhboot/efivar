@@ -30,7 +30,10 @@
 enum {
 	ERR_SUCCESS = 0,
 	ERR_USAGE,
+	ERR_BAD_PE,
 };
+
+typedef struct pe_file pe_file_t;
 
 #include "compiler.h" // IWYU pragma: export
 #include "util.h" // IWYU pragma: export
