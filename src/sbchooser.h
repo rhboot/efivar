@@ -39,6 +39,7 @@ enum {
 	ERR_USAGE,
 	ERR_BAD_PE,
 	ERR_INPUT,
+	ERR_SECDB,
 };
 
 typedef struct sbchooser_context sbchooser_context_t;
@@ -65,6 +66,10 @@ struct sbchooser_context {
 	 */
 	size_t n_files;
 	pe_file_t **files;
+
+	efi_secdb_t *db;
+
+	efi_secdb_t *dbx;
 };
 
 // vim:fenc=utf-8:tw=75:noet

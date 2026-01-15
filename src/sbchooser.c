@@ -15,6 +15,14 @@ usage(int status)
 {
 	fprintf(status == 0 ? stdout : stderr,
 		"Usage: %s [OPTION...]\n"
+		"  -d, --db=<db file>                UEFI trusted key database\n"
+		"  -D, --no-system-db                Do not load the UEFI trusted key database\n"
+		"  -s, --system-db                   Load the UEFI trusted key database from\n"
+		"                                    this system (default)\n"
+		"  -x, --dbx=<dbx file>              UEFI revoked key database\n"
+		"  -X, --no-system-dbx               Do not load the UEFI revoked key database\n"
+		"  -S, --system-dbx                  Load the UEFI revoked key database from\n"
+		"                                    this system (default)\n"
 		"  -i, --input=<efi file>            EFI binary for sorting\n"
 		"Help options:\n"
 		"  -?, --help                        Show this help message\n"
@@ -33,6 +41,16 @@ clean_up_context(sbchooser_context_t *ctxp)
 	free(ctxp->files);
 	ctxp->n_files = 0;
 	ctxp->files = NULL;
+
+	if (ctxp->db) {
+		efi_secdb_free(ctxp->db);
+		ctxp->db = NULL;
+	}
+
+	if (ctxp->dbx) {
+		efi_secdb_free(ctxp->dbx);
+		ctxp->dbx = NULL;
+	}
 }
 
 static int
@@ -75,8 +93,14 @@ add_one_pe_to_ctx(sbchooser_context_t *ctx, const char *filename)
 int
 main(int argc, char *argv[])
 {
-	const char sopts[] = ":i:vh";
+	const char sopts[] = ":d:Di:sSx:Xvh";
 	const struct option lopts[] = {
+		{"db", required_argument, NULL, 'd' },
+		{"no-system-db", no_argument, NULL, 'D' },
+		{"system-db", no_argument, NULL, 's' },
+		{"dbx", required_argument, NULL, 'x' },
+		{"no-system-dbx", no_argument, NULL, 'X' },
+		{"system-dbx", no_argument, NULL, 'S' },
 		{"in", required_argument, NULL, 'i' },
 		{"verbose", no_argument, NULL, 'v' },
 		{"usage", no_argument, NULL, 'h' },
@@ -85,11 +109,27 @@ main(int argc, char *argv[])
 	};
 	int c;
 	int verbose = 0;
+	int rc;
 	bool read_inputs_from_stdin = false;
+	bool needs_db = true;
+	bool needs_dbx = true;
 
 	sbchooser_context_t ctx;
 
 	memset(&ctx, 0, sizeof(ctx));
+
+	ctx.db = efi_secdb_new();
+	if (!ctx.db)
+		err(ERR_SECDB, "could not allocate memory");
+	efi_secdb_set_bool(ctx.db, EFI_SECDB_SORT, false);
+	efi_secdb_set_bool(ctx.db, EFI_SECDB_SORT_DATA, false);
+	efi_secdb_set_bool(ctx.db, EFI_SECDB_SORT_DESCENDING, false);
+	ctx.dbx = efi_secdb_new();
+	if (!ctx.dbx)
+		err(ERR_SECDB, "could not allocate memory");
+	efi_secdb_set_bool(ctx.dbx, EFI_SECDB_SORT, false);
+	efi_secdb_set_bool(ctx.dbx, EFI_SECDB_SORT_DATA, false);
+	efi_secdb_set_bool(ctx.dbx, EFI_SECDB_SORT_DESCENDING, false);
 
 	while (true) {
 		int option_index = 0;
@@ -103,6 +143,16 @@ main(int argc, char *argv[])
 		case ':':
 			errx(ERR_USAGE, "Error: '--%s' requires an argument", lopts[optind].name);
 			break;
+		case 'D':
+			needs_db = false;
+			break;
+		case 'd':
+			rc = load_secdb_from_file(argv[optind-1], &ctx.db);
+			if (rc < 0)
+				err(ERR_SECDB, "Could not load db from \"%s\"",
+				    argv[optind-1]);
+			needs_db = false;
+			break;
 		case 'h':
 			usage(ERR_SUCCESS);
 			break;
@@ -112,6 +162,28 @@ main(int argc, char *argv[])
 				break;
 			}
 			add_one_pe_to_ctx(&ctx, argv[optind-1]);
+			break;
+		case 's':
+			rc = load_secdb_from_var("db", &efi_guid_security, &ctx.db);
+			if (rc < 0 && errno != ENOENT)
+				err(ERR_SECDB, "Could not load db from EFI variable");
+			needs_db = false;
+			break;
+		case 'S':
+			rc = load_secdb_from_var("dbx", &efi_guid_security, &ctx.dbx);
+			if (rc < 0 && errno != ENOENT)
+				err(ERR_SECDB, "Could not load dbx from EFI variable");
+			needs_dbx = false;
+			break;
+		case 'X':
+			needs_dbx = false;
+			break;
+		case 'x':
+			rc = load_secdb_from_file(argv[optind-1], &ctx.dbx);
+			if (rc < 0)
+				err(ERR_SECDB, "Could not load dbx from \"%s\"",
+				    argv[optind-1]);
+			needs_dbx = false;
 			break;
 		case 'v':
 			verbose += 1;
@@ -180,6 +252,18 @@ main(int argc, char *argv[])
 	if (ctx.n_files == 0) {
 		warnx("no input files!");
 		exit(ERR_USAGE);
+	}
+
+	if (needs_db) {
+		rc = load_secdb_from_var("db", &efi_guid_security, &ctx.db);
+		if (rc < 0 && errno != ENOENT)
+			err(ERR_SECDB, "Could not load db from EFI variable");
+	}
+
+	if (needs_dbx) {
+		rc = load_secdb_from_var("dbx", &efi_guid_security, &ctx.dbx);
+		if (rc < 0 && errno != ENOENT)
+			err(ERR_SECDB, "Could not load db from EFI variable");
 	}
 
 	for (size_t i = 0; i < ctx.n_files; i++) {
