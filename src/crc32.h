@@ -3,9 +3,7 @@
  * crc32.h - headers for crc32
  *
  */
-
-#ifndef _CRC32_H
-#define _CRC32_H
+#pragma once
 
 #include <stdint.h>
 
@@ -33,8 +31,5 @@ efi_crc32(const void *buf, unsigned long len)
 {
 	return (crc32(buf, len, ~0L) ^ ~0L);
 }
-
-
-#endif /* _CRC32_H */
 
 // vim:fenc=utf-8:tw=75:noet

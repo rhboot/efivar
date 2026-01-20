@@ -4,8 +4,7 @@
  * Copyright Peter Jones <pjones@redhat.com>
  */
 
-#ifndef COMPILER_H_
-#define COMPILER_H_
+#pragma once
 
 /* GCC version checking borrowed from glibc. */
 #if defined(__GNUC__) && defined(__GNUC_MINOR__)
@@ -80,5 +79,4 @@
 #define ALIGNMENT_PADDING(value, align) ((align - (value % align)) % align)
 #define ALIGN_UP(value, align) ((value) + ALIGNMENT_PADDING(value, align))
 
-#endif /* !COMPILER_H_ */
 // vim:fenc=utf-8:tw=75:noet

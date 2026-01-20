@@ -3,9 +3,7 @@
  * efisec.h
  * Copyright 2018 Peter Jones <pjones@redhat.com>
  */
-
-#ifndef PRIVATE_EFISEC_H_
-#define PRIVATE_EFISEC_H_
+#pragma once
 
 #include "fix_coverity.h"
 
@@ -25,7 +23,5 @@
 #include "esl-iter.h"
 #include "secdb.h"
 #include "x509.h"
-
-#endif /* !PRIVATE_EFISEC_H_ */
 
 // vim:fenc=utf-8:tw=75:noet

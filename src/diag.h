@@ -3,9 +3,7 @@
  * diag.h - Set up appropriate -W flags based on which compiler is in use
  * Copyright Peter Jones <pjones@redhat.com>
  */
-
-#ifndef PRIVATE_DIAG_H_
-#define PRIVATE_DIAG_H_
+#pragma once
 
 #if defined(__clang__)
 #pragma clang diagnostic ignored "-Wpointer-bool-conversion"
@@ -55,5 +53,4 @@
 #endif /* !defined(EFIVAR_SYNTAX_CHECKING) */
 #endif
 
-#endif /* !PRIVATE_DIAG_H_ */
 // vim:fenc=utf-8:tw=75:noet
