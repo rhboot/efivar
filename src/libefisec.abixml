@@ -135,27 +135,27 @@
     <array-type-def dimensions='1' type-id='a84c031d' size-in-bits='64' hash='e1c8b625c73024c4' id='8e100159'>
       <subrange length='8' lower-bound='0' upper-bound='7' type-id='f0981eeb' size-in-bits='64' is-anonymous='yes' hash='6e87a8ff484907ad' id='56e0c0b1'/>
     </array-type-def>
-    <enum-decl name='efi_secdb_flag_t' naming-typedef-id='a512262a' size-in-bits='32' alignment-in-bits='32' hash='d7e4bf1345d458d3' id='63af5b16'>
+    <enum-decl name='efi_secdb_flag' size-in-bits='32' alignment-in-bits='32' hash='4feaf1f564547df0' id='968af95d'>
       <underlying-type type-id='9cac1fee'/>
       <enumerator name='EFI_SECDB_SORT' value='0'/>
       <enumerator name='EFI_SECDB_SORT_DATA' value='1'/>
       <enumerator name='EFI_SECDB_SORT_DESCENDING' value='2'/>
     </enum-decl>
-    <enum-decl name='efi_secdb_type_t' naming-typedef-id='a21a1fb4' size-in-bits='32' alignment-in-bits='32' hash='a61cbda3f6e9cca8' id='9554ba18'>
+    <enum-decl name='efi_secdb_type' size-in-bits='32' alignment-in-bits='32' hash='6207bff85a4c3d2e' id='4a23cccb'>
       <underlying-type type-id='9cac1fee'/>
-      <enumerator name='X509_CERT' value='0'/>
-      <enumerator name='X509_SHA256' value='1'/>
-      <enumerator name='SHA256' value='2'/>
-      <enumerator name='X509_SHA512' value='3'/>
-      <enumerator name='SHA512' value='4'/>
-      <enumerator name='X509_SHA384' value='5'/>
-      <enumerator name='SHA224' value='6'/>
-      <enumerator name='SHA384' value='7'/>
-      <enumerator name='SHA1' value='8'/>
-      <enumerator name='RSA2048' value='9'/>
-      <enumerator name='RSA2048_SHA1' value='10'/>
-      <enumerator name='RSA2048_SHA256' value='11'/>
-      <enumerator name='MAX_SECDB_TYPE' value='12'/>
+      <enumerator name='EFI_SECDB_TYPE_X509_CERT' value='0'/>
+      <enumerator name='EFI_SECDB_TYPE_X509_SHA256' value='1'/>
+      <enumerator name='EFI_SECDB_TYPE_SHA256' value='2'/>
+      <enumerator name='EFI_SECDB_TYPE_X509_SHA512' value='3'/>
+      <enumerator name='EFI_SECDB_TYPE_SHA512' value='4'/>
+      <enumerator name='EFI_SECDB_TYPE_X509_SHA384' value='5'/>
+      <enumerator name='EFI_SECDB_TYPE_SHA224' value='6'/>
+      <enumerator name='EFI_SECDB_TYPE_SHA384' value='7'/>
+      <enumerator name='EFI_SECDB_TYPE_SHA1' value='8'/>
+      <enumerator name='EFI_SECDB_TYPE_RSA2048' value='9'/>
+      <enumerator name='EFI_SECDB_TYPE_RSA2048_SHA1' value='10'/>
+      <enumerator name='EFI_SECDB_TYPE_RSA2048_SHA256' value='11'/>
+      <enumerator name='EFI_SECDB_TYPE_MAX' value='12'/>
     </enum-decl>
     <enum-decl name='esl_iter_status' size-in-bits='32' alignment-in-bits='32' hash='639df809365cf075' id='fa1c20ea'>
       <underlying-type type-id='9cac1fee'/>
@@ -366,8 +366,8 @@
     <typedef-decl name='efi_guid_t' type-id='c76c79a0' size-in-bits='128' id='1a7f9ac1'/>
     <typedef-decl name='efi_rsa2048_sig_t' type-id='62946659' size-in-bits='2048' hash='e6dda4fc6d697382' id='392065e8'/>
     <typedef-decl name='efi_secdb_data_t' type-id='8ca00d04' size-in-bits='2048' id='03e08394'/>
-    <typedef-decl name='efi_secdb_flag_t' type-id='63af5b16' size-in-bits='32' alignment-in-bits='32' hash='d7e4bf1345d458d3' id='a512262a'/>
-    <typedef-decl name='efi_secdb_type_t' type-id='9554ba18' size-in-bits='32' alignment-in-bits='32' hash='a61cbda3f6e9cca8' id='a21a1fb4'/>
+    <typedef-decl name='efi_secdb_flag_t' type-id='968af95d' size-in-bits='32' alignment-in-bits='32' hash='4feaf1f564547df0' id='a512262a'/>
+    <typedef-decl name='efi_secdb_type_t' type-id='4a23cccb' size-in-bits='32' alignment-in-bits='32' hash='6207bff85a4c3d2e' id='a21a1fb4'/>
     <typedef-decl name='efi_sha1_hash_t' type-id='013f0a7a' size-in-bits='160' hash='814d1b11e0ce8923' id='28d0dedc'/>
     <typedef-decl name='efi_sha224_hash_t' type-id='01529232' size-in-bits='224' hash='be161a0171b53489' id='1b0540e5'/>
     <typedef-decl name='efi_sha256_hash_t' type-id='d0f1c0cb' size-in-bits='256' hash='037c09e5626cce93' id='c951efa2'/>
@@ -508,7 +508,7 @@
     <function-decl name='efi_secdb_new' mangled-name='efi_secdb_new' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='efi_secdb_new@@LIBEFISEC_1.38' hash='7f32ffea222edbe7'>
       <return type-id='40c69d84'/>
     </function-decl>
-    <function-decl name='efi_secdb_del_entry' mangled-name='efi_secdb_del_entry' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='efi_secdb_del_entry@@LIBEFISEC_1.38' hash='1aaa3d36c27ca212'>
+    <function-decl name='efi_secdb_del_entry' mangled-name='efi_secdb_del_entry' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='efi_secdb_del_entry@@LIBEFISEC_1.38' hash='c2f4ccc34c65ffba'>
       <parameter type-id='40c69d84' name='top'/>
       <parameter type-id='d1df4f21' name='owner'/>
       <parameter type-id='a21a1fb4' name='algorithm'/>
@@ -516,7 +516,7 @@
       <parameter type-id='b59d7dce' name='datasz'/>
       <return type-id='95e97e5e'/>
     </function-decl>
-    <function-decl name='efi_secdb_add_entry' mangled-name='efi_secdb_add_entry' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='efi_secdb_add_entry@@LIBEFISEC_1.38' hash='1aaa3d36c27ca212'>
+    <function-decl name='efi_secdb_add_entry' mangled-name='efi_secdb_add_entry' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='efi_secdb_add_entry@@LIBEFISEC_1.38' hash='c2f4ccc34c65ffba'>
       <parameter type-id='40c69d84' name='top'/>
       <parameter type-id='d1df4f21' name='owner'/>
       <parameter type-id='a21a1fb4' name='algorithm'/>
@@ -524,7 +524,7 @@
       <parameter type-id='b59d7dce' name='datasz'/>
       <return type-id='95e97e5e'/>
     </function-decl>
-    <function-decl name='efi_secdb_set_bool' mangled-name='efi_secdb_set_bool' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='efi_secdb_set_bool@@LIBEFISEC_1.38' hash='98da87417749838b'>
+    <function-decl name='efi_secdb_set_bool' mangled-name='efi_secdb_set_bool' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='efi_secdb_set_bool@@LIBEFISEC_1.38' hash='118ca9b1f96167d2'>
       <parameter type-id='40c69d84' name='secdb'/>
       <parameter type-id='a512262a' name='flag'/>
       <parameter type-id='c894953d' name='value'/>
