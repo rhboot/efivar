@@ -6,8 +6,8 @@
  */
 #pragma once
 
-#include "efisec.h"
-#include <efivar/efisec.h>
+#include "efisec.h" // IWYU pragma: export
+#include "efivar/efisec.h" // IWYU pragma: export
 
 typedef enum {
 	BAD,
