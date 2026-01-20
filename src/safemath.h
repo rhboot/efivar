@@ -3,9 +3,7 @@
  * safemath.h
  * Copyright 2016-2019 Peter Jones <pjones@redhat.com>
  */
-
-#ifndef SAFEMATH_H_
-#define SAFEMATH_H_
+#pragma once
 
 #include "compiler.h"
 
@@ -240,6 +238,4 @@
 		})
 #endif
 
-
-#endif /* !SAFEMATH_H_ */
 // vim:fenc=utf-8:tw=75:noet

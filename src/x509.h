@@ -3,8 +3,7 @@
  * x509.h - X.509/ASN.1 helper functions
  * Copyright 2019-2020 Peter M. Jones <pjones@redhat.com>
  */
-#ifndef EFIVAR_X509_H
-#define EFIVAR_X509_H
+#pragma once
 
 #define SMALLEST_POSSIBLE_DER_SEQ 3
 
@@ -71,5 +70,4 @@ get_asn1_seq_size(uint8_t *location, uint32_t size)
 
 #undef SMALLEST_POSSIBLE_DER_SEQ
 
-#endif
 // vim:fenc=utf-8:tw=75:noet

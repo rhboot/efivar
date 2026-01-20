@@ -4,8 +4,7 @@
  * Copyright Peter Jones <pjones@redhat.com>
  * Copyright Red Hat, Inc.
  */
-#ifndef PRIVATE_SECDB_H
-#define PRIVATE_SECDB_H 1
+#pragma once
 
 #include "efisec.h"
 #include <efivar/efisec.h>
@@ -224,4 +223,4 @@ extern int secdb_cmp_descending(const void *a, const void *b, void *state);
  */
 extern void secdb_dump(efi_secdb_t *secdb, bool annotate);
 
-#endif /* PRIVATE_SECDB_H */
+// vim:fenc=utf-8:tw=75:noet

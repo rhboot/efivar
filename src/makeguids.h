@@ -3,9 +3,7 @@
  * makeguids.h - stuff makeguids needs that we also need at runtime
  * Copyright Peter Jones <pjones@redhat.com>
  */
-
-#ifndef EFIVAR_MAKEGUIDS_H_
-#define EFIVAR_MAKEGUIDS_H_
+#pragma once
 
 #include <errno.h>
 #include <fcntl.h>
@@ -272,5 +270,4 @@ err:
 	return rc;
 }
 
-#endif /* !EFIVAR_MAKEGUIDS_H_ */
 // vim:fenc=utf-8:tw=75:noet

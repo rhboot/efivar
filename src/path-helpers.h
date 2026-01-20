@@ -3,9 +3,7 @@
  * path-helper.h
  * Copyright 2018 Peter Jones <pjones@redhat.com>
  */
-
-#ifndef PATH_HELPER_H_
-#define PATH_HELPER_H_
+#pragma once
 
 void HIDDEN fill_spans(const char *str, const char *reject, void *spanbuf);
 unsigned int HIDDEN count_spans(const char *str, const char *reject, unsigned int *chars);
@@ -28,9 +26,5 @@ int HIDDEN find_path_segment(const char *path, int segment, const char **pos, si
 		}							\
 		ret_;							\
 	})
-
-
-
-#endif /* !PATH_HELPER_H_ */
 
 // vim:fenc=utf-8:tw=75:noet
