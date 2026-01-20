@@ -5,7 +5,7 @@
  * Copyright Red Hat, Inc.
  */
 
-#include "efisec.h"
+#include "efisec.h" // IWYU pragma: keep
 #include "efivar/efisec-secdb.h"
 
 /*

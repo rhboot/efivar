@@ -5,7 +5,7 @@
  */
 #pragma once
 
-#include "efivar.h"
-#include <efivar/efiboot.h>
+#include "efivar.h" // IWYU pragma: export
+#include "efivar/efiboot.h" // IWYU pragma: export
 
 // vim:fenc=utf-8:tw=75:noet

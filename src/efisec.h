@@ -7,7 +7,7 @@
 
 #include "fix_coverity.h"
 
-#include <efivar/efisec.h>
+#include "efivar/efisec.h"
 #include <err.h>
 #include <errno.h>
 #include <inttypes.h>

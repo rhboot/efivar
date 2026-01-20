@@ -9,7 +9,7 @@
 
 #include "fix_coverity.h"
 
-#include <efivar/efivar.h>
+#include "efivar/efivar.h"
 
 #include "compiler.h"
 #include "diag.h"
