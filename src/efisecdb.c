@@ -38,17 +38,17 @@ struct hash_param {
 
 static struct hash_param hash_params[] = {
 	{.name = "sha512",
-	 .algorithm = SHA512,
+	 .algorithm = EFI_SECDB_TYPE_SHA512,
 	 .size = 64,
 	 .def = false,
 	},
 	{.name = "sha256",
-	 .algorithm = SHA256,
+	 .algorithm = EFI_SECDB_TYPE_SHA256,
 	 .size = 32,
 	 .def = true,
 	},
 	{.name = "sha1",
-	 .algorithm = SHA1,
+	 .algorithm = EFI_SECDB_TYPE_SHA1,
 	 .size = 20,
 	 .def = false,
 	},
@@ -394,7 +394,7 @@ main(int argc, char *argv[])
 			      mode == ADD ? "adding" : "removing", datasz);
 			if (mode == ADD)
 				wants_add_actions = true;
-			add_action(&actions, mode, &owner, X509_CERT, data, datasz);
+			add_action(&actions, mode, &owner, EFI_SECDB_TYPE_X509_CERT, data, datasz);
 			break;
 		case 'd':
 			dump = true;
