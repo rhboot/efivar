@@ -5,23 +5,31 @@
  */
 #pragma once
 
-#include "fix_coverity.h"
+#include "fix_coverity.h" // IWYU pragma: export
 
-#include "efivar/efisec.h"
-#include <err.h>
-#include <errno.h>
-#include <inttypes.h>
-#include <stddef.h>
-#include <stdlib.h>
-#include <stdint.h>
-#include <stdio.h>
-#include <string.h>
-#include <sys/param.h>
-#include <unistd.h>
+#include <err.h> // IWYU pragma: export
+#include <errno.h> // IWYU pragma: export
+#include <inttypes.h> // IWYU pragma: export
+#include <stdbool.h> // IWYU pragma: export
+#include <stddef.h> // IWYU pragma: export
+#include <stdlib.h> // IWYU pragma: export
+#include <stdint.h> // IWYU pragma: export
+#include <stdio.h> // IWYU pragma: export
+#include <string.h> // IWYU pragma: export
+#include <sys/param.h> // IWYU pragma: export
+#include <unistd.h> // IWYU pragma: export
 
-#include "efivar.h"
-#include "esl-iter.h"
-#include "secdb.h"
-#include "x509.h"
+#include "efivar/efivar-types.h" // IWYU pragma: export
+#include "efivar/efivar-guids.h" // IWYU pragma: export
+#include "efivar/efivar.h" // IWYU pragma: export
+
+#include "efivar/efisec-types.h" // IWYU pragma: export
+#include "efivar/efisec-secdb.h" // IWYU pragma: export
+#include "efivar/efisec.h" // IWYU pragma: export
+
+#include "efivar.h" // IWYU pragma: export
+#include "esl-iter.h" // IWYU pragma: export
+#include "secdb.h" // IWYU pragma: export
+#include "x509.h" // IWYU pragma: export
 
 // vim:fenc=utf-8:tw=75:noet
