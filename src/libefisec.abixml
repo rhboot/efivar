@@ -11,6 +11,7 @@
     <elf-symbol name='efi_secdb_parse' version='LIBEFISEC_1.38' is-default-version='yes' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes'/>
     <elf-symbol name='efi_secdb_realize' version='LIBEFISEC_1.38' is-default-version='yes' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes'/>
     <elf-symbol name='efi_secdb_set_bool' version='LIBEFISEC_1.38' is-default-version='yes' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes'/>
+    <elf-symbol name='efi_secdb_visit_entries' version='LIBEFISEC_1.39' is-default-version='yes' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes'/>
   </elf-function-symbols>
   <elf-variable-symbols>
     <elf-symbol name='efi_secdb_algs_' size='576' version='LIBEFISEC_1.38' is-default-version='yes' type='object-type' binding='global-binding' visibility='default-visibility' is-defined='yes'/>
@@ -156,6 +157,12 @@
       <enumerator name='EFI_SECDB_TYPE_RSA2048_SHA1' value='10'/>
       <enumerator name='EFI_SECDB_TYPE_RSA2048_SHA256' value='11'/>
       <enumerator name='EFI_SECDB_TYPE_MAX' value='12'/>
+    </enum-decl>
+    <enum-decl name='efi_secdb_visitor_status_t' naming-typedef-id='c865b8b9' size-in-bits='32' alignment-in-bits='32' hash='77b58eabaf698744' id='7e0de2a5'>
+      <underlying-type type-id='9cac1fee'/>
+      <enumerator name='EFI_SECDB_VISITOR_ERROR' value='-1'/>
+      <enumerator name='EFI_SECDB_VISITOR_BREAK' value='0'/>
+      <enumerator name='EFI_SECDB_VISITOR_CONTINUE' value='1'/>
     </enum-decl>
     <enum-decl name='esl_iter_status' size-in-bits='32' alignment-in-bits='32' hash='639df809365cf075' id='fa1c20ea'>
       <underlying-type type-id='9cac1fee'/>
@@ -368,6 +375,8 @@
     <typedef-decl name='efi_secdb_data_t' type-id='8ca00d04' size-in-bits='2048' id='03e08394'/>
     <typedef-decl name='efi_secdb_flag_t' type-id='968af95d' size-in-bits='32' alignment-in-bits='32' hash='4feaf1f564547df0' id='a512262a'/>
     <typedef-decl name='efi_secdb_type_t' type-id='4a23cccb' size-in-bits='32' alignment-in-bits='32' hash='6207bff85a4c3d2e' id='a21a1fb4'/>
+    <typedef-decl name='efi_secdb_visitor_status_t' type-id='7e0de2a5' size-in-bits='32' alignment-in-bits='32' hash='77b58eabaf698744' id='c865b8b9'/>
+    <typedef-decl name='efi_secdb_visitor_t' type-id='ab35c972' size-in-bits='64' id='2dfa0d2c'/>
     <typedef-decl name='efi_sha1_hash_t' type-id='013f0a7a' size-in-bits='160' hash='814d1b11e0ce8923' id='28d0dedc'/>
     <typedef-decl name='efi_sha224_hash_t' type-id='01529232' size-in-bits='224' hash='be161a0171b53489' id='1b0540e5'/>
     <typedef-decl name='efi_sha256_hash_t' type-id='d0f1c0cb' size-in-bits='256' hash='037c09e5626cce93' id='c951efa2'/>
@@ -456,8 +465,15 @@
     <pointer-type-def type-id='9b45d938' size-in-bits='64' hash='c44743f354f6a443' id='80f4b756'/>
     <qualified-type-def type-id='1a7f9ac1' const='yes' hash='5ea91808138567e1' id='7055acd1'/>
     <pointer-type-def type-id='7055acd1' size-in-bits='64' hash='d809134072fc3264' id='d1df4f21'/>
+    <qualified-type-def type-id='d1df4f21' const='yes' hash='608249ce8fd97fc8' id='1f58187e'/>
+    <qualified-type-def type-id='03e08394' const='yes' hash='03877441d5699bca' id='b3ad1d24'/>
+    <pointer-type-def type-id='b3ad1d24' size-in-bits='64' hash='d996d7ca7c23de62' id='e784bd0a'/>
+    <qualified-type-def type-id='e784bd0a' const='yes' hash='a6a4f1691b422c79' id='466e0f55'/>
+    <qualified-type-def type-id='a21a1fb4' const='yes' hash='1be1b4494b7cdf0d' id='0a455ac4'/>
+    <qualified-type-def type-id='b59d7dce' const='yes' hash='86827e66a8bd4e2d' id='d0fa5dde'/>
     <pointer-type-def type-id='1a7f9ac1' size-in-bits='64' hash='c6942bb633dc77f9' id='e4b4d1d6'/>
     <pointer-type-def type-id='03e08394' size-in-bits='64' hash='04ca777a587933c5' id='06bc8e05'/>
+    <pointer-type-def type-id='2dfa0d2c' size-in-bits='64' hash='3f49d7dc4b5fa460' id='e38ceddf'/>
     <pointer-type-def type-id='add6e811' size-in-bits='64' hash='fd7a63c0c6c822c4' id='6d2cbff6'/>
     <pointer-type-def type-id='95e97e5e' size-in-bits='64' hash='3fd83b2c14ae2f2f' id='7292109c'/>
     <pointer-type-def type-id='b59d7dce' size-in-bits='64' hash='54c1e9f81ec7a1db' id='78c01427'/>
@@ -492,6 +508,7 @@
     <class-decl name='_IO_wide_data' is-struct='yes' visibility='default' is-declaration-only='yes' id='79bd3751'/>
     <class-decl name='__dirstream' is-struct='yes' visibility='default' is-declaration-only='yes' id='20cd73f4'/>
     <class-decl name='esl_iter' is-struct='yes' visibility='default' is-declaration-only='yes' id='aed63f16'/>
+    <qualified-type-def type-id='eaa32e2f' const='yes' id='83be723c'/>
     <typedef-decl name='esl_iter' type-id='aed63f16' id='b16da02b'/>
     <typedef-decl name='efi_secdb_t' type-id='203a0f85' id='4a881f91'/>
     <var-decl name='efi_guid_sha512' type-id='7055acd1' visibility='default' elf-symbol-id='efi_guid_sha512'/>
@@ -546,6 +563,12 @@
       <parameter type-id='40c69d84' name='top'/>
       <return type-id='48b5725f'/>
     </function-decl>
+    <function-decl name='efi_secdb_visit_entries' mangled-name='efi_secdb_visit_entries' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='efi_secdb_visit_entries@@LIBEFISEC_1.39' hash='371b0c2f45dcb294'>
+      <parameter type-id='40c69d84' name='top'/>
+      <parameter type-id='e38ceddf' name='visitor'/>
+      <parameter type-id='eaa32e2f' name='closure'/>
+      <return type-id='95e97e5e'/>
+    </function-decl>
     <var-decl name='efi_secdb_algs_' type-id='e51a06d5' mangled-name='efi_secdb_algs_' visibility='default' elf-symbol-id='efi_secdb_algs_@@LIBEFISEC_1.38'/>
     <class-decl name='secdb_alg_t' is-struct='yes' naming-typedef-id='00ef251d' visibility='default' is-declaration-only='yes' id='a0974bce'/>
     <typedef-decl name='secdb_alg_t' type-id='a0974bce' id='00ef251d'/>
@@ -574,6 +597,18 @@
     <type-decl name='variadic parameter type' id='2c1145c5'/>
     <type-decl name='void' id='48b5725f'/>
     <pointer-type-def type-id='48b5725f' id='eaa32e2f'/>
+    <function-type size-in-bits='64' hash='6559dfca9909f7be' id='ab35c972'>
+      <parameter type-id='f0981eec'/>
+      <parameter type-id='f0981eec'/>
+      <parameter type-id='1f58187e'/>
+      <parameter type-id='0a455ac4'/>
+      <parameter type-id='83be723c'/>
+      <parameter type-id='d0fa5dde'/>
+      <parameter type-id='466e0f55'/>
+      <parameter type-id='d0fa5dde'/>
+      <parameter type-id='eaa32e2f'/>
+      <return type-id='c865b8b9'/>
+    </function-type>
     <function-type size-in-bits='64' hash='388da3fa973fde78' id='add6e811'>
       <parameter type-id='eaa32e2f'/>
       <parameter type-id='eaa32e2f'/>
