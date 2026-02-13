@@ -161,7 +161,7 @@ extern int HIDDEN eb_nvme_ns_id(int fd, uint32_t *ns_id);
 
 int HIDDEN get_sector_size(int filedes);
 
-extern int HIDDEN find_parent_devpath(const char * const child,
+extern int HIDDEN find_parent_devpath(char * const child,
 				      char **parent);
 
 extern ssize_t HIDDEN make_mac_path(uint8_t *buf, ssize_t size,

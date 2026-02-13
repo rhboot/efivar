@@ -31,7 +31,7 @@
 #include "efiboot.h"
 
 int HIDDEN
-find_parent_devpath(const char * const child, char **parent)
+find_parent_devpath(char * const child, char **parent)
 {
 	int ret;
 	char *node;
