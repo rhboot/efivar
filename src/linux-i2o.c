@@ -32,7 +32,7 @@ parse_i2o(struct device *dev, const char *current, const char *root UNUSED)
 	        return 0;
 	}
 
-	char *block = strstr(current, "/block/");
+	const char *block = strstr(current, "/block/");
 	ssize_t sz = block ? block + 1 - current : -1;
 	debug("current:'%s' sz:%zd", current, sz);
 	return sz;

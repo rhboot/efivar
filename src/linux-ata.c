@@ -95,7 +95,7 @@ parse_ata(struct device *dev, const char *path, const char *root UNUSED)
 		return 0;
 	}
 
-	char *host = strstr(path, "/host");
+	const char *host = strstr(path, "/host");
 	if (!host)
 		return -1;
 
@@ -113,7 +113,7 @@ parse_ata(struct device *dev, const char *path, const char *root UNUSED)
 	dev->ata_info.scsi_target = scsi_target;
 	dev->ata_info.scsi_lun = scsi_lun;
 
-	char *block = strstr(current, "/block/");
+	const char *block = strstr(current, "/block/");
 	if (block)
 		current += block + 1 - current;
 	debug("current:'%s' sz:%zd", current, current - path);

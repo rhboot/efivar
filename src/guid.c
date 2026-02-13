@@ -78,13 +78,13 @@ cmpnamep(const void *p1, const void *p2)
 }
 
 static int NONNULL(1, 2)
-_get_common_guidname(const efi_guid_t *guid, struct efivar_guidname **result)
+_get_common_guidname(const efi_guid_t *guid, const struct efivar_guidname **result)
 {
 	struct efivar_guidname key;
 	memset(&key, '\0', sizeof(key));
 	memcpy(&key.guid, guid, sizeof(*guid));
 
-	struct efivar_guidname *tmp;
+	const struct efivar_guidname *tmp;
 	tmp = bsearch(&key,
 		      &efi_well_known_guids[0],
 		      efi_n_well_known_guids,
@@ -104,7 +104,7 @@ _get_common_guidname(const efi_guid_t *guid, struct efivar_guidname **result)
 int NONNULL(1, 2) PUBLIC
 efi_guid_to_name(efi_guid_t *guid, char **name)
 {
-	struct efivar_guidname *result;
+	const struct efivar_guidname *result;
 	int rc = _get_common_guidname(guid, &result);
 	if (rc >= 0) {
 		*name = strndup(result->name, sizeof(result->name) -1);
@@ -119,7 +119,7 @@ efi_guid_to_name(efi_guid_t *guid, char **name)
 int NONNULL(1, 2) PUBLIC
 efi_guid_to_symbol(efi_guid_t *guid, char **symbol)
 {
-	struct efivar_guidname *result;
+	const struct efivar_guidname *result;
 	int rc = _get_common_guidname(guid, &result);
 	if (rc >= 0) {
 		*symbol = strndup(result->symbol, sizeof(result->symbol) -1);
@@ -133,7 +133,7 @@ efi_guid_to_symbol(efi_guid_t *guid, char **symbol)
 int NONNULL(1) PUBLIC
 efi_guid_to_id_guid(const efi_guid_t *guid, char **sp)
 {
-	struct efivar_guidname *result = NULL;
+	const struct efivar_guidname *result = NULL;
 	char *ret = NULL;
 	int rc;
 
@@ -201,7 +201,7 @@ efi_name_to_guid(const char *name, efi_guid_t *guid)
 
 	key.name[sizeof(key.name) - 1] = '\0';
 
-	struct efivar_guidname *result;
+	const struct efivar_guidname *result;
 	result = bsearch(&key,
 			 &efi_well_known_names[0],
 			 efi_n_well_known_names,

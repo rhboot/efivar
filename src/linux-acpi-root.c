@@ -35,7 +35,7 @@ parse_acpi_root(struct device *dev, const char *path, const char *root UNUSED)
 	uint16_t pad0;
 	uint8_t pad1;
 	char *acpi_header = NULL;
-	char *colon;
+	const char *colon;
 
 	debug("entry");
 
