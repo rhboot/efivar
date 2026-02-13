@@ -24,6 +24,9 @@
 #include <sys/types.h>
 #include <unistd.h>
 
+#define OPENSSL_NO_DEPRECATED
+#include <openssl/x509.h>
+
 #include "efivar/efisec.h" // IWYU pragma: export
 
 /*
@@ -36,6 +39,13 @@ enum {
 };
 
 typedef struct sbchooser_context sbchooser_context_t;
+typedef struct cert_data cert_data_t;
+
+struct digest_data {
+	uint8_t *data;
+	size_t datasz;
+};
+typedef struct digest_data digest_data_t;
 
 #include "compiler.h" // IWYU pragma: export
 #include "util.h" // IWYU pragma: export
@@ -48,8 +58,17 @@ typedef struct sbchooser_context sbchooser_context_t;
  */
 struct sbchooser_context {
 	efi_secdb_t *db;
+	size_t n_db_digests;
+	digest_data_t **db_digests;
+	size_t n_db_certs;
+	cert_data_t **db_certs;
 
 	efi_secdb_t *dbx;
+	size_t n_dbx_digests;
+	digest_data_t **dbx_digests;
+	size_t n_dbx_certs;
+	cert_data_t **dbx_certs;
+	// XXX PJFIX: support cert TBS hash revocations
 };
 
 // vim:fenc=utf-8:tw=75:noet
