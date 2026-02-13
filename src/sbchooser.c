@@ -163,6 +163,11 @@ main(int argc, char *argv[])
 			err(ERR_SECDB, "Could not load db from EFI variable");
 	}
 
+	rc = parse_secdb_info(&ctx);
+	if (rc < 0) {
+		errx(ERR_SECDB, "couldn't parse secdb info");
+	}
+
 	clean_up_context(&ctx);
 
 	return 0;
