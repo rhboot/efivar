@@ -51,6 +51,9 @@ clean_up_context(sbchooser_context_t *ctxp)
 		efi_secdb_free(ctxp->dbx);
 		ctxp->dbx = NULL;
 	}
+
+	free_secdb_info(ctxp);
+	memset(ctxp, 0, sizeof (*ctxp));
 }
 
 static int
@@ -264,6 +267,11 @@ main(int argc, char *argv[])
 		rc = load_secdb_from_var("dbx", &efi_guid_security, &ctx.dbx);
 		if (rc < 0 && errno != ENOENT)
 			err(ERR_SECDB, "Could not load db from EFI variable");
+	}
+
+	rc = parse_secdb_info(&ctx);
+	if (rc < 0) {
+		errx(ERR_SECDB, "couldn't parse secdb info");
 	}
 
 	for (size_t i = 0; i < ctx.n_files; i++) {

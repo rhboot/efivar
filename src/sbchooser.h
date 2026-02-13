@@ -44,6 +44,7 @@ enum {
 
 typedef struct sbchooser_context sbchooser_context_t;
 typedef struct pe_file pe_file_t;
+typedef struct cert_data cert_data_t;
 
 struct digest_data {
 	uint8_t *data;
@@ -68,8 +69,17 @@ struct sbchooser_context {
 	pe_file_t **files;
 
 	efi_secdb_t *db;
+	size_t n_db_digests;
+	digest_data_t **db_digests;
+	size_t n_db_certs;
+	cert_data_t **db_certs;
 
 	efi_secdb_t *dbx;
+	size_t n_dbx_digests;
+	digest_data_t **dbx_digests;
+	size_t n_dbx_certs;
+	cert_data_t **dbx_certs;
+	// XXX PJFIX: support cert TBS hash revocations
 };
 
 // vim:fenc=utf-8:tw=75:noet
