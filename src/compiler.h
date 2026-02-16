@@ -79,4 +79,39 @@
 #define ALIGNMENT_PADDING(value, align) ((align - (value % align)) % align)
 #define ALIGN_UP(value, align) ((value) + ALIGNMENT_PADDING(value, align))
 
+#if GNUC_PREREQ(5, 1) || CLANG_PREREQ(3, 8)
+#define checked_add(addend0, addend1, sum) \
+	__builtin_add_overflow(addend0, addend1, sum)
+#define checked_sub(minuend, subtrahend, difference) \
+	__builtin_sub_overflow(minuend, subtrahend, difference)
+#define checked_mul(factor0, factor1, product) \
+	__builtin_mul_overflow(factor0, factor1, product)
+#else
+#define checked_add(a0, a1, s)		\
+	({				\
+		(*s) = ((a0) + (a1));   \
+		0;			\
+	})
+#define checked_sub(s0, s1, d)		\
+	({				\
+		(*d) = ((s0) - (s1));   \
+		0;			\
+	})
+#define checked_mul(f0, f1, p)		\
+	({				\
+		(*p) = ((f0) * (f1));   \
+		0;			\
+	})
+#endif
+
+#define checked_div(dividend, divisor, quotient)                \
+        ({                                                      \
+                bool _ret = True;                               \
+                if ((divisor) != 0) {                           \
+                        _ret = False;                           \
+                        (quotient) = (dividend) / (divisor);    \
+                }                                               \
+                _ret;                                           \
+        })
+
 // vim:fenc=utf-8:tw=75:noet
