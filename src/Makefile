@@ -26,7 +26,7 @@ EFIVAR_SOURCES = efivar.c guid.c util.c
 EFIVAR_OBJECTS = $(patsubst %.S,%.o,$(patsubst %.c,%.o,$(EFIVAR_SOURCES)))
 EFISECDB_SOURCES = efisecdb.c guid-symbols.c secdb-dump.c util.c
 EFISECDB_OBJECTS = $(patsubst %.S,%.o,$(patsubst %.c,%.o,$(EFISECDB_SOURCES)))
-SBCHOOSER_SOURCES = sbchooser.c sbchooser-pe.c sbchooser-db.c sbchooser-x509.c error.c
+SBCHOOSER_SOURCES = sbchooser.c sbchooser-pe.c sbchooser-db.c sbchooser-x509.c authenticode.c error.c
 SBCHOOSER_OBJECTS = $(patsubst %.S,%.o,$(patsubst %.c,%.o,$(SBCHOOSER_SOURCES)))
 GENERATED_SOURCES = include/efivar/efivar-guids.h guid-symbols.c
 MAKEGUIDS_SOURCES = makeguids.c util-makeguids.c
@@ -128,10 +128,10 @@ efisecdb-static : $(patsubst %.o,%.static.o,$(LIBEFISEC_OBJECTS) $(LIBEFIVAR_OBJ
 efisecdb-static : | $(GENERATED_SOURCES)
 efisecdb-static : private LIBS=dl
 
-sbchooser : private LIBS=efivar
+sbchooser : private LIBS=crypto efivar
 sbchooser : $(SBCHOOSER_OBJECTS)
 
-sbchooser-static : private LIBS=efivar
+sbchooser-static : private LIBS=crypto efivar
 sbchooser-static : $(SBCHOOSER_OBJECTS)
 sbchooser-static : | $(GENERATED_SOURCES)
 

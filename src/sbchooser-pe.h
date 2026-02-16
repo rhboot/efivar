@@ -36,6 +36,14 @@ struct pe_file {
 	size_t mapsz;		// how big the map is
 	pe_image_context_t ctx;	// context built from "loading" it.
 
+	/*
+	 * authenticode hashes of this binary, using different digest
+	 * functions.
+	 */
+	digest_data_t sha256;
+	digest_data_t sha384;
+	digest_data_t sha512;
+
 	uint32_t score;		// score for sorting
 };
 
@@ -68,6 +76,8 @@ void free_pe(pe_file_t **pe_file);
 int get_section_vma (pe_file_t *pe, unsigned int section_num,
 		     char **basep, size_t *sizep,
 		     efi_image_section_header_t **sectionp);
+
+int generate_authenticode(pe_file_t *pe);
 
 void score_pe(sbchooser_context_t *ctx, pe_file_t *pe);
 int pe_cmp(const void *p0, const void *p1);

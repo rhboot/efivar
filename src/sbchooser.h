@@ -26,6 +26,11 @@
 #include <sys/types.h>
 #include <unistd.h>
 
+#define OPENSSL_NO_DEPRECATED
+#include <openssl/x509.h>
+
+#include "efivar/efisec.h" // IWYU pragma: export
+
 /*
  * exit status codes from sbchooser
  */
@@ -38,6 +43,12 @@ enum {
 
 typedef struct sbchooser_context sbchooser_context_t;
 typedef struct pe_file pe_file_t;
+
+struct digest_data {
+	uint8_t *data;
+	size_t datasz;
+};
+typedef struct digest_data digest_data_t;
 
 #include "compiler.h" // IWYU pragma: export
 #include "util.h" // IWYU pragma: export
