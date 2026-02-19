@@ -264,7 +264,7 @@ efi_secdb_add_entry_or_secdb(efi_secdb_t *top,
 			return 0;
 	}
 
-	debug("adding %zd(0x%zd) bytes of data", datasz, datasz);
+	debug("adding %zd(0x%lx) bytes of data", datasz, datasz);
 	secdb_add_entry_data(secdb, owner, data, datasz);
 	if (sort_data && secdb->sigsz) {
 		debug("sorting data %s", sort_descending ? "desc" : "asc");

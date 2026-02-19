@@ -23,13 +23,13 @@ get_asn1_seq_size(uint8_t *location, uint32_t size)
 
 	// If it's not a CONSTRUCTED SEQUENCE it's not a certificate
 	if (location[0] != 0x30) {
-		debug("%p: %d != 0x30", &location[0], location[0]);
+		debug("%p: 0x%02x != 0x30", &location[0], location[0]);
 		return -1;
 	}
 
 	if (!(location[1] & 0x80)) {
 		// Short form, which is too small to hold a certificate.
-		debug("%p: %d & 0x80 == 1", &location[1], location[1]);
+		debug("%p: 0x%02x & 0x80 == 1", &location[1], location[1]);
 		return -1;
 	}
 

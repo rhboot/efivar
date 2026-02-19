@@ -180,7 +180,7 @@ secdb_entry_size(efi_secdb_t *secdb)
 	sz = sizeof(efi_signature_list_t)
 	     + secdb->hdrsz
 	     + secdb->sigsz * secdb->nsigs;
-	debug("secdb:%p sz:%zd", secdb, sz);
+	debug("secdb:%p sz:%zd (0x%lx)", secdb, sz, sz);
 	return sz;
 }
 
