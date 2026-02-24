@@ -41,10 +41,16 @@ struct pe_file {
 	 * functions.
 	 */
 	digest_data_t sha256;
+	bool sha256_revoked;
+	bool sha256_trusted;
 
 	digest_data_t sha384;
+	bool sha384_revoked;
+	bool sha384_trusted;
 
 	digest_data_t sha512;
+	bool sha512_revoked;
+	bool sha512_trusted;
 };
 
 /*
@@ -80,5 +86,14 @@ int get_section_vma (pe_file_t *pe, unsigned int section_num,
 
 void fmt_digest(digest_data_t *dgst, char *buf, size_t bufsz);
 int generate_authenticode(pe_file_t *pe);
+
+/*
+ * evaluate the security posture of the PE file provided, in the context of
+ * the security databases in ctx.
+ */
+void update_pe_security(sbchooser_context_t *ctx, pe_file_t *pe);
+
+bool is_revoked_by_hash(pe_file_t *pe, digest_data_t **revoking_digest);
+bool is_trusted_by_hash(pe_file_t *pe, digest_data_t **trusting_digest);
 
 // vim:fenc=utf-8:tw=75:noet

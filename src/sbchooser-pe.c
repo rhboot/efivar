@@ -5,6 +5,7 @@
  */
 
 #include "sbchooser.h" // IWYU pragma: keep
+#include <openssl/sha.h>
 
 void
 free_pe(pe_file_t **pe_p)
@@ -419,6 +420,114 @@ get_section_vma (pe_file_t *pe, unsigned int section_num,
 	return 0;
 err:
 	return -1;
+}
+
+static void
+check_secdb_hash(char *dbname, digest_data_t **digests, size_t n_digests,
+		 char *dgstname, digest_data_t *candidate, bool *found)
+{
+	char buf[1024];
+
+	fmt_digest(candidate, buf, sizeof(buf));
+	debug("candidate:%s", buf);
+
+	for (size_t i = 0; i < n_digests; i++) {
+		digest_data_t *dgst = digests[i];
+
+		if (candidate->datasz != dgst->datasz)
+			continue;
+
+		fmt_digest(dgst, buf, sizeof(buf));
+		log(LOG_DEBUG_DUMPER, "%s:%s", dbname, buf);
+
+		if (memcmp(dgst->data, candidate->data, dgst->datasz) == 0) {
+			debug("%s hash is in %s", dgstname, dbname);
+			*found = true;
+		}
+	}
+}
+
+static void
+check_dbx_hashes(sbchooser_context_t *ctx, pe_file_t *pe)
+{
+	debug("%zu digests in dbx\n", ctx->n_dbx_digests);
+
+	check_secdb_hash("dbx", ctx->dbx_digests, ctx->n_dbx_digests,
+			 "sha512", &pe->sha512, &pe->sha512_revoked);
+	check_secdb_hash("dbx", ctx->dbx_digests, ctx->n_dbx_digests,
+			 "sha384", &pe->sha384, &pe->sha384_revoked);
+	check_secdb_hash("dbx", ctx->dbx_digests, ctx->n_dbx_digests,
+			 "sha256", &pe->sha256, &pe->sha256_revoked);
+}
+
+static void
+check_db_hashes(sbchooser_context_t *ctx, pe_file_t *pe)
+{
+	debug("%zu digests in db\n", ctx->n_db_digests);
+
+	check_secdb_hash("db", ctx->db_digests, ctx->n_db_digests,
+			 "sha512", &pe->sha512, &pe->sha512_trusted);
+	check_secdb_hash("db", ctx->db_digests, ctx->n_db_digests,
+			 "sha384", &pe->sha384, &pe->sha384_trusted);
+	check_secdb_hash("db", ctx->db_digests, ctx->n_db_digests,
+			 "sha256", &pe->sha256, &pe->sha256_trusted);
+}
+
+bool
+is_revoked_by_hash(pe_file_t *pe, digest_data_t **revoking_digest)
+{
+	if (pe->sha512_revoked) {
+		if (revoking_digest)
+			*revoking_digest = &pe->sha512;
+		return true;
+	}
+
+	if (pe->sha384_revoked) {
+		if (revoking_digest)
+			*revoking_digest = &pe->sha384;
+		return true;
+	}
+
+	if (pe->sha256_revoked) {
+		if (revoking_digest)
+			*revoking_digest = &pe->sha256;
+		return true;
+	}
+
+	return false;
+}
+
+bool
+is_trusted_by_hash(pe_file_t *pe, digest_data_t **trusting_digest)
+{
+	if (pe->sha512_trusted) {
+		if (trusting_digest)
+			*trusting_digest = &pe->sha512;
+		return true;
+	}
+
+	if (pe->sha384_trusted) {
+		if (trusting_digest)
+			*trusting_digest = &pe->sha384;
+		return true;
+	}
+
+	if (pe->sha256_trusted) {
+		if (trusting_digest)
+			*trusting_digest = &pe->sha256;
+		return true;
+	}
+
+	return false;
+}
+
+void
+update_pe_security(sbchooser_context_t *ctx, pe_file_t *pe)
+{
+	debug("scoring \"%s\"", pe->filename);
+
+	check_dbx_hashes(ctx, pe);
+	check_db_hashes(ctx, pe);
 }
 
 // vim:fenc=utf-8:tw=75:noet
