@@ -399,4 +399,21 @@ err:
 	return -1;
 }
 
+void
+score_pe(sbchooser_context_t *ctx __attribute__((__unused__)),
+	 pe_file_t *pe)
+{
+	// PJFIX: wrong wrong wrong
+	pe->score = 1;
+}
+
+int
+pe_cmp(const void *p0, const void *p1)
+{
+	pe_file_t *pe0 = *(pe_file_t **)p0;
+	pe_file_t *pe1 = *(pe_file_t **)p1;
+
+	return pe1->score - pe0->score;
+}
+
 // vim:fenc=utf-8:tw=75:noet

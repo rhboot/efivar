@@ -14,8 +14,10 @@
 #include <errno.h> // IWYU pragma: keep
 #include <fcntl.h>
 #include <getopt.h>
+#include <inttypes.h>
 #include <stdbool.h>
 #include <stddef.h>
+#include <stdint.h>
 #include <stdio.h> // IWYU pragma: keep
 #include <stdlib.h> // IWYU pragma: keep
 #include <string.h> // IWYU pragma: keep

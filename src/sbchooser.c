@@ -183,8 +183,16 @@ main(int argc, char *argv[])
 	}
 
 	for (size_t i = 0; i < ctx.n_files; i++) {
+		score_pe(&ctx, ctx.files[i]);
+	}
+	qsort(ctx.files, ctx.n_files, sizeof(ctx.files[0]), pe_cmp);
+
+	for (size_t i = 0; i < ctx.n_files; i++) {
 		pe_file_t *pe = ctx.files[i];
-		printf("%s\n", pe->filename);
+		if (pe->score > 0) {
+			debug("PE \"%s\" score 0x%"PRIx32, pe->filename, pe->score);
+			printf("%s\n", pe->filename);
+		}
 	}
 
 	clean_up_context(&ctx);
