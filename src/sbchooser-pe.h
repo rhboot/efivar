@@ -96,4 +96,10 @@ void update_pe_security(sbchooser_context_t *ctx, pe_file_t *pe);
 bool is_revoked_by_hash(pe_file_t *pe, digest_data_t **revoking_digest);
 bool is_trusted_by_hash(pe_file_t *pe, digest_data_t **trusting_digest);
 
+/*
+ * PE comparison function, suitable for use with qsort(3)
+ * Lower return value is most desirable.
+ */
+int pe_cmp(const void *p0, const void *p1);
+
 // vim:fenc=utf-8:tw=75:noet

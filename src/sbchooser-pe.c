@@ -521,6 +521,22 @@ is_trusted_by_hash(pe_file_t *pe, digest_data_t **trusting_digest)
 	return false;
 }
 
+static uint32_t
+get_highest_hash_secbits(pe_file_t *pe)
+{
+	if (is_revoked_by_hash(pe, NULL))
+		return 0;
+
+	if (pe->sha512_trusted)
+		return 256;
+	if (pe->sha384_trusted)
+		return 192;
+	if (pe->sha256_trusted)
+		return 128;
+
+	return 0;
+}
+
 void
 update_pe_security(sbchooser_context_t *ctx, pe_file_t *pe)
 {
@@ -528,6 +544,32 @@ update_pe_security(sbchooser_context_t *ctx, pe_file_t *pe)
 
 	check_dbx_hashes(ctx, pe);
 	check_db_hashes(ctx, pe);
+}
+
+int
+pe_cmp(const void *p0, const void *p1)
+{
+	pe_file_t *pe0 = *(pe_file_t **)p0;
+	pe_file_t *pe1 = *(pe_file_t **)p1;
+
+	bool pe0_revoked = is_revoked_by_hash(pe0, NULL);
+	bool pe1_revoked = is_revoked_by_hash(pe1, NULL);
+	if (!pe1_revoked && pe0_revoked)
+		return -1;
+	if (pe1_revoked && !pe0_revoked)
+		return 1;
+
+	bool pe0_trusted = is_trusted_by_hash(pe0, NULL);
+	bool pe1_trusted = is_trusted_by_hash(pe1, NULL);
+	if (pe1_trusted && !pe0_trusted)
+		return 1;
+	if (!pe1_trusted && pe0_trusted)
+		return -1;
+
+	uint32_t pe0_hash_secbits = get_highest_hash_secbits(pe0);
+	uint32_t pe1_hash_secbits = get_highest_hash_secbits(pe1);
+
+	return pe1_hash_secbits - pe0_hash_secbits;
 }
 
 // vim:fenc=utf-8:tw=75:noet
