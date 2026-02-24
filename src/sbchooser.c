@@ -269,9 +269,45 @@ main(int argc, char *argv[])
 		update_pe_security(&ctx, ctx.files[i]);
 	}
 
+	qsort(ctx.files, ctx.n_files, sizeof(ctx.files[0]), pe_cmp);
+
 	for (size_t i = 0; i < ctx.n_files; i++) {
 		pe_file_t *pe = ctx.files[i];
-		printf("%s\n", pe->filename);
+
+		/*
+		 * UEFI spec 2.12ish says:
+		 *   – C. Any entry with SignatureListType of EFI_CERT_X509_GUID,
+		 *     with SignatureData which contains a certificate with the
+		 *     same Issuer, Serial Number, and To-Be-Signed hash included
+		 *     in any certificate in the signing chain of the signature
+		 *     being verified.
+		 *
+		 *     Multiple signatures are allowed to exist in the binary's
+		 *     certificate table (as per the "Attribute Certificate Table"
+		 *     section of the Microsoft PE/COFF Specification). The
+		 *     firmware must do the validation according to the following:
+		 *
+		 *     - If the hash of the binary is in dbx, then the image shall
+		 *       fail the validation.
+		 *     - Else if the hash of the binary is in db, then the image
+		 *       shall pass the validation.
+		 *     - Else if one of signatures is in db and is not in dbx, then
+		 *       the image shall pass the validation.
+		 *     - Else the image shall fail the validation.
+		 *
+		 * And so we check dbx hashes first, then db.
+		 */
+		if (is_revoked_by_hash(pe, NULL)) {
+			debug("PE \"%s\" is revoked by hash", pe->filename);
+			continue;
+		}
+		if (is_trusted_by_hash(pe, NULL)) {
+			debug("PE \"%s\" is trusted by hash", pe->filename);
+			printf("%s\n", pe->filename);
+			continue;
+		} else {
+			debug("PE \"%s\" is not trusted by hash", pe->filename);
+		}
 	}
 
 	clean_up_context(&ctx);
