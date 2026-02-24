@@ -266,6 +266,10 @@ main(int argc, char *argv[])
 	}
 
 	for (size_t i = 0; i < ctx.n_files; i++) {
+		update_pe_security(&ctx, ctx.files[i]);
+	}
+
+	for (size_t i = 0; i < ctx.n_files; i++) {
 		pe_file_t *pe = ctx.files[i];
 		printf("%s\n", pe->filename);
 	}
