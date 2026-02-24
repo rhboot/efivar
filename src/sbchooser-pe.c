@@ -5,6 +5,7 @@
  */
 
 #include "sbchooser.h" // IWYU pragma: keep
+#include <openssl/sha.h>
 
 void
 free_pe(pe_file_t **pe_p)
@@ -419,12 +420,144 @@ err:
 	return -1;
 }
 
-void
-score_pe(sbchooser_context_t *ctx __attribute__((__unused__)),
-	 pe_file_t *pe)
+static bool
+is_revoked_by_hash(sbchooser_context_t *ctx, pe_file_t *pe)
 {
-	// PJFIX: wrong wrong wrong
-	pe->score = 1;
+	debug("%zu digests in dbx\n", ctx->n_dbx_digests);
+	for (size_t i = 0; i < ctx->n_dbx_digests; i++) {
+		digest_data_t *dgst = ctx->dbx_digests[i];
+
+		//debug("digest size %d", dgst->datasz);
+
+		if (dgst->datasz == pe->sha512.datasz &&
+		    memcmp(dgst->data, pe->sha512.data, dgst->datasz) == 0)
+			return true;
+
+		if (dgst->datasz == pe->sha384.datasz &&
+		    memcmp(dgst->data, pe->sha384.data, dgst->datasz) == 0)
+			return true;
+
+		if (dgst->datasz == pe->sha256.datasz &&
+		    memcmp(dgst->data, pe->sha256.data, dgst->datasz) == 0)
+			return true;
+	}
+
+	return false;
+}
+
+#define PE_SCORE_SHA512_IN_DB		0x00000004ull
+#define PE_SCORE_SHA384_IN_DB		0x00000002ull
+#define PE_SCORE_SHA256_IN_DB		0x00000001ull
+#define PE_SCORE_HASH_IN_DB_MASK	0x00000007ull
+#define PE_SCORE_HASH_IN_DB_SHIFT	28ull
+
+static void
+assign_db_hash_score(sbchooser_context_t *ctx, pe_file_t *pe)
+{
+	for (size_t i = 0; i < ctx->n_db_digests; i++) {
+		digest_data_t *dgst = ctx->db_digests[i];
+
+		if ((dgst->datasz == SHA256_DIGEST_LENGTH &&
+		     (pe->score & (PE_SCORE_SHA256_IN_DB << PE_SCORE_HASH_IN_DB_MASK))) ||
+		    (dgst->datasz == SHA384_DIGEST_LENGTH &&
+		     (pe->score & (PE_SCORE_SHA384_IN_DB << PE_SCORE_HASH_IN_DB_MASK))) ||
+		    (dgst->datasz == SHA512_DIGEST_LENGTH &&
+		     (pe->score & (PE_SCORE_SHA512_IN_DB << PE_SCORE_HASH_IN_DB_MASK))))
+			continue;
+
+		if (efi_get_verbose() >= DEBUG_LEVEL) {
+			fprintf(stderr, "  dgst:");
+			for (size_t j = 0; j < dgst->datasz; j++)
+				fprintf(stderr, "%02x", dgst->data[j]);
+			fprintf(stderr, "\n");
+		}
+
+		if (efi_get_verbose() >= DEBUG_LEVEL &&
+		    dgst->datasz == pe->sha512.datasz) {
+			fprintf(stderr, "sha512:");
+			for (size_t j = 0; j < pe->sha512.datasz; j++)
+				fprintf(stderr, "%02x", pe->sha512.data[j]);
+			fprintf(stderr, "\n");
+		}
+
+		if (efi_get_verbose() >= DEBUG_LEVEL &&
+		    dgst->datasz == pe->sha384.datasz) {
+			fprintf(stderr, "sha384:");
+			for (size_t j = 0; j < pe->sha384.datasz; j++)
+				fprintf(stderr, "%02x", pe->sha384.data[j]);
+			fprintf(stderr, "\n");
+		}
+
+		if (efi_get_verbose() >= DEBUG_LEVEL &&
+		    dgst->datasz == pe->sha256.datasz) {
+			fprintf(stderr, "sha256:");
+			for (size_t j = 0; j < pe->sha256.datasz; j++)
+				fprintf(stderr, "%02x", pe->sha256.data[j]);
+			fprintf(stderr, "\n");
+		}
+
+		if (dgst->datasz == pe->sha512.datasz &&
+		    !(pe->score & PE_SCORE_SHA512_IN_DB) &&
+		    memcmp(dgst->data, pe->sha512.data, dgst->datasz) == 0) {
+			debug("sha512 hash is in db");
+			pe->score |= PE_SCORE_SHA512_IN_DB << PE_SCORE_HASH_IN_DB_SHIFT;
+		}
+
+		if (dgst->datasz == pe->sha384.datasz &&
+		    !(pe->score & PE_SCORE_SHA384_IN_DB) &&
+		    memcmp(dgst->data, pe->sha384.data, dgst->datasz) == 0) {
+			debug("sha384 hash is in db");
+			pe->score |= PE_SCORE_SHA384_IN_DB << PE_SCORE_HASH_IN_DB_SHIFT;
+		}
+
+		if (dgst->datasz == pe->sha256.datasz &&
+		    !(pe->score & PE_SCORE_SHA256_IN_DB) &&
+		    memcmp(dgst->data, pe->sha256.data, dgst->datasz) == 0) {
+			debug("sha256 hash is in db");
+			pe->score |= PE_SCORE_SHA256_IN_DB << PE_SCORE_HASH_IN_DB_SHIFT;
+		}
+	}
+}
+
+void
+score_pe(sbchooser_context_t *ctx, pe_file_t *pe)
+{
+	debug("scoring \"%s\"", pe->filename);
+	/*
+	 * UEFI spec 2.12ish says:
+	 *   – C. Any entry with SignatureListType of EFI_CERT_X509_GUID,
+	 *     with SignatureData which contains a certificate with the
+	 *     same Issuer, Serial Number, and To-Be-Signed hash included
+	 *     in any certificate in the signing chain of the signature
+	 *     being verified.
+	 *
+	 *     Multiple signatures are allowed to exist in the binary's
+	 *     certificate table (as per the "Attribute Certificate Table"
+	 *     section of the Microsoft PE/COFF Specification). The
+	 *     firmware must do the validation according to the following:
+	 *
+	 *     - If the hash of the binary is in dbx, then the image shall
+	 *       fail the validation.
+	 *     - Else if the hash of the binary is in db, then the image
+	 *       shall pass the validation.
+	 *     - Else if one of signatures is in db and is not in dbx, then
+	 *       the image shall pass the validation.
+	 *     - Else the image shall fail the validation.
+	 *
+	 * And so we check dbx hashes first, then db.
+	 */
+	if (is_revoked_by_hash(ctx, pe)) {
+		debug("PE \"%s\" is revoked by hash", pe->filename);
+		pe->score = 0;
+		return;
+	}
+
+	assign_db_hash_score(ctx, pe);
+
+	if (pe->score != 0) {
+		debug("PE \"%s\" is validated by hash", pe->filename);
+		return;
+	}
 }
 
 int
