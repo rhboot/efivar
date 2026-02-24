@@ -106,6 +106,7 @@ main(int argc, char *argv[])
 	int rc;
 	bool needs_db = true;
 	bool needs_dbx = true;
+	bool read_inputs_from_stdin = false;
 
 	sbchooser_context_t ctx;
 
@@ -172,6 +173,10 @@ main(int argc, char *argv[])
 			needs_dbx = false;
 			break;
 		case 'i':
+			if (strcmp(argv[optind-1], "-") == 0) {
+				read_inputs_from_stdin = true;
+				break;
+			}
 			add_one_pe_to_ctx(&ctx, argv[optind-1]);
 			break;
 		case 'v':
@@ -223,6 +228,36 @@ main(int argc, char *argv[])
 	rc = parse_secdb_info(&ctx);
 	if (rc < 0) {
 		errx(ERR_SECDB, "couldn't parse secdb info");
+	}
+
+	if (ctx.n_files == 0 && !isatty(STDIN_FILENO)) {
+		read_inputs_from_stdin = true;
+	}
+
+	if (read_inputs_from_stdin) {
+		while (true) {
+			char filename[PATH_MAX+1];
+			char *fret;
+
+			memset(filename, 0, sizeof(filename));
+			fret = fgets(filename, PATH_MAX, stdin);
+			if (fret == NULL) {
+				if (feof(stdin))
+					break;
+				err(ERR_INPUT, "Could not read from stdin");
+			}
+			for (size_t i = 0; filename[i] != 0; i++) {
+				switch (filename[i]) {
+				case '\r':
+				case '\n':
+					filename[i] = '\0';
+					break;
+				default:
+					continue;
+				}
+			}
+			add_one_pe_to_ctx(&ctx, filename);
+		}
 	}
 
 	if (ctx.n_files == 0) {

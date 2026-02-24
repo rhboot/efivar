@@ -37,6 +37,7 @@ enum {
 	ERR_USAGE,
 	ERR_SECDB,
 	ERR_BAD_PE,
+	ERR_INPUT,
 };
 
 typedef struct sbchooser_context sbchooser_context_t;
