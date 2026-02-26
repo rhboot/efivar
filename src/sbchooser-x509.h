@@ -36,6 +36,8 @@ struct cert_data {
 					// issuer)
 };
 
+bool is_same_cert(cert_data_t *cert0, cert_data_t *cert1);
+bool is_issuing_cert(cert_data_t *subject, cert_data_t *candidate_issuer);
 int elaborate_x509_info(cert_data_t *cert);
 
 // vim:fenc=utf-8:tw=75:noet

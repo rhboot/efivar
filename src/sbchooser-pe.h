@@ -30,6 +30,15 @@ typedef struct pe_image_context {
 	efi_image_data_directory_t *sec_dir; // security directory
 } pe_image_context_t;
 
+struct sig_data {
+	size_t n_certs;
+	cert_data_t **certs;
+
+	bool revoked;
+};
+
+typedef struct sig_data sig_data_t;
+
 struct pe_file {
 	char *filename;		// for display later
 	void *map;		// where the file is mapped
@@ -43,6 +52,12 @@ struct pe_file {
 	digest_data_t sha256;
 	digest_data_t sha384;
 	digest_data_t sha512;
+
+	/*
+	 * each authenticode signature founds on this binary
+	 */
+	size_t n_sigs;
+	sig_data_t **sigs;
 
 	uint32_t score;		// score for sorting
 };

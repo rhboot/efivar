@@ -6,6 +6,41 @@
 
 #include "sbchooser.h" // IWYU pragma: keep
 
+/*
+ * note that none of this checks any /cryptographic/ properties.  If you've
+ * got two certs with the same issuer, and serial, we'll believe they're
+ * the same, even if one of them is "fake" and has a pubkey that won't
+ * verify signatures from the other one.
+ */
+bool
+is_same_cert(cert_data_t *cert0, cert_data_t *cert1)
+{
+	int rc;
+	rc = X509_NAME_cmp(cert0->issuer, cert1->issuer);
+	debug("  name cmp: %d", rc);
+	if (rc != 0)
+		return false;
+
+	rc = ASN1_INTEGER_cmp(cert0->serial, cert1->serial);
+	debug("  serial cmp: %d", rc);
+	if (!rc)
+		return false;
+
+	return true;
+}
+
+bool
+is_issuing_cert(cert_data_t *subject, cert_data_t *candidate_issuer)
+{
+	int rc;
+
+	rc = X509_NAME_cmp(subject->issuer, candidate_issuer->subject);
+	debug("  name cmp: %d", rc);
+	if (rc == 0)
+		return true;
+	return false;
+}
+
 int
 elaborate_x509_info(cert_data_t *cert)
 {
