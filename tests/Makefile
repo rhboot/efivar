@@ -20,6 +20,7 @@ TESTS = test.dmpstore.export \
 	test.sbchooser.sha512.vs.sha256 \
 	test.sbchooser.sha512.vs.untrusted \
 	test.sbchooser.sha512.vs.sha256.vs.dbx \
+	test.sbchooser.sha512.vs.db \
 
 all: clean $(TESTS)
 
@@ -357,6 +358,28 @@ test.sbchooser.sha512.vs.sha256.vs.dbx:
 	fi
 	$(quiet)cmp test.sbchooser.sha512.vs.sha256.vs.dbx.goal.txt test.sbchooser.sha512.vs.sha256.vs.dbx.result
 	$(quiet)rm -f test.sbchooser.sha512.vs.sha256.vs.dbx.result
+	$(quiet)echo passed
+
+test.sbchooser.sha512.vs.db.result:
+	$(quiet)ls -1 shim-13-0.2.fedora.x64.nosigs.efi \
+		      shim-15-7.el7_2.x64.msft2011.efi \
+		      shim-13-0.2.fedora.x64.nosigs.efi \
+		      shim-15-7.el7_2.x64.msft2011.efi \
+		| sort -R | MALLOC_PERTURB_=$(MALLOC_PERTURB_) LD_LIBRARY_PATH=../src \
+			    ../src/sbchooser -d db.msft2011 \
+					     -d db.shim-13-0.2.fedora.x64.sha512 \
+					     --no-system-dbx \
+		> "$@"
+
+test.sbchooser.sha512.vs.db:
+	$(quiet)echo testing sbchooser sorting: sha512 db vs RSA 2K cert in db
+	$(quiet)$(MAKE) $(makequiet) test.sbchooser.sha512.vs.db.result
+	$(quiet)if ! cmp test.sbchooser.sha512.vs.db.goal.txt test.sbchooser.sha512.vs.db.result ; then \
+		diff -U 200 test.sbchooser.sha512.vs.db.goal.txt test.sbchooser.sha512.vs.db.result ; \
+		exit 1 ; \
+	fi
+	$(quiet)cmp test.sbchooser.sha512.vs.db.goal.txt test.sbchooser.sha512.vs.db.result
+	$(quiet)rm -f test.sbchooser.sha512.vs.db.result
 	$(quiet)echo passed
 
 .PHONY: all clean $(TESTS)
