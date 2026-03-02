@@ -145,7 +145,7 @@ usage(int status)
 		"  -a, --add                 following hashes or certs are to be added (default)\n"
 		"  -r, --remove              following hashes or certs are to be removed\n"
 		"  -g, --owner-guid=<GUID>   following added entries use GUID as the owner\n"
-		"  -h, --hash=<hash>         hash value to add (\n"
+		"  -h, --hash=<hash>         hash value to add\n"
 		"  -t, --type=<hash-type>    hash type to add (\"help\" lists options)\n"
 		"  -c, --certificate=<file>  certificate file to add\n"
 		"  -L, --list-guids          list well known guids\n",
