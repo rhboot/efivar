@@ -23,6 +23,7 @@ TESTS = test.dmpstore.export \
 	test.sbchooser.sha512.vs.db \
 	test.sbchooser.db.vs.dbx \
 	test.sbchooser.identical.secbits \
+	test.sbchooser.first.sig.only \
 
 all: clean $(TESTS)
 
@@ -418,6 +419,29 @@ test.sbchooser.identical.secbits:
 	fi
 	$(quiet)cmp test.sbchooser.identical.secbits.goal.txt test.sbchooser.identical.secbits.result
 	$(quiet)rm -f test.sbchooser.identical.secbits.result
+	$(quiet)echo passed
+
+test.sbchooser.first.sig.only.result:
+	$(quiet)ls -1 shim-16.1-4.el10.x64.msft2011.efi \
+		      shim-16.1-4.el10.x64.msft2011.msft2023.efi \
+		      shim-16.1-4.el10.x64.msft2023.efi \
+		      shim-16.1-4.el10.x64.msft2011.efi \
+		      shim-16.1-4.el10.x64.msft2011.msft2023.efi \
+		      shim-16.1-4.el10.x64.msft2023.efi \
+		| sort -R | LD_LIBRARY_PATH=../src ../src/sbchooser -d db.msft2023 \
+								    --no-system-dbx \
+								    --first-sig-only \
+		> "$@"
+
+test.sbchooser.first.sig.only:
+	$(quiet)echo testing sbchooser sorting with only the first signature
+	$(quiet)$(MAKE) --quiet test.sbchooser.first.sig.only.result
+	$(quiet)if ! cmp test.sbchooser.first.sig.only.goal.txt test.sbchooser.first.sig.only.result ; then \
+		diff -U 200 test.sbchooser.first.sig.only.goal.txt test.sbchooser.first.sig.only.result ; \
+		exit 1 ; \
+	fi
+	$(quiet)cmp test.sbchooser.first.sig.only.goal.txt test.sbchooser.first.sig.only.result
+	$(quiet)rm -f test.sbchooser.first.sig.only.result
 	$(quiet)echo passed
 
 .PHONY: all clean $(TESTS)
