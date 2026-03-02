@@ -16,7 +16,8 @@ TESTS = test.dmpstore.export \
 	test.esl.sha256.removal.descending \
 	test.esl.sha256.addition.unsorted \
 	test.esl.cert.addition \
-	test.esl.cert.removal
+	test.esl.cert.removal \
+	test.sbchooser.sha512.vs.sha256 \
 
 all: clean $(TESTS)
 
@@ -38,6 +39,8 @@ ifeq ($(V),2)
 else
         loud=
 endif
+
+MALLOC_PERTURB_=$(shell echo $$(($${RANDOM} % 128)))
 
 EFIVAR ?= $(VALGRIND) $(TOPDIR)/src/efivar $(loud)
 EFISECDB ?= $(VALGRIND) $(TOPDIR)/src/efisecdb $(loud)
@@ -281,6 +284,30 @@ test.esl.cert.removal:
 	fi
 	$(quiet)cmp test.esl.cert.removal.esl.goal test.esl.cert.removal.esl.result
 	$(quiet)rm -f test.esl.cert.removal.esl.result
+	$(quiet)echo passed
+
+test.sbchooser.sha512.vs.sha256.result:
+	$(quiet)ls -1 shim-13-0.2.fedora.x64.nosigs.efi \
+		      shim-15-7.el7_2.x64.nosigs.efi \
+		      shim-13-0.2.fedora.x64.nosigs.efi \
+		      shim-15-7.el7_2.x64.nosigs.efi \
+		| sort -R | MALLOC_PERTURB_=$(MALLOC_PERTURB_) LD_LIBRARY_PATH=../src \
+			    ../src/sbchooser -d db.msft2011 \
+					     -d db.msft2023 \
+					     -d db.shim-15-7.el7_2.x64.sha512 \
+					     -d db.shim-13-0.2.fedora.x64.sha256 \
+					     --no-system-dbx \
+		> "$@"
+
+test.sbchooser.sha512.vs.sha256:
+	$(quiet)echo testing sbchooser sorting: sha512 db vs sha256 db
+	$(quiet)$(MAKE) $(makequiet) test.sbchooser.sha512.vs.sha256.result
+	$(quiet)if ! cmp test.sbchooser.sha512.vs.sha256.goal.txt test.sbchooser.sha512.vs.sha256.result ; then \
+		diff -U 200 test.sbchooser.sha512.vs.sha256.goal.txt test.sbchooser.sha512.vs.sha256.result ; \
+		exit 1 ; \
+	fi
+	$(quiet)cmp test.sbchooser.sha512.vs.sha256.goal.txt test.sbchooser.sha512.vs.sha256.result
+	$(quiet)rm -f test.sbchooser.sha512.vs.sha256.result
 	$(quiet)echo passed
 
 .PHONY: all clean $(TESTS)
