@@ -81,6 +81,47 @@ image_is_64_bit(efi_image_optional_header_union_t *pehdr)
 	return false;
 }
 
+void
+fmt_time(const ASN1_TIME *asn1, char buf[1024])
+{
+	struct tm tm;
+
+	memset(buf, 0, 1024);
+	if (!asn1) {
+		strcpy(buf, "(null)");
+		return;
+	}
+	ASN1_TIME_to_tm(asn1, &tm);
+	asctime_r(&tm, buf);
+
+	buf[1023] = '\0';
+	for (size_t i = 0; i < 1024; i++) {
+		if (buf[i] == '\r' || buf[i] == 'n' || !isprint(buf[i]))
+			buf[i] = '\0';
+	}
+}
+
+static int
+time_cmp(const ASN1_TIME *t0, const ASN1_TIME *t1)
+{
+	int rc = 0;
+	char str0[1024];
+	char str1[1024];
+
+	memset(str0, 0, 1024);
+	memset(str1, 0, 1024);
+	fmt_time(t0, str0);
+	fmt_time(t1, str1);
+
+	if (t0 && t1)
+		rc = ASN1_TIME_compare(t0, t1);
+	if (t0 && !t1)
+		rc = -1;
+	if (t1 && !t0)
+		rc = 1;
+	return rc;
+}
+
 static int
 add_one_cert(sig_data_t *sig, X509 *x509)
 {
@@ -88,6 +129,11 @@ add_one_cert(sig_data_t *sig, X509 *x509)
 	cert_data_t **new_certs = NULL;
 	size_t n_certs = sig->n_certs;
 	int rc;
+	char buf0[1024];
+	char buf1[1024];
+
+	memset(buf0, 0, sizeof(buf0));
+	memset(buf1, 0, sizeof(buf1));
 
 	new_certs = reallocarray(sig->certs, n_certs + 1, sizeof(cert_data_t));
 	if (!new_certs)
@@ -107,6 +153,33 @@ add_one_cert(sig_data_t *sig, X509 *x509)
 		free(cert);
 		return rc;
 	}
+
+	if (sig->earliest_not_before) {
+		fmt_time(sig->earliest_not_before, buf0);
+		fmt_time(cert->not_before, buf1);
+		debug("comparing \"%s\" to \"%s\"", buf0, buf1);
+	}
+	if (!sig->earliest_not_before) {
+		sig->earliest_not_before = cert->not_before;
+	} else if (time_cmp(sig->earliest_not_before, cert->not_before) > 0) {
+		sig->earliest_not_before = cert->not_before;
+	}
+	fmt_time(sig->earliest_not_before, buf0);
+	debug("set sig->earliest_not_before to %s", buf0);
+
+	if (sig->latest_not_after) {
+		fmt_time(sig->latest_not_after, buf0);
+		fmt_time(cert->not_after, buf1);
+		debug("finding latest of \"%s\" to \"%s\"", buf0, buf1);
+	}
+
+	if (!sig->latest_not_after) {
+		sig->latest_not_after = cert->not_after;
+	} else if (time_cmp(sig->latest_not_after, cert->not_after) < 0) {
+		sig->latest_not_after = cert->not_after;
+	}
+	fmt_time(sig->latest_not_after, buf0);
+	debug("set sig->latest_not_after to %s", buf0);
 
 	new_certs[n_certs] = cert;
 	sig->n_certs += 1;
@@ -148,6 +221,11 @@ add_one_sig(pe_file_t *pe, uint8_t *data, size_t datasz)
 	sig_data_t **sigs = NULL;
 	size_t n_sigs = pe->n_sigs + 1;
 	int rc;
+	char buf0[1024];
+	char buf1[1024];
+
+	memset(buf0, 0, sizeof(buf0));
+	memset(buf1, 0, sizeof(buf1));
 
 	sigs = reallocarray(pe->sigs, n_sigs, sizeof(*sigs));
 	if (!sigs)
@@ -172,6 +250,34 @@ add_one_sig(pe_file_t *pe, uint8_t *data, size_t datasz)
 		debug("parsing pkcs7 data failed");
 		goto err;
 	}
+
+	if (pe->earliest_not_before) {
+		fmt_time(pe->earliest_not_before, buf0);
+		fmt_time(sig->earliest_not_before, buf1);
+		debug("finding earliest of \"%s\" to \"%s\"", buf0, buf1);
+	}
+
+	if (!pe->earliest_not_before) {
+		pe->earliest_not_before = sig->earliest_not_before;
+	} else if (time_cmp(pe->earliest_not_before, sig->earliest_not_before) > 0) {
+		pe->earliest_not_before = sig->earliest_not_before;
+	}
+	fmt_time(pe->earliest_not_before, buf0);
+	debug("set pe->earliest_not_before to %s", buf0);
+
+	if (pe->latest_not_after) {
+		fmt_time(pe->latest_not_after, buf0);
+		fmt_time(sig->latest_not_after, buf1);
+		debug("finding latest of \"%s\" to \"%s\"", buf0, buf1);
+	}
+
+	if (!pe->latest_not_after) {
+		pe->latest_not_after = sig->latest_not_after;
+	} else if (time_cmp(pe->latest_not_after, sig->latest_not_after) < 0) {
+		pe->latest_not_after = sig->latest_not_after;
+	}
+	fmt_time(pe->latest_not_after, buf0);
+	debug("set pe->latest_not_after to %s", buf0);
 
 	sigs[pe->n_sigs] = sig;
 	pe->n_sigs = n_sigs;
@@ -625,6 +731,39 @@ is_revoked_by_hash(sbchooser_context_t *ctx, pe_file_t *pe)
 #define PE_SCORE_HASH_IN_DB_MASK	0x00000007ull
 #define PE_SCORE_HASH_IN_DB_SHIFT	28ull
 
+#define PE_SCORE_CERT_TBS_SHA512	0x00000004ull
+#define PE_SCORE_CERT_TBS_SHA384	0x00000002ull
+#define PE_SCORE_CERT_TBS_SHA256	0x00000001ull
+#define PE_SCORE_CERT_TBS_MASK		0x00000007ull
+#define PE_SCORE_CERT_TBS_SHIFT		24ull
+
+/*
+ * PQC could stand to be elaborated here...
+ */
+#define PE_SCORE_CERT_PK_PQC		0x00000020ull
+
+// these are defined by security strength, not key size.
+#define PE_SCORE_CERT_PK_RSA_256	0x00000010ull // RSA15360
+#define PE_SCORE_CERT_PK_RSA_192	0x00000008ull // RSA7690
+#define PE_SCORE_CERT_PK_RSA_128	0x00000004ull // RSA3072
+#define PE_SCORE_CERT_PK_RSA_112	0x00000002ull // RSA2048
+#define PE_SCORE_CERT_PK_RSA_80		0x00000001ull // RSA1024
+#define PE_SCORE_CERT_PK_MASK		0x0000003full
+#define PE_SCORE_CERT_PK_SHIFT		20ull
+
+static void
+debug_print_digest(char *label, uint8_t *data, size_t datasz)
+{
+	if (efi_get_verbose() >= DEBUG_LEVEL) {
+		FILE *dbglog = efi_get_logfile();
+		fprintf(dbglog, "%s:", label);
+		for (size_t i = 0; i < datasz; i++) {
+			fprintf(dbglog, "%02x", data[i]);
+		}
+		fprintf(dbglog, "\n");
+	}
+}
+
 static void
 assign_db_hash_score(sbchooser_context_t *ctx, pe_file_t *pe)
 {
@@ -639,36 +778,10 @@ assign_db_hash_score(sbchooser_context_t *ctx, pe_file_t *pe)
 		     (pe->score & (PE_SCORE_SHA512_IN_DB << PE_SCORE_HASH_IN_DB_MASK))))
 			continue;
 
-		if (efi_get_verbose() >= DEBUG_LEVEL) {
-			fprintf(stderr, "  dgst:");
-			for (size_t j = 0; j < dgst->datasz; j++)
-				fprintf(stderr, "%02x", dgst->data[j]);
-			fprintf(stderr, "\n");
-		}
-
-		if (efi_get_verbose() >= DEBUG_LEVEL &&
-		    dgst->datasz == pe->sha512.datasz) {
-			fprintf(stderr, "sha512:");
-			for (size_t j = 0; j < pe->sha512.datasz; j++)
-				fprintf(stderr, "%02x", pe->sha512.data[j]);
-			fprintf(stderr, "\n");
-		}
-
-		if (efi_get_verbose() >= DEBUG_LEVEL &&
-		    dgst->datasz == pe->sha384.datasz) {
-			fprintf(stderr, "sha384:");
-			for (size_t j = 0; j < pe->sha384.datasz; j++)
-				fprintf(stderr, "%02x", pe->sha384.data[j]);
-			fprintf(stderr, "\n");
-		}
-
-		if (efi_get_verbose() >= DEBUG_LEVEL &&
-		    dgst->datasz == pe->sha256.datasz) {
-			fprintf(stderr, "sha256:");
-			for (size_t j = 0; j < pe->sha256.datasz; j++)
-				fprintf(stderr, "%02x", pe->sha256.data[j]);
-			fprintf(stderr, "\n");
-		}
+		debug_print_digest("  dgst", dgst->data, dgst->datasz);
+		debug_print_digest("sha512", pe->sha512.data, pe->sha512.datasz);
+		debug_print_digest("sha384", pe->sha384.data, pe->sha384.datasz);
+		debug_print_digest("sha256", pe->sha256.data, pe->sha256.datasz);
 
 		if (dgst->datasz == pe->sha512.datasz &&
 		    !(pe->score & PE_SCORE_SHA512_IN_DB) &&
@@ -689,6 +802,196 @@ assign_db_hash_score(sbchooser_context_t *ctx, pe_file_t *pe)
 		    memcmp(dgst->data, pe->sha256.data, dgst->datasz) == 0) {
 			debug("sha256 hash is in db");
 			pe->score |= PE_SCORE_SHA256_IN_DB << PE_SCORE_HASH_IN_DB_SHIFT;
+		}
+	}
+}
+
+static void
+_minimize_cert_pk_score_shifted(uint32_t *score)
+{
+	uint32_t pk_score = *score;
+
+	if (pk_score & PE_SCORE_CERT_PK_RSA_80) {
+		pk_score = PE_SCORE_CERT_PK_RSA_80;
+	}
+	if (pk_score & PE_SCORE_CERT_PK_RSA_112) {
+		pk_score = PE_SCORE_CERT_PK_RSA_112;
+	}
+	if (pk_score & PE_SCORE_CERT_PK_RSA_128) {
+		pk_score = PE_SCORE_CERT_PK_RSA_128;
+	}
+	if (pk_score & PE_SCORE_CERT_PK_RSA_192) {
+		pk_score = PE_SCORE_CERT_PK_RSA_192;
+	}
+	if (pk_score & PE_SCORE_CERT_PK_RSA_256) {
+		pk_score = PE_SCORE_CERT_PK_RSA_256;
+	}
+	*score = pk_score;
+}
+
+static void
+update_pk_score(uint32_t *score, uint32_t value)
+{
+	uint32_t orig_pk_score = (*score >> PE_SCORE_CERT_PK_SHIFT) & PE_SCORE_CERT_PK_MASK;
+	uint32_t pk_score = orig_pk_score;
+
+	pk_score |= value;
+	_minimize_cert_pk_score_shifted(&pk_score);
+	*score &= ~(PE_SCORE_CERT_PK_MASK << PE_SCORE_CERT_PK_SHIFT);
+	*score |= pk_score << PE_SCORE_CERT_PK_SHIFT;
+	debug("pk_score: 0x%08"PRIx32"->0x%08"PRIx32, orig_pk_score, pk_score);
+}
+
+static void
+_minimize_cert_md_score_shifted(uint32_t *score)
+{
+	uint32_t md_score = *score;
+
+	if (md_score & PE_SCORE_CERT_TBS_SHA256) {
+		md_score = PE_SCORE_CERT_TBS_SHA256;
+	}
+	if (md_score & PE_SCORE_CERT_TBS_SHA384) {
+		md_score = PE_SCORE_CERT_TBS_SHA384;
+	}
+	if (md_score & PE_SCORE_CERT_TBS_SHA512) {
+		md_score = PE_SCORE_CERT_TBS_SHA512;
+	}
+
+	*score = md_score;
+}
+
+static void
+update_md_score(uint32_t *score, uint32_t value)
+{
+	uint32_t orig_md_score = (*score >> PE_SCORE_CERT_TBS_SHIFT) & PE_SCORE_CERT_TBS_MASK;
+	uint32_t md_score = orig_md_score;
+
+	md_score |= value;
+	_minimize_cert_md_score_shifted(&md_score);
+
+	*score &= ~(PE_SCORE_CERT_TBS_MASK << PE_SCORE_CERT_TBS_SHIFT);
+	*score |= md_score << PE_SCORE_CERT_TBS_SHIFT;
+	debug("md_score: 0x%08"PRIx32"->0x%08"PRIx32, orig_md_score, md_score);
+}
+
+static void
+debug_print_trusted_cert(cert_data_t *anchor, cert_data_t *signer)
+{
+	if (efi_get_verbose() < DEBUG_LEVEL)
+		return;
+
+	char buf0[4096];
+	char buf1[4096];
+
+	X509_NAME_oneline(anchor->subject, buf0, 4096);
+
+	debug("anchor subject:\"%s\"", buf0);
+
+	X509_NAME_oneline(signer->issuer, buf0, 4096);
+	X509_NAME_oneline(signer->subject, buf1, 4096);
+
+	debug("signer issuer:\"%s\" subject:\"%s\"", buf0, buf1);
+}
+
+static void
+assign_sig_score(sbchooser_context_t *ctx, sig_data_t *sig)
+{
+	bool only_trusted = true;
+	bool found_trust_anchor = false;
+
+	if (sig->revoked) {
+		sig->score = 0;
+		return;
+	}
+
+	for (size_t i = 0; i < sig->n_certs; i++) {
+		cert_data_t *sigcert = sig->certs[i];
+
+		for (size_t j = 0; j < ctx->n_db_certs; j++) {
+			cert_data_t *dbcert = ctx->db_certs[j];
+
+			if (is_same_cert(sigcert, dbcert)) {
+				debug("signature cert %zu is trust anchor %zu", i, j);
+				sigcert->trust_anchor_cert = dbcert;
+				debug_print_trusted_cert(dbcert, sigcert);
+				found_trust_anchor = true;
+			} else if (is_issuing_cert(sigcert, dbcert)) {
+				debug("signature cert %zu is issued by anchor %zu", i, j);
+				sigcert->trust_anchor_cert = dbcert;
+				debug_print_trusted_cert(dbcert, sigcert);
+				found_trust_anchor = true;
+			}
+		}
+		if (found_trust_anchor) {
+			sigcert->trusted = true;
+		} else {
+			only_trusted = false;
+		}
+	}
+
+	if (only_trusted && found_trust_anchor) {
+		debug("only trusted certs found");
+		sig->trusted = true;
+	}
+
+	for (size_t i = 0; i < sig->n_certs; i++) {
+		cert_data_t *sigcert = sig->certs[i];
+
+		const char *mdsn = OBJ_nid2sn(sigcert->mdnid);
+		debug("mdsn:\"%s\"", mdsn);
+
+
+		if (!strcmp(mdsn, "SHA512")) {
+			update_md_score(&sig->score, PE_SCORE_CERT_TBS_SHA512);
+		} else if (!strcmp(mdsn, "SHA384")) {
+			update_md_score(&sig->score, PE_SCORE_CERT_TBS_SHA384);
+		} else if (!strcmp(mdsn, "SHA256")) {
+			update_md_score(&sig->score, PE_SCORE_CERT_TBS_SHA256);
+		}
+
+		const char *pksn = OBJ_nid2ln(sigcert->pknid);
+		debug("pksn:\"%s\"", pksn);
+
+		/*
+		 * XXX:PJFIX PQC isn't implemented here yet
+		 */
+		if (!strcmp(pksn, "rsaEncryption")) {
+			X509_PUBKEY *xpk;
+			ASN1_OBJECT *ppkalg = NULL;
+			const unsigned char *pk = NULL;
+			int pklen = 0;
+			X509_ALGOR *pa = NULL;
+			int rc = 0;
+
+			xpk = X509_get_X509_PUBKEY(sigcert->x509);
+			if (!xpk) {
+				debug("This certificate has no public key.  Not scoring.");
+				return;
+			}
+
+			rc = X509_PUBKEY_get0_param(&ppkalg, &pk, &pklen, &pa, xpk);
+			if (!rc) {
+				debug("This public key has no algorithm parameters.  Not scoring.");
+				return;
+			}
+			/*
+			 * PK here is the ASN1 encoded modulus and
+			 * exponent, so pklen (in bytes) includes a few
+			 * extra bytes here and there, but these values are
+			 * far enough apart it shouldn't matter...
+			 */
+			pklen *= 8;
+			if (pklen >= 15360) {
+				update_pk_score(&sig->score, PE_SCORE_CERT_PK_RSA_256);
+			} else if (pklen >= 7690) {
+				update_pk_score(&sig->score, PE_SCORE_CERT_PK_RSA_192);
+			} else if (pklen >= 3072) {
+				update_pk_score(&sig->score, PE_SCORE_CERT_PK_RSA_128);
+			} else if (pklen >= 2048) {
+				update_pk_score(&sig->score, PE_SCORE_CERT_PK_RSA_112);
+			} else if (pklen >= 1024) {
+				update_pk_score(&sig->score, PE_SCORE_CERT_PK_RSA_80);
+			}
 		}
 	}
 }
@@ -757,6 +1060,7 @@ score_pe(sbchooser_context_t *ctx, pe_file_t *pe)
 	}
 
 	for (size_t i = 0; i < pe->n_sigs; i++) {
+		bool found = false;
 		sig_data_t *sig = pe->sigs[i];
 
 		for (size_t j = 0; j < sig->n_certs; j++) {
@@ -764,11 +1068,159 @@ score_pe(sbchooser_context_t *ctx, pe_file_t *pe)
 
 			if (is_signing_cert_revoked(ctx, sigcert)) {
 				debug("PE \"%s\" signature %zu is revoked by cert", pe->filename, i);
+				found = true;
 				sig->revoked = true;
 				break;
 			}
 		}
+		if (found)
+			continue;
+
+		assign_sig_score(ctx, sig);
 	}
+	debug("merging pe sig scores before:0x%08"PRIx32, pe->score);
+	for (size_t i = 0; i < pe->n_sigs; i++) {
+		sig_data_t *sig = pe->sigs[i];
+		uint32_t tmpscore;
+
+		if (sig->trusted) {
+			debug("signature %zu is trusted, merging", i);
+		} else {
+			debug("signature %zu is not trusted, not merging", i);
+			continue;
+		}
+
+		tmpscore = sig->score & (PE_SCORE_CERT_TBS_MASK << PE_SCORE_CERT_TBS_SHIFT);
+		tmpscore >>= PE_SCORE_CERT_TBS_SHIFT;
+		debug("tmpscore:0x%08"PRIx32, tmpscore);
+		update_md_score(&pe->score, tmpscore);
+
+		tmpscore = sig->score & (PE_SCORE_CERT_PK_MASK << PE_SCORE_CERT_PK_SHIFT);
+		tmpscore >>= PE_SCORE_CERT_PK_SHIFT;
+		debug("tmpscore:0x%08"PRIx32, tmpscore);
+		update_pk_score(&pe->score, tmpscore);
+	}
+	debug("merging pe sig scores after:0x%08"PRIx32, pe->score);
+}
+
+static uint32_t
+compute_minimum_security_strength(pe_file_t *pe)
+{
+	uint32_t secbits = 0xffffffffull;
+
+	uint32_t pk_score = (pe->score >> PE_SCORE_CERT_PK_SHIFT) & PE_SCORE_CERT_PK_MASK;
+	if (pk_score & PE_SCORE_CERT_PK_RSA_256) {
+		secbits = 256;
+	}
+	if (pk_score & PE_SCORE_CERT_PK_RSA_192) {
+		secbits = 192;
+	}
+	if (pk_score & PE_SCORE_CERT_PK_RSA_128) {
+		secbits = 128;
+	}
+	if (pk_score & PE_SCORE_CERT_PK_RSA_112) {
+		secbits = 112;
+	}
+	if (pk_score & PE_SCORE_CERT_PK_RSA_80) {
+		secbits = 80;
+	}
+
+	uint32_t md_score = (pe->score >> PE_SCORE_CERT_TBS_SHIFT) & PE_SCORE_CERT_TBS_MASK;
+	if ((md_score & PE_SCORE_CERT_TBS_SHA512) && secbits >= 256) {
+		secbits = 256;
+	}
+	if ((md_score & PE_SCORE_CERT_TBS_SHA384) && secbits >= 192) {
+		secbits = 192;
+	}
+	if ((md_score & PE_SCORE_CERT_TBS_SHA256) && secbits >= 128) {
+		secbits = 128;
+	}
+
+	/*
+	 * If the hash is in db, we let that override signature security
+	 * strength
+	 */
+	uint32_t db_score = (pe->score >> PE_SCORE_HASH_IN_DB_SHIFT) & PE_SCORE_HASH_IN_DB_MASK;
+	if (db_score & PE_SCORE_SHA512_IN_DB) {
+		secbits = 256;
+	} else if (db_score & PE_SCORE_SHA384_IN_DB) {
+		secbits = 192;
+	} else if (db_score & PE_SCORE_SHA256_IN_DB) {
+		secbits = 128;
+	}
+
+	if (secbits == 0xffffffffull)
+		secbits = 0;
+
+	//debug("%s pe->score:0x%08"PRIx32" secbits:%"PRIu32, pe->filename, pe->score, secbits);
+	return secbits;
+}
+
+static int
+compare_validities(pe_file_t *pe0, pe_file_t *pe1)
+{
+	int rc = 0;
+	char buf0[1024];
+	char buf1[1024];
+	char default_pref[] = "no preference";
+	char *pref;
+
+	/*
+	 * Dunno when this can happen, but always prefer the one that's
+	 * signed if we get this far...
+	 */
+	if (pe0->latest_not_after && !pe1->latest_not_after)
+		return -1;
+	if (!pe0->latest_not_after && pe1->latest_not_after)
+		return 1;
+
+	/*
+	 * prefer the one that has certs expiring the latest
+	 */
+	fmt_time(pe0->latest_not_after, buf0);
+	fmt_time(pe1->latest_not_after, buf1);
+	rc = time_cmp(pe0->latest_not_after, pe1->latest_not_after);
+	if (rc < 0)
+		pref = buf1;
+	else if (rc > 0)
+		pref = buf0;
+	else
+		pref = default_pref;
+
+	debug("finding latest of \"%s\" and \"%s\": %s", buf0, buf1, pref);
+	if (rc < 0)
+		return 1;
+	if (rc > 0)
+		return -1;
+
+	/*
+	 * Dunno when this can happen, but always prefer the one that's
+	 * signed if we get this far...
+	 */
+	if (pe0->earliest_not_before && !pe1->earliest_not_before)
+		return -1;
+	if (!pe0->earliest_not_before && pe1->earliest_not_before)
+		return 1;
+
+	/*
+	 * prefer the one that has certs starting the earliest
+	 */
+	fmt_time(pe0->earliest_not_before, buf0);
+	fmt_time(pe1->earliest_not_before, buf1);
+	rc = time_cmp(pe1->earliest_not_before, pe0->earliest_not_before);
+	if (rc < 0)
+		pref = buf1;
+	else if (rc > 0)
+		pref = buf0;
+	else
+		pref = default_pref;
+
+	debug("finding earliest of \"%s\" and \"%s\": %s", buf0, buf1, pref);
+	if (rc < 0)
+		return 1;
+	if (rc > 0)
+		return -1;
+	return 0;
 }
 
 int
@@ -776,8 +1228,30 @@ pe_cmp(const void *p0, const void *p1)
 {
 	pe_file_t *pe0 = *(pe_file_t **)p0;
 	pe_file_t *pe1 = *(pe_file_t **)p1;
+	int rc;
 
-	return pe1->score - pe0->score;
+	uint32_t score = 0;
+
+	uint32_t strength0 = compute_minimum_security_strength(pe0);
+	uint32_t strength1 = compute_minimum_security_strength(pe1);
+
+	score = strength1 - strength0;
+	debug("\"%s\" (secbits %"PRIu32") vs \"%s\" (secbits %"PRIu32"): %d",
+	      pe0->filename, strength0, pe1->filename, strength1, score);
+	if (score != 0)
+		return pe1->score - pe0->score;
+
+	debug("security strength is equal; comparing validities");
+	rc = compare_validities(pe0, pe1);
+	if (rc < 0) {
+		debug("prefer \"%s\"", pe1->filename);
+	} else if (rc > 0) {
+		debug("prefer \"%s\"", pe0->filename);
+	} else {
+		debug("no preference");
+		return strcmp(pe0->filename, pe1->filename);
+	}
+	return rc;
 }
 
 // vim:fenc=utf-8:tw=75:noet

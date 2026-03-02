@@ -34,7 +34,21 @@ struct sig_data {
 	size_t n_certs;
 	cert_data_t **certs;
 
+	/*
+	 * the earliest not_before and latest not_after validation date
+	 * from our signature's issuers.
+	 *
+	 * Strictly this isn't necessary, but if everything has the same
+	 * security strength, we'd prefer the "newest" binary, so we need
+	 * some heuristic for that.
+	 */
+	const ASN1_TIME *earliest_not_before;
+	const ASN1_TIME *latest_not_after;
+
 	bool revoked;
+	bool trusted;
+
+	uint32_t score;
 };
 
 typedef struct sig_data sig_data_t;
@@ -58,6 +72,17 @@ struct pe_file {
 	 */
 	size_t n_sigs;
 	sig_data_t **sigs;
+
+	/*
+	 * the earliest not_before and latest not_after validation date
+	 * from our signature's issuers.
+	 *
+	 * Strictly this isn't necessary, but if everything has the same
+	 * security strength, we'd prefer the "newest" binary, so we need
+	 * some heuristic for that.
+	 */
+	const ASN1_TIME *earliest_not_before;
+	const ASN1_TIME *latest_not_after;
 
 	uint32_t score;		// score for sorting
 };

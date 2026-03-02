@@ -93,6 +93,26 @@ add_one_pe_to_ctx(sbchooser_context_t *ctx, const char *filename)
 		err(ERR_BAD_PE, "Could not add \"%s\" to context", filename);
 }
 
+void
+fmt_time(const ASN1_TIME *asn1, char buf[1024])
+{
+	struct tm tm;
+
+	memset(buf, 0, 1024);
+	if (!asn1) {
+		strcpy(buf, "(null)");
+		return;
+	}
+	ASN1_TIME_to_tm(asn1, &tm);
+	asctime_r(&tm, buf);
+
+	buf[1023] = '\0';
+	for (size_t i = 0; i < 1024; i++) {
+		if (buf[i] == '\r' || buf[i] == 'n' || !isprint(buf[i]))
+			buf[i] = '\0';
+	}
+}
+
 int
 main(int argc, char *argv[])
 {
@@ -279,10 +299,15 @@ main(int argc, char *argv[])
 	}
 	qsort(ctx.files, ctx.n_files, sizeof(ctx.files[0]), pe_cmp);
 
+	char buf0[1024];
+	char buf1[1024];
 	for (size_t i = 0; i < ctx.n_files; i++) {
 		pe_file_t *pe = ctx.files[i];
 		if (pe->score > 0) {
-			debug("PE \"%s\" score 0x%"PRIx32, pe->filename, pe->score);
+			fmt_time(pe->earliest_not_before, buf0);
+			fmt_time(pe->latest_not_after, buf1);
+			debug("PE \"%s\" score 0x%08"PRIx32" valid %s through %s", pe->filename, pe->score,
+			      buf0, buf1);
 			printf("%s\n", pe->filename);
 		}
 	}
