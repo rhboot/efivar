@@ -1,0 +1,2 @@
+shim-15-7.el7_2.x64.nosigs.efi
+shim-15-7.el7_2.x64.nosigs.efi
