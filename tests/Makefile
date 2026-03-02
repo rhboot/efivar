@@ -21,6 +21,7 @@ TESTS = test.dmpstore.export \
 	test.sbchooser.sha512.vs.untrusted \
 	test.sbchooser.sha512.vs.sha256.vs.dbx \
 	test.sbchooser.sha512.vs.db \
+	test.sbchooser.db.vs.dbx \
 
 all: clean $(TESTS)
 
@@ -380,6 +381,28 @@ test.sbchooser.sha512.vs.db:
 	fi
 	$(quiet)cmp test.sbchooser.sha512.vs.db.goal.txt test.sbchooser.sha512.vs.db.result
 	$(quiet)rm -f test.sbchooser.sha512.vs.db.result
+	$(quiet)echo passed
+
+test.sbchooser.db.vs.dbx.result:
+	$(quiet)ls -1 shim-15-7.el7_2.x64.msft2011.efi \
+		      shim-16.1-4.el10.x64.msft2011.msft2023.efi \
+		      shim-15-7.el7_2.x64.msft2011.efi \
+		      shim-16.1-4.el10.x64.msft2011.msft2023.efi \
+		| sort -R | MALLOC_PERTURB_=$(MALLOC_PERTURB_) LD_LIBRARY_PATH=../src \
+			    ../src/sbchooser -d db.msft2023 \
+					     -d db.msft2011 \
+					     -x db.msft2011 \
+		> "$@"
+
+test.sbchooser.db.vs.dbx:
+	$(quiet)echo testing sbchooser sorting: db vs dbx
+	$(quiet)$(MAKE) $(makequiet) test.sbchooser.db.vs.dbx.result
+	$(quiet)if ! cmp test.sbchooser.db.vs.dbx.goal.txt test.sbchooser.db.vs.dbx.result ; then \
+		diff -U 200 test.sbchooser.db.vs.dbx.goal.txt test.sbchooser.db.vs.dbx.result ; \
+		exit 1 ; \
+	fi
+	$(quiet)cmp test.sbchooser.db.vs.dbx.goal.txt test.sbchooser.db.vs.dbx.result
+	$(quiet)rm -f test.sbchooser.db.vs.dbx.result
 	$(quiet)echo passed
 
 .PHONY: all clean $(TESTS)
