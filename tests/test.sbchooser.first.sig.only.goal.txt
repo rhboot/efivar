@@ -1,0 +1,2 @@
+shim-16.1-4.el10.x64.msft2023.efi
+shim-16.1-4.el10.x64.msft2023.efi
