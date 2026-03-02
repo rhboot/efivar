@@ -22,6 +22,7 @@ TESTS = test.dmpstore.export \
 	test.sbchooser.sha512.vs.sha256.vs.dbx \
 	test.sbchooser.sha512.vs.db \
 	test.sbchooser.db.vs.dbx \
+	test.sbchooser.identical.secbits \
 
 all: clean $(TESTS)
 
@@ -394,6 +395,29 @@ test.sbchooser.db.vs.dbx:
 	fi
 	$(quiet)cmp test.sbchooser.db.vs.dbx.goal.txt test.sbchooser.db.vs.dbx.result
 	$(quiet)rm -f test.sbchooser.db.vs.dbx.result
+	$(quiet)echo passed
+
+test.sbchooser.identical.secbits.result:
+	$(quiet)ls -1 shim-16.1-4.el10.x64.msft2011.efi \
+		      shim-16.1-4.el10.x64.msft2011.msft2023.efi \
+		      shim-16.1-4.el10.x64.msft2023.efi \
+		      shim-16.1-4.el10.x64.msft2011.efi \
+		      shim-16.1-4.el10.x64.msft2011.msft2023.efi \
+		      shim-16.1-4.el10.x64.msft2023.efi \
+		| sort -R | LD_LIBRARY_PATH=../src ../src/sbchooser -d db.msft2023 \
+								    -d db.msft2011 \
+								    -x db.msft2011 \
+		> "$@"
+
+test.sbchooser.identical.secbits:
+	$(quiet)echo testing sbchooser sorting: identical security strength sort order
+	$(quiet)$(MAKE) --quiet test.sbchooser.identical.secbits.result
+	$(quiet)if ! cmp test.sbchooser.identical.secbits.goal.txt test.sbchooser.identical.secbits.result ; then \
+		diff -U 200 test.sbchooser.identical.secbits.goal.txt test.sbchooser.identical.secbits.result ; \
+		exit 1 ; \
+	fi
+	$(quiet)cmp test.sbchooser.identical.secbits.goal.txt test.sbchooser.identical.secbits.result
+	$(quiet)rm -f test.sbchooser.identical.secbits.result
 	$(quiet)echo passed
 
 .PHONY: all clean $(TESTS)
