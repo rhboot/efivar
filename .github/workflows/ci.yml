@@ -11,7 +11,7 @@
                 "fail-fast": false,
                 "matrix": {
                     "container": [
-                        "f38", "f39", "centos8", "centos9",
+                        "f43", "f44", "f45", "centos8", "centos9", "centos10",
                     ],
                 },
             },
