@@ -51,3 +51,42 @@
   change_kind = added-variable
   soname_regexp = libefi(var|boot|sec)\\.so\\..*
   symbol_name_regexp = ^(efidp_|efi_)[[:alnum:]_]+
+
+# glibc breaks FILE pretty often, and we only ever reference it as an opaque
+# pointer, so there's no real change we're affected by this.
+#
+#   [C] 'function FILE* efi_get_logfile(void)' at error.c:273:1 has some indirect sub-type changes:
+#    return type changed:
+#      in pointed to type 'typedef FILE' at FILE.h:7:1:
+#        underlying type 'struct _IO_FILE' at struct_FILE.h:51:1 changed:
+#          type size hasn't changed
+#          3 data member deletions:
+#            'char _short_backupbuf[1]', at offset 952 (in bits) at struct_FILE.h:77:1
+#            'int _unused3', at offset 1568 (in bits) at struct_FILE.h:102:1
+#            '__uint64_t _total_written', at offset 1600 (in bits) at struct_FILE.h:104:1
+#          2 data member changes (2 filtered):
+#            type of '_IO_FILE** _prevchain' changed:
+#              entity changed from '_IO_FILE**' to 'typedef size_t' at stddef.h:229:1
+#              type size hasn't changed
+#            and name of '_IO_FILE::_prevchain' changed to '_IO_FILE::__pad5' at struct_FILE.h:104:1
+#            type of 'char _unused2[8]' changed:
+#              type name changed from 'char[8]' to 'char[20]'
+#              array type size changed from 64 to 160
+#              array type subrange 1 changed length from 8 to 20
+#              array subrange changed:
+#                upper bound of '<anonymous range>[8]' change from '7' to '19'
+#            and offset changed from 1664 to 1568 (in bits) (by -96 bits)
+#
+# Unfortunately I don't see a way to ignore only this specific /change/, only
+# the entire function whenever the type changes.  But it doesn't change on purpose.
+#
+[suppress_function]
+  change_kind = function-subtype-change
+  soname_regexp = libefi(var|boot|sec)\\.so\\..*
+  name = efi_get_logfile
+
+# same as above...
+[suppress_function]
+  change_kind = function-subtype-change
+  soname_regexp = libefi(var|boot|sec)\\.so\\..*
+  name = efi_set_verbose
