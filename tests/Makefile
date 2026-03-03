@@ -255,7 +255,7 @@ test.esl.cert.addition.esl.result:
 
 test.esl.cert.addition:
 	$(quiet)echo testing ESL entry addition with x509 cert
-	$(quiet)$(MAKE) test.esl.cert.addition.esl.result.txt test.esl.cert.addition.esl.goal.txt
+	$(quiet)$(MAKE) --quiet test.esl.cert.addition.esl.result.txt test.esl.cert.addition.esl.goal.txt
 	$(quiet)if ! cmp test.esl.cert.addition.esl.goal test.esl.cert.addition.esl.result ; then \
 		diff -U 200 test.esl.cert.addition.esl.goal.txt test.esl.cert.addition.esl.result.txt ; \
 		exit 1 ; \
@@ -272,7 +272,7 @@ test.esl.cert.removal.esl.result:
 
 test.esl.cert.removal:
 	$(quiet)echo testing ESL entry removal with x509 cert
-	$(quiet)$(MAKE) test.esl.cert.removal.esl.goal.txt test.esl.cert.removal.esl.result.txt
+	$(quiet)$(MAKE) --quiet test.esl.cert.removal.esl.goal.txt test.esl.cert.removal.esl.result.txt
 	$(quiet)if ! cmp test.esl.cert.removal.esl.goal test.esl.cert.removal.esl.result ; then \
 		diff -U 200 test.esl.cert.removal.esl.goal.txt test.esl.cert.removal.esl.result.txt ; \
 		exit 1 ; \
