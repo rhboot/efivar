@@ -334,7 +334,7 @@ next:
 }
 
 int
-load_pe(const char * const filename, pe_file_t **pe_p)
+load_pe(const char * const filename, pe_file_t **pe_p, bool first_sig_only)
 {
 	int ret = -1;
 	pe_file_t *pe = NULL;
@@ -619,6 +619,8 @@ load_pe(const char * const filename, pe_file_t **pe_p)
 		debug("Malformed security header");
 		goto err;
 	}
+
+	pe->first_sig_only = first_sig_only;
 
 	rc = parse_sigs(pe);
 	if (rc < 0)
@@ -1073,10 +1075,15 @@ score_pe(sbchooser_context_t *ctx, pe_file_t *pe)
 				break;
 			}
 		}
-		if (found)
+		if (found) {
+			if (pe->first_sig_only)
+				break;
 			continue;
+		}
 
 		assign_sig_score(ctx, sig);
+		if (pe->first_sig_only)
+			break;
 	}
 	debug("merging pe sig scores before:0x%08"PRIx32, pe->score);
 	for (size_t i = 0; i < pe->n_sigs; i++) {

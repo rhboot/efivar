@@ -19,6 +19,7 @@ usage(int status)
 		"  -D, --no-system-db                Do not load the UEFI trusted key database\n"
 		"  -s, --system-db                   Load the UEFI trusted key database from\n"
 		"                                    this system (default)\n"
+		"  -f, --first-sig-only              Only consider the first signature on an input\n"
 		"  -x, --dbx=<dbx file>              UEFI revoked key database\n"
 		"  -X, --no-system-dbx               Do not load the UEFI revoked key database\n"
 		"  -S, --system-dbx                  Load the UEFI revoked key database from\n"
@@ -80,7 +81,7 @@ add_one_pe_to_ctx(sbchooser_context_t *ctx, const char *filename)
 	int rc;
 	pe_file_t *pe = NULL;
 
-	rc = load_pe(filename, &pe);
+	rc = load_pe(filename, &pe, ctx->first_sig_only);
 	if (rc < 0) {
 		if (filename[0] == '-') {
 			warnx("Unknown argument:\"%s\"", filename);
@@ -116,7 +117,7 @@ fmt_time(const ASN1_TIME *asn1, char buf[1024])
 int
 main(int argc, char *argv[])
 {
-	const char sopts[] = ":d:Di:sSx:Xvh";
+	const char sopts[] = ":d:Dfi:sSx:Xvh";
 	const struct option lopts[] = {
 		{"db", required_argument, NULL, 'd' },
 		{"no-system-db", no_argument, NULL, 'D' },
@@ -124,6 +125,7 @@ main(int argc, char *argv[])
 		{"dbx", required_argument, NULL, 'x' },
 		{"no-system-dbx", no_argument, NULL, 'X' },
 		{"system-dbx", no_argument, NULL, 'S' },
+		{"first-sig-only", no_argument, NULL, 'f' },
 		{"in", required_argument, NULL, 'i' },
 		{"verbose", no_argument, NULL, 'v' },
 		{"usage", no_argument, NULL, 'h' },
@@ -175,6 +177,9 @@ main(int argc, char *argv[])
 				err(ERR_SECDB, "Could not load db from \"%s\"",
 				    argv[optind-1]);
 			needs_db = false;
+			break;
+		case 'f':
+			ctx.first_sig_only = true;
 			break;
 		case 'h':
 			usage(ERR_SUCCESS);
