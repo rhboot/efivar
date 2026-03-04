@@ -79,6 +79,8 @@ struct sbchooser_context {
 	size_t n_dbx_certs;
 	cert_data_t **dbx_certs;
 	// XXX PJFIX: support cert TBS hash revocations
+
+	bool first_sig_only;	// should only the first signature be scored?
 };
 
 // vim:fenc=utf-8:tw=75:noet

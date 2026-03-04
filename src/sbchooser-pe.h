@@ -119,11 +119,16 @@ struct pe_file {
 	 */
 	const ASN1_TIME *earliest_not_before;
 	const ASN1_TIME *latest_not_after;
+
+	bool first_sig_only;	// should only the first signature be scored?
 };
 
 /*
  * load_pe() allocates a pe_file_t, maps it,  and "loads" it, validating
  * the input as well as filling out the "context" structure.
+ *
+ * If "first_sig_only" is true, only the first signature will be scored and
+ * used for sorting.
  *
  * returns 0 on success, negative on error
  */

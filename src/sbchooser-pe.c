@@ -429,7 +429,7 @@ next:
 }
 
 int
-load_pe(sbchooser_context_t *ctx __attribute__((__unused__)),
+load_pe(sbchooser_context_t *ctx,
 	const char * const filename,
 	pe_file_t **pe_p)
 {
@@ -717,6 +717,8 @@ load_pe(sbchooser_context_t *ctx __attribute__((__unused__)),
 		goto err;
 	}
 
+	pe->first_sig_only = ctx->first_sig_only;
+
 	rc = parse_sigs(pe);
 	if (rc < 0)
 		goto err;
@@ -950,6 +952,9 @@ update_pe_security(sbchooser_context_t *ctx, pe_file_t *pe)
 				pe->latest_not_after = sig->latest_not_after;
 			}
 		}
+
+		if (pe->first_sig_only)
+			break;
 	}
 	if (!found_trusted_sig) {
 		pe->secbits = 0;
