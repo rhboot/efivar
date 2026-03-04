@@ -125,9 +125,10 @@ esl_iter_next_with_size_correction(esl_iter *iter, efi_guid_t *type,
 
 			asn1size = get_asn1_seq_size(iter->esd->signature_data,
 				iter->len - sizeof(iter->esd->signature_owner));
-			debug("iter->len:%zu sizeof(owner):%zd bufsz:%zd asn1sz:%d",
+			debug("iter->len:%zu sizeof(owner):%zd bufsz:%zd asn1sz:%d (0x%x)",
 			      iter->len, sizeof(iter->esd->signature_owner),
-			      iter->len - sizeof(iter->esd->signature_owner), asn1size);
+			      iter->len - sizeof(iter->esd->signature_owner), asn1size,
+			      asn1size);
 
 			if (asn1size < 0) {
 				debug("iterator data claims to be an X.509 Cert but is not valid ASN.1 DER");
@@ -377,9 +378,10 @@ esl_list_iter_next_with_size_correction(esl_list_iter *iter, efi_guid_t *type,
 		if (!efi_guid_cmp(&type, &efi_guid_x509_cert)) {
 			int32_t asn1size;
 
-			asn1size = get_asn1_seq_size(
-				iter->buf + iter->offset + sizeof(efi_guid_t),
-				*len - sizeof(efi_guid_t));
+			asn1size = get_asn1_seq_size(iter->buf + iter->offset
+						     + sizeof(efi_signature_list_t)
+						     + sizeof(efi_guid_t),
+						     *len - sizeof(efi_guid_t));
 			if (asn1size < 0) {
 				debug("iterator data claims to be an X.509 Cert but is not valid ASN.1 DER");
 			} else if ((uint32_t)asn1size != iter->esl->signature_size

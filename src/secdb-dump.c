@@ -58,7 +58,7 @@ secdb_buffer(char *val, size_t valsz, ssize_t offset)
 static inline ssize_t
 secdb_dump_value(char *val, size_t size, ssize_t offset, char *fmt, ...)
 {
-	char posbuf[9];
+	char posbuf[17];
 	char hexbuf[49];
 	char textbuf[19];
 

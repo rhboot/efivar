@@ -3,8 +3,7 @@
  * libefivar - library for the manipulation of EFI variables
  * Copyright 2012-2015 Red Hat, Inc.
  */
-#ifndef _EFIVAR_INTERNAL_DP_H
-#define _EFIVAR_INTERNAL_DP_H
+#pragma once
 
 #include <alloca.h>
 #include <stdarg.h>
@@ -178,7 +177,5 @@ extern ssize_t _format_bios_boot_dn(unsigned char *buf, size_t size, const_efidp
 	format_helper_2(_format_media_dn, buf, size, off, dp)
 #define format_bios_boot_dn(buf, size, off, dp) \
 	format_helper_2(_format_bios_boot_dn, buf, size, off, dp)
-
-#endif /* _EFIVAR_INTERNAL_DP_H */
 
 // vim:fenc=utf-8:tw=75:noet

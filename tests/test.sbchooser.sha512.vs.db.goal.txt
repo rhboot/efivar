@@ -1,0 +1,4 @@
+shim-13-0.2.fedora.x64.nosigs.efi
+shim-13-0.2.fedora.x64.nosigs.efi
+shim-15-7.el7_2.x64.msft2011.efi
+shim-15-7.el7_2.x64.msft2011.efi

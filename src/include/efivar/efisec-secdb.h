@@ -28,23 +28,23 @@ typedef union {
 	uint8_t			raw[0];
 } efi_secdb_data_t;
 
-typedef enum {
-	X509_CERT,	// a raw x509 cert
-	X509_SHA256,	// SHA-256 hash of the TBSData
-	SHA256,		// SHA-256 hash
-	X509_SHA512,	// SHA-512 hash of the TBSData
-	SHA512,		// SHA-512 hash
-	X509_SHA384,	// SHA-384 hash of the TBSData
-	SHA224,		// SHA-224 hash
-	SHA384,		// SHA-384 hash
-	SHA1,		// SHA-1 hash
-	RSA2048,	// RSA-2048 pubkey (m, e=0x10001)
-	RSA2048_SHA1,	// RSA-2048 signature of a SHA-1 hash
-	RSA2048_SHA256,	// RSA-2048 signature of a SHA-256 hash
-	MAX_SECDB_TYPE
+typedef enum efi_secdb_type {
+	EFI_SECDB_TYPE_X509_CERT,      // a raw x509 cert
+	EFI_SECDB_TYPE_X509_SHA256,    // SHA-256 hash of the TBSData
+	EFI_SECDB_TYPE_SHA256,         // SHA-256 hash
+	EFI_SECDB_TYPE_X509_SHA512,    // SHA-512 hash of the TBSData
+	EFI_SECDB_TYPE_SHA512,         // SHA-512 hash
+	EFI_SECDB_TYPE_X509_SHA384,    // SHA-384 hash of the TBSData
+	EFI_SECDB_TYPE_SHA224,         // SHA-224 hash
+	EFI_SECDB_TYPE_SHA384,         // SHA-384 hash
+	EFI_SECDB_TYPE_SHA1,           // SHA-1 hash
+	EFI_SECDB_TYPE_RSA2048,        // RSA-2048 pubkey (m, e=0x10001)
+	EFI_SECDB_TYPE_RSA2048_SHA1,   // RSA-2048 signature of a SHA-1 hash
+	EFI_SECDB_TYPE_RSA2048_SHA256, // RSA-2048 signature of a SHA-256 hash
+	EFI_SECDB_TYPE_MAX
 } efi_secdb_type_t;
 
-typedef enum {
+typedef enum efi_secdb_flag {
 	EFI_SECDB_SORT,
 	EFI_SECDB_SORT_DATA,
 	EFI_SECDB_SORT_DESCENDING,
@@ -74,9 +74,9 @@ extern int efi_secdb_realize(efi_secdb_t *secdb,
 extern void efi_secdb_free(efi_secdb_t *secdb);
 
 typedef enum {
-	ERROR = -1,
-	BREAK = 0,
-	CONTINUE = 1,
+	EFI_SECDB_VISITOR_ERROR = -1,
+	EFI_SECDB_VISITOR_BREAK = 0,
+	EFI_SECDB_VISITOR_CONTINUE = 1,
 } efi_secdb_visitor_status_t;
 
 typedef efi_secdb_visitor_status_t

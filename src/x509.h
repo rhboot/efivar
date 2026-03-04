@@ -3,8 +3,7 @@
  * x509.h - X.509/ASN.1 helper functions
  * Copyright 2019-2020 Peter M. Jones <pjones@redhat.com>
  */
-#ifndef EFIVAR_X509_H
-#define EFIVAR_X509_H
+#pragma once
 
 #define SMALLEST_POSSIBLE_DER_SEQ 3
 
@@ -24,13 +23,13 @@ get_asn1_seq_size(uint8_t *location, uint32_t size)
 
 	// If it's not a CONSTRUCTED SEQUENCE it's not a certificate
 	if (location[0] != 0x30) {
-		debug("%p: %d != 0x30", &location[0], location[0]);
+		debug("%p: 0x%02x != 0x30", &location[0], location[0]);
 		return -1;
 	}
 
 	if (!(location[1] & 0x80)) {
 		// Short form, which is too small to hold a certificate.
-		debug("%p: %d & 0x80 == 1", &location[1], location[1]);
+		debug("%p: 0x%02x & 0x80 == 1", &location[1], location[1]);
 		return -1;
 	}
 
@@ -71,5 +70,4 @@ get_asn1_seq_size(uint8_t *location, uint32_t size)
 
 #undef SMALLEST_POSSIBLE_DER_SEQ
 
-#endif
 // vim:fenc=utf-8:tw=75:noet

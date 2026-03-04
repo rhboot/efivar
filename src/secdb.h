@@ -4,11 +4,10 @@
  * Copyright Peter Jones <pjones@redhat.com>
  * Copyright Red Hat, Inc.
  */
-#ifndef PRIVATE_SECDB_H
-#define PRIVATE_SECDB_H 1
+#pragma once
 
-#include "efisec.h"
-#include <efivar/efisec.h>
+#include "efisec.h" // IWYU pragma: export
+#include "efivar/efisec.h" // IWYU pragma: export
 
 typedef enum {
 	BAD,
@@ -59,7 +58,7 @@ struct efi_secdb {
 #define for_each_secdb_entry(pos, head) list_for_each(pos, head)
 #define for_each_secdb_entry_safe(pos, n, head) list_for_each_safe(pos, n, head)
 
-extern const secdb_alg_t PUBLIC efi_secdb_algs_[MAX_SECDB_TYPE];
+extern const secdb_alg_t PUBLIC efi_secdb_algs_[EFI_SECDB_TYPE_MAX];
 
 /*********************************************************
  * some helpers to look up sizes for each algorithm type *
@@ -71,7 +70,7 @@ extern const secdb_alg_t PUBLIC efi_secdb_algs_[MAX_SECDB_TYPE];
 static inline int
 secdb_entry_has_owner_from_guid(efi_guid_t *alg_guid, bool *answer)
 {
-	for (efi_secdb_type_t i = 0; i < MAX_SECDB_TYPE; i++) {
+	for (efi_secdb_type_t i = 0; i < EFI_SECDB_TYPE_MAX; i++) {
 		if (!memcmp(alg_guid, efi_secdb_algs_[i].guid, sizeof(*alg_guid))) {
 			*answer = efi_secdb_algs_[i].has_owner;
 			return 0;
@@ -87,7 +86,7 @@ secdb_entry_has_owner_from_guid(efi_guid_t *alg_guid, bool *answer)
 static inline int
 secdb_entry_has_owner_from_type(efi_secdb_type_t secdb_type, bool *answer)
 {
-	if (secdb_type < 0 || secdb_type >= MAX_SECDB_TYPE) {
+	if (secdb_type < 0 || secdb_type >= EFI_SECDB_TYPE_MAX) {
 		errno = EINVAL;
 		return -1;
 	}
@@ -101,7 +100,7 @@ secdb_entry_has_owner_from_type(efi_secdb_type_t secdb_type, bool *answer)
 static inline efi_secdb_type_t
 secdb_entry_type_from_guid(const efi_guid_t * const guid)
 {
-	for (efi_secdb_type_t i = 0; i < MAX_SECDB_TYPE; i++) {
+	for (efi_secdb_type_t i = 0; i < EFI_SECDB_TYPE_MAX; i++) {
 		if (!memcmp(guid, efi_secdb_algs_[i].guid, sizeof(*guid)))
 			return i;
 	}
@@ -114,7 +113,7 @@ secdb_entry_type_from_guid(const efi_guid_t * const guid)
 static inline efi_guid_t const *
 secdb_guid_from_type(const efi_secdb_type_t secdb_type)
 {
-	if (secdb_type < 0 || secdb_type >= MAX_SECDB_TYPE) {
+	if (secdb_type < 0 || secdb_type >= EFI_SECDB_TYPE_MAX) {
 		errno = EINVAL;
 		return NULL;
 	}
@@ -144,7 +143,7 @@ secdb_entry_size_from_guid(const efi_guid_t * const alg_guid)
 static inline size_t
 secdb_entry_size_from_type(const efi_secdb_type_t secdb_type)
 {
-	if (secdb_type < 0 || secdb_type >= MAX_SECDB_TYPE) {
+	if (secdb_type < 0 || secdb_type >= EFI_SECDB_TYPE_MAX) {
 		errno = EINVAL;
 		return -1;
 	}
@@ -159,7 +158,7 @@ secdb_entry_size_from_type(const efi_secdb_type_t secdb_type)
 static inline int32_t
 secdb_header_size_from_type(const efi_secdb_type_t secdb_type)
 {
-	if (secdb_type < 0 || secdb_type >= MAX_SECDB_TYPE) {
+	if (secdb_type < 0 || secdb_type >= EFI_SECDB_TYPE_MAX) {
 		errno = EINVAL;
 		return -1;
 	}
@@ -181,7 +180,7 @@ secdb_entry_size(efi_secdb_t *secdb)
 	sz = sizeof(efi_signature_list_t)
 	     + secdb->hdrsz
 	     + secdb->sigsz * secdb->nsigs;
-	debug("secdb:%p sz:%zd", secdb, sz);
+	debug("secdb:%p sz:%zd (0x%lx)", secdb, sz, sz);
 	return sz;
 }
 
@@ -224,4 +223,4 @@ extern int secdb_cmp_descending(const void *a, const void *b, void *state);
  */
 extern void secdb_dump(efi_secdb_t *secdb, bool annotate);
 
-#endif /* PRIVATE_SECDB_H */
+// vim:fenc=utf-8:tw=75:noet
