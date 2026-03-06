@@ -51,6 +51,9 @@ struct sig_data {
 
 	size_t n_certs;
 	cert_data_t **certs;
+
+	bool trusted;		// sig is in db
+	bool revoked;		// sig is in dbx
 };
 
 typedef struct sig_data sig_data_t;
@@ -82,6 +85,8 @@ struct pe_file {
 	 */
 	size_t n_sigs;
 	sig_data_t **sigs;
+
+	bool has_trusted_signature;
 };
 
 /*

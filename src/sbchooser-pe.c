@@ -177,7 +177,7 @@ get_authorization(sbchooser_context_t *ctx, cert_data_t *sigcert)
 	return false;
 }
 
-static void __attribute__((__unused__))
+static void
 update_cert_trust(sbchooser_context_t *ctx, cert_data_t *cert)
 {
 	char subject[4096];
@@ -279,6 +279,24 @@ parse_pkcs7(PKCS7 *p7, sig_data_t *sig)
 	return rc;
 err:
 	return -1;
+}
+
+static void __attribute__((__unused__))
+update_sig_trust(sbchooser_context_t *ctx, sig_data_t *sig)
+{
+	for (size_t j = 0; j < sig->n_certs; j++) {
+		cert_data_t *sigcert = sig->certs[j];
+
+		update_cert_trust(ctx, sigcert);
+
+		if (sigcert->trusted)
+			sig->trusted = true;
+
+		if (sigcert->revoked)
+			sig->revoked = true;
+	}
+	if (sig->revoked)
+		sig->trusted = false;
 }
 
 static int
@@ -862,6 +880,15 @@ update_pe_security(sbchooser_context_t *ctx, pe_file_t *pe)
 
 	check_dbx_hashes(ctx, pe);
 	check_db_hashes(ctx, pe);
+
+	for (size_t i = 0; i < pe->n_sigs; i++) {
+		sig_data_t *sig = pe->sigs[i];
+
+		update_sig_trust(ctx, sig);
+		if (sig->trusted) {
+			pe->has_trusted_signature = true;
+		}
+	}
 }
 
 int
