@@ -113,6 +113,108 @@ image_is_64_bit(efi_image_optional_header_union_t *pehdr)
 	return false;
 }
 
+static bool
+get_revocation(sbchooser_context_t *ctx, cert_data_t *sigcert)
+{
+	debug("looking for subject or issuer in %d dbx certs", ctx->n_dbx_certs);
+
+	for (size_t i = 0; i < ctx->n_dbx_certs; i++) {
+		cert_data_t *dbxcert = ctx->dbx_certs[i];
+
+		if (is_same_cert(sigcert, dbxcert)) {
+			if (!sigcert->revoked_cert)
+				sigcert->revoked_cert = dbxcert;
+			debug("found");
+			return true;
+		}
+
+		if (is_issuing_cert(sigcert, dbxcert)) {
+			if (!sigcert->revoked_cert)
+				sigcert->revoked_cert = dbxcert;
+			debug("found");
+			return true;
+		}
+		/*
+		 * XXX PJFIX: right now we don't check cert revocations by
+		 * TBS hash.  I think we could solve this with
+		 * X509_digest() and looking them up, but I don't have any
+		 * dbx examples handy.
+		 */
+	}
+	debug("none found");
+	return false;
+}
+
+static bool
+get_authorization(sbchooser_context_t *ctx, cert_data_t *sigcert)
+{
+	debug("looking for subject or issuer in %d db certs", ctx->n_db_certs);
+
+	for (size_t i = 0; i < ctx->n_db_certs; i++) {
+		cert_data_t *dbcert = ctx->db_certs[i];
+
+		if (is_same_cert(sigcert, dbcert)) {
+			if (!sigcert->trust_anchor_cert)
+				sigcert->trust_anchor_cert = dbcert;
+			debug("found");
+			return true;
+		}
+
+		if (is_issuing_cert(sigcert, dbcert)) {
+			if (!sigcert->trust_anchor_cert)
+				sigcert->trust_anchor_cert = dbcert;
+			debug("found");
+			return true;
+		}
+		/*
+		 * XXX PJFIX: right now we don't check cert authorizations
+		 * by TBS hash.  I think we could solve this with
+		 * X509_digest() and looking them up, but I don't have any
+		 * db examples handy.
+		 */
+	}
+	debug("none found");
+	return false;
+}
+
+static void __attribute__((__unused__))
+update_cert_trust(sbchooser_context_t *ctx, cert_data_t *cert)
+{
+	char subject[4096];
+	memset(subject, 0, sizeof(subject));
+	X509_NAME_oneline(cert->subject, subject, 4095);
+
+	if (get_revocation(ctx, cert)) {
+		char revoker[4096];
+
+		memset(revoker, 0, sizeof(revoker));
+
+		X509_NAME_oneline(cert->revoked_cert->subject, revoker, 4095);
+
+		debug("cert \"%s\" revoked by \"%s\"", subject, revoker);
+		cert->revoked = true;
+	} else {
+		debug("no revocations for \"%s\"", subject);
+	}
+
+	if (get_authorization(ctx, cert)) {
+		char trust_anchor[4096];
+
+		memset(trust_anchor, 0, sizeof(trust_anchor));
+
+		X509_NAME_oneline(cert->trust_anchor_cert->subject,
+				  trust_anchor, 4095);
+
+		debug("cert \"%s\" trusted by \"%s\"", subject, trust_anchor);
+		cert->trusted = true;
+	} else {
+		debug("no trust for \"%s\"", subject);
+	}
+	debug("cert \"%s\" trust is: trusted:%s revoked:%s", subject,
+	      cert->trusted ? "true" : "false",
+	      cert->revoked ? "true" : "false");
+}
+
 static int
 add_one_cert(sig_data_t *sig, X509 *x509)
 {
