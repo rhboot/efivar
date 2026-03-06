@@ -20,6 +20,7 @@ usage(int status)
 		"  -D, --no-system-db                Do not load the UEFI trusted key database\n"
 		"  -s, --system-db                   Load the UEFI trusted key database from\n"
 		"                                    this system (default)\n"
+		"  -e, --explain                     Instead of acting as a sorter, explain choices\n"
 		"  -f, --first-sig-only              Only consider the first signature on an input\n"
 		"  -x, --dbx=<dbx file>              UEFI revoked key database\n"
 		"  -X, --no-system-dbx               Do not load the UEFI revoked key database\n"
@@ -89,7 +90,7 @@ add_one_pe_to_ctx(sbchooser_context_t *ctx, const char *filename)
 int
 main(int argc, char *argv[])
 {
-	const char sopts[] = ":d:Dfi:sSx:Xvh";
+	const char sopts[] = ":d:Defi:sSx:Xvh";
 	const struct option lopts[] = {
 		{"db", required_argument, NULL, 'd' },
 		{"no-system-db", no_argument, NULL, 'D' },
@@ -98,6 +99,7 @@ main(int argc, char *argv[])
 		{"no-system-dbx", no_argument, NULL, 'X' },
 		{"system-dbx", no_argument, NULL, 'S' },
 		{"first-sig-only", no_argument, NULL, 'f' },
+		{"explain", no_argument, NULL, 'e' },
 		{"in", required_argument, NULL, 'i' },
 		{"verbose", no_argument, NULL, 'v' },
 		{"usage", no_argument, NULL, 'h' },
@@ -110,6 +112,7 @@ main(int argc, char *argv[])
 	bool needs_db = true;
 	bool needs_dbx = true;
 	bool read_inputs_from_stdin = false;
+	bool explain = false;
 
 	sbchooser_context_t ctx;
 
@@ -149,6 +152,9 @@ main(int argc, char *argv[])
 				err(ERR_SECDB, "Could not load db from \"%s\"",
 				    argv[optind-1]);
 			needs_db = false;
+			break;
+		case 'e':
+			explain = true;
 			break;
 		case 'f':
 			ctx.first_sig_only = true;
@@ -279,6 +285,8 @@ main(int argc, char *argv[])
 
 	for (size_t i = 0; i < ctx.n_files; i++) {
 		pe_file_t *pe = ctx.files[i];
+		digest_data_t *dgst = NULL;
+		char buf[1024];
 
 		/*
 		 * UEFI spec 2.12ish says:
@@ -303,21 +311,43 @@ main(int argc, char *argv[])
 		 *
 		 * And so we check dbx hashes first, then db.
 		 */
-		if (is_revoked_by_hash(pe, NULL)) {
-			debug("PE \"%s\" is revoked by hash", pe->filename);
+		if (is_revoked_by_hash(pe, &dgst)) {
+			fmt_digest(dgst, buf, sizeof(buf));
+			debug("PE \"%s\" is revoked by hash %s", pe->filename, buf);
+			if (explain) {
+				printf("%s is revoked by hash %s in dbx\n", pe->filename, buf);
+			}
 			continue;
 		}
-		if (is_trusted_by_hash(pe, NULL)) {
-			debug("PE \"%s\" is trusted by hash", pe->filename);
-			printf("%s\n", pe->filename);
+		dgst = NULL;
+		if (is_trusted_by_hash(pe, &dgst)) {
+			fmt_digest(dgst, buf, sizeof(buf));
+			debug("PE \"%s\" is trusted by hash %s", pe->filename, buf);
+			if (explain) {
+				printf("%s is trusted by hash %s in db\n", pe->filename, buf);
+			} else {
+				printf("%s\n", pe->filename);
+			}
 			continue;
 		} else {
 			debug("PE \"%s\" is not trusted by hash", pe->filename);
 		}
 
 		debug("PE \"%s\" score 0x%"PRIx32, pe->filename, pe->secbits);
-		if (pe->secbits != 0) {
-			printf("%s\n", pe->filename);
+		if (pe->secbits == 0) {
+			if (explain) {
+				if (!pe->rationale) {
+					printf("%s is not trusted because no certs or hashes trust it\n", pe->filename);
+				} else {
+					printf("%s is not trusted because %s\n", pe->filename, pe->rationale);
+				}
+			}
+		} else {
+			if (explain) {
+				printf("%s is trusted because %s\n", pe->filename, pe->rationale);
+			} else {
+				printf("%s\n", pe->filename);
+			}
 		}
 	}
 

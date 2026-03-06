@@ -44,6 +44,8 @@ struct cert_data {
 
 	bool revoked;
 	cert_data_t *revoked_cert;	// the cert that's actually in dbx
+
+	char *rationale;		// why was this revoked or trusted
 };
 
 void free_cert(cert_data_t *cert);

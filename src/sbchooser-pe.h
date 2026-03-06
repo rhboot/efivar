@@ -71,6 +71,11 @@ struct sig_data {
 	 */
 	const ASN1_TIME *earliest_not_before;
 	const ASN1_TIME *latest_not_after;
+
+	/*
+	 * why was this revoked or trusted?  Borrowed from certs
+	 */
+	char *rationale;
 };
 
 typedef struct sig_data sig_data_t;
@@ -119,6 +124,11 @@ struct pe_file {
 	 */
 	const ASN1_TIME *earliest_not_before;
 	const ASN1_TIME *latest_not_after;
+
+	/*
+	 * why was this revoked or trusted?  Borrowed from sigs
+	 */
+	char *rationale;
 
 	bool first_sig_only;	// should only the first signature be scored?
 };

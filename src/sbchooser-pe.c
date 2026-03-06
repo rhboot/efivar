@@ -191,6 +191,13 @@ update_cert_trust(sbchooser_context_t *ctx, cert_data_t *cert)
 
 		X509_NAME_oneline(cert->revoked_cert->subject, revoker, 4095);
 
+		if (cert->rationale) {
+			free(cert->rationale);
+			cert->rationale = NULL;
+			debug("updating cert rationale to revoked");
+		}
+		asprintf(&cert->rationale, "cert \"%s\" is revoked by \"%s\" in dbx",
+			 subject, revoker);
 		debug("cert \"%s\" revoked by \"%s\"", subject, revoker);
 		cert->revoked = true;
 	} else {
@@ -205,6 +212,11 @@ update_cert_trust(sbchooser_context_t *ctx, cert_data_t *cert)
 		X509_NAME_oneline(cert->trust_anchor_cert->subject,
 				  trust_anchor, 4095);
 
+		if (!cert->rationale) {
+			debug("updating cert rationale to trusted");
+			asprintf(&cert->rationale, "cert \"%s\" is trusted by \"%s\" in db",
+				 subject, trust_anchor);
+		}
 		debug("cert \"%s\" trusted by \"%s\"", subject, trust_anchor);
 		cert->trusted = true;
 	} else {
@@ -308,11 +320,19 @@ update_sig_trust(sbchooser_context_t *ctx, sig_data_t *sig)
 
 		update_cert_trust(ctx, sigcert);
 
-		if (sigcert->trusted)
+		if (sigcert->trusted) {
+			if (!sig->revoked) {
+				debug("updating sig rationale to trusted");
+				sig->rationale = sigcert->rationale;
+			}
 			sig->trusted = true;
+		}
 
-		if (sigcert->revoked)
+		if (sigcert->revoked) {
+			debug("updating sig rationale to revoked");
+			sig->rationale = sigcert->rationale;
 			sig->revoked = true;
+		}
 	}
 	if (sig->revoked)
 		sig->trusted = false;
@@ -931,9 +951,18 @@ update_pe_security(sbchooser_context_t *ctx, pe_file_t *pe)
 
 		update_sig_trust(ctx, sig);
 
+		if (sig->rationale && !pe->rationale) {
+			debug("updating pe rationale to %s", sig->revoked ? "revoked" : (sig->trusted ? "trusted" : ""));
+			pe->rationale = sig->rationale;
+		}
+
 		if (sig->trusted) {
-			pe->has_trusted_signature = true;
 			found_trusted_sig = true;
+			if (!pe->has_trusted_signature && pe->rationale) {
+				debug("updating pe rationale to %s", sig->revoked ? "revoked" : (sig->trusted ? "trusted" : ""));
+				pe->rationale = sig->rationale;
+			}
+			pe->has_trusted_signature = true;
 
 			if (sig->lowest_md_secbits < lowest_md_secbits) {
 				lowest_md_secbits = sig->lowest_md_secbits;

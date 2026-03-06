@@ -112,6 +112,12 @@ free_cert(cert_data_t *cert)
 		X509_free(cert->x509);
 		cert->x509 = NULL;
 	}
+
+	if (cert->rationale) {
+		free(cert->rationale);
+		cert->rationale = NULL;
+	}
+
 	free(cert);
 }
 

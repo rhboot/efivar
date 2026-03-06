@@ -1,0 +1,4 @@
+shim-15-7.el7_2.x64.nosigs.efi is trusted by hash 5c1872d1556e9e39f821d25682e3f3db0545a1e47db2ac6e6d93d2a687be536b4b3a56fa11395ff096b33348cfb15801160008188f207a5a39bdb69e65464f1d in db
+shim-15-7.el7_2.x64.nosigs.efi is trusted by hash 5c1872d1556e9e39f821d25682e3f3db0545a1e47db2ac6e6d93d2a687be536b4b3a56fa11395ff096b33348cfb15801160008188f207a5a39bdb69e65464f1d in db
+shim-13-0.2.fedora.x64.nosigs.efi is not trusted because no certs or hashes trust it
+shim-13-0.2.fedora.x64.nosigs.efi is not trusted because no certs or hashes trust it

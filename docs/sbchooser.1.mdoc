@@ -66,6 +66,9 @@ Load the UEFI revoked key database from this system (default)
 Load an EFI binary from \fIpe\-file\fR.
 
 By default, if \fB-i\fR is not used, \fBsbchooser\fR reads a list of input files on \fIstandard in\fR.  If \fIpe-file\fR is \fB-\fR, \fBsbchooser\fR will look for input files on \fIstandard in\fR as well as any \fB-i\fR input options.
+.It Ao Fl e | Fl Fl explain Ac
+Instead of producing the normal results, attempt to explain the reason for
+trusting or distrusting each input PE file.
 .It Fl Fl Ec
 All following options are treated as input files.  Can be used with \fB-i -\fR to suppliment \fIstandard in\fR.
 .El
@@ -175,6 +178,29 @@ host:~$ sbchooser -s -d db.shim-15.5.el7.x64.sha256 -- \\
 /usr/lib/shim/shim-16.1-4.el10.x64.msft2011.efi
 /usr/lib/shim/shim-15-7.el7_2.x64.msft2011.efi
 /usr/lib/shim/shim-15-2.fedora.x64.msft2011.efi
+host:~$ 
+.Ed
+.Ss Explanation of choosing which bootloader is most appropriate with local security databases:
+.Bd -literal
+host:~$ sbchooser --db db.msft2023 --dbx db.msft2011 --explain -- \\
+                  /usr/lib/shim/shim-13-0.2.fedora.x64.nosigs.efi \\
+                  /usr/lib/shim/shim-15-2.fedora.x64.msft2011.efi \\
+                  /usr/lib/shim/shim-15-7.el7_2.x64.msft2011.efi \\
+                  /usr/lib/shim/shim-15-7.el7_2.x64.nosigs.efi \\
+                  /usr/lib/shim/shim-15.5-1.el9.x64.msft2011.efi \\
+                  /usr/lib/shim/shim-15.5.el7.x64.nosigs.efi \\
+                  /usr/lib/shim/shim-16.1-4.el10.x64.msft2011.efi \\
+                  /usr/lib/shim/shim-16.1-4.el10.x64.msft2011.msft2023.efi \\
+                  /usr/lib/shim/shim-16.1-4.el10.x64.msft2023.efi
+/usr/lib/shim/shim-16.1-4.el10.x64.msft2011.msft2023.efi is trusted because cert "/C=US/ST=Washington/L=Redmond/O=Microsoft Corporation/CN=Microsoft UEFI CA 2023 signer" is trusted by "/C=US/O=Microsoft Corporation/CN=Microsoft UEFI CA 2023" in db
+/usr/lib/shim/shim-16.1-4.el10.x64.msft2023.efi is trusted because cert "/C=US/ST=Washington/L=Redmond/O=Microsoft Corporation/CN=Microsoft UEFI CA 2023 signer" is trusted by "/C=US/O=Microsoft Corporation/CN=Microsoft UEFI CA 2023" in db
+/usr/lib/shim/shim-16.1-4.el10.x64.msft2011.efi is not trusted because cert "/C=US/ST=Washington/L=Redmond/O=Microsoft Corporation/CN=Microsoft Windows UEFI Driver Publisher" is revoked by "/C=US/ST=Washington/L=Redmond/O=Microsoft Corporation/CN=Microsoft Corporation UEFI CA 2011" in dbx
+/usr/lib/shim/shim-15.5-1.el9.x64.msft2011.efi is not trusted because cert "/C=US/ST=Washington/L=Redmond/O=Microsoft Corporation/CN=Microsoft Windows UEFI Driver Publisher" is revoked by "/C=US/ST=Washington/L=Redmond/O=Microsoft Corporation/CN=Microsoft Corporation UEFI CA 2011" in dbx
+/usr/lib/shim/shim-15-7.el7_2.x64.msft2011.efi is not trusted because cert "/C=US/ST=Washington/L=Redmond/O=Microsoft Corporation/CN=Microsoft Windows UEFI Driver Publisher" is revoked by "/C=US/ST=Washington/L=Redmond/O=Microsoft Corporation/CN=Microsoft Corporation UEFI CA 2011" in dbx
+/usr/lib/shim/shim-15-2.fedora.x64.msft2011.efi is not trusted because cert "/C=US/ST=Washington/L=Redmond/O=Microsoft Corporation/CN=Microsoft Windows UEFI Driver Publisher" is revoked by "/C=US/ST=Washington/L=Redmond/O=Microsoft Corporation/CN=Microsoft Corporation UEFI CA 2011" in dbx
+/usr/lib/shim/shim-13-0.2.fedora.x64.nosigs.efi is not trusted because no certs or hashes trust it
+/usr/lib/shim/shim-15-7.el7_2.x64.nosigs.efi is not trusted because no certs or hashes trust it
+/usr/lib/shim/shim-15.5.el7.x64.nosigs.efi is not trusted because no certs or hashes trust it
 host:~$ 
 .Ed
 .Sh STANDARDS

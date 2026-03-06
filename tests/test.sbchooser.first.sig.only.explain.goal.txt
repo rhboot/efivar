@@ -1,0 +1,6 @@
+shim-16.1-4.el10.x64.msft2023.efi is trusted because cert "/C=US/ST=Washington/L=Redmond/O=Microsoft Corporation/CN=Microsoft UEFI CA 2023 signer" is trusted by "/C=US/O=Microsoft Corporation/CN=Microsoft UEFI CA 2023" in db
+shim-16.1-4.el10.x64.msft2023.efi is trusted because cert "/C=US/ST=Washington/L=Redmond/O=Microsoft Corporation/CN=Microsoft UEFI CA 2023 signer" is trusted by "/C=US/O=Microsoft Corporation/CN=Microsoft UEFI CA 2023" in db
+shim-16.1-4.el10.x64.msft2011.msft2023.efi is not trusted because no certs or hashes trust it
+shim-16.1-4.el10.x64.msft2011.msft2023.efi is not trusted because no certs or hashes trust it
+shim-16.1-4.el10.x64.msft2011.efi is not trusted because no certs or hashes trust it
+shim-16.1-4.el10.x64.msft2011.efi is not trusted because no certs or hashes trust it

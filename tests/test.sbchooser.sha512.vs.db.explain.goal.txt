@@ -1,0 +1,4 @@
+shim-13-0.2.fedora.x64.nosigs.efi is trusted by hash 3a6bb1f335451278bd3b794630c806c83da7b29bae66a161e5ab78b75571d674d50a15b54735ec288b953c8d7696ffdf2f7ef0bcb5c4e74c8cb2ca4b6a5e2c98 in db
+shim-13-0.2.fedora.x64.nosigs.efi is trusted by hash 3a6bb1f335451278bd3b794630c806c83da7b29bae66a161e5ab78b75571d674d50a15b54735ec288b953c8d7696ffdf2f7ef0bcb5c4e74c8cb2ca4b6a5e2c98 in db
+shim-15-7.el7_2.x64.msft2011.efi is trusted because cert "/C=US/ST=Washington/L=Redmond/O=Microsoft Corporation/CN=Microsoft Windows UEFI Driver Publisher" is trusted by "/C=US/ST=Washington/L=Redmond/O=Microsoft Corporation/CN=Microsoft Corporation UEFI CA 2011" in db
+shim-15-7.el7_2.x64.msft2011.efi is trusted because cert "/C=US/ST=Washington/L=Redmond/O=Microsoft Corporation/CN=Microsoft Windows UEFI Driver Publisher" is trusted by "/C=US/ST=Washington/L=Redmond/O=Microsoft Corporation/CN=Microsoft Corporation UEFI CA 2011" in db
