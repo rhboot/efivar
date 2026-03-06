@@ -7,6 +7,54 @@
 #include "sbchooser.h" // IWYU pragma: keep
 #include <openssl/sha.h>
 
+#include <openssl/err.h>
+
+static void
+debug_print_openssl_errors(void)
+{
+	while (true) {
+		unsigned long err;
+		const char *file = NULL, *func = NULL, *data = NULL;
+		int line = 0;
+		int flags = 0;
+
+		err = ERR_get_error_all(&file, &line, &func, &data, &flags);
+		if (err == 0)
+			break;
+		debug("openssl error 0x%016llx %s:%d:%s flags:%d data:\"%s\"",
+		      err, file, line, func, flags, data);
+	}
+}
+
+static void
+free_sig(sig_data_t *sig)
+{
+	if (!sig)
+		return;
+
+	for (size_t i = 0; i < sig->n_certs; i++) {
+		free_cert(sig->certs[i]);
+		sig->certs[i] = NULL;
+	}
+	if (sig->certs) {
+		sig->n_certs = 0;
+		free(sig->certs);
+		sig->certs = NULL;
+	}
+
+	if (sig->p7) {
+		PKCS7_free(sig->p7);
+		sig->p7 = NULL;
+	}
+
+	if (sig->x509s) {
+		sk_X509_free(sig->x509s);
+		sig->x509s = NULL;
+	}
+
+	free(sig);
+}
+
 void
 free_pe(pe_file_t **pe_p)
 {
@@ -42,6 +90,14 @@ free_pe(pe_file_t **pe_p)
 		pe->sha512.datasz = 0;
 	}
 
+	if (pe->sigs) {
+		for (size_t i = 0; i < pe->n_sigs; i++) {
+			free_sig(pe->sigs[i]);
+			pe->sigs[i] = NULL;
+		}
+		free(pe->sigs);
+	}
+
 	memset(pe, 0, sizeof(*pe));
 	free(pe);
 	*pe_p = NULL;
@@ -55,6 +111,162 @@ image_is_64_bit(efi_image_optional_header_union_t *pehdr)
 	    EFI_IMAGE_NT_OPTIONAL_HDR64_MAGIC)
 		return true;
 	return false;
+}
+
+static int
+add_one_cert(sig_data_t *sig, X509 *x509)
+{
+	cert_data_t *cert = NULL;
+	cert_data_t **new_certs = NULL;
+	size_t n_certs = sig->n_certs;
+	int rc;
+	char buf0[1024];
+
+	memset(buf0, 0, sizeof(buf0));
+
+	new_certs = reallocarray(sig->certs, n_certs + 1, sizeof(cert_data_t));
+	if (!new_certs)
+		return -1;
+
+	sig->certs = new_certs;
+
+	cert = calloc(1, sizeof(*cert));
+	if (!cert)
+		return -1;
+
+	cert->free_x509 = false;
+	cert->x509 = x509;
+
+	rc = elaborate_x509_info(cert);
+	if (rc < 0) {
+		memset(cert, 0, sizeof(*cert));
+		free(cert);
+		return rc;
+	}
+
+	new_certs[n_certs] = cert;
+	sig->n_certs += 1;
+	return 0;
+}
+
+static int
+parse_pkcs7(PKCS7 *p7, sig_data_t *sig)
+{
+	STACK_OF(X509) *certs;
+	int rc = 0;
+
+	sig->p7 = p7;
+
+	certs = PKCS7_get0_signers(p7, NULL, 0);
+	if (!certs) {
+		warnx("failed to parse X509 certs");
+		debug_print_openssl_errors();
+		errno = EINVAL;
+		goto err;
+	}
+	sig->x509s = certs;
+
+	for (int i = 0; i < sk_X509_num(certs); i++) {
+		X509 *x = sk_X509_value(certs, i);
+
+		rc = add_one_cert(sig, x);
+		if (rc < 0)
+			goto err;
+	}
+
+	return rc;
+err:
+	return -1;
+}
+
+static int
+add_one_sig(pe_file_t *pe, uint8_t *data, size_t datasz)
+{
+	sig_data_t *sig = NULL;
+	const unsigned char *ppin = (const unsigned char *)data;
+	sig_data_t **sigs = NULL;
+	size_t n_sigs = pe->n_sigs + 1;
+	int rc;
+	char buf0[1024];
+
+	memset(buf0, 0, sizeof(buf0));
+
+	sigs = reallocarray(pe->sigs, n_sigs, sizeof(*sigs));
+	if (!sigs)
+		return -1;
+	pe->sigs = sigs;
+
+	sig = calloc(1, sizeof(*sig));
+	if (!sig)
+		return -1;
+
+	PKCS7 *p7;
+	p7 = d2i_PKCS7(NULL, &ppin, datasz);
+	if (!p7) {
+		warnx("failed to parse X509 signature");
+		debug_print_openssl_errors();
+		errno = EINVAL;
+		goto err;
+	}
+
+	rc = parse_pkcs7(p7, sig);
+	if (rc < 0) {
+		debug("parsing pkcs7 data failed");
+		goto err;
+	}
+
+	sigs[pe->n_sigs] = sig;
+	pe->n_sigs = n_sigs;
+
+	return 0;
+err:
+	if (p7) {
+		debug("Freeing PKCS7_SIGNED %p", p7);
+		PKCS7_free(p7);
+		p7 = NULL;
+	}
+
+	free(sig);
+	return -1;
+}
+
+static int
+parse_sigs(pe_file_t *pe)
+{
+	int rc = 0;
+	uintptr_t pos = 0;
+	uintptr_t dd = (uintptr_t)(pe->map) + pe->ctx.sec_dir->virtual_address;
+
+	while (pos < pe->ctx.sec_dir->size) {
+		win_certificate_header_t *wincert = (win_certificate_header_t *)(dd + pos);
+		win_certificate_pkcs_signed_data_t *pkcs7 = NULL;
+		size_t data_len;
+
+		debug("win_certificate_t length:%"PRIu32" (0x%08"PRIx32") revision:0x%04"PRIx16" type:0x%04"PRIx16,
+		      wincert->length, wincert->length, wincert->revision, wincert->cert_type);
+		if (wincert->revision != WIN_CERT_REVISION_2_0) {
+			debug("weird win_cert revision 0x%04"PRIx16, wincert->revision);
+			goto next;
+		}
+
+		if (wincert->cert_type != WIN_CERT_TYPE_PKCS_SIGNED_DATA) {
+			debug("weird win_cert type 0x%04"PRIx16, wincert->cert_type);
+			goto next;
+		}
+
+		data_len = wincert->length - sizeof(*wincert);
+		pkcs7 = (win_certificate_pkcs_signed_data_t *)wincert;
+
+		rc = add_one_sig(pe, pkcs7->data, data_len);
+		if (rc < 0) {
+			warn("adding signature failed");
+			break;
+		}
+next:
+		pos += wincert->length;
+	}
+
+	return rc;
 }
 
 int
@@ -345,6 +557,10 @@ load_pe(sbchooser_context_t *ctx __attribute__((__unused__)),
 		debug("Malformed security header");
 		goto err;
 	}
+
+	rc = parse_sigs(pe);
+	if (rc < 0)
+		goto err;
 
 	rc = generate_authenticode(pe);
 	if (rc < 0)
