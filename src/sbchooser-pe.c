@@ -251,6 +251,20 @@ add_one_cert(sig_data_t *sig, X509 *x509, cert_data_t **worst_cert)
 		*worst_cert = cert;
 	}
 
+	if (!sig->earliest_not_before ||
+	    time_cmp(cert->not_before, sig->earliest_not_before) < 0) {
+		fmt_time(cert->not_before, buf0);
+		debug("setting sig->earliest_not_before to %s", buf0);
+		sig->earliest_not_before = cert->not_before;
+	}
+
+	if (!sig->latest_not_after ||
+	    time_cmp(cert->not_after, sig->latest_not_after) > 0) {
+		fmt_time(cert->not_after, buf0);
+		debug("setting sig->latest_not_after to %s", buf0);
+		sig->latest_not_after = cert->not_after;
+	}
+
 	new_certs[n_certs] = cert;
 	sig->n_certs += 1;
 	return 0;
@@ -345,6 +359,20 @@ add_one_sig(pe_file_t *pe, uint8_t *data, size_t datasz)
 		sig->lowest_md_secbits = worst_cert->md_secbits;
 		sig->lowest_pk_secbits = worst_cert->pk_secbits;
 	}
+
+	if (!pe->earliest_not_before ||
+	    time_cmp(pe->earliest_not_before, sig->earliest_not_before) > 0) {
+		pe->earliest_not_before = sig->earliest_not_before;
+	}
+	fmt_time(pe->earliest_not_before, buf0);
+	debug("set pe->earliest_not_before to %s", buf0);
+
+	if (!pe->latest_not_after ||
+	    time_cmp(pe->latest_not_after, sig->latest_not_after) < 0) {
+		pe->latest_not_after = sig->latest_not_after;
+	}
+	fmt_time(pe->latest_not_after, buf0);
+	debug("set pe->latest_not_after to %s", buf0);
 
 	sigs[pe->n_sigs] = sig;
 	pe->n_sigs = n_sigs;
@@ -911,6 +939,16 @@ update_pe_security(sbchooser_context_t *ctx, pe_file_t *pe)
 			if (sig->lowest_pk_secbits < lowest_pk_secbits) {
 				lowest_pk_secbits = sig->lowest_pk_secbits;
 			}
+
+			if (!pe->earliest_not_before ||
+			    time_cmp(sig->earliest_not_before, pe->earliest_not_before) < 0) {
+				pe->earliest_not_before = sig->earliest_not_before;
+			}
+
+			if (!pe->latest_not_after ||
+			    time_cmp(sig->latest_not_after, pe->latest_not_after) > 0) {
+				pe->latest_not_after = sig->latest_not_after;
+			}
 		}
 	}
 	if (!found_trusted_sig) {
@@ -924,6 +962,73 @@ update_pe_security(sbchooser_context_t *ctx, pe_file_t *pe)
 		lowest_pk_secbits = 0;
 	}
 	pe->secbits = lowest_md_secbits < lowest_pk_secbits ? lowest_md_secbits : lowest_pk_secbits;
+}
+
+static int
+compare_validities(pe_file_t *pe0, pe_file_t *pe1)
+{
+	int rc = 0;
+	char buf0[1024];
+	char buf1[1024];
+	char default_pref[] = "no preference";
+	char *pref;
+
+	/*
+	 * Dunno when this can happen, but always prefer the one that's
+	 * signed if we get this far...
+	 */
+	if (pe0->latest_not_after && !pe1->latest_not_after)
+		return -1;
+	if (!pe0->latest_not_after && pe1->latest_not_after)
+		return 1;
+
+	/*
+	 * prefer the one that has certs expiring the latest
+	 */
+	fmt_time(pe0->latest_not_after, buf0);
+	fmt_time(pe1->latest_not_after, buf1);
+	rc = time_cmp(pe0->latest_not_after, pe1->latest_not_after);
+	if (rc < 0)
+		pref = buf1;
+	else if (rc > 0)
+		pref = buf0;
+	else
+		pref = default_pref;
+
+	debug("finding latest of \"%s\" and \"%s\": %s", buf0, buf1, pref);
+	if (rc < 0)
+		return 1;
+	if (rc > 0)
+		return -1;
+
+	/*
+	 * Dunno when this can happen, but always prefer the one that's
+	 * signed if we get this far...
+	 */
+	if (pe0->earliest_not_before && !pe1->earliest_not_before)
+		return -1;
+	if (!pe0->earliest_not_before && pe1->earliest_not_before)
+		return 1;
+
+	/*
+	 * prefer the one that has certs starting the earliest
+	 */
+	fmt_time(pe0->earliest_not_before, buf0);
+	fmt_time(pe1->earliest_not_before, buf1);
+	rc = time_cmp(pe1->earliest_not_before, pe0->earliest_not_before);
+	if (rc < 0)
+		pref = buf1;
+	else if (rc > 0)
+		pref = buf0;
+	else
+		pref = default_pref;
+
+	debug("finding earliest of \"%s\" and \"%s\": %s", buf0, buf1, pref);
+	if (rc < 0)
+		return 1;
+	if (rc > 0)
+		return -1;
+	return 0;
 }
 
 int
@@ -957,6 +1062,19 @@ pe_cmp(const void *p0, const void *p1)
 	score = pe1->secbits - pe0->secbits;
 	debug("\"%s\" (secbits %"PRIu32") vs \"%s\" (secbits %"PRIu32"): %d",
 	      pe0->filename, pe0->secbits, pe1->filename, pe1->secbits, score);
+	if (score != 0)
+		return score;
+
+	debug("security strength is equal; comparing validities");
+	score = compare_validities(pe0, pe1);
+	if (score < 0) {
+		debug("prefer \"%s\"", pe1->filename);
+	} else if (score > 0) {
+		debug("prefer \"%s\"", pe0->filename);
+	} else {
+		debug("no preference");
+		return strcmp(pe0->filename, pe1->filename);
+	}
 	return score;
 }
 
