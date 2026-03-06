@@ -216,7 +216,7 @@ update_cert_trust(sbchooser_context_t *ctx, cert_data_t *cert)
 }
 
 static int
-add_one_cert(sig_data_t *sig, X509 *x509)
+add_one_cert(sig_data_t *sig, X509 *x509, cert_data_t **worst_cert)
 {
 	cert_data_t *cert = NULL;
 	cert_data_t **new_certs = NULL;
@@ -246,13 +246,18 @@ add_one_cert(sig_data_t *sig, X509 *x509)
 		return rc;
 	}
 
+	if (!worst_cert || !*worst_cert ||
+	    cert_sec_cmp(cert, *worst_cert) < 0) {
+		*worst_cert = cert;
+	}
+
 	new_certs[n_certs] = cert;
 	sig->n_certs += 1;
 	return 0;
 }
 
 static int
-parse_pkcs7(PKCS7 *p7, sig_data_t *sig)
+parse_pkcs7(PKCS7 *p7, sig_data_t *sig, cert_data_t **worst_cert)
 {
 	STACK_OF(X509) *certs;
 	int rc = 0;
@@ -271,7 +276,7 @@ parse_pkcs7(PKCS7 *p7, sig_data_t *sig)
 	for (int i = 0; i < sk_X509_num(certs); i++) {
 		X509 *x = sk_X509_value(certs, i);
 
-		rc = add_one_cert(sig, x);
+		rc = add_one_cert(sig, x, worst_cert);
 		if (rc < 0)
 			goto err;
 	}
@@ -281,7 +286,7 @@ err:
 	return -1;
 }
 
-static void __attribute__((__unused__))
+static void
 update_sig_trust(sbchooser_context_t *ctx, sig_data_t *sig)
 {
 	for (size_t j = 0; j < sig->n_certs; j++) {
@@ -307,6 +312,7 @@ add_one_sig(pe_file_t *pe, uint8_t *data, size_t datasz)
 	sig_data_t **sigs = NULL;
 	size_t n_sigs = pe->n_sigs + 1;
 	int rc;
+	cert_data_t *worst_cert = NULL;
 	char buf0[1024];
 
 	memset(buf0, 0, sizeof(buf0));
@@ -329,10 +335,15 @@ add_one_sig(pe_file_t *pe, uint8_t *data, size_t datasz)
 		goto err;
 	}
 
-	rc = parse_pkcs7(p7, sig);
+	rc = parse_pkcs7(p7, sig, &worst_cert);
 	if (rc < 0) {
 		debug("parsing pkcs7 data failed");
 		goto err;
+	}
+
+	if (worst_cert) {
+		sig->lowest_md_secbits = worst_cert->md_secbits;
+		sig->lowest_pk_secbits = worst_cert->pk_secbits;
 	}
 
 	sigs[pe->n_sigs] = sig;
@@ -881,14 +892,38 @@ update_pe_security(sbchooser_context_t *ctx, pe_file_t *pe)
 	check_dbx_hashes(ctx, pe);
 	check_db_hashes(ctx, pe);
 
+	uint32_t lowest_pk_secbits = 0xffffffffull;
+	uint32_t lowest_md_secbits = 0xffffffffull;
+
+	bool found_trusted_sig = false;
 	for (size_t i = 0; i < pe->n_sigs; i++) {
 		sig_data_t *sig = pe->sigs[i];
 
 		update_sig_trust(ctx, sig);
+
 		if (sig->trusted) {
 			pe->has_trusted_signature = true;
+			found_trusted_sig = true;
+
+			if (sig->lowest_md_secbits < lowest_md_secbits) {
+				lowest_md_secbits = sig->lowest_md_secbits;
+			}
+			if (sig->lowest_pk_secbits < lowest_pk_secbits) {
+				lowest_pk_secbits = sig->lowest_pk_secbits;
+			}
 		}
 	}
+	if (!found_trusted_sig) {
+		pe->secbits = 0;
+		return;
+	}
+	if (lowest_md_secbits == 0xffffffffull) {
+		lowest_md_secbits = 0;
+	}
+	if (lowest_pk_secbits == 0xffffffffull) {
+		lowest_pk_secbits = 0;
+	}
+	pe->secbits = lowest_md_secbits < lowest_pk_secbits ? lowest_md_secbits : lowest_pk_secbits;
 }
 
 int
@@ -896,6 +931,7 @@ pe_cmp(const void *p0, const void *p1)
 {
 	pe_file_t *pe0 = *(pe_file_t **)p0;
 	pe_file_t *pe1 = *(pe_file_t **)p1;
+	int score;
 
 	bool pe0_revoked = is_revoked_by_hash(pe0, NULL);
 	bool pe1_revoked = is_revoked_by_hash(pe1, NULL);
@@ -914,7 +950,14 @@ pe_cmp(const void *p0, const void *p1)
 	uint32_t pe0_hash_secbits = get_highest_hash_secbits(pe0);
 	uint32_t pe1_hash_secbits = get_highest_hash_secbits(pe1);
 
-	return pe1_hash_secbits - pe0_hash_secbits;
+	score = pe1_hash_secbits - pe0_hash_secbits;
+	if (score != 0)
+		return score;
+
+	score = pe1->secbits - pe0->secbits;
+	debug("\"%s\" (secbits %"PRIu32") vs \"%s\" (secbits %"PRIu32"): %d",
+	      pe0->filename, pe0->secbits, pe1->filename, pe1->secbits, score);
+	return score;
 }
 
 // vim:fenc=utf-8:tw=75:noet
