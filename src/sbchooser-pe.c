@@ -25,6 +25,22 @@ free_pe(pe_file_t **pe_p)
 			warn("munmap(%p, %zu) failed", pe->map, pe->mapsz);
 	}
 
+	if (pe->sha256.data) {
+		free(pe->sha256.data);
+		pe->sha256.data = NULL;
+		pe->sha256.datasz = 0;
+	}
+	if (pe->sha384.data) {
+		free(pe->sha384.data);
+		pe->sha384.data = NULL;
+		pe->sha384.datasz = 0;
+	}
+	if (pe->sha512.data) {
+		free(pe->sha512.data);
+		pe->sha512.data = NULL;
+		pe->sha512.datasz = 0;
+	}
+
 	memset(pe, 0, sizeof(*pe));
 	free(pe);
 	*pe_p = NULL;
@@ -328,6 +344,10 @@ load_pe(sbchooser_context_t *ctx __attribute__((__unused__)),
 		debug("Malformed security header");
 		goto err;
 	}
+
+	rc = generate_authenticode(pe);
+	if (rc < 0)
+		goto err;
 
 	*pe_p = pe;
 	return 0;

@@ -35,6 +35,16 @@ struct pe_file {
 	void *map;		// where the file is mapped
 	size_t mapsz;		// how big the map is
 	pe_image_context_t ctx;	// context built from "loading" it.
+
+	/*
+	 * authenticode hashes of this binary, using different digest
+	 * functions.
+	 */
+	digest_data_t sha256;
+
+	digest_data_t sha384;
+
+	digest_data_t sha512;
 };
 
 /*
@@ -67,5 +77,8 @@ void free_pe(pe_file_t **pe_file);
 int get_section_vma (pe_file_t *pe, unsigned int section_num,
 		     char **basep, size_t *sizep,
 		     efi_image_section_header_t **sectionp);
+
+void fmt_digest(digest_data_t *dgst, char *buf, size_t bufsz);
+int generate_authenticode(pe_file_t *pe);
 
 // vim:fenc=utf-8:tw=75:noet
