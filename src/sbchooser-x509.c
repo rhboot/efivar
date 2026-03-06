@@ -48,6 +48,60 @@ time_cmp(const ASN1_TIME *t0, const ASN1_TIME *t1)
 	return rc;
 }
 
+/*
+ * note that none of this checks any /cryptographic/ properties.  If you've
+ * got two certs with the same issuer, and serial, we'll believe they're
+ * the same, even if one of them is "fake" and has a pubkey that won't
+ * verify signatures from the other one.
+ */
+bool
+is_same_cert(cert_data_t *cert0, cert_data_t *cert1)
+{
+	int rc;
+	char buf0[4096], buf1[4096];
+
+	memset(buf0, 0, 4096);
+	memset(buf1, 0, 4096);
+
+	X509_NAME_oneline(cert0->issuer, buf0, 4095);
+	X509_NAME_oneline(cert1->issuer, buf1, 4095);
+
+	rc = X509_NAME_cmp(cert0->issuer, cert1->issuer);
+	debug("  comparing issuers for \"%s\" and \"%s\": %d", buf0, buf1, rc);
+	if (rc != 0)
+		return false;
+
+	uint64_t a, b;
+
+	ASN1_INTEGER_get_uint64(&a, cert0->serial);
+	ASN1_INTEGER_get_uint64(&b, cert1->serial);
+	rc = ASN1_INTEGER_cmp(cert0->serial, cert1->serial);
+	debug("  serial cmp(0x%"PRIx64",0x%"PRIx64"):%d", a, b, rc);
+	if (!rc)
+		return false;
+
+	return true;
+}
+
+bool
+is_issuing_cert(cert_data_t *subject, cert_data_t *candidate_issuer)
+{
+	int rc;
+	char buf0[4096], buf1[4096];
+
+	memset(buf0, 0, 4096);
+	memset(buf1, 0, 4096);
+
+	X509_NAME_oneline(subject->issuer, buf0, 4095);
+	X509_NAME_oneline(candidate_issuer->subject, buf1, 4095);
+
+	rc = X509_NAME_cmp(subject->issuer, candidate_issuer->subject);
+	debug("  comparing issuers for \"%s\" and \"%s\": %d", buf0, buf1, rc);
+	if (rc == 0)
+		return true;
+	return false;
+}
+
 void
 free_cert(cert_data_t *cert)
 {

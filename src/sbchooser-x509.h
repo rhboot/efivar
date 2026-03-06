@@ -51,6 +51,18 @@ void free_cert(cert_data_t *cert);
 int elaborate_x509_info(cert_data_t *cert);
 
 /*
+ * Returns true if these certs have the same issuer and serial number.
+ * There's no cryptography here.
+ */
+bool is_same_cert(cert_data_t *cert0, cert_data_t *cert1);
+
+/*
+ * returns true if the subject issuer name matches the candidate issuer
+ * name.  There's no cryptography here.
+ */
+bool is_issuing_cert(cert_data_t *subject, cert_data_t *candidate_issuer);
+
+/*
  * Format an ASN1_TIME * into the buffer
  */
 void fmt_time(const ASN1_TIME *asn1, char buf[1024]);
