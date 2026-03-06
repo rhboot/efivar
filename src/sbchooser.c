@@ -309,6 +309,11 @@ main(int argc, char *argv[])
 		} else {
 			debug("PE \"%s\" is not trusted by hash", pe->filename);
 		}
+
+		debug("PE \"%s\" score 0x%"PRIx32, pe->filename, pe->secbits);
+		if (pe->secbits != 0) {
+			printf("%s\n", pe->filename);
+		}
 	}
 
 	clean_up_context(&ctx);
