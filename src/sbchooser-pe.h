@@ -30,6 +30,31 @@ typedef struct pe_image_context {
 	efi_image_data_directory_t *sec_dir; // security directory
 } pe_image_context_t;
 
+struct sig_data {
+	/*
+	 * Stuff from OpenSSL that we need to free later.
+	 */
+	PKCS7 *p7;
+	/*
+	 * This is procured with PKCS7_get0_signers(), which
+	 * ossl-guide-libraries-introduction(7ossl) claims means the p7
+	 * object still owns it, and it should get freed when we free that.
+	 *
+	 * This doesn't actually happen - the contents get freed, but
+	 * there's still 128 bytes of overhead that got allocated.
+	 *
+	 * openssl/apps/smime.c frees these with sk_X509_free().  That
+	 * seems to work, and valgrind like it just fine, but I can't find
+	 * any documentation of that at all.
+	 */
+	STACK_OF(X509) *x509s;
+
+	size_t n_certs;
+	cert_data_t **certs;
+};
+
+typedef struct sig_data sig_data_t;
+
 struct pe_file {
 	char *filename;		// for display later
 	void *map;		// where the file is mapped
@@ -51,6 +76,12 @@ struct pe_file {
 	digest_data_t sha512;
 	bool sha512_revoked;
 	bool sha512_trusted;
+
+	/*
+	 * each authenticode signature found on this binary
+	 */
+	size_t n_sigs;
+	sig_data_t **sigs;
 };
 
 /*
