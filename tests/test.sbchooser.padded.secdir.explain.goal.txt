@@ -1,0 +1,2 @@
+shim-16.1-6.x64.onesig.efi is trusted because cert "/C=US/ST=Washington/L=Redmond/O=Microsoft Corporation/CN=Microsoft Windows UEFI Driver Publisher" is trusted by "/C=US/ST=Washington/L=Redmond/O=Microsoft Corporation/CN=Microsoft Corporation UEFI CA 2011" in db
+shim-16.1-6.x64.onesig.efi is trusted because cert "/C=US/ST=Washington/L=Redmond/O=Microsoft Corporation/CN=Microsoft Windows UEFI Driver Publisher" is trusted by "/C=US/ST=Washington/L=Redmond/O=Microsoft Corporation/CN=Microsoft Corporation UEFI CA 2011" in db
