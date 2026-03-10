@@ -416,12 +416,22 @@ parse_sigs(pe_file_t *pe)
 	uintptr_t pos = 0;
 	uintptr_t dd = (uintptr_t)(pe->map) + pe->ctx.sec_dir->virtual_address;
 
+	debug("security directory is at %p + 0x%p (%p)", pe->map,
+	      (void *)(uintptr_t)pe->ctx.sec_dir->virtual_address, (void *)dd);
 	while (pos < pe->ctx.sec_dir->size) {
 		win_certificate_header_t *wincert = (win_certificate_header_t *)(dd + pos);
 		win_certificate_pkcs_signed_data_t *pkcs7 = NULL;
 		size_t data_len;
 
-		debug("win_certificate_t length:%"PRIu32" (0x%08"PRIx32") revision:0x%04"PRIx16" type:0x%04"PRIx16,
+		if (pe->ctx.sec_dir->size - pos < sizeof(*wincert)) {
+			debug("secdir is %d bytes long, ignoring",
+			      pe->ctx.sec_dir->size - pos);
+			break;
+		}
+
+		debug("win_certificate_t at pos:0x%"PRIx32" (0x%"PRIx32") ",
+		      pos, pe->ctx.sec_dir->virtual_address + pos);
+		debug("length:%"PRIu32" (0x%08"PRIx32") revision:0x%04"PRIx16" type:0x%04"PRIx16,
 		      wincert->length, wincert->length, wincert->revision, wincert->cert_type);
 		if (wincert->revision != WIN_CERT_REVISION_2_0) {
 			debug("weird win_cert revision 0x%04"PRIx16, wincert->revision);
@@ -442,6 +452,8 @@ parse_sigs(pe_file_t *pe)
 			break;
 		}
 next:
+		if (wincert->length == 0)
+			break;
 		pos += wincert->length;
 	}
 
