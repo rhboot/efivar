@@ -39,12 +39,19 @@ family = $(foreach FAMILY_SUFFIX,$(FAMILY_SUFFIXES),$($(1)_$(FAMILY_SUFFIX)))
 	ln -vfs $@ $@.1
 
 %.abixml : %.so
-	$(ABIDW) --headers-dir $(TOPDIR)/src/include/efivar/ --out-file $@ $^
+	$(ABIDW) \
+		--headers-dir $(TOPDIR)/src/include/efivar/ \
+		--no-show-locs \
+		--no-architecture \
+		--type-id-style hash \
+		--out-file $@ $^
 	@sed -i -s 's,$(TOPDIR)/,,g' $@
 
 %.abicheck : %.so
 	$(ABIDIFF) \
 		--suppr abignore \
+		--no-show-locs \
+		--no-architecture \
 		--headers-dir2 $(TOPDIR)/src/include/efivar/ \
 		$(patsubst %.so,%.abixml,$<) \
 		$<

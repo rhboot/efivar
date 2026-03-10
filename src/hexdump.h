@@ -3,8 +3,7 @@
  * libefivar - library for the manipulation of EFI variables
  * Copyright 2018-2020 Peter M. Jones <pjones@redhat.com>
  */
-#ifndef STATIC_HEXDUMP_H
-#define STATIC_HEXDUMP_H
+#pragma once
 
 #include <ctype.h>
 #include <inttypes.h>
@@ -150,7 +149,5 @@ hexdumpat(uint8_t *data, unsigned long size, size_t at)
 {
 	fhexdumpf(stdout, "", data, size, at);
 }
-
-#endif /* STATIC_HEXDUMP_H */
 
 // vim:fenc=utf-8:tw=75:noet

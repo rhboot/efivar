@@ -16,7 +16,22 @@ TESTS = test.dmpstore.export \
 	test.esl.sha256.removal.descending \
 	test.esl.sha256.addition.unsorted \
 	test.esl.cert.addition \
-	test.esl.cert.removal
+	test.esl.cert.removal \
+	test.sbchooser.sha512.vs.sha256 \
+	test.sbchooser.sha512.vs.sha256.explain \
+	test.sbchooser.sha512.vs.untrusted \
+	test.sbchooser.sha512.vs.untrusted.explain \
+	test.sbchooser.sha512.vs.sha256.vs.dbx \
+	test.sbchooser.sha512.vs.sha256.vs.dbx.explain \
+	test.sbchooser.sha512.vs.db \
+	test.sbchooser.sha512.vs.db.explain \
+	test.sbchooser.db.vs.dbx \
+	test.sbchooser.db.vs.dbx.explain \
+	test.sbchooser.identical.secbits \
+	test.sbchooser.identical.secbits.explain \
+	test.sbchooser.first.sig.only \
+	test.sbchooser.first.sig.only.explain \
+	test.sbchooser.padded.secdir.explain \
 
 all: clean $(TESTS)
 
@@ -27,15 +42,19 @@ V ?= 0
 ifeq ($(V),0)
         quiet=@
         rmverbose=
+        makequiet=--quiet
 else
         quiet=
         rmverbose=-v
+        makequiet=
 endif
 ifeq ($(V),2)
         loud=-vvvv
 else
         loud=
 endif
+
+MALLOC_PERTURB_=$(shell echo $$(($${RANDOM} % 128)))
 
 EFIVAR ?= $(VALGRIND) $(TOPDIR)/src/efivar $(loud)
 EFISECDB ?= $(VALGRIND) $(TOPDIR)/src/efisecdb $(loud)
@@ -255,7 +274,7 @@ test.esl.cert.addition.esl.result:
 
 test.esl.cert.addition:
 	$(quiet)echo testing ESL entry addition with x509 cert
-	$(quiet)$(MAKE) test.esl.cert.addition.esl.result.txt test.esl.cert.addition.esl.goal.txt
+	$(quiet)$(MAKE) $(makequiet) test.esl.cert.addition.esl.result.txt test.esl.cert.addition.esl.goal.txt
 	$(quiet)if ! cmp test.esl.cert.addition.esl.goal test.esl.cert.addition.esl.result ; then \
 		diff -U 200 test.esl.cert.addition.esl.goal.txt test.esl.cert.addition.esl.result.txt ; \
 		exit 1 ; \
@@ -272,13 +291,365 @@ test.esl.cert.removal.esl.result:
 
 test.esl.cert.removal:
 	$(quiet)echo testing ESL entry removal with x509 cert
-	$(quiet)$(MAKE) test.esl.cert.removal.esl.goal.txt test.esl.cert.removal.esl.result.txt
+	$(quiet)$(MAKE) $(makequiet) test.esl.cert.removal.esl.goal.txt test.esl.cert.removal.esl.result.txt
 	$(quiet)if ! cmp test.esl.cert.removal.esl.goal test.esl.cert.removal.esl.result ; then \
 		diff -U 200 test.esl.cert.removal.esl.goal.txt test.esl.cert.removal.esl.result.txt ; \
 		exit 1 ; \
 	fi
 	$(quiet)cmp test.esl.cert.removal.esl.goal test.esl.cert.removal.esl.result
 	$(quiet)rm -f test.esl.cert.removal.esl.result
+	$(quiet)echo passed
+
+test.sbchooser.sha512.vs.sha256.result:
+	$(quiet)ls -1 shim-13-0.2.fedora.x64.nosigs.efi \
+		      shim-15-7.el7_2.x64.nosigs.efi \
+		      shim-13-0.2.fedora.x64.nosigs.efi \
+		      shim-15-7.el7_2.x64.nosigs.efi \
+		| sort -R | MALLOC_PERTURB_=$(MALLOC_PERTURB_) LD_LIBRARY_PATH=../src \
+			    ../src/sbchooser -d db.msft2011 \
+					     -d db.msft2023 \
+					     -d db.shim-15-7.el7_2.x64.sha512 \
+					     -d db.shim-13-0.2.fedora.x64.sha256 \
+					     --no-system-dbx \
+		> "$@"
+
+test.sbchooser.sha512.vs.sha256:
+	$(quiet)echo testing sbchooser sorting: sha512 db vs sha256 db
+	$(quiet)$(MAKE) $(makequiet) test.sbchooser.sha512.vs.sha256.result
+	$(quiet)if ! cmp test.sbchooser.sha512.vs.sha256.goal.txt test.sbchooser.sha512.vs.sha256.result ; then \
+		diff -U 200 test.sbchooser.sha512.vs.sha256.goal.txt test.sbchooser.sha512.vs.sha256.result ; \
+		exit 1 ; \
+	fi
+	$(quiet)cmp test.sbchooser.sha512.vs.sha256.goal.txt test.sbchooser.sha512.vs.sha256.result
+	$(quiet)rm -f test.sbchooser.sha512.vs.sha256.result
+	$(quiet)echo passed
+
+test.sbchooser.sha512.vs.untrusted.result:
+	$(quiet)ls -1 shim-13-0.2.fedora.x64.nosigs.efi \
+		      shim-15-7.el7_2.x64.nosigs.efi \
+		      shim-13-0.2.fedora.x64.nosigs.efi \
+		      shim-15-7.el7_2.x64.nosigs.efi \
+		| sort -R | MALLOC_PERTURB_=$(MALLOC_PERTURB_) LD_LIBRARY_PATH=../src \
+			    ../src/sbchooser -d db.msft2011 \
+					     -d db.msft2023 \
+					     -d db.shim-15-7.el7_2.x64.sha512 \
+					     --no-system-dbx \
+		> "$@"
+
+test.sbchooser.sha512.vs.untrusted:
+	$(quiet)echo testing sbchooser sorting: sha512 db vs untrusted
+	$(quiet)$(MAKE) $(makequiet) test.sbchooser.sha512.vs.untrusted.result
+	$(quiet)if ! cmp test.sbchooser.sha512.vs.untrusted.goal.txt test.sbchooser.sha512.vs.untrusted.result ; then \
+		diff -U 200 test.sbchooser.sha512.vs.untrusted.goal.txt test.sbchooser.sha512.vs.untrusted.result ; \
+		exit 1 ; \
+	fi
+	$(quiet)cmp test.sbchooser.sha512.vs.untrusted.goal.txt test.sbchooser.sha512.vs.untrusted.result
+	$(quiet)rm -f test.sbchooser.sha512.vs.untrusted.result
+	$(quiet)echo passed
+
+test.sbchooser.sha512.vs.sha256.vs.dbx.result:
+	$(quiet)ls -1 shim-13-0.2.fedora.x64.nosigs.efi \
+		      shim-15-7.el7_2.x64.nosigs.efi \
+		      shim-13-0.2.fedora.x64.nosigs.efi \
+		      shim-15-7.el7_2.x64.nosigs.efi \
+		| sort -R | MALLOC_PERTURB_=$(MALLOC_PERTURB_) LD_LIBRARY_PATH=../src \
+			    ../src/sbchooser -d db.msft2011 \
+					     -d db.msft2023 \
+					     -d db.shim-15-7.el7_2.x64.sha512 \
+					     -d db.shim-13-0.2.fedora.x64.sha256 \
+					     -x db.shim-13-0.2.fedora.x64.sha256 \
+		> "$@"
+
+test.sbchooser.sha512.vs.sha256.vs.dbx:
+	$(quiet)echo testing sbchooser sorting: sha512 db vs sha256 db vs dbx
+	$(quiet)$(MAKE) $(makequiet) test.sbchooser.sha512.vs.sha256.vs.dbx.result
+	$(quiet)if ! cmp test.sbchooser.sha512.vs.sha256.vs.dbx.goal.txt test.sbchooser.sha512.vs.sha256.vs.dbx.result ; then \
+		diff -U 200 test.sbchooser.sha512.vs.sha256.vs.dbx.goal.txt test.sbchooser.sha512.vs.sha256.vs.dbx.result ; \
+		exit 1 ; \
+	fi
+	$(quiet)cmp test.sbchooser.sha512.vs.sha256.vs.dbx.goal.txt test.sbchooser.sha512.vs.sha256.vs.dbx.result
+	$(quiet)rm -f test.sbchooser.sha512.vs.sha256.vs.dbx.result
+	$(quiet)echo passed
+
+test.sbchooser.sha512.vs.db.result:
+	$(quiet)ls -1 shim-13-0.2.fedora.x64.nosigs.efi \
+		      shim-15-7.el7_2.x64.msft2011.efi \
+		      shim-13-0.2.fedora.x64.nosigs.efi \
+		      shim-15-7.el7_2.x64.msft2011.efi \
+		| sort -R | MALLOC_PERTURB_=$(MALLOC_PERTURB_) LD_LIBRARY_PATH=../src \
+			    ../src/sbchooser -d db.msft2011 \
+					     -d db.shim-13-0.2.fedora.x64.sha512 \
+					     --no-system-dbx \
+		> "$@"
+
+test.sbchooser.sha512.vs.db:
+	$(quiet)echo testing sbchooser sorting: sha512 db vs RSA 2K cert in db
+	$(quiet)$(MAKE) $(makequiet) test.sbchooser.sha512.vs.db.result
+	$(quiet)if ! cmp test.sbchooser.sha512.vs.db.goal.txt test.sbchooser.sha512.vs.db.result ; then \
+		diff -U 200 test.sbchooser.sha512.vs.db.goal.txt test.sbchooser.sha512.vs.db.result ; \
+		exit 1 ; \
+	fi
+	$(quiet)cmp test.sbchooser.sha512.vs.db.goal.txt test.sbchooser.sha512.vs.db.result
+	$(quiet)rm -f test.sbchooser.sha512.vs.db.result
+	$(quiet)echo passed
+
+test.sbchooser.db.vs.dbx.result:
+	$(quiet)ls -1 shim-15-7.el7_2.x64.msft2011.efi \
+		      shim-16.1-4.el10.x64.msft2011.msft2023.efi \
+		      shim-15-7.el7_2.x64.msft2011.efi \
+		      shim-16.1-4.el10.x64.msft2011.msft2023.efi \
+		| sort -R | MALLOC_PERTURB_=$(MALLOC_PERTURB_) LD_LIBRARY_PATH=../src \
+			    ../src/sbchooser -d db.msft2023 \
+					     -d db.msft2011 \
+					     -x db.msft2011 \
+		> "$@"
+
+test.sbchooser.db.vs.dbx:
+	$(quiet)echo testing sbchooser sorting: db vs dbx
+	$(quiet)$(MAKE) $(makequiet) test.sbchooser.db.vs.dbx.result
+	$(quiet)if ! cmp test.sbchooser.db.vs.dbx.goal.txt test.sbchooser.db.vs.dbx.result ; then \
+		diff -U 200 test.sbchooser.db.vs.dbx.goal.txt test.sbchooser.db.vs.dbx.result ; \
+		exit 1 ; \
+	fi
+	$(quiet)cmp test.sbchooser.db.vs.dbx.goal.txt test.sbchooser.db.vs.dbx.result
+	$(quiet)rm -f test.sbchooser.db.vs.dbx.result
+	$(quiet)echo passed
+
+test.sbchooser.identical.secbits.result:
+	$(quiet)ls -1 shim-16.1-4.el10.x64.msft2011.efi \
+		      shim-16.1-4.el10.x64.msft2011.msft2023.efi \
+		      shim-16.1-4.el10.x64.msft2023.efi \
+		      shim-16.1-4.el10.x64.msft2011.efi \
+		      shim-16.1-4.el10.x64.msft2011.msft2023.efi \
+		      shim-16.1-4.el10.x64.msft2023.efi \
+		| sort -R | MALLOC_PERTURB_=$(MALLOC_PERTURB_) LD_LIBRARY_PATH=../src \
+			    ../src/sbchooser -d db.msft2023 \
+					     -d db.msft2011 \
+					     -x db.msft2011 \
+		> "$@"
+
+test.sbchooser.identical.secbits:
+	$(quiet)echo testing sbchooser sorting: identical security strength sort order
+	$(quiet)$(MAKE) $(makequiet) test.sbchooser.identical.secbits.result
+	$(quiet)if ! cmp test.sbchooser.identical.secbits.goal.txt test.sbchooser.identical.secbits.result ; then \
+		diff -U 200 test.sbchooser.identical.secbits.goal.txt test.sbchooser.identical.secbits.result ; \
+		exit 1 ; \
+	fi
+	$(quiet)cmp test.sbchooser.identical.secbits.goal.txt test.sbchooser.identical.secbits.result
+	$(quiet)rm -f test.sbchooser.identical.secbits.result
+	$(quiet)echo passed
+
+test.sbchooser.first.sig.only.result:
+	$(quiet)ls -1 shim-16.1-4.el10.x64.msft2011.efi \
+		      shim-16.1-4.el10.x64.msft2011.msft2023.efi \
+		      shim-16.1-4.el10.x64.msft2023.efi \
+		      shim-16.1-4.el10.x64.msft2011.efi \
+		      shim-16.1-4.el10.x64.msft2011.msft2023.efi \
+		      shim-16.1-4.el10.x64.msft2023.efi \
+		| sort -R | MALLOC_PERTURB_=$(MALLOC_PERTURB_) LD_LIBRARY_PATH=../src \
+			    ../src/sbchooser -d db.msft2023 \
+					     --no-system-dbx \
+					     --first-sig-only \
+		> "$@"
+
+test.sbchooser.first.sig.only:
+	$(quiet)echo testing sbchooser sorting with only the first signature
+	$(quiet)$(MAKE) $(makequiet) test.sbchooser.first.sig.only.result
+	$(quiet)if ! cmp test.sbchooser.first.sig.only.goal.txt test.sbchooser.first.sig.only.result ; then \
+		diff -U 200 test.sbchooser.first.sig.only.goal.txt test.sbchooser.first.sig.only.result ; \
+		exit 1 ; \
+	fi
+	$(quiet)cmp test.sbchooser.first.sig.only.goal.txt test.sbchooser.first.sig.only.result
+	$(quiet)rm -f test.sbchooser.first.sig.only.result
+	$(quiet)echo passed
+
+test.sbchooser.sha512.vs.sha256.explain.result:
+	$(quiet)ls -1 shim-13-0.2.fedora.x64.nosigs.efi \
+		      shim-15-7.el7_2.x64.nosigs.efi \
+		      shim-13-0.2.fedora.x64.nosigs.efi \
+		      shim-15-7.el7_2.x64.nosigs.efi \
+		| sort -R | MALLOC_PERTURB_=$(MALLOC_PERTURB_) LD_LIBRARY_PATH=../src \
+			    ../src/sbchooser --explain \
+					     -d db.msft2011 \
+					     -d db.msft2023 \
+					     -d db.shim-15-7.el7_2.x64.sha512 \
+					     -d db.shim-13-0.2.fedora.x64.sha256 \
+					     --no-system-dbx \
+		> "$@"
+
+test.sbchooser.sha512.vs.sha256.explain:
+	$(quiet)echo testing sbchooser explanation: sha512 db vs sha256 db
+	$(quiet)$(MAKE) $(makequiet) test.sbchooser.sha512.vs.sha256.explain.result
+	$(quiet)if ! cmp test.sbchooser.sha512.vs.sha256.explain.goal.txt test.sbchooser.sha512.vs.sha256.explain.result ; then \
+		diff -U 200 test.sbchooser.sha512.vs.sha256.explain.goal.txt test.sbchooser.sha512.vs.sha256.explain.result ; \
+		exit 1 ; \
+	fi
+	$(quiet)cmp test.sbchooser.sha512.vs.sha256.explain.goal.txt test.sbchooser.sha512.vs.sha256.explain.result
+	$(quiet)rm -f test.sbchooser.sha512.vs.sha256.explain.result
+	$(quiet)echo passed
+
+test.sbchooser.sha512.vs.untrusted.explain.result:
+	$(quiet)ls -1 shim-13-0.2.fedora.x64.nosigs.efi \
+		      shim-15-7.el7_2.x64.nosigs.efi \
+		      shim-13-0.2.fedora.x64.nosigs.efi \
+		      shim-15-7.el7_2.x64.nosigs.efi \
+		| sort -R | MALLOC_PERTURB_=$(MALLOC_PERTURB_) LD_LIBRARY_PATH=../src \
+			    ../src/sbchooser --explain \
+					     -d db.msft2011 \
+					     -d db.msft2023 \
+					     -d db.shim-15-7.el7_2.x64.sha512 \
+					     --no-system-dbx \
+		> "$@"
+
+test.sbchooser.sha512.vs.untrusted.explain:
+	$(quiet)echo testing sbchooser explanation: sha512 db vs untrusted
+	$(quiet)$(MAKE) $(makequiet) test.sbchooser.sha512.vs.untrusted.explain.result
+	$(quiet)if ! cmp test.sbchooser.sha512.vs.untrusted.explain.goal.txt test.sbchooser.sha512.vs.untrusted.explain.result ; then \
+		diff -U 200 test.sbchooser.sha512.vs.untrusted.explain.goal.txt test.sbchooser.sha512.vs.untrusted.explain.result ; \
+		exit 1 ; \
+	fi
+	$(quiet)cmp test.sbchooser.sha512.vs.untrusted.explain.goal.txt test.sbchooser.sha512.vs.untrusted.explain.result
+	$(quiet)rm -f test.sbchooser.sha512.vs.untrusted.explain.result
+	$(quiet)echo passed
+
+test.sbchooser.sha512.vs.sha256.vs.dbx.explain.result:
+	$(quiet)ls -1 shim-13-0.2.fedora.x64.nosigs.efi \
+		      shim-15-7.el7_2.x64.nosigs.efi \
+		      shim-13-0.2.fedora.x64.nosigs.efi \
+		      shim-15-7.el7_2.x64.nosigs.efi \
+		| sort -R | MALLOC_PERTURB_=$(MALLOC_PERTURB_) LD_LIBRARY_PATH=../src \
+			    ../src/sbchooser --explain \
+					     -d db.msft2011 \
+					     -d db.msft2023 \
+					     -d db.shim-15-7.el7_2.x64.sha512 \
+					     -d db.shim-13-0.2.fedora.x64.sha256 \
+					     -x db.shim-13-0.2.fedora.x64.sha256 \
+		> "$@"
+
+test.sbchooser.sha512.vs.sha256.vs.dbx.explain:
+	$(quiet)echo testing sbchooser explanation: sha512 db vs sha256 db vs dbx
+	$(quiet)$(MAKE) $(makequiet) test.sbchooser.sha512.vs.sha256.vs.dbx.explain.result
+	$(quiet)if ! cmp test.sbchooser.sha512.vs.sha256.vs.dbx.explain.goal.txt test.sbchooser.sha512.vs.sha256.vs.dbx.explain.result ; then \
+		diff -U 200 test.sbchooser.sha512.vs.sha256.vs.dbx.explain.goal.txt test.sbchooser.sha512.vs.sha256.vs.dbx.explain.result ; \
+		exit 1 ; \
+	fi
+	$(quiet)cmp test.sbchooser.sha512.vs.sha256.vs.dbx.explain.goal.txt test.sbchooser.sha512.vs.sha256.vs.dbx.explain.result
+	$(quiet)rm -f test.sbchooser.sha512.vs.sha256.vs.dbx.explain.result
+	$(quiet)echo passed
+
+test.sbchooser.sha512.vs.db.explain.result:
+	$(quiet)ls -1 shim-13-0.2.fedora.x64.nosigs.efi \
+		      shim-15-7.el7_2.x64.msft2011.efi \
+		      shim-13-0.2.fedora.x64.nosigs.efi \
+		      shim-15-7.el7_2.x64.msft2011.efi \
+		| sort -R | MALLOC_PERTURB_=$(MALLOC_PERTURB_) LD_LIBRARY_PATH=../src \
+			    ../src/sbchooser --explain \
+					     -d db.msft2011 \
+					     -d db.shim-13-0.2.fedora.x64.sha512 \
+					     --no-system-dbx \
+		> "$@"
+
+test.sbchooser.sha512.vs.db.explain:
+	$(quiet)echo testing sbchooser explanation: sha512 db vs RSA 2K cert in db
+	$(quiet)$(MAKE) $(makequiet) test.sbchooser.sha512.vs.db.explain.result
+	$(quiet)if ! cmp test.sbchooser.sha512.vs.db.explain.goal.txt test.sbchooser.sha512.vs.db.explain.result ; then \
+		diff -U 200 test.sbchooser.sha512.vs.db.explain.goal.txt test.sbchooser.sha512.vs.db.explain.result ; \
+		exit 1 ; \
+	fi
+	$(quiet)cmp test.sbchooser.sha512.vs.db.explain.goal.txt test.sbchooser.sha512.vs.db.explain.result
+	$(quiet)rm -f test.sbchooser.sha512.vs.db.explain.result
+	$(quiet)echo passed
+
+test.sbchooser.db.vs.dbx.explain.result:
+	$(quiet)ls -1 shim-15-7.el7_2.x64.msft2011.efi \
+		      shim-16.1-4.el10.x64.msft2011.msft2023.efi \
+		      shim-15-7.el7_2.x64.msft2011.efi \
+		      shim-16.1-4.el10.x64.msft2011.msft2023.efi \
+		| sort -R | MALLOC_PERTURB_=$(MALLOC_PERTURB_) LD_LIBRARY_PATH=../src \
+			    ../src/sbchooser --explain \
+					     -d db.msft2023 \
+					     -d db.msft2011 \
+					     -x db.msft2011 \
+		> "$@"
+
+test.sbchooser.db.vs.dbx.explain:
+	$(quiet)echo testing sbchooser explanation: db vs dbx
+	$(quiet)$(MAKE) $(makequiet) test.sbchooser.db.vs.dbx.explain.result
+	$(quiet)if ! cmp test.sbchooser.db.vs.dbx.explain.goal.txt test.sbchooser.db.vs.dbx.explain.result ; then \
+		diff -U 200 test.sbchooser.db.vs.dbx.explain.goal.txt test.sbchooser.db.vs.dbx.explain.result ; \
+		exit 1 ; \
+	fi
+	$(quiet)cmp test.sbchooser.db.vs.dbx.explain.goal.txt test.sbchooser.db.vs.dbx.explain.result
+	$(quiet)rm -f test.sbchooser.db.vs.dbx.explain.result
+	$(quiet)echo passed
+
+test.sbchooser.identical.secbits.explain.result:
+	$(quiet)ls -1 shim-16.1-4.el10.x64.msft2011.efi \
+		      shim-16.1-4.el10.x64.msft2011.msft2023.efi \
+		      shim-16.1-4.el10.x64.msft2023.efi \
+		      shim-16.1-4.el10.x64.msft2011.efi \
+		      shim-16.1-4.el10.x64.msft2011.msft2023.efi \
+		      shim-16.1-4.el10.x64.msft2023.efi \
+		| sort -R | MALLOC_PERTURB_=$(MALLOC_PERTURB_) LD_LIBRARY_PATH=../src \
+			    ../src/sbchooser --explain \
+					     -d db.msft2023 \
+					     -d db.msft2011 \
+					     -x db.msft2011 \
+		> "$@"
+
+test.sbchooser.identical.secbits.explain:
+	$(quiet)echo testing sbchooser explanation: identical security strength sort order
+	$(quiet)$(MAKE) $(makequiet) test.sbchooser.identical.secbits.explain.result
+	$(quiet)if ! cmp test.sbchooser.identical.secbits.explain.goal.txt test.sbchooser.identical.secbits.explain.result ; then \
+		diff -U 200 test.sbchooser.identical.secbits.explain.goal.txt test.sbchooser.identical.secbits.explain.result ; \
+		exit 1 ; \
+	fi
+	$(quiet)cmp test.sbchooser.identical.secbits.explain.goal.txt test.sbchooser.identical.secbits.explain.result
+	$(quiet)rm -f test.sbchooser.identical.secbits.explain.result
+	$(quiet)echo passed
+
+test.sbchooser.first.sig.only.explain.result:
+	$(quiet)ls -1 shim-16.1-4.el10.x64.msft2011.efi \
+		      shim-16.1-4.el10.x64.msft2011.msft2023.efi \
+		      shim-16.1-4.el10.x64.msft2023.efi \
+		      shim-16.1-4.el10.x64.msft2011.efi \
+		      shim-16.1-4.el10.x64.msft2011.msft2023.efi \
+		      shim-16.1-4.el10.x64.msft2023.efi \
+		| sort -R | MALLOC_PERTURB_=$(MALLOC_PERTURB_) LD_LIBRARY_PATH=../src \
+			    ../src/sbchooser --explain \
+					     -d db.msft2023 \
+					     --no-system-dbx \
+					     --first-sig-only \
+		> "$@"
+
+test.sbchooser.first.sig.only.explain:
+	$(quiet)echo testing sbchooser explanation with only the first signature
+	$(quiet)$(MAKE) $(makequiet) test.sbchooser.first.sig.only.explain.result
+	$(quiet)if ! cmp test.sbchooser.first.sig.only.explain.goal.txt test.sbchooser.first.sig.only.explain.result ; then \
+		diff -U 200 test.sbchooser.first.sig.only.explain.goal.txt test.sbchooser.first.sig.only.explain.result ; \
+		exit 1 ; \
+	fi
+	$(quiet)cmp test.sbchooser.first.sig.only.explain.goal.txt test.sbchooser.first.sig.only.explain.result
+	$(quiet)rm -f test.sbchooser.first.sig.only.explain.result
+	$(quiet)echo passed
+
+test.sbchooser.padded.secdir.explain.result:
+	$(quiet)ls -1 shim-16.1-6.x64.onesig.efi shim-16.1-6.x64.onesig.efi \
+		| sort -R | MALLOC_PERTURB_=$(MALLOC_PERTURB_) LD_LIBRARY_PATH=../src \
+			    ../src/sbchooser --explain \
+					     -d db.msft2011 \
+					     --no-system-dbx \
+		> "$@"
+
+test.sbchooser.padded.secdir.explain:
+	$(quiet)echo testing sbchooser explanation with a padded security directory
+	$(quiet)$(MAKE) $(makequiet) test.sbchooser.padded.secdir.explain.result
+	$(quiet)if ! cmp test.sbchooser.padded.secdir.explain.goal.txt test.sbchooser.padded.secdir.explain.result ; then \
+		diff -U 200 test.sbchooser.padded.secdir.explain.goal.txt test.sbchooser.padded.secdir.explain.result ; \
+		exit 1 ; \
+	fi
+	$(quiet)cmp test.sbchooser.padded.secdir.explain.goal.txt test.sbchooser.padded.secdir.explain.result
+	$(quiet)rm -f test.sbchooser.padded.secdir.explain.result
 	$(quiet)echo passed
 
 .PHONY: all clean $(TESTS)

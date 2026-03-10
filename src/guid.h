@@ -3,8 +3,7 @@
  * libefivar - library for the manipulation of EFI variables
  * Copyright 2012-2013 Red Hat, Inc.
  */
-#ifndef LIBEFIVAR_GUID_H
-#define LIBEFIVAR_GUID_H 1
+#pragma once
 
 #include <endian.h>
 #include <errno.h>
@@ -216,7 +215,5 @@ efi_str_to_guid_(const char *s, efi_guid_t *guid)
 		efi_error("text_to_guid(\"%s\",...)", s);
 	return rc;
 }
-
-#endif /* LIBEFIVAR_GUID */
 
 // vim:fenc=utf-8:tw=75:noet

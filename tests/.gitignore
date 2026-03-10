@@ -1,7 +1,7 @@
 !*.cer
 !*.esl
 *.esl.txt
-*.result.*
+*.result*
 !*.var
 *.export.var
 test.*.result.var

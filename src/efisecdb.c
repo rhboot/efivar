@@ -4,9 +4,8 @@
  * Copyright Peter Jones <pjones@redhat.com>
  * Copyright Red Hat, Inc.
  */
-#include "fix_coverity.h"
+#include "fix_coverity.h" // IWYU pragma: keep
 
-#include "linux.h"
 #include <err.h>
 #include <errno.h>
 #include <fcntl.h>
@@ -38,17 +37,22 @@ struct hash_param {
 
 static struct hash_param hash_params[] = {
 	{.name = "sha512",
-	 .algorithm = SHA512,
+	 .algorithm = EFI_SECDB_TYPE_SHA512,
 	 .size = 64,
 	 .def = false,
 	},
+	{.name = "sha384",
+	 .algorithm = EFI_SECDB_TYPE_SHA384,
+	 .size = 48,
+	 .def = false,
+	},
 	{.name = "sha256",
-	 .algorithm = SHA256,
+	 .algorithm = EFI_SECDB_TYPE_SHA256,
 	 .size = 32,
 	 .def = true,
 	},
 	{.name = "sha1",
-	 .algorithm = SHA1,
+	 .algorithm = EFI_SECDB_TYPE_SHA1,
 	 .size = 20,
 	 .def = false,
 	},
@@ -145,7 +149,7 @@ usage(int status)
 		"  -a, --add                 following hashes or certs are to be added (default)\n"
 		"  -r, --remove              following hashes or certs are to be removed\n"
 		"  -g, --owner-guid=<GUID>   following added entries use GUID as the owner\n"
-		"  -h, --hash=<hash>         hash value to add (\n"
+		"  -h, --hash=<hash>         hash value to add\n"
 		"  -t, --type=<hash-type>    hash type to add (\"help\" lists options)\n"
 		"  -c, --certificate=<file>  certificate file to add\n"
 		"  -L, --list-guids          list well known guids\n",
@@ -394,7 +398,7 @@ main(int argc, char *argv[])
 			      mode == ADD ? "adding" : "removing", datasz);
 			if (mode == ADD)
 				wants_add_actions = true;
-			add_action(&actions, mode, &owner, X509_CERT, data, datasz);
+			add_action(&actions, mode, &owner, EFI_SECDB_TYPE_X509_CERT, data, datasz);
 			break;
 		case 'd':
 			dump = true;

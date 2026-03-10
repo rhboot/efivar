@@ -2,8 +2,7 @@
 /*
  * Copyright 2012-2016 Red Hat, Inc.
  */
-#ifndef _EFIVAR_UCS2_H
-#define _EFIVAR_UCS2_H
+#pragma once
 
 #define ev_bits(val, mask, shift) \
 	(((val) & ((mask) << (shift))) >> (shift))
@@ -229,7 +228,5 @@ utf8_to_ucs2(void *s, ssize_t size, bool terminate, const unsigned char *utf8)
 	}
 	return j;
 };
-
-#endif /* _EFIVAR_UCS2_H */
 
 // vim:fenc=utf-8:tw=75:noet

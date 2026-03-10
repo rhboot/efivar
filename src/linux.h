@@ -4,8 +4,7 @@
  * Copyright 2012-2019 Red Hat, Inc.
  * Copyright (C) 2001 Dell Computer Corporation <Matt_Domsch@dell.com>
  */
-#ifndef _EFIBOOT_LINUX_H
-#define _EFIBOOT_LINUX_H
+#pragma once
 
 #include <stdbool.h>
 #include <stdint.h>
@@ -358,7 +357,5 @@ extern struct dev_probe i2o_parser;
 extern struct dev_probe scsi_parser;
 extern struct dev_probe ata_parser;
 extern struct dev_probe emmc_parser;
-
-#endif /* _EFIBOOT_LINUX_H */
 
 // vim:fenc=utf-8:tw=75:noet

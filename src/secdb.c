@@ -5,7 +5,7 @@
  * Copyright Red Hat, Inc.
  */
 
-#include "efisec.h"
+#include "efisec.h" // IWYU pragma: keep
 #include "efivar/efisec-secdb.h"
 
 /*
@@ -42,7 +42,7 @@ find_secdb_entry(efi_secdb_t *top, efi_secdb_type_t algorithm, size_t datasz)
 	size_t sigsz = datasz + sizeof(efi_guid_t);
 	char *algstr = NULL;
 
-	if (algorithm != X509_CERT)
+	if (algorithm != EFI_SECDB_TYPE_X509_CERT)
 		sigsz = secdb_entry_size_from_type(algorithm);
 
 	efi_guid_to_id_guid(secdb_guid_from_type(algorithm), &algstr);
@@ -54,7 +54,7 @@ find_secdb_entry(efi_secdb_t *top, efi_secdb_type_t algorithm, size_t datasz)
 		efi_secdb_t *candidate = list_entry(pos, efi_secdb_t, list);
 
 		if (candidate->listsz == 0 ||
-		    candidate->algorithm == MAX_SECDB_TYPE ||
+		    candidate->algorithm == EFI_SECDB_TYPE_MAX ||
 		    (candidate->algorithm == algorithm &&
 		     candidate->sigsz == sigsz)) {
 			secdb = candidate;
@@ -75,7 +75,7 @@ alloc_secdb_entry(efi_secdb_t *top,
 	efi_secdb_t *secdb = NULL;
 	size_t sigsz = datasz;
 
-	if (algorithm != X509_CERT)
+	if (algorithm != EFI_SECDB_TYPE_X509_CERT)
 		sigsz = secdb_entry_size_from_type(algorithm);
 
 	debug("allocating new secdb entry alg %d", algorithm);
@@ -108,7 +108,7 @@ find_or_alloc_secdb_entry(efi_secdb_t *top,
 	efi_secdb_t *secdb = NULL;
 	size_t sigsz = datasz;
 
-	if (algorithm != X509_CERT)
+	if (algorithm != EFI_SECDB_TYPE_X509_CERT)
 		sigsz = secdb_entry_size_from_type(algorithm);
 
 	secdb = find_secdb_entry(top, algorithm, datasz);
@@ -140,7 +140,7 @@ efi_secdb_del_entry(efi_secdb_t *top,
 	size_t sigsz = datasz;
 	bool has_owner = false;
 
-	if (algorithm != X509_CERT)
+	if (algorithm != EFI_SECDB_TYPE_X509_CERT)
 		sigsz = secdb_entry_size_from_type(algorithm);
 
 	if (secdb_entry_has_owner_from_type(algorithm, &has_owner) < 0)
@@ -200,7 +200,7 @@ secdb_add_entry_data(efi_secdb_t *secdb,
 	debug("nsigs:%zd -> %zd", secdb->nsigs, secdb->nsigs+1);
 	secdb->nsigs += 1;
 	if (secdb->nsigs == 1 &&
-	    secdb->algorithm == X509_CERT &&
+	    secdb->algorithm == EFI_SECDB_TYPE_X509_CERT &&
 	    secdb->sigsz == sizeof(efi_guid_t)) {
 		debug("secdb->sigsz:%"PRIu32"(0x%"PRIx32") -> %"PRIu32"(0x%"PRIx32") datasz:%"PRIu32"(0x%"PRIx32")",
 		      secdb->sigsz, secdb->sigsz, secdb->sigsz + datasz,
@@ -264,7 +264,7 @@ efi_secdb_add_entry_or_secdb(efi_secdb_t *top,
 			return 0;
 	}
 
-	debug("adding %zd(0x%zd) bytes of data", datasz, datasz);
+	debug("adding %zd(0x%lx) bytes of data", datasz, datasz);
 	secdb_add_entry_data(secdb, owner, data, datasz);
 	if (sort_data && secdb->sigsz) {
 		debug("sorting data %s", sort_descending ? "desc" : "asc");
@@ -483,7 +483,7 @@ secdb_realize_visitor(unsigned int listnum,
 		buf = realloc(state->buf, allocsz);
 		if (!buf) {
 			efi_error("could not allocate %zd bytes", allocsz);
-			return ERROR;
+			return EFI_SECDB_VISITOR_ERROR;
 		}
 		esl = (efi_signature_list_t *)(buf + state->pos);
 		state->buf = buf;
@@ -505,7 +505,7 @@ secdb_realize_visitor(unsigned int listnum,
 		skew = buf - state->buf;
 		if (!buf) {
 			efi_error("could not allocate %zd bytes", allocsz);
-			return ERROR;
+			return EFI_SECDB_VISITOR_ERROR;
 		}
 		memset(buf + state->pos, 0, allocsz - state->pos);
 		esl = (efi_signature_list_t *)((char *)state->esl + skew);
@@ -522,7 +522,7 @@ secdb_realize_visitor(unsigned int listnum,
 	state->pos += esdsz;
 	state->listnum = listnum;
 
-	return CONTINUE;
+	return EFI_SECDB_VISITOR_CONTINUE;
 }
 
 /*
@@ -538,7 +538,7 @@ efi_secdb_realize(efi_secdb_t *secdb, void **out, size_t *outsize)
 	state.esl = (efi_signature_list_t *)state.buf;
 	if (!state.buf) {
 		efi_error("could not allocate %zd bytes", page_size);
-		return ERROR;
+		return EFI_SECDB_VISITOR_ERROR;
 	}
 
 	efi_secdb_visit_entries(secdb, secdb_realize_visitor, &state);
@@ -611,7 +611,7 @@ secdb_visit_entries(efi_secdb_t *secdb, int i,
 	rc = secdb_entry_has_owner_from_type(secdb->algorithm, &has_owner);
 	if (rc < 0) {
 		efi_error("could not determine signature type");
-		return ERROR;
+		return EFI_SECDB_VISITOR_ERROR;
 	}
 	datasz = secdb->sigsz - (has_owner ? sizeof(efi_guid_t) : 0);
 
@@ -627,12 +627,12 @@ secdb_visit_entries(efi_secdb_t *secdb, int i,
 		      &entry->data, &entry->data+datasz, datasz);
 		status = visitor(i, j++, &entry->owner, secdb->algorithm, NULL,
 		                 0, &entry->data, datasz, closure);
-		if (status == ERROR)
-			return ERROR;
-		if (status == BREAK)
-			return BREAK;
+		if (status == EFI_SECDB_VISITOR_ERROR)
+			return EFI_SECDB_VISITOR_ERROR;
+		if (status == EFI_SECDB_VISITOR_BREAK)
+			return EFI_SECDB_VISITOR_BREAK;
 	}
-	return CONTINUE;
+	return EFI_SECDB_VISITOR_CONTINUE;
 }
 
 PUBLIC int
@@ -640,7 +640,7 @@ efi_secdb_visit_entries(efi_secdb_t *top,
 			efi_secdb_visitor_t *visitor,
 			void *closure)
 {
-	efi_secdb_visitor_status_t status = CONTINUE;
+	efi_secdb_visitor_status_t status = EFI_SECDB_VISITOR_CONTINUE;
 	list_t *pos = NULL, *tmp = NULL;
 	int i = 0;
 
@@ -652,9 +652,9 @@ efi_secdb_visit_entries(efi_secdb_t *top,
 		debug("secdb[%d]:%p nsigs:%zu sigsz:%d",
 		      i, secdb, secdb->nsigs, secdb->sigsz);
 		status = secdb_visit_entries(secdb, i++, visitor, closure);
-		if (status == ERROR)
+		if (status == EFI_SECDB_VISITOR_ERROR)
 			return -1;
-		if (status == BREAK)
+		if (status == EFI_SECDB_VISITOR_BREAK)
 			break;
 	}
 	return 0;
@@ -721,12 +721,12 @@ secdb_cmp(const void *ap, const void *bp, void * state UNUSED)
 	a = *(efi_secdb_t **)ap;
 	b = *(efi_secdb_t **)bp;
 
-	if (a->algorithm == MAX_SECDB_TYPE) {
+	if (a->algorithm == EFI_SECDB_TYPE_MAX) {
 		debug("sorting unready data from secdb:%p", a);
 		return -1;
 	}
 
-	if (b->algorithm == MAX_SECDB_TYPE) {
+	if (b->algorithm == EFI_SECDB_TYPE_MAX) {
 		debug("sorting unready data from secdb:%p", b);
 		return 1;
 	}
@@ -748,85 +748,85 @@ secdb_cmp_descending(const void *ap, const void *bp, void * state)
 	return secdb_cmp(bp, ap, state);
 }
 
-const secdb_alg_t PUBLIC efi_secdb_algs_[MAX_SECDB_TYPE] = {
-	[SHA1] = {
+const secdb_alg_t PUBLIC efi_secdb_algs_[EFI_SECDB_TYPE_MAX] = {
+	[EFI_SECDB_TYPE_SHA1] = {
 		.class = HASH,
 		.guid = &efi_guid_sha1,
 		.header_size = 0,
 		.has_owner = true,
 		.size = 20,
 	},
-	[SHA224] = {
+	[EFI_SECDB_TYPE_SHA224] = {
 		.class = HASH,
 		.guid = &efi_guid_sha224,
 		.header_size = 0,
 		.has_owner = true,
 		.size = 28,
 	},
-	[SHA256] = {
+	[EFI_SECDB_TYPE_SHA256] = {
 		.class = HASH,
 		.guid = &efi_guid_sha256,
 		.header_size = 0,
 		.has_owner = true,
 		.size = 32,
 	},
-	[SHA384] = {
+	[EFI_SECDB_TYPE_SHA384] = {
 		.class = HASH,
 		.guid = &efi_guid_sha384,
 		.header_size = 0,
 		.has_owner = true,
 		.size = 48,
 	},
-	[SHA512] = {
+	[EFI_SECDB_TYPE_SHA512] = {
 		.class = HASH,
 		.guid = &efi_guid_sha512,
 		.header_size = 0,
 		.has_owner = true,
 		.size = 64,
 	},
-	[RSA2048] = {
+	[EFI_SECDB_TYPE_RSA2048] = {
 		.class = SIGNATURE,
 		.guid = &efi_guid_rsa2048,
 		.header_size = 0,
 		.has_owner = true,
 		.size = 256,
 	},
-	[RSA2048_SHA1] = {
+	[EFI_SECDB_TYPE_RSA2048_SHA1] = {
 		.class = SIGNATURE,
 		.guid = &efi_guid_rsa2048_sha1,
 		.header_size = 0,
 		.has_owner = true,
 		.size = 256,
 	},
-	[RSA2048_SHA256] = {
+	[EFI_SECDB_TYPE_RSA2048_SHA256] = {
 		.class = SIGNATURE,
 		.guid = &efi_guid_rsa2048_sha256,
 		.header_size = 0,
 		.has_owner = true,
 		.size = 256,
 	},
-	[X509_SHA256] = {
+	[EFI_SECDB_TYPE_X509_SHA256] = {
 		.class = CERTIFICATE_HASH,
 		.guid = &efi_guid_x509_sha256,
 		.header_size = 0,
 		.has_owner = true,
 		.size = 256,
 	},
-	[X509_SHA384] = {
+	[EFI_SECDB_TYPE_X509_SHA384] = {
 		.class = CERTIFICATE_HASH,
 		.guid = &efi_guid_x509_sha384,
 		.header_size = 0,
 		.has_owner = true,
 		.size = 384,
 	},
-	[X509_SHA512] = {
+	[EFI_SECDB_TYPE_X509_SHA512] = {
 		.class = CERTIFICATE_HASH,
 		.guid = &efi_guid_x509_sha512,
 		.header_size = 0,
 		.has_owner = true,
 		.size = 512,
 	},
-	[X509_CERT] = {
+	[EFI_SECDB_TYPE_X509_CERT] = {
 		.class = CERTIFICATE,
 		.guid = &efi_guid_x509_cert,
 		.header_size = 0,

@@ -6,7 +6,8 @@ include $(TOPDIR)/src/include/rules.mk
 include $(TOPDIR)/src/include/defaults.mk
 
 MAN1TARGETS = efisecdb.1 \
-	      efivar.1
+	      efivar.1 \
+	      sbchooser.1
 
 MAN3TARGETS = efi_append_variable.3 \
 	     efi_del_variable.3 \
@@ -41,7 +42,7 @@ MAN3TARGETS = efi_append_variable.3 \
 all : $(MAN1TARGETS) $(MAN3TARGETS)
 
 clean :
-	@rm -f efisecdb.1
+	@rm -f efisecdb.1 sbchooser.1
 
 prep :
 

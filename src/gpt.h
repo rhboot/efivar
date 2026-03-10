@@ -9,9 +9,7 @@
  * Per Intel EFI Specification v1.02
  * http://developer.intel.com/technology/efi/efi.htm
  */
-
-#ifndef _EFIBOOT_GPT_H
-#define _EFIBOOT_GPT_H
+#pragma once
 
 #include <inttypes.h>
 #include "include/efivar/efivar-types.h"
@@ -150,7 +148,5 @@ gpt_disk_get_partition_info (int fd, uint32_t num, uint64_t *start,
 			     uint64_t *size, efi_guid_t *signature,
 			     uint8_t *mbr_type, uint8_t *signature_type,
 			     int ignore_pmbr_error, int logical_sector_size);
-
-#endif /* _EFIBOOT_GPT_H */
 
 // vim:fenc=utf-8:tw=75:noet

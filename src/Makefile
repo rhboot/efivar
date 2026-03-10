@@ -7,8 +7,8 @@ include $(TOPDIR)/src/include/defaults.mk
 
 LIBTARGETS=libefivar.so libefiboot.so libefisec.so
 STATICLIBTARGETS=libefivar.a libefiboot.a libefisec.a
-BINTARGETS=efivar efisecdb thread-test
-STATICBINTARGETS=efivar-static efisecdb-static
+BINTARGETS=efivar efisecdb sbchooser thread-test
+STATICBINTARGETS=efivar-static efisecdb-static sbchooser-static
 PCTARGETS=efivar.pc efiboot.pc efisec.pc
 TARGETS=$(LIBTARGETS) $(BINTARGETS) $(PCTARGETS)
 STATICTARGETS=$(STATICLIBTARGETS) $(STATICBINTARGETS)
@@ -26,6 +26,8 @@ EFIVAR_SOURCES = efivar.c guid.c util.c
 EFIVAR_OBJECTS = $(patsubst %.S,%.o,$(patsubst %.c,%.o,$(EFIVAR_SOURCES)))
 EFISECDB_SOURCES = efisecdb.c guid-symbols.c secdb-dump.c util.c
 EFISECDB_OBJECTS = $(patsubst %.S,%.o,$(patsubst %.c,%.o,$(EFISECDB_SOURCES)))
+SBCHOOSER_SOURCES = sbchooser.c sbchooser-pe.c sbchooser-db.c sbchooser-x509.c authenticode.c error.c
+SBCHOOSER_OBJECTS = $(patsubst %.S,%.o,$(patsubst %.c,%.o,$(SBCHOOSER_SOURCES)))
 GENERATED_SOURCES = include/efivar/efivar-guids.h guid-symbols.c
 MAKEGUIDS_SOURCES = makeguids.c util-makeguids.c
 MAKEGUIDS_OBJECTS = $(patsubst %.S,%.o,$(patsubst %.c,%.o,$(MAKEGUIDS_SOURCES)))
@@ -36,6 +38,7 @@ util-makeguids.c : util.c
 
 ALL_SOURCES=$(LIBEFISEC_SOURCES) $(LIBEFIBOOT_SOURCES) $(LIBEFIVAR_SOURCES) \
 	    $(MAKEGUIDS_SOURCES) $(GENERATED_SOURCES) $(EFIVAR_SOURCES) \
+	    $(EFISECDB_SOURCES) $(SBCHOOSER_SOURCES) \
 	    $(sort $(wildcard include/efivar/*.h))
 
 ifneq ($(MAKECMDGOALS),clean)
@@ -118,12 +121,20 @@ libefisec.so : | libefisec.map
 libefisec.so : private MAP=libefisec.map
 
 efisecdb : $(EFISECDB_OBJECTS) | libefisec.so
-efisecdb : private LIBS=efivar efisec dl
+efisecdb : private LIBS=crypto efivar efisec dl
 
 efisecdb-static : $(EFISECDB_OBJECTS)
 efisecdb-static : $(patsubst %.o,%.static.o,$(LIBEFISEC_OBJECTS) $(LIBEFIVAR_OBJECTS))
 efisecdb-static : | $(GENERATED_SOURCES)
-efisecdb-static : private LIBS=dl
+efisecdb-static : private LIBS=crypto dl
+
+sbchooser : private LIBS=crypto efisec efivar
+sbchooser : $(SBCHOOSER_OBJECTS)
+sbchooser : | $(GENERATED_SOURCES)
+
+sbchooser-static : private LIBS=crypto efisec efivar
+sbchooser-static : $(SBCHOOSER_OBJECTS)
+sbchooser-static : | $(GENERATED_SOURCES)
 
 thread-test : libefivar.so
 # make sure we don't propagate CFLAGS to object files used by 'libefivar.so'

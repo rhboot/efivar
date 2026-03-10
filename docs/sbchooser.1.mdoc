@@ -1,0 +1,227 @@
+.Dd $Mdocdate: Mar 3 2026$
+.Dt SBCHOOSER 1
+.Sh NAME
+.Nm sbchooser
+.Nd Utility to sort bootloaders by trust
+.Nm
+.Sh SYNOPSIS
+.Nm
+.Oo OPTIONS
+.Ek
+.Sh DESCRIPTION
+.Nm
+is a command line utility to determine which of several UEFI bootloaders is
+most preferred based on what certificates it is signed by.  The output is a
+list, one entry per line, of the acceptable loaders, with the best choice
+first.
+
+This utility is meant to be used by system installation and upgrade software,
+in order to choose the most appropriate bootloader to install based on the
+system trust, especially during periods of transition between trust anchors.
+
+When sorting, \fBsbchooser\fR chooses the most preferred binary using the
+following criteria, from highest priority to lowest:
+.Bl -dash
+.It
+binaries hashed directly into DB, according to the security strength of the digest used
+.It
+binaries signed by a certificate in db or chaining to one, sorted by the
+security strength of the signature.  A binary signed by a certificate with 80
+bits of security strength and another signature with a 256-bit security
+strength signature which are both trusted is scored as 80 bits; if only the
+256-bit signature is trusted, it's scored as 256 bits.
+.It
+if all that is equal, it prefers the binary with the latest not_after in the
+certificate chain.
+.It
+if all that is equal, it prefers the binary with the earliest not_before in
+the certificate chain.
+.El
+.Pp
+When an individual signature is scored, it is much the same.  Each
+signature's security strength is computed by checking each X509 certificate
+in its signatures and taking the lowest security strength of any encryption
+algorithm or message digest in use.  That is to say, if an individual
+signature has (for example) if there are 2 X509 certs co-signing a
+signature and one has an RSA-1024 key but the other has an RSA-2048 key,
+it's an RSA-1024 (80-bit) signature.  In comparing signatures, again the
+validity dates are used as a last resort in determining a preference.
+.Sh OPTIONS
+.Bl -tag
+.It Ao Fl d | Fl Fl db Ar db-file Ac
+Load a UEFI trusted key database from \fIdb\-file\fR
+.It Ao Fl D | Fl Fl no-system-db Ac
+Do not load the UEFI trusted key database from this system.
+.It Ao Fl s | Fl Fl system-db Ac
+Load the UEFI trusted key database from this system (default)
+.It Ao Fl f | Fl Fl first-sig-only Ac
+Only consider the first signature on an input file
+.It Ao Fl x | Fl Fl dbx Ar dbx-file Ac
+Load a UEFI revoked key database from \fIdbx\-file\fR
+.It Ao Fl X | Fl Fl no-system-dbx Ac
+Do not load the UEFI revoked key database from this system.
+.It Ao Fl S | Fl Fl system-dbx Ac
+Load the UEFI revoked key database from this system (default)
+.It Ao Fl i | Fl Fl input Ar pe-file Ac
+Load an EFI binary from \fIpe\-file\fR.
+
+By default, if \fB-i\fR is not used, \fBsbchooser\fR reads a list of input files on \fIstandard in\fR.  If \fIpe-file\fR is \fB-\fR, \fBsbchooser\fR will look for input files on \fIstandard in\fR as well as any \fB-i\fR input options.
+.It Ao Fl e | Fl Fl explain Ac
+Instead of producing the normal results, attempt to explain the reason for
+trusting or distrusting each input PE file.
+.It Fl Fl Ec
+All following options are treated as input files.  Can be used with \fB-i -\fR to suppliment \fIstandard in\fR.
+.El
+.Sh EXAMPLES
+In the following examples, the following conventions are observed:
+.Bl -dash
+.It
+An EFI binary with \fB.nosigs.\fR in its name has no signatures.
+.It
+An EFI binary with \fB.msft2011.\fR in its name is signed by the UEFI 2011 certificate.
+.It
+An EFI binary with \fB.msft2023.\fR in its name is signed by the UEFI 2023 certificate.
+.It
+When an EFI binary has more than one signature, the order in the filename is the same as the order of the signatures on the binary.
+.It
+\fBdb.msft2011\fR is a security database containing the UEFI CA 2011 certificate.
+.It
+\fBdb.msft2023\fR is a security database containing the UEFI CA 2023 certificate.
+.It
+Database files of the form \fBdb.shim-15.5.el7.x64.sha256\fR contain a sha256 authenticode sum of \fBshim-15.5.el7.x64.efi\fR.
+.El
+.Ss Choosing which bootloader is most appropriate:
+.Bd -literal
+host:~$ sbchooser -- \\
+                  /usr/lib/shim/shim-13-0.2.fedora.x64.nosigs.efi \\
+                  /usr/lib/shim/shim-15-2.fedora.x64.msft2011.efi \\
+                  /usr/lib/shim/shim-15-7.el7_2.x64.msft2011.efi \\
+                  /usr/lib/shim/shim-15-7.el7_2.x64.nosigs.efi \\
+                  /usr/lib/shim/shim-15.5-1.el9.x64.msft2011.efi \\
+                  /usr/lib/shim/shim-15.5.el7.x64.nosigs.efi \\
+                  /usr/lib/shim/shim-16.1-4.el10.x64.msft2011.efi \\
+                  /usr/lib/shim/shim-16.1-4.el10.x64.msft2011.msft2023.efi \\
+                  /usr/lib/shim/shim-16.1-4.el10.x64.msft2023.efi
+/usr/lib/shim/shim-16.1-4.el10.x64.msft2011.msft2023.efi
+/usr/lib/shim/shim-16.1-4.el10.x64.msft2023.efi
+/usr/lib/shim/shim-16.1-4.el10.x64.msft2011.efi
+/usr/lib/shim/shim-15.5-1.el9.x64.msft2011.efi
+/usr/lib/shim/shim-15-7.el7_2.x64.msft2011.efi
+/usr/lib/shim/shim-15-2.fedora.x64.msft2011.efi
+host:~$ 
+.Ed
+.Ss Choosing which bootloader is most appropriate with local security databases:
+.Bd -literal
+host:~$ sbchooser --db db.msft2023 --dbx db.msft2011 -- \\
+                  /usr/lib/shim/shim-13-0.2.fedora.x64.nosigs.efi \\
+                  /usr/lib/shim/shim-15-2.fedora.x64.msft2011.efi \\
+                  /usr/lib/shim/shim-15-7.el7_2.x64.msft2011.efi \\
+                  /usr/lib/shim/shim-15-7.el7_2.x64.nosigs.efi \\
+                  /usr/lib/shim/shim-15.5-1.el9.x64.msft2011.efi \\
+                  /usr/lib/shim/shim-15.5.el7.x64.nosigs.efi \\
+                  /usr/lib/shim/shim-16.1-4.el10.x64.msft2011.efi \\
+                  /usr/lib/shim/shim-16.1-4.el10.x64.msft2011.msft2023.efi \\
+                  /usr/lib/shim/shim-16.1-4.el10.x64.msft2023.efi
+/usr/lib/shim/shim-16.1-4.el10.x64.msft2011.msft2023.efi
+/usr/lib/shim/shim-16.1-4.el10.x64.msft2023.efi
+host:~$ 
+.Ed
+.Ss Choosing which bootloader is most appropriate with the system trusted database but a local revocation database:
+.Bd -literal
+host:~$ sbchooser --dbx db.msft2023 -- \\
+                  /usr/lib/shim/shim-13-0.2.fedora.x64.nosigs.efi \\
+                  /usr/lib/shim/shim-15-2.fedora.x64.msft2011.efi \\
+                  /usr/lib/shim/shim-15-7.el7_2.x64.msft2011.efi \\
+                  /usr/lib/shim/shim-15-7.el7_2.x64.nosigs.efi \\
+                  /usr/lib/shim/shim-15.5-1.el9.x64.msft2011.efi \\
+                  /usr/lib/shim/shim-15.5.el7.x64.nosigs.efi \\
+                  /usr/lib/shim/shim-16.1-4.el10.x64.msft2011.efi \\
+                  /usr/lib/shim/shim-16.1-4.el10.x64.msft2011.msft2023.efi \\
+                  /usr/lib/shim/shim-16.1-4.el10.x64.msft2023.efi
+/usr/lib/shim/shim-16.1-4.el10.x64.msft2011.msft2023.efi
+/usr/lib/shim/shim-16.1-4.el10.x64.msft2011.efi
+/usr/lib/shim/shim-15.5-1.el9.x64.msft2011.efi
+/usr/lib/shim/shim-15-7.el7_2.x64.msft2011.efi
+/usr/lib/shim/shim-15-2.fedora.x64.msft2011.efi
+host:~$ 
+.Ed
+.Ss Choosing which bootloader is most appropriate with a local trusted database, but only considering the first signature:
+.Bd -literal
+host:~$ sbchooser -f -d db.msft2023 -- \\
+                  /usr/lib/shim/shim-13-0.2.fedora.x64.nosigs.efi \\
+                  /usr/lib/shim/shim-15-2.fedora.x64.msft2011.efi \\
+                  /usr/lib/shim/shim-15-7.el7_2.x64.msft2011.efi \\
+                  /usr/lib/shim/shim-15-7.el7_2.x64.nosigs.efi \\
+                  /usr/lib/shim/shim-15.5-1.el9.x64.msft2011.efi \\
+                  /usr/lib/shim/shim-15.5.el7.x64.nosigs.efi \\
+                  /usr/lib/shim/shim-16.1-4.el10.x64.msft2011.efi \\
+                  /usr/lib/shim/shim-16.1-4.el10.x64.msft2011.msft2023.efi \\
+                  /usr/lib/shim/shim-16.1-4.el10.x64.msft2023.efi
+/usr/lib/shim/shim-16.1-4.el10.x64.msft2023.efi
+host:~$ 
+.Ed
+.Ss Augmenting the system trust database with only msft2011 enrolled:
+.Bd -literal
+host:~$ sbchooser -s -d db.shim-15.5.el7.x64.sha256 -- \\
+                  /usr/lib/shim/shim-13-0.2.fedora.x64.nosigs.efi \\
+                  /usr/lib/shim/shim-15-2.fedora.x64.msft2011.efi \\
+                  /usr/lib/shim/shim-15-7.el7_2.x64.msft2011.efi \\
+                  /usr/lib/shim/shim-15-7.el7_2.x64.nosigs.efi \\
+                  /usr/lib/shim/shim-15.5-1.el9.x64.msft2011.efi \\
+                  /usr/lib/shim/shim-15.5.el7.x64.nosigs.efi \\
+                  /usr/lib/shim/shim-16.1-4.el10.x64.msft2011.efi \\
+                  /usr/lib/shim/shim-16.1-4.el10.x64.msft2011.msft2023.efi \\
+                  /usr/lib/shim/shim-16.1-4.el10.x64.msft2023.efi
+/usr/lib/shim/shim-15.5.el7.x64.nosigs.efi
+/usr/lib/shim/shim-15.5-1.el9.x64.msft2011.efi
+/usr/lib/shim/shim-16.1-4.el10.x64.msft2011.msft2023.efi
+/usr/lib/shim/shim-16.1-4.el10.x64.msft2011.efi
+/usr/lib/shim/shim-15-7.el7_2.x64.msft2011.efi
+/usr/lib/shim/shim-15-2.fedora.x64.msft2011.efi
+host:~$ 
+.Ed
+.Ss Explanation of choosing which bootloader is most appropriate with local security databases:
+.Bd -literal
+host:~$ sbchooser --db db.msft2023 --dbx db.msft2011 --explain -- \\
+                  /usr/lib/shim/shim-13-0.2.fedora.x64.nosigs.efi \\
+                  /usr/lib/shim/shim-15-2.fedora.x64.msft2011.efi \\
+                  /usr/lib/shim/shim-15-7.el7_2.x64.msft2011.efi \\
+                  /usr/lib/shim/shim-15-7.el7_2.x64.nosigs.efi \\
+                  /usr/lib/shim/shim-15.5-1.el9.x64.msft2011.efi \\
+                  /usr/lib/shim/shim-15.5.el7.x64.nosigs.efi \\
+                  /usr/lib/shim/shim-16.1-4.el10.x64.msft2011.efi \\
+                  /usr/lib/shim/shim-16.1-4.el10.x64.msft2011.msft2023.efi \\
+                  /usr/lib/shim/shim-16.1-4.el10.x64.msft2023.efi
+/usr/lib/shim/shim-16.1-4.el10.x64.msft2011.msft2023.efi is trusted because cert "/C=US/ST=Washington/L=Redmond/O=Microsoft Corporation/CN=Microsoft UEFI CA 2023 signer" is trusted by "/C=US/O=Microsoft Corporation/CN=Microsoft UEFI CA 2023" in db
+/usr/lib/shim/shim-16.1-4.el10.x64.msft2023.efi is trusted because cert "/C=US/ST=Washington/L=Redmond/O=Microsoft Corporation/CN=Microsoft UEFI CA 2023 signer" is trusted by "/C=US/O=Microsoft Corporation/CN=Microsoft UEFI CA 2023" in db
+/usr/lib/shim/shim-16.1-4.el10.x64.msft2011.efi is not trusted because cert "/C=US/ST=Washington/L=Redmond/O=Microsoft Corporation/CN=Microsoft Windows UEFI Driver Publisher" is revoked by "/C=US/ST=Washington/L=Redmond/O=Microsoft Corporation/CN=Microsoft Corporation UEFI CA 2011" in dbx
+/usr/lib/shim/shim-15.5-1.el9.x64.msft2011.efi is not trusted because cert "/C=US/ST=Washington/L=Redmond/O=Microsoft Corporation/CN=Microsoft Windows UEFI Driver Publisher" is revoked by "/C=US/ST=Washington/L=Redmond/O=Microsoft Corporation/CN=Microsoft Corporation UEFI CA 2011" in dbx
+/usr/lib/shim/shim-15-7.el7_2.x64.msft2011.efi is not trusted because cert "/C=US/ST=Washington/L=Redmond/O=Microsoft Corporation/CN=Microsoft Windows UEFI Driver Publisher" is revoked by "/C=US/ST=Washington/L=Redmond/O=Microsoft Corporation/CN=Microsoft Corporation UEFI CA 2011" in dbx
+/usr/lib/shim/shim-15-2.fedora.x64.msft2011.efi is not trusted because cert "/C=US/ST=Washington/L=Redmond/O=Microsoft Corporation/CN=Microsoft Windows UEFI Driver Publisher" is revoked by "/C=US/ST=Washington/L=Redmond/O=Microsoft Corporation/CN=Microsoft Corporation UEFI CA 2011" in dbx
+/usr/lib/shim/shim-13-0.2.fedora.x64.nosigs.efi is not trusted because no certs or hashes trust it
+/usr/lib/shim/shim-15-7.el7_2.x64.nosigs.efi is not trusted because no certs or hashes trust it
+/usr/lib/shim/shim-15.5.el7.x64.nosigs.efi is not trusted because no certs or hashes trust it
+host:~$ 
+.Ed
+.Sh STANDARDS
+.Rs
+.%A UEFI Specification Working Group
+.%B Unified Extensible Firmware Interface (UEFI) Specification Version 2.11
+.%I UEFI Forum
+.%D March 2026
+.%U https://uefi.org/specifications\ \&
+.Sh SEE ALSO
+.Xr pesign 1 ,
+.Xr efikeygen 1 ,
+.Xr efisecdb 1
+.Sh AUTHORS
+.An Peter Jones
+.Sh BUGS
+.Bl -dash
+.It
+.Nm
+currently ignores \fI.sbat\fR revocation sections, and does not consider that a bootloader may be revoked by the \fISBAT\fR self-check.
+.It
+.Nm
+currently does not treat certificates revoked by their \fITo-Be-Signed\fR hash in \fIdbx\fR as revoked.
+.El
