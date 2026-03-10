@@ -31,6 +31,7 @@ TESTS = test.dmpstore.export \
 	test.sbchooser.identical.secbits.explain \
 	test.sbchooser.first.sig.only \
 	test.sbchooser.first.sig.only.explain \
+	test.sbchooser.padded.secdir.explain \
 
 all: clean $(TESTS)
 
@@ -630,6 +631,25 @@ test.sbchooser.first.sig.only.explain:
 	fi
 	$(quiet)cmp test.sbchooser.first.sig.only.explain.goal.txt test.sbchooser.first.sig.only.explain.result
 	$(quiet)rm -f test.sbchooser.first.sig.only.explain.result
+	$(quiet)echo passed
+
+test.sbchooser.padded.secdir.explain.result:
+	$(quiet)ls -1 shim-16.1-6.x64.onesig.efi shim-16.1-6.x64.onesig.efi \
+		| sort -R | MALLOC_PERTURB_=$(MALLOC_PERTURB_) LD_LIBRARY_PATH=../src \
+			    ../src/sbchooser --explain \
+					     -d db.msft2011 \
+					     --no-system-dbx \
+		> "$@"
+
+test.sbchooser.padded.secdir.explain:
+	$(quiet)echo testing sbchooser explanation with a padded security directory
+	$(quiet)$(MAKE) $(makequiet) test.sbchooser.padded.secdir.explain.result
+	$(quiet)if ! cmp test.sbchooser.padded.secdir.explain.goal.txt test.sbchooser.padded.secdir.explain.result ; then \
+		diff -U 200 test.sbchooser.padded.secdir.explain.goal.txt test.sbchooser.padded.secdir.explain.result ; \
+		exit 1 ; \
+	fi
+	$(quiet)cmp test.sbchooser.padded.secdir.explain.goal.txt test.sbchooser.padded.secdir.explain.result
+	$(quiet)rm -f test.sbchooser.padded.secdir.explain.result
 	$(quiet)echo passed
 
 .PHONY: all clean $(TESTS)
