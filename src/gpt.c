@@ -8,7 +8,7 @@
  * http://developer.intel.com/technology/efi/efi.htm
  */
 
-#include "fix_coverity.h"
+#include "fix_coverity.h" // IWYU pragma: keep
 
 #include <errno.h>
 #include <fcntl.h>

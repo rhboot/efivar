@@ -4,7 +4,7 @@
  * Copyright Jonathan Marler
  */
 
-#include "fix_coverity.h"
+#include "fix_coverity.h" // IWYU pragma: keep
 
 #include <alloca.h>
 #include <efivar.h>

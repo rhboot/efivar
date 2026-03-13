@@ -4,7 +4,7 @@
  * Copyright 2012-2013 Red Hat, Inc.
  */
 
-#include "fix_coverity.h"
+#include "fix_coverity.h" // IWYU pragma: keep
 
 #include <errno.h>
 #include <fcntl.h>

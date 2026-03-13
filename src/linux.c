@@ -5,7 +5,7 @@
  * Copyright (C) 2001 Dell Computer Corporation <Matt_Domsch@dell.com>
  */
 
-#include "fix_coverity.h"
+#include "fix_coverity.h" // IWYU pragma: keep
 
 #include <dirent.h>
 #include <errno.h>

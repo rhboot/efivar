@@ -7,7 +7,7 @@
 
 #pragma GCC diagnostic warning "-Wcpp"
 
-#include "fix_coverity.h"
+#include "fix_coverity.h" // IWYU pragma: keep
 
 #include "efivar/efivar.h"
 

@@ -4,7 +4,7 @@
  * Copyright 2012-2015 Red Hat, Inc.
  */
 
-#include "fix_coverity.h"
+#include "fix_coverity.h" // IWYU pragma: keep
 
 #include <arpa/inet.h>
 #include <errno.h>

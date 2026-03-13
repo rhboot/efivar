@@ -5,7 +5,7 @@
  */
 #pragma once
 
-#include "fix_coverity.h" // IWYU pragma: export
+#include "fix_coverity.h" // IWYU pragma: keep
 
 #include <err.h> // IWYU pragma: export
 #include <errno.h> // IWYU pragma: export

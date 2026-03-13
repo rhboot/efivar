@@ -4,7 +4,7 @@
  * Copyright 2012-2019 Red Hat, Inc.
  */
 
-#include "fix_coverity.h"
+#include "fix_coverity.h" // IWYU pragma: keep
 
 #include <dirent.h>
 #include <errno.h>

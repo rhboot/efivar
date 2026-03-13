@@ -3,7 +3,7 @@
  * path-helper.c
  * Copyright 2018 Peter Jones <pjones@redhat.com>
  */
-#include "fix_coverity.h"
+#include "fix_coverity.h" // IWYU pragma: keep
 
 #include "efivar.h"
 
