@@ -49,6 +49,10 @@ clean-toplevel:
 	@rm -vf efivar.spec vgcore.* core.*
 	@$(MAKE) -C tests clean
 
+compile_commands.json : Makefile
+	make clean
+	bear -- make COMPILER=clang test all
+
 test : all
 	@$(MAKE) -C tests
 

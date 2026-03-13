@@ -7,6 +7,8 @@
 #include "efisec.h"
 #include "hexdump.h"
 
+#include <openssl/x509.h>
+
 #undef DEBUG_LEVEL
 #define DEBUG_LEVEL LOG_DEBUG_DUMPER
 
@@ -58,7 +60,7 @@ secdb_buffer(char *val, size_t valsz, ssize_t offset)
 static inline ssize_t
 secdb_dump_value(char *val, size_t size, ssize_t offset, char *fmt, ...)
 {
-	char posbuf[9];
+	char posbuf[17];
 	char hexbuf[49];
 	char textbuf[19];
 
@@ -175,11 +177,85 @@ secdb_dump_esl(efi_secdb_t *secdb, int esl, ssize_t offset)
 	return offset;
 }
 
+static int
+fmt_digest(char *buf, size_t bufsz, efi_secdb_type_t algorithm,
+	   uint8_t *data, size_t datasz)
+{
+	int pos = 0;
+	int rc;
+
+	const char * const alg_names[EFI_SECDB_TYPE_MAX] = {
+		[EFI_SECDB_TYPE_SHA1] = "SHA1",
+		[EFI_SECDB_TYPE_SHA224] = "SHA224",
+		[EFI_SECDB_TYPE_SHA256] = "SHA256",
+		[EFI_SECDB_TYPE_SHA384] = "SHA384",
+		[EFI_SECDB_TYPE_SHA512] = "SHA512",
+	};
+
+	if (algorithm < 0 || algorithm > EFI_SECDB_TYPE_SHA512) {
+		errno = EINVAL;
+		return -1;
+	}
+
+	if (datasz != efi_secdb_algs_[algorithm].size) {
+		errno = EINVAL;
+		return -1;
+	}
+
+	datasz = MIN(efi_secdb_algs_[algorithm].size, datasz);
+	if (bufsz == 0) {
+		return strlen(alg_names[algorithm]) // string
+			+ 1 // colon
+			+ datasz * 2 // hex
+			+ 1; // NUL
+	}
+	rc = snprintf(&buf[pos], bufsz-pos, "%s:", alg_names[algorithm]);
+	if (rc < 0)
+		return rc;
+	pos += rc;
+	for (size_t i = 0; i < datasz && (i * 2 + 1) < bufsz; i++) {
+		rc = snprintf(&buf[pos], bufsz-pos, "%02x", data[i]);
+		if (rc < 0)
+			return rc;
+		pos += rc;
+	}
+
+	return pos;
+}
+
+static int
+fmt_x509_cert(char *buf, size_t bufsz, uint8_t *data, size_t datasz)
+{
+	X509 *cert = NULL;
+	X509_NAME *subject = NULL;
+
+	cert = d2i_X509(NULL, (const unsigned char **)&data, datasz);
+	if (!cert)
+		return 0;
+
+	subject = X509_get_subject_name(cert);
+	if (!subject)
+		goto err;
+
+	X509_NAME_oneline(subject, buf, bufsz);
+	buf[bufsz-1] = '\0';
+	X509_free(cert);
+	return strlen(buf) + 1;
+err:
+	if (cert) {
+		X509_free(cert);
+		cert = NULL;
+	}
+	return 0;
+}
+
 static inline ssize_t
-secdb_dump_esd(secdb_entry_t *entry, int esl, int esd, size_t data_size,
-               ssize_t offset)
+secdb_dump_esd(secdb_entry_t *entry, efi_secdb_type_t algorithm, int esl,
+	       int esd, size_t data_size, ssize_t offset)
 {
 	char *id_guid = NULL;
+	char buf[1024] = "";
+	int rc = 0;
 
 	efi_guid_to_id_guid(&entry->owner, &id_guid);
 	offset = secdb_dump_value((char *)&entry->owner,
@@ -189,9 +265,36 @@ secdb_dump_esd(secdb_entry_t *entry, int esl, int esd, size_t data_size,
 	xfree(id_guid);
 	if (offset < 0)
 		return offset;
-	offset = secdb_dump_value((char *)&entry->data, data_size, offset,
-				  "esl[%d].signature[%d].data (end:0x%08zx)",
+
+	debug("formatting algorithm %d", algorithm);
+	switch(algorithm) {
+		case EFI_SECDB_TYPE_SHA1:
+		case EFI_SECDB_TYPE_SHA224:
+		case EFI_SECDB_TYPE_SHA256:
+		case EFI_SECDB_TYPE_SHA384:
+		case EFI_SECDB_TYPE_SHA512:
+			rc = fmt_digest(buf, sizeof(buf), algorithm,
+					entry->data.raw, data_size);
+
+			break;
+		case EFI_SECDB_TYPE_X509_CERT:
+			rc = fmt_x509_cert(buf, sizeof(buf),
+					   entry->data.raw, data_size);
+			break;
+		default:
+			break;
+	};
+	if (rc > 0) {
+		secdb_dump_value((char *)&entry->data, 0, offset,
+				 "esl[%d].signature[%d].data (end:0x%08zx)",
 				  esl, esd, offset+data_size);
+		offset = secdb_dump_value((char *)&entry->data, data_size,
+					  offset, "%s", buf);
+	} else {
+		offset = secdb_dump_value((char *)&entry->data, data_size,
+				offset, "esl[%d].signature[%d].data (end:0x%08zx) %s",
+				esl, esd, offset+data_size);
+	}
 	return offset;
 }
 
@@ -238,7 +341,8 @@ secdb_dump(efi_secdb_t *secdb, bool annotations)
 			debug("esl[%d].esd[%d]:%p owner:%p data:%p-%p datasz:%zd",
 			      esln, esdn, esd, &esd->owner,
 			      &esd->data, &esd->data+datasz, datasz);
-			offset = secdb_dump_esd(esd, esln, esdn, datasz, offset);
+			offset = secdb_dump_esd(esd, esl->algorithm, esln,
+						esdn, datasz, offset);
 			esdn += 1;
 			if (offset < 0)
 				break;

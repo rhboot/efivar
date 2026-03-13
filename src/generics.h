@@ -4,8 +4,7 @@
  */
 
 #ifndef EFIVAR_BUILD_ENVIRONMENT
-#ifndef LIBEFIVAR_GENERIC_NEXT_VARIABLE_NAME_H
-#define LIBEFIVAR_GENERIC_NEXT_VARIABLE_NAME_H 1
+#pragma once
 
 #include <dirent.h>
 #include <err.h>
@@ -166,7 +165,6 @@ generic_append_variable(efi_guid_t guid, const char *name,
 	return rc;
 }
 
-#endif /* LIBEFIVAR_GENERIC_NEXT_VARIABLE_NAME_H */
 #endif /* EFIVAR_BUILD_ENVIRONMENT */
 
 // vim:fenc=utf-8:tw=75:noet

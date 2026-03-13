@@ -3,15 +3,13 @@
  * efivar.h
  * Copyright 2018 Peter Jones <pjones@redhat.com>
  */
-
-#ifndef PRIVATE_EFIVAR_H_
-#define PRIVATE_EFIVAR_H_
+#pragma once
 
 #pragma GCC diagnostic warning "-Wcpp"
 
-#include "fix_coverity.h"
+#include "fix_coverity.h" // IWYU pragma: keep
 
-#include <efivar/efivar.h>
+#include "efivar/efivar.h"
 
 #include "compiler.h"
 #include "diag.h"
@@ -30,7 +28,5 @@
 #include "hexdump.h"
 #include "path-helpers.h"
 #include "makeguids.h"
-
-#endif /* !PRIVATE_EFIVAR_H_ */
 
 // vim:fenc=utf-8:tw=75:noet

@@ -5,8 +5,7 @@
  *
  * Author(s): Peter Jones <pjones@redhat.com>
  */
-#ifndef PRIVATE_ESL_ITER_H_
-#define PRIVATE_ESL_ITER_H_ 1
+#pragma once
 
 #include "efisec.h"
 
@@ -78,5 +77,3 @@ extern int esl_iter_get_line(esl_iter *iter)
 intptr_t
 esd_get_esl_offset(esl_iter *iter)
 	__attribute__((__nonnull__(1)));
-
-#endif /* PRIVATE_ESL_ITER_H_ */

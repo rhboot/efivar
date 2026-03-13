@@ -36,6 +36,7 @@ util-makeguids.c : util.c
 
 ALL_SOURCES=$(LIBEFISEC_SOURCES) $(LIBEFIBOOT_SOURCES) $(LIBEFIVAR_SOURCES) \
 	    $(MAKEGUIDS_SOURCES) $(GENERATED_SOURCES) $(EFIVAR_SOURCES) \
+	    $(EFISECDB_SOURCES) \
 	    $(sort $(wildcard include/efivar/*.h))
 
 ifneq ($(MAKECMDGOALS),clean)
@@ -118,12 +119,12 @@ libefisec.so : | libefisec.map
 libefisec.so : private MAP=libefisec.map
 
 efisecdb : $(EFISECDB_OBJECTS) | libefisec.so
-efisecdb : private LIBS=efivar efisec dl
+efisecdb : private LIBS=crypto efivar efisec dl
 
 efisecdb-static : $(EFISECDB_OBJECTS)
 efisecdb-static : $(patsubst %.o,%.static.o,$(LIBEFISEC_OBJECTS) $(LIBEFIVAR_OBJECTS))
 efisecdb-static : | $(GENERATED_SOURCES)
-efisecdb-static : private LIBS=dl
+efisecdb-static : private LIBS=crypto dl
 
 thread-test : libefivar.so
 # make sure we don't propagate CFLAGS to object files used by 'libefivar.so'

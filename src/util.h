@@ -5,8 +5,7 @@
  *
  * Author(s): Peter Jones <pjones@redhat.com>
  */
-#ifndef EFIVAR_UTIL_H
-#define EFIVAR_UTIL_H 1
+#pragma once
 
 #include <alloca.h>
 #include <ctype.h>
@@ -501,7 +500,5 @@ safe_to_print(const int c)
 
 	return true;
 }
-
-#endif /* EFIVAR_UTIL_H */
 
 // vim:fenc=utf-8:tw=75:noet

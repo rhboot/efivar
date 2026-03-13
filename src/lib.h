@@ -3,9 +3,7 @@
  * libefivar - library for the manipulation of EFI variables
  * Copyright 2012-2013 Red Hat, Inc.
  */
-
-#ifndef LIBEFIVAR_LIB_H
-#define LIBEFIVAR_LIB_H 1
+#pragma once
 
 #include <dirent.h>
 #include <limits.h>
@@ -46,7 +44,5 @@ typedef unsigned long efi_status_t;
 
 extern struct efi_var_operations vars_ops;
 extern struct efi_var_operations efivarfs_ops;
-
-#endif /* LIBEFIVAR_LIB_H */
 
 // vim:fenc=utf-8:tw=75:noet

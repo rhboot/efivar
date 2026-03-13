@@ -2,9 +2,7 @@
 /*
  * list.h - simple list primitives
  */
-
-#ifndef LIST_H_
-#define LIST_H_
+#pragma once
 
 #include <stdlib.h>
 
@@ -162,6 +160,4 @@ list_sort(struct list_head *head,
 	return 0;
 }
 
-
-#endif /* !LIST_H_ */
 // vim:fenc=utf-8:tw=75:noet

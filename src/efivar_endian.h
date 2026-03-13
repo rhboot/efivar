@@ -4,8 +4,7 @@
  *
  * Author:  Peter Jones <pjones@redhat.com>
  */
-#ifndef _EFIVAR_ENDIAN_H
-#define _EFIVAR_ENDIAN_H
+#pragma once
 
 #include <endian.h>
 
@@ -36,7 +35,5 @@
 #define le32_to_cpu(x) __builtin_bswap32(x)
 #define le64_to_cpu(x) ((uint64_t)__builtin_bswap64(x))
 #endif
-
-#endif /* _EFIVAR_ENDIAN_H */
 
 // vim:fenc=utf-8:tw=75:noet

@@ -13,3 +13,8 @@ LIBEFISEC_1.38 {
 		efi_secdb_realize;
 		efi_secdb_set_bool;
 } libefisec.so.0;
+
+LIBEFISEC_1.39 {
+	global: efi_secdb_visit_entries;
+
+} LIBEFISEC_1.38;

@@ -3,13 +3,9 @@
  * efiboot.h
  * Copyright 2018 Peter Jones <pjones@redhat.com>
  */
+#pragma once
 
-#ifndef PRIVATE_EFIBOOT_H_
-#define PRIVATE_EFIBOOT_H_
-
-#include "efivar.h"
-#include <efivar/efiboot.h>
-
-#endif /* !PRIVATE_EFIBOOT_H_ */
+#include "efivar.h" // IWYU pragma: export
+#include "efivar/efiboot.h" // IWYU pragma: export
 
 // vim:fenc=utf-8:tw=75:noet
