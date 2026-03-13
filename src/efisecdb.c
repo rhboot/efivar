@@ -6,7 +6,6 @@
  */
 #include "fix_coverity.h" // IWYU pragma: keep
 
-#include "linux.h"
 #include <err.h>
 #include <errno.h>
 #include <fcntl.h>
