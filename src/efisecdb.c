@@ -68,7 +68,8 @@ set_hash_parameters(char *name, int *hash_number)
 	if (strcmp(name, "help")) {
 		out = stderr;
 		for (int i = 0; i < n_hash_params; i++) {
-			if (!strcmp(name, hash_params[i].name)) {
+			if (!strcmp(name, hash_params[i].name) ||
+			    (!strcmp(name, "default") && hash_params[i].def == true)) {
 				*hash_number = i;
 				return;
 			}
@@ -359,6 +360,11 @@ main(int argc, char *argv[])
 	atexit(free_actions);
 	atexit(free_infiles);
 	atexit(maybe_free_secdb);
+
+	/*
+	 * Set the "default" hash
+	 */
+	set_hash_parameters("default", &hash_index);
 
 	/*
 	 * parse the command line.
