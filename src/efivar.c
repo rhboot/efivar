@@ -10,6 +10,7 @@
 #include <err.h>
 #include <fcntl.h>
 #include <getopt.h>
+#include <inttypes.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <sys/mman.h>
@@ -573,7 +574,7 @@ int main(int argc, char *argv[])
 			const uint64_t n = efi_n_well_known_guids;
 			size_t i;
 
-			debug("&guid[0]:%p n:%lu end:%p", &guid[0], n, &guid[n]);
+			debug("&guid[0]:%p n:%"PRIu64" end:%p", &guid[0], n, &guid[n]);
 			for (i = 0; i < n; i++) {
 				printf("{"GUID_FORMAT"}\t",
 				       GUID_FORMAT_ARGS(&guid[i].guid));
