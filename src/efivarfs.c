@@ -93,7 +93,7 @@ get_esp_filepath(const char *filename, char *filepath, size_t sz)
 
 		rc = snprintf(filepath, sz, "%s%s", esp_paths[i], filename);
 		if (rc >= sz) {
-			fprintf(stderr, "Error: Filepath too big. Max allowed %ld\n", sz);
+			fprintf(stderr, "Error: Filepath too big. Max allowed %zu\n", sz);
 			return -1;
 		}
 		if (!stat(filepath, &buffer))
@@ -120,7 +120,7 @@ get_esp_filename(char *filename, size_t sz)
 		return rc;
 
 	if (size > sz) {
-		fprintf(stderr, "Error: Filename too big. Max allowed %ld\n", sz);
+		fprintf(stderr, "Error: Filename too big. Max allowed %zu\n", sz);
 		free(data);
 		return -1;
 	}
