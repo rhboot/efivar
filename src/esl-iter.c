@@ -395,8 +395,7 @@ esl_list_iter_next_with_size_correction(esl_list_iter *iter, efi_guid_t *type,
 		iter->offset += iter->esl->signature_list_size;
 		if ((uint32_t)iter->offset >= iter->len)
 			return 0;
-		iter->esl = (efi_signature_list_t *)((intptr_t)iter->buf
-						+ (unsigned long)iter->offset);
+		iter->esl = (efi_signature_list_t *)(iter->buf + (size_t)iter->offset);
 	}
 
 	efi_signature_list_t esl;
