@@ -256,7 +256,7 @@ load_secdb_from_file(const char * const filename, efi_secdb_t **secdbp)
 	close(fd);
 	if (rc < 0) {
 		efi_error("Could not read file \"%s\": %m", filename);
-		return fd;
+		return rc;
 	}
 	data_size -= 1;
 
