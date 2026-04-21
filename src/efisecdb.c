@@ -10,6 +10,7 @@
 #include <errno.h>
 #include <fcntl.h>
 #include <getopt.h>
+#include <inttypes.h>
 #include <stdarg.h>
 #include <stdint.h>
 #include <stdlib.h>
@@ -244,7 +245,7 @@ list_guids(void)
 	const uint64_t n = efi_n_well_known_guids;
 	unsigned int i;
 
-	debug("&guid[0]:%p n:%lu", &guid[0], n);
+	debug("&guid[0]:%p n:%"PRIu64, &guid[0], n);
 	for (i = 0; i < n; i++) {
 		printf("{"GUID_FORMAT"}\t",
 		       GUID_FORMAT_ARGS(&guid[i].guid));
