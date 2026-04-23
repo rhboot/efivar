@@ -27,3 +27,11 @@ WARNING
 You should probably not run "make a brick" *ever*, unless you're already
 reasonably sure it won't permanently corrupt your firmware.  This is not a
 joke.
+
+Contributing
+============
+
+If you would like to contribute code to the efivar project, then please take a
+look at [`./CONTRIBUTING.md`].
+
+[`./CONTRIBUTING.md`]: ./CONTRIBUTING.md
