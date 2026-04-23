@@ -1122,6 +1122,8 @@ efidp_is_valid(const_efidp dp, ssize_t limit)
 		efidp_header *next;
 		if (limit < (int64_t)(sizeof (efidp_header)))
 			return 0;
+		if (hdr->length < 4)
+			return 0;
 
 		switch (hdr->type) {
 		case EFIDP_HARDWARE_TYPE:
