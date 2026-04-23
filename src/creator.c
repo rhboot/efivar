@@ -493,6 +493,68 @@ efi_generate_ipv4_device_path(uint8_t *buf, ssize_t size,
 	return off;
 }
 
+static ssize_t NONNULL(3, 4, 5)
+make_ipv6_path(uint8_t *buf, ssize_t size,
+	       const char * const local_addr UNUSED,
+	       const char * const remote_addr UNUSED,
+	       const char * const gateway_addr UNUSED,
+	       uint8_t prefix_length UNUSED,
+	       uint16_t local_port UNUSED,
+	       uint16_t remote_port UNUSED,
+	       uint16_t protocol UNUSED,
+	       uint8_t addr_origin)
+{
+	ssize_t ret;
+
+	ret = efidp_make_ipv6(buf, size, 0, 0, 0, 64, 0, 0, 0, addr_origin);
+	if (ret < 0)
+		efi_error("could not make ipv6 DP node");
+	return ret;
+}
+
+ssize_t NONNULL(3, 4, 5, 6) PUBLIC
+efi_generate_ipv6_device_path(uint8_t *buf, ssize_t size,
+			      const char * const ifname,
+			      const char * const local_addr,
+			      const char * const remote_addr,
+			      const char * const gateway_addr,
+			      uint8_t prefix_length,
+			      uint16_t local_port,
+			      uint16_t remote_port,
+			      uint16_t protocol,
+			      uint8_t addr_origin)
+{
+	ssize_t off = 0;
+	ssize_t sz;
+
+	sz = make_mac_path(buf, size, ifname);
+	if (sz < 0) {
+		efi_error("could not make MAC DP node");
+		return -1;
+	}
+	off += sz;
+
+	sz = make_ipv6_path(buf+off, size?size-off:0,
+			    local_addr, remote_addr,
+			    gateway_addr, prefix_length,
+			    local_port, remote_port,
+			    protocol, addr_origin);
+	if (sz < 0) {
+		efi_error("could not make IPV6 DP node");
+		return -1;
+	}
+	off += sz;
+
+	sz = efidp_make_end_entire(buf+off, size?size-off:0);
+	if (sz < 0) {
+		efi_error("could not make EndEntire DP node");
+		return -1;
+	}
+	off += sz;
+
+	return off;
+}
+
 uint32_t PUBLIC
 efi_get_libefiboot_version(void)
 {

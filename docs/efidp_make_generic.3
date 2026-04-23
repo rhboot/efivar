@@ -2,7 +2,7 @@
 .SH NAME
 efidp_make_generic, efidp_make_end_instance, efidp_make_end_entire,
 efidp_make_vendor, efidp_make_file, efidp_make_hd, efidp_make_nvme,
-efidp_make_sas, efidp_make_ipv4, efidp_make_mac_addr, efidp_make_sata,
+efidp_make_sas, efidp_make_ipv4, efidp_make_ipv6, efidp_make_mac_addr, efidp_make_sata,
 efidp_make_scsi, efidp_make_acpi_hid, efidp_make_acpi_hid_ex, efidp_make_edd10,
 efidp_make_pci, efidp_make_hw_vendor, efidp_make_msg_vendor, efidp_make_media_vendor \-
 Create EFI Device Path node data structures for specific device types
@@ -61,6 +61,13 @@ Format EFI Device Path structures as printable strings.
 	uint32_t \fIgateway\fB, uint32_t \fInetmask\fB,
 	uint16_t \fIlocal_port\fB, uint16_t \fIremote_port\fB,
 	uint16_t \fIprotocol\fB, int \fIis_static\fB);\fR
+
+\fBssize_t \fRefidp_make_ipv6\fB(\kZuint8_t *\fIbuf\fB, ssize_t \fIsize\fB,
+.ta \nZu
+	uint8_t *\fIlocal\fB, uint8_t *\fIremote\fB,
+	uint8_t *\fIgateway\fB, uint8_t \fIprefix_length\fB,
+	uint16_t \fIlocal_port\fB, uint16_t \fIremote_port\fB,
+	uint16_t \fIprotocol\fB, uint8_t \fIaddr_origin\fB);\fR
 
 \fBssize_t \fRefidp_make_mac_addr\fB(\kZuint8_t *\fIbuf\fB, ssize_t \fIsize\fB,
 .ta \nZu

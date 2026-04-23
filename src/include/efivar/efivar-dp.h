@@ -471,6 +471,11 @@ typedef struct {
 	uint8_t		prefix_length;
 	uint8_t		gateway_ipv6_addr[16];
 } EFIVAR_PACKED efidp_ipv6_addr;
+extern ssize_t efidp_make_ipv6(uint8_t *buf, ssize_t size,
+			       uint8_t *local_ipv6_addr, uint8_t *remote_ipv6_addr,
+			       uint8_t *gateway_ipv6_addr, uint8_t prefix_length,
+			       uint16_t local_port, uint16_t remote_port,
+			       uint16_t protocol, uint8_t addr_origin);
 
 #define EFIDP_IPv6_ORIGIN_MANUAL	0x00
 #define EFIDP_IPv6_ORIGIN_STATIC	0x00

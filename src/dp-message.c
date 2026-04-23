@@ -705,6 +705,37 @@ efidp_make_ipv4(uint8_t *buf, ssize_t size, uint32_t local, uint32_t remote,
 }
 
 ssize_t PUBLIC
+efidp_make_ipv6(uint8_t *buf, ssize_t size,
+		uint8_t *local_ipv6_addr, uint8_t *remote_ipv6_addr,
+		uint8_t *gateway_ipv6_addr, uint8_t prefix_length,
+		uint16_t local_port, uint16_t remote_port,
+		uint16_t protocol, uint8_t addr_origin)
+{
+	efidp_ipv6_addr *ipv6 = (efidp_ipv6_addr *)buf;
+	ssize_t sz = efidp_make_generic(buf, size, EFIDP_MESSAGE_TYPE,
+					EFIDP_MSG_IPv6, sizeof (*ipv6));
+	ssize_t req = sizeof (*ipv6);
+	if (size && sz == req) {
+		memcpy(ipv6->local_ipv6_addr, local_ipv6_addr,
+		       sizeof(ipv6->local_ipv6_addr));
+		memcpy(ipv6->remote_ipv6_addr, remote_ipv6_addr,
+		       sizeof(ipv6->remote_ipv6_addr));
+		ipv6->local_port = htons(local_port);
+		ipv6->remote_port = htons(remote_port);
+		ipv6->protocol = htons(protocol);
+		ipv6->ip_addr_origin = addr_origin;
+		ipv6->prefix_length = prefix_length;
+		memcpy(ipv6->gateway_ipv6_addr, gateway_ipv6_addr,
+		       sizeof(ipv6->gateway_ipv6_addr));
+	}
+
+	if (sz < 0)
+		efi_error("efidp_make_generic failed");
+
+	return sz;
+}
+
+ssize_t PUBLIC
 efidp_make_scsi(uint8_t *buf, ssize_t size, uint16_t target, uint16_t lun)
 {
 	efidp_scsi *scsi = (efidp_scsi *)buf;
