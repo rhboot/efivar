@@ -33,6 +33,7 @@ struct hash_param {
 	efi_secdb_type_t algorithm;
 	ssize_t size;
 	bool def;
+	bool hidden;
 };
 
 static struct hash_param hash_params[] = {
@@ -40,21 +41,25 @@ static struct hash_param hash_params[] = {
 	 .algorithm = EFI_SECDB_TYPE_SHA512,
 	 .size = 64,
 	 .def = false,
+	 .hidden = false,
 	},
 	{.name = "sha384",
 	 .algorithm = EFI_SECDB_TYPE_SHA384,
 	 .size = 48,
 	 .def = false,
+	 .hidden = false,
 	},
 	{.name = "sha256",
 	 .algorithm = EFI_SECDB_TYPE_SHA256,
 	 .size = 32,
 	 .def = true,
+	 .hidden = false,
 	},
 	{.name = "sha1",
 	 .algorithm = EFI_SECDB_TYPE_SHA1,
 	 .size = 20,
 	 .def = false,
+	 .hidden = true,
 	},
 };
 static int n_hash_params = sizeof(hash_params) / sizeof(hash_params[0]);
@@ -68,7 +73,8 @@ set_hash_parameters(char *name, int *hash_number)
 	if (strcmp(name, "help")) {
 		out = stderr;
 		for (int i = 0; i < n_hash_params; i++) {
-			if (!strcmp(name, hash_params[i].name)) {
+			if (!strcmp(name, hash_params[i].name) ||
+			    (!strcmp(name, "default") && hash_params[i].def == true)) {
 				*hash_number = i;
 				return;
 			}
@@ -80,9 +86,11 @@ set_hash_parameters(char *name, int *hash_number)
 
 	fprintf(out, "Supported hashes:");
 	for (int i = 0; i < n_hash_params; i++) {
-		fprintf(out, " %s", hash_params[i].name);
 		if (hash_params[i].def)
 			def = i;
+		if (hash_params[i].hidden)
+			continue;
+		fprintf(out, " %s", hash_params[i].name);
 	}
 	fprintf(out, "\n");
 	if (def >= 0)
@@ -359,6 +367,11 @@ main(int argc, char *argv[])
 	atexit(free_actions);
 	atexit(free_infiles);
 	atexit(maybe_free_secdb);
+
+	/*
+	 * Set the "default" hash
+	 */
+	set_hash_parameters("default", &hash_index);
 
 	/*
 	 * parse the command line.
