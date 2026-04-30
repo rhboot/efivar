@@ -382,21 +382,10 @@ efivarfs_get_variable(efi_guid_t guid, const char *name, uint8_t **data,
 	__typeof__(errno) errno_value;
 	int ret = -1;
 	size_t size = 0;
-	uint32_t ret_attributes = 0;
 	uint8_t *ret_data;
 	int fd = -1;
 	char *path = NULL;
 	int rc;
-	int ratelimit;
-
-	/*
-	 * The kernel rate limiter hits us if we go faster than 100 efi
-	 * variable reads per second as non-root.  So if we're not root, just
-	 * delay this long after each read.  The user is not going to notice.
-	 *
-	 * 1s / 100 = 10000us.
-	 */
-	ratelimit = geteuid() == 0 ? 0 : 10000;
 
 	rc = make_efivarfs_path(&path, guid, name);
 	if (rc < 0) {
@@ -410,23 +399,23 @@ efivarfs_get_variable(efi_guid_t guid, const char *name, uint8_t **data,
 		goto err;
 	}
 
-	usleep(ratelimit);
-	rc = read(fd, &ret_attributes, sizeof (ret_attributes));
-	if (rc < 0) {
-		efi_error("read failed");
-		goto err;
-	}
-
-	usleep(ratelimit);
 	rc = read_file(fd, &ret_data, &size);
 	if (rc < 0) {
 		efi_error("read_file failed");
 		goto err;
 	}
+	--size; // read_file pads out 1 extra byte to NUL
 
-	*attributes = ret_attributes;
+	if (size < sizeof (*attributes)) {
+		efi_error("no attributes");
+		goto err;
+	}
+
+	memcpy(attributes, ret_data, sizeof (*attributes));
+	memmove(ret_data, ret_data + sizeof (*attributes), size - sizeof (*attributes));
+
 	*data = ret_data;
-	*data_size = size - 1; // read_file pads out 1 extra byte to NUL it */
+	*data_size = size - sizeof (*attributes);
 
 	ret = 0;
 err:
