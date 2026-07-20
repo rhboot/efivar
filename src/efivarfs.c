@@ -183,6 +183,11 @@ write_file(const char *filepath) {
 		}
 	}
 
+	if (fflush(output_file) != 0 || fsync(fileno(output_file)) != 0) {
+		fprintf(stderr, "Error: Could not sync data to ESP '%s' file\n", filepath);
+		fail = true;
+	}
+
 err:
 	if (path)
 		free(path);
