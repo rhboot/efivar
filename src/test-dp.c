@@ -1,0 +1,298 @@
+// SPDX-License-Identifier: LGPL-2.1-or-later
+/*
+ * test-make-dp.c - test making device paths
+ * Copyright Peter Jones <pjones@redhat.com>
+ */
+
+#include "efivar/efivar.h" // IWYU pragma: keep
+
+#include "test.h"
+
+#include <stdlib.h>
+
+static void
+print_one_efi_error(char * const filename,
+		    char * const function,
+		    int line,
+		    char * const message,
+		    int error)
+{
+	printf("%s %s():%d error:%d %s\n",
+	       filename, function, line, error, message);
+}
+
+static void
+print_efi_error(void)
+{
+	int rc = 1;
+	for (unsigned int n = 0; rc == 1 && n < 255; n++) {
+		char * filename = NULL;
+		char * function = NULL;
+		char * message = NULL;
+		int line = 0;
+		int error = 0;
+
+		rc = efi_error_get(n, &filename, &function, &line, &message, &error);
+		if (rc > 0)
+			print_one_efi_error(filename, function, line, message, error);
+	}
+}
+
+static void
+efi_error_pop_all(void)
+{
+	int rc = 1;
+	do {
+		char * filename = NULL;
+		char * function = NULL;
+		char * message = NULL;
+		int line = 0;
+		int error = 0;
+
+		efi_error_pop();
+
+		rc = efi_error_get(0, &filename, &function, &line, &message, &error);
+	} while (rc > 0);
+}
+
+#define TEST_PREAMBLE \
+	ssize_t sz = 0;						\
+	ssize_t dnsz = 0;					\
+	size_t insz = 0;					\
+	uint8_t *buf = NULL, *bufp = NULL;			\
+	const size_t bufsz = 4096;				\
+	int rc;							\
+	char *file, *func, *msg;				\
+	int line, error;					\
+	int ret = -1;						\
+	const size_t outbufsz = 4096;				\
+	ssize_t outsize = 0;					\
+	unsigned char *outbuf = NULL, *outbufp = NULL;		\
+								\
+	efi_error_pop_all();					\
+								\
+	buf = aligned_alloc(bufsz, bufsz);			\
+	assert_nonzero_goto(buf, out, "got %p: %m\n");		\
+	memset(buf, 0, bufsz);					\
+								\
+	outbuf = aligned_alloc(outbufsz, outbufsz);		\
+	assert_nonzero_goto(outbuf, out, "got %p: %m\n");	\
+	memset(outbuf, 0, outbufsz);				\
+	outbufp = outbuf;					\
+	assert_nonzero_goto(outbufp, out, "got %p\n");
+
+#define TEST_POSTAMBLE						\
+	ret = 0;						\
+out:								\
+	if (buf)						\
+		free(buf);					\
+	if (outbuf)						\
+		free(outbuf);					\
+	efi_error_pop_all();					\
+	return ret;
+
+#define TEST_RETURNS(szexpr, makefn, args...)							\
+	dnsz = szexpr;										\
+												\
+	insz = 0;										\
+	bufp = NULL;										\
+	sz = makefn(bufp, insz, ## args);							\
+	assert_equal_goto(sz, dnsz, out, "got %zd expected %zd\n");				\
+												\
+	insz = dnsz - 1;									\
+	bufp = &buf[bufsz - insz];								\
+	sz = makefn(bufp, insz, ## args);							\
+	assert_negative_goto(sz, out, "\n");							\
+	efi_error_pop_all();									\
+												\
+	insz = dnsz;										\
+	bufp = &buf[bufsz - insz];								\
+	sz = makefn(bufp, insz, ## args);							\
+	assert_equal_goto(sz, dnsz, out, "got %zd expected %zd\n");				\
+	efi_error_pop_all();									\
+												\
+	insz = dnsz + 1;									\
+	bufp = &buf[bufsz - insz];								\
+	sz = makefn(bufp, insz, ## args);							\
+	assert_equal_goto(sz, dnsz, out, "got %zd expected %zd\n");				\
+	efi_error_pop_all();
+
+#define __TEST_APPEND_END(ctr, makefn, args...)							\
+	insz = dnsz;										\
+	bufp = &buf[bufsz - insz - sizeof(efidp_header)];					\
+	sz = makefn(bufp, insz, ## args);							\
+	assert_equal_goto(sz, dnsz, out, "got %zd expected %zd\n");				\
+	efi_error_pop_all();									\
+												\
+	const_efidp __CONCAT(next, ctr);							\
+	rc = efidp_next_node((efidp)bufp, &__CONCAT(next, ctr));				\
+	assert_positive_goto(rc, out, "\n");							\
+												\
+	sz = efidp_make_end_entire((uint8_t *)__CONCAT(next, ctr), 4);				\
+	assert_equal_goto(sz, sizeof(efidp_header), out, "got sz %zd expected %zu\n");
+
+#define _TEST_APPEND_END(ctr, makefn, args...)							\
+	__TEST_APPEND_END(ctr, makefn, ## args)
+
+#define TEST_APPEND_END(makefn, args...)							\
+	_TEST_APPEND_END(__COUNTER__, makefn, ## args)
+
+#define __TEST_FORMAT(ctr, _dp, expected_str_result)						\
+	char __CONCAT(expected_format, ctr) [] = expected_str_result;				\
+												\
+	outsize = sizeof(__CONCAT(expected_format, ctr));					\
+	outbufp = &outbuf[outbufsz - outsize];							\
+	sz = efidp_format_device_path((uint8_t *)outbufp, outsize, _dp, insz);			\
+	assert_equal_goto(sz, outsize, out, "got %zd expected %zd: \"%s\"\n", outbufp);		\
+												\
+	sz = strlen((char *)outbufp);								\
+	assert_equal_goto(sz, outsize-1, out, "got %zd expected %zd: \"%s\"\n", outbufp);	\
+												\
+	rc = strcmp((char *)outbufp, __CONCAT(expected_format, ctr));				\
+	assert_zero_goto(rc, out, "got %d comparing \"%s\" to \"%s\"\n",			\
+			 (char *)outbufp, __CONCAT(expected_format, ctr));			\
+												\
+	rc = efi_error_get(0, &file, &func, &line, &msg, &error);				\
+	if (rc != 0)										\
+		print_efi_error();								\
+	assert_zero_goto(rc, out, " got %d\n");
+
+#define _TEST_FORMAT(ctr, _dp, expected_str_result)						\
+	__TEST_FORMAT(ctr, _dp, expected_str_result)
+
+#define TEST_FORMAT(_dp, expected_str_result) \
+	_TEST_FORMAT(__COUNTER__, _dp, expected_str_result)
+
+#pragma GCC diagnostic ignored "-Wunused-variable"
+
+static int
+test_make_generic(void)
+{
+	TEST_PREAMBLE;
+
+	bufp = &buf[bufsz - sizeof(efidp_header)];
+
+	sz = efidp_make_generic(bufp, bufsz, 0, 1, 0);
+	assert_zero_goto(sz, out, "got %zd\n");
+
+	sz = efidp_make_generic(bufp, bufsz, 0, 1, 1);
+	assert_positive_goto(sz, out, "\n");
+
+	sz = efidp_make_generic(bufp, bufsz, 0, 1, 4);
+	assert_positive_goto(sz, out, "\n");
+
+	sz = efidp_make_generic(bufp, bufsz, 0, 1, 5);
+	assert_positive_goto(sz, out, "\n");
+
+	rc = efi_error_get(0, &file, &func, &line, &msg, &error);
+	if (rc != 0)
+		print_efi_error();
+	assert_zero_goto(rc, out, "got %d\n");
+
+	TEST_POSTAMBLE;
+}
+
+#pragma GCC diagnostic error "-Wunused-variable"
+
+/*
+ * This one is special: 1) we can't use the normal "append an end marker"
+ * technique, 2) it tests the efi_get_error() path as well.
+ */
+static int
+test_make_end_entire(void)
+{
+	TEST_PREAMBLE;
+
+	dnsz = sizeof(efidp_header);
+	bufp = NULL;
+	sz = efidp_make_end_instance(bufp, 0);
+	assert_equal_goto(sz, dnsz, out, "got %zd expected %zd\n");
+
+	sz = efidp_make_end_instance(bufp, 1);
+	assert_negative_goto(sz, out, "\n");
+
+	sz = efidp_make_end_instance(bufp, 2);
+	assert_negative_goto(sz, out, "\n");
+
+	printf("this should print at least two errors:\n");
+	print_efi_error();
+	efi_error_pop_all();
+
+	TEST_RETURNS(sizeof(efidp_header), efidp_make_end_entire);
+
+	insz = dnsz;
+	bufp = &buf[bufsz - insz];
+	sz = efidp_make_end_entire(bufp, insz);
+	assert_equal_goto(sz, dnsz, out, "got %zd expected %zd\n");
+	efi_error_pop_all();
+
+	char expected_format[] = "";
+
+	outsize = sizeof(expected_format);
+	outbufp = &outbuf[outbufsz - outsize];
+	sz = efidp_format_device_path((uint8_t *)outbufp, outsize, (const_efidp)bufp, insz);
+	assert_equal_goto(sz, outsize, out, "got %zd expected %zd\n");
+
+	sz = strlen((char *)outbufp);
+	assert_equal_goto(sz, outsize - 1, out, "got %zd expected %zd\n");
+
+	rc = strcmp((char *)outbufp, expected_format);
+	assert_zero_goto(rc, out, "got %d\n");
+
+	rc = efi_error_get(0, &file, &func, &line, &msg, &error);
+	if (rc != 0)
+		print_efi_error();
+	assert_zero_goto(rc, out, " got %d\n");
+
+	TEST_POSTAMBLE;
+}
+
+static int
+test_make_end_instance(void)
+{
+	TEST_PREAMBLE;
+
+	TEST_RETURNS(sizeof(efidp_header), efidp_make_end_instance);
+
+	TEST_APPEND_END(efidp_make_end_instance);
+	TEST_FORMAT((efidp)bufp, ",");
+
+	TEST_POSTAMBLE;
+}
+
+static int
+test_make_vendor(void)
+{
+	TEST_PREAMBLE;
+
+	char teststr[] = "ééé";
+	efi_guid_t vendor_guid = efi_guid_redhat_2;
+
+	TEST_RETURNS(sizeof(efidp_hw_vendor) + sizeof(teststr), efidp_make_vendor, 0, 1, vendor_guid, teststr, sizeof(teststr));
+
+	TEST_APPEND_END(efidp_make_vendor, 0, 1, vendor_guid, teststr, sizeof(teststr));
+	TEST_FORMAT((efidp)bufp, "Path(0,1,dbed230279908843af772d65b1c35d3bc3a9c3a9c3a900)");
+
+	TEST_POSTAMBLE;
+}
+
+int
+main(int argc __attribute__((__unused__)),
+     char *argv[] __attribute__((__unused__)))
+{
+	int status = 0;
+
+	test(test_make_generic);
+
+	test(test_make_end_entire);
+	test(test_make_end_instance);
+	test(test_make_vendor);
+
+	printf("this should print no errors:\n");
+	print_efi_error();
+	efi_error_pop_all();
+
+	return status;
+}
+
+// vim:fenc=utf-8:tw=75:noet

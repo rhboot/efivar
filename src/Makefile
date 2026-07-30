@@ -151,6 +151,7 @@ clean :
 		$(STATICTARGETS)
 	@# remove the deps files we used to create, as well.
 	@rm -rfv .*.P .*.h.P *.S.P include/efivar/.*.h.P
+	$(quiet)$(MAKE) -f test.mk clean
 
 install : all
 	$(INSTALL) -d -m 755 $(DESTDIR)$(LIBDIR)
@@ -166,8 +167,28 @@ install : all
 	$(INSTALL) -d -m 755 $(DESTDIR)$(BINDIR)
 	$(foreach x, $(filter-out %-test,$(BINTARGETS)), $(INSTALL) -m 755 $(x) $(DESTDIR)$(BINDIR);)
 
-test : all
-	$(MAKE) -C test $@
+
+TESTS = $(patsubst %.c,%,$(wildcard test-*.c))
+
+test : | all
+test : $(TESTS)
+
+test-clean :
+	$(quiet)$(MAKE) -C test clean
+	$(quiet)$(MAKE) -f test.mk clean
+
+$(TESTS) : | all
+$(TESTS) :
+	$(quiet)$(MAKE) -f test.mk \
+		CC="$(CC)" \
+		COMPILER="$(COMPILER)" \
+		CFLAGS="$(CFLAGS)" \
+		OPTIMIZATIONS="$(OPTIMIZATIONS)" \
+		TEST_LTO="$(TEST_LTO)" \
+		TEST_COVERAGE="$(TEST_COVERAGE)" \
+		LIBEFIVAR_OBJECTS="$(LIBEFIVAR_OBJECTS)" \
+		LIBEFIBOOT_OBJECTS="$(LIBEFIBOOT_OBJECTS)" \
+		"$@"
 
 .PHONY: abiclean abicheck abidw abixml all
 .PHONY: clean deps install test
