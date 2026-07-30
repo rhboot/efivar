@@ -1,5 +1,5 @@
-!guids.S
 *.bin
+/cov/
 /efivar
 efivar-guids.h
 efivar-static
@@ -8,6 +8,9 @@ efisecdb-static
 makeguids
 guid-symbols.c
 guids.lds
+!guids.S
 sbchooser
+test-*
+!test-*.c
 thread-test
 util-makeguids.c

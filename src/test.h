@@ -1,0 +1,255 @@
+// SPDX-License-Identifier: BSD-2-Clause-Patent
+/*
+ * test.h - a bunch of basic test comparitors
+ * Copyright Peter Jones <pjones@redhat.com>
+ */
+
+#pragma once
+
+#define __stringify_1(x...)	#x
+#define __stringify(x...)	__stringify_1(x)
+
+#define eassert(cond, fmt, ...)					\
+	({							\
+		if (!(cond)) {					\
+			printf("%s:%d:" fmt, __func__, __LINE__,\
+			       ##__VA_ARGS__);			\
+		}						\
+		assert(cond);					\
+	})
+
+#define assert_true_as_expr(a, status, fmt, ...)				\
+	({									\
+		__typeof__(status) rc_ = 0;					\
+		if (!(a)) {							\
+			printf("%s:%d:got %lld, expected nonzero " fmt,		\
+			       __func__, __LINE__, (long long)(uintptr_t)(a),	\
+			       ##__VA_ARGS__);					\
+			printf("%s:%d:Assertion `%s' failed.\n", __func__,	\
+			       __LINE__, __stringify(!(a)));			\
+			rc_ = status;						\
+		}								\
+		rc_;								\
+	})
+#define assert_nonzero_as_expr(a, ...) assert_true_as_expr(a, ##__VA_ARGS__)
+
+#define assert_false_as_expr(a, status, fmt, ...)				\
+	({									\
+		__typeof__(status) rc_ = (__typeof__(status))0;			\
+		if (a) {							\
+			printf("%s:%d:got %lld, expected zero " fmt, __func__,	\
+			       __LINE__, (long long)(a), ##__VA_ARGS__);	\
+			printf("%s:%d:Assertion `%s' failed.\n", __func__,	\
+			       __LINE__, __stringify(a));			\
+			rc_ = status;						\
+		}								\
+		rc_;								\
+	})
+#define assert_zero_as_expr(a, ...) assert_false_as_expr(a, ##__VA_ARGS__)
+
+#define assert_positive_as_expr(a, status, fmt, ...)				\
+	({									\
+		__typeof__(status) rc_ = (__typeof__(status))0;			\
+		if ((a) <= 0) {							\
+			printf("%s:%d:got %lld, expected > 0 " fmt, __func__,	\
+			       __LINE__, (long long)(a), ##__VA_ARGS__);	\
+			printf("%s:%d:Assertion `%s' failed.\n", __func__,	\
+			       __LINE__, __stringify((a) <= 0));		\
+			rc_ = status;						\
+		}								\
+		rc_;								\
+	})
+
+#define assert_negative_as_expr(a, status, fmt, ...)				\
+	({									\
+		__typeof__(status) rc_ = (__typeof__(status))0;			\
+		if ((a) >= 0) {							\
+			printf("%s:%d:got %lld, expected < 0 " fmt, __func__,	\
+			       __LINE__, (long long)(a), ##__VA_ARGS__);	\
+			printf("%s:%d:Assertion `%s' failed.\n", __func__,	\
+			       __LINE__, __stringify((a) >= 0));		\
+			rc_ = status;						\
+		}								\
+		rc_;								\
+	})
+
+#define assert_equal_as_expr(a, b, status, fmt, ...)				\
+	({									\
+		__typeof__(status) rc_ = (__typeof__(status))0;			\
+		if (!((a) == (b))) {						\
+			printf("%s:%d:" fmt, __func__, __LINE__, (a), (b),	\
+			       ##__VA_ARGS__);					\
+			printf("%s:%d:Assertion `%s' failed.\n", __func__,	\
+			       __LINE__, __stringify(a == b));			\
+			rc_ = status;						\
+		}								\
+		rc_;								\
+	})
+
+#define assert_not_equal_as_expr(a, b, status, fmt, ...)			\
+	({									\
+		__typeof__(status) rc_ = (__typeof__(status))0;			\
+		if (!((a) != (b))) {						\
+			printf("%s:%d:" fmt, __func__, __LINE__, (a), (b),	\
+			       ##__VA_ARGS__);					\
+			printf("%s:%d:Assertion `%s' failed.\n", __func__,	\
+			       __LINE__, __stringify(a != b));			\
+			rc_ = status;						\
+		}								\
+		rc_;								\
+	})
+
+#define assert_as_expr(cond, status, fmt, ...)					\
+	({									\
+		__typeof__(status) rc_ = (__typeof__(status))0;			\
+		if (!(cond)) {							\
+			printf("%s:%d:" fmt, __func__, __LINE__,		\
+			       ##__VA_ARGS__);					\
+			printf("%s:%d:Assertion `%s' failed.\n", __func__,	\
+			       __LINE__, __stringify(cond));			\
+			rc_ = status;						\
+		}								\
+		rc_;								\
+	})
+
+#define assert_true_return(a, status, fmt, ...)					\
+	({									\
+		__typeof__(status) rc_ =					\
+			assert_true_as_expr(a, status, fmt, ##__VA_ARGS__);	\
+		if (rc_ != 0)							\
+			return rc_;						\
+	})
+#define assert_nonzero_return(a, ...) assert_true_return(a, ##__VA_ARGS__)
+
+#define assert_false_return(a, status, fmt, ...)				\
+	({									\
+		__typeof__(status) rc_ =					\
+			assert_false_as_expr(a, status, fmt, ##__VA_ARGS__);	\
+		if (rc_ != 0)							\
+			return rc_;						\
+	})
+#define assert_zero_return(a, ...) assert_false_return(a, ##__VA_ARGS__)
+
+#define assert_positive_return(a, status, fmt, ...)			\
+	({								\
+		__typeof__(status) rc_ = assert_positive_as_expr(	\
+			a, status, fmt, ##__VA_ARGS__);			\
+		if (rc_ != 0)						\
+			return rc_;					\
+	})
+
+#define assert_negative_return(a, status, fmt, ...)			\
+	({								\
+		__typeof__(status) rc_ = assert_negative_as_expr(	\
+			a, status, fmt, ##__VA_ARGS__);			\
+		if (rc_ != 0)						\
+			return rc_;					\
+	})
+
+#define assert_equal_return(a, b, status, fmt, ...)		\
+	({							\
+		__typeof__(status) rc_ = assert_equal_as_expr(	\
+			a, b, status, fmt, ##__VA_ARGS__);	\
+		if (rc_ != 0)					\
+			return rc_;				\
+	})
+
+#define assert_not_equal_return(a, b, status, fmt, ...)			\
+	({								\
+		__typeof__(status) rc_ = assert_not_equal_as_expr(	\
+			a, b, status, fmt, ##__VA_ARGS__);		\
+		if (rc_ != 0)						\
+			return rc_;					\
+	})
+
+#define assert_return(cond, status, fmt, ...)					\
+	({									\
+		__typeof__(status) rc_ =					\
+			assert_as_expr(cond, status, fmt, ##__VA_ARGS__);	\
+		if (rc_ != 0)							\
+			return rc_;						\
+	})
+
+#define assert_goto(cond, label, fmt, ...)					\
+	({									\
+		if (!(cond)) {							\
+			printf("%s:%d:" fmt, __func__, __LINE__,		\
+			       ##__VA_ARGS__);					\
+			printf("%s:%d:Assertion `%s' failed.\n", __func__,	\
+			       __LINE__, __stringify(cond));			\
+			goto label;						\
+		}								\
+	})
+
+#define assert_equal_goto(a, b, label, fmt, ...)				\
+	({									\
+		if (!((a) == (b))) {						\
+			printf("%s:%d:" fmt, __func__, __LINE__, (a), (b),	\
+			       ##__VA_ARGS__);					\
+			printf("%s:%d:Assertion `%s' failed.\n", __func__,	\
+			       __LINE__, __stringify(a == b));			\
+			goto label;						\
+		}								\
+	})
+
+#define assert_not_equal_goto(a, b, label, fmt, ...)				\
+	({									\
+		if (!((a) != (b))) {						\
+			printf("%s:%d:" fmt, __func__, __LINE__, (a), (b),	\
+			       ##__VA_ARGS__);					\
+			printf("%s:%d:Assertion `%s' failed.\n", __func__,	\
+			       __LINE__, __stringify(a != b));			\
+			goto label;						\
+		}								\
+	})
+
+#define assert_true_goto(a, label, fmt, ...)					\
+	({									\
+		if (!(a)) {							\
+			printf("%s:%d:" fmt, __func__, __LINE__, (a),		\
+			       ##__VA_ARGS__);					\
+			printf("%s:%d:Assertion `%s' failed.\n", __func__,	\
+			       __LINE__, __stringify(!(a)));			\
+			goto label;						\
+		}								\
+	})
+#define assert_nonzero_goto(a, ...) assert_true_goto(a, ##__VA_ARGS__)
+
+#define assert_false_goto(a, label, fmt, ...)					\
+	({									\
+		if (a) {							\
+			printf("%s:%d:" fmt, __func__, __LINE__, (a),		\
+			       ##__VA_ARGS__);					\
+			printf("%s:%d:Assertion `%s' failed.\n", __func__,	\
+			       __LINE__, __stringify(a));			\
+			goto label;						\
+		}								\
+	})
+#define assert_zero_goto(a, ...) assert_false_goto(a, ##__VA_ARGS__)
+
+#define assert_negative_goto(a, label, fmt, ...)				\
+	({									\
+		int rc_ = assert_negative_as_expr(a, -1, fmt, ##__VA_ARGS__);	\
+		if (rc_ != 0)							\
+			goto label;						\
+	})
+
+#define assert_positive_goto(a, label, fmt, ...)				\
+	({									\
+		int rc_ = assert_positive_as_expr(a, -1, fmt, ##__VA_ARGS__);	\
+		if (rc_ != 0)							\
+			goto label;						\
+	})
+
+#define test(x, ...)					\
+	({						\
+		int rc;					\
+		printf("running %s\n", __stringify(x));	\
+		rc = x(__VA_ARGS__);			\
+		if (rc < 0)				\
+			status = 1;			\
+		printf("%s: %s\n", __stringify(x),	\
+		       rc < 0 ? "failed" : "passed");	\
+	})
+
+// vim:fenc=utf-8:tw=75:noet

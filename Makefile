@@ -53,8 +53,30 @@ compile_commands.json : Makefile
 	make clean
 	bear -- make COMPILER=clang test all
 
+TEST_COVERAGE	?=
+TEST_LTO	?=
+
+test-clean :
+	$(quiet)$(MAKE) -C tests clean
+	$(quiet)$(MAKE) -C src test-clean
+
 test : all
-	@$(MAKE) -C tests
+	$(quiet)$(MAKE) -C tests "$@"
+	$(quiet)$(MAKE) -C src \
+		TEST_COVERAGE="$(TEST_COVERAGE)" \
+		TEST_LTO="$(TEST_LTO)" \
+		test-clean test
+
+UNIT_TESTS = $(patsubst src/%.c,%,$(wildcard src/test-*.c))
+
+$(UNIT_TESTS) : | all
+$(UNIT_TESTS) :
+	$(quiet)$(MAKE) -C src \
+		TEST_COVERAGE="$(TEST_COVERAGE)" \
+		TEST_LTO="$(TEST_LTO)" \
+		test-clean $@
+
+unit-tests : $(UNIT_TESTS)
 
 test-archive: abicheck efivar.spec
 	@rm -rf /tmp/efivar-$(GITTAG) /tmp/efivar-$(GITTAG)-tmp

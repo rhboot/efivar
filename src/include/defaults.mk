@@ -20,6 +20,13 @@ $(call set-if-undefined,CCLD,$(CC))
 $(call set-if-undefined,HOSTCC,$(COMPILER))
 $(call set-if-undefined,HOSTCCLD,$(HOSTCC))
 
+CFLAGS_LTO	?= -flto
+CFLAGS_GCOV	?= $(if $(findstring gcc,$(CC)),-fprofile-arcs) \
+                   $(if $(findstring gcc,$(CC)),-ftest-coverage) \
+                   $(if $(findstring gcc,$(CC)),--coverage) \
+                   $(if $(findstring clang,$(CC)),-fcoverage-mapping) \
+                   $(if $(findstring clang,$(CC)),-fprofile-instr-generate) \
+
 # temporary, see https://sourceware.org/bugzilla/show_bug.cgi?id=28264
 #OPTIMIZE_GCC = -flto
 OPTIMIZE_GCC =
@@ -46,6 +53,13 @@ override CFLAGS = $(_CFLAGS) \
 		  -fvisibility=hidden \
 		  $(call family,CFLAGS) \
 		  $(call pkg-config-cflags)
+ifneq ($(TEST_LTO),)
+override CFLAGS += $(CFLAGS_LTO)
+endif
+ifneq ($(TEST_COVERAGE),)
+override CFLAGS += $(CFLAGS_GCOV)
+endif
+
 LDFLAGS_CLANG ?= -rtlib=compiler-rt
 CCLDFLAGS ?=
 LDFLAGS ?=
@@ -129,5 +143,16 @@ NAME=efivar
 # Docs are enabled by default. Set ENABLE_DOCS=0 to disable
 # building/installing docs.
 ENABLE_DOCS ?= 1
+
+V ?= 0
+ifeq ($(V),0)
+        quiet=@
+        rmverbose=
+        makequiet=--quiet
+else
+        quiet=
+        rmverbose=-v
+        makequiet=
+endif
 
 # vim:ft=make

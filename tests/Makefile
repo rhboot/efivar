@@ -35,6 +35,8 @@ TESTS = test.dmpstore.export \
 
 all: clean $(TESTS)
 
+test: all
+
 GRUB_PREFIX ?= grub2
 VALGRIND ?=
 
