@@ -32,11 +32,17 @@ efidp_data_address(const_efidp dp)
 int PUBLIC
 efidp_set_node_data(const_efidp dn, void *buf, size_t bufsize)
 {
-	if (dn->length < 4 || bufsize > (size_t)dn->length - 4) {
+	if (dn->length < 4) {
 		errno = ENOSPC;
-		efi_error("DP was smaller than DP header");
+		efi_error("DN of %u bytes is smaller than DP header (4)", dn->length);
 		return -1;
 	}
+	if (bufsize > (size_t)dn->length - 4) {
+		errno = ENOSPC;
+		efi_error("DN of %u bytes is too small, need %zu bytes", dn->length, (bufsize - (dn->length - 4)));
+		return -1;
+	}
+
 	void *data = efidp_data_address(dn);
 	if (!data) {
 		efi_error("efidp_data_address failed");
