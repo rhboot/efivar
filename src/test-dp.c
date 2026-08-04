@@ -536,6 +536,21 @@ test_make_msg_vendor(void)
 }
 
 static int
+test_make_nvdimm()
+{
+	TEST_PREAMBLE;
+
+	efi_guid_t guid = {0x89d4a929, 0x322b, 0x4c65, 0x982b, {0x54, 0xce, 0x9a, 0xae, 0x7e, 0x4f }};
+
+	TEST_RETURNS(sizeof(efidp_nvdimm), efidp_make_nvdimm, &guid);
+
+	TEST_APPEND_END(efidp_make_nvdimm, &guid);
+	TEST_FORMAT((efidp)bufp, "NVDIMM(89d4a929-322b-4c65-2b98-54ce9aae7e4f)");
+
+	TEST_POSTAMBLE;
+}
+
+static int
 test_make_vendor(void)
 {
 	TEST_PREAMBLE;
@@ -572,6 +587,7 @@ main(int argc __attribute__((__unused__)),
 	test(test_make_mac_addr);
 	test(test_make_media_vendor);
 	test(test_make_msg_vendor);
+	test(test_make_nvdimm);
 	test(test_make_vendor);
 
 	printf("this should print no errors:\n");
