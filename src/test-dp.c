@@ -487,6 +487,21 @@ test_make_ipv4()
 }
 
 static int
+test_make_mac_addr()
+{
+	TEST_PREAMBLE;
+
+	uint8_t mac_addr[] = { 0xc0, 0xff, 0xee, 0xc0, 0xff, 0xee };
+
+	TEST_RETURNS(sizeof(efidp_mac_addr), efidp_make_mac_addr, 1, mac_addr, sizeof(mac_addr));
+
+	TEST_APPEND_END(efidp_make_mac_addr, 1, mac_addr, sizeof(mac_addr));
+	TEST_FORMAT((efidp)bufp, "MAC(c0ffeec0ffee,1)");
+
+	TEST_POSTAMBLE;
+}
+
+static int
 test_make_vendor(void)
 {
 	TEST_PREAMBLE;
@@ -520,6 +535,7 @@ main(int argc __attribute__((__unused__)),
 	test(test_make_hd);
 	test(test_make_hw_vendor);
 	test(test_make_ipv4);
+	test(test_make_mac_addr);
 	test(test_make_vendor);
 
 	printf("this should print no errors:\n");
