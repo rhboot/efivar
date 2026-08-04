@@ -202,6 +202,51 @@ test_make_generic(void)
 
 #pragma GCC diagnostic error "-Wunused-variable"
 
+static int
+test_make_acpi_hid()
+{
+	TEST_PREAMBLE;
+
+	TEST_RETURNS(sizeof(efidp_acpi_hid), efidp_make_acpi_hid, 1, 1);
+
+	TEST_APPEND_END(efidp_make_acpi_hid, 1, 1);
+	TEST_FORMAT((efidp)bufp, "Acpi(0x1,0x1)");
+
+	TEST_APPEND_END(efidp_make_acpi_hid, EFIDP_ACPI_PCI_ROOT_HID, 0x5a5a5a5a);
+	TEST_FORMAT((efidp)bufp, "PciRoot(0x5a5a5a5a)");
+
+	TEST_APPEND_END(efidp_make_acpi_hid, EFIDP_ACPI_CONTAINER_0A05_HID, 0x5a5a5a5a);
+	TEST_FORMAT((efidp)bufp, "AcpiContainer()");
+
+	TEST_APPEND_END(efidp_make_acpi_hid, EFIDP_ACPI_CONTAINER_0A06_HID, 0x5a5a5a5a);
+	TEST_FORMAT((efidp)bufp, "AcpiContainer()");
+
+	TEST_APPEND_END(efidp_make_acpi_hid, EFIDP_ACPI_PCIE_ROOT_HID, 0x5a5a5a5a);
+	TEST_FORMAT((efidp)bufp, "PcieRoot(0x5a5a5a5a)");
+
+	TEST_APPEND_END(efidp_make_acpi_hid, EFIDP_ACPI_EC_HID, 0x5a5a5a5a);
+	TEST_FORMAT((efidp)bufp, "EmbeddedController()");
+
+	TEST_APPEND_END(efidp_make_acpi_hid, EFIDP_ACPI_FLOPPY_HID, 0x5a5a5a5a);
+	TEST_FORMAT((efidp)bufp, "Floppy(0x5a5a5a5a)");
+
+	TEST_APPEND_END(efidp_make_acpi_hid, EFIDP_ACPI_KEYBOARD_HID, 0x5a5a5a5a);
+	TEST_FORMAT((efidp)bufp, "Keyboard(0x5a5a5a5a)");
+
+	TEST_APPEND_END(efidp_make_acpi_hid, EFIDP_ACPI_SERIAL_HID, 0x5a5a5a5a);
+	TEST_FORMAT((efidp)bufp, "Serial(0x5a5a5a5a)");
+
+	TEST_APPEND_END(efidp_make_acpi_hid, EFIDP_ACPI_PARALLEL_HID, 0x5a5a5a5a);
+	TEST_FORMAT((efidp)bufp, "Parallel(0x5a5a5a5a)");
+
+	/* XXX: add an nvdimm test */
+
+	TEST_APPEND_END(efidp_make_acpi_hid, 0xa5a5a5a5, 0x5a5a5a5a);
+	TEST_FORMAT((efidp)bufp, "Acpi(0xa5a5a5a5,0x5a5a5a5a)");
+
+	TEST_POSTAMBLE;
+}
+
 /*
  * This one is special: 1) we can't use the normal "append an end marker"
  * technique, 2) it tests the efi_get_error() path as well.
@@ -292,6 +337,7 @@ main(int argc __attribute__((__unused__)),
 
 	test(test_make_generic);
 
+	test(test_make_acpi_hid);
 	test(test_make_end_entire);
 	test(test_make_end_instance);
 	test(test_make_vendor);
