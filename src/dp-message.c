@@ -111,8 +111,17 @@ static ssize_t
 format_ipv6_addr_helper(unsigned char *buf, size_t size, const char *dp_type,
 			const uint8_t *ipaddr, int32_t port)
 {
-	uint16_t *ip = (uint16_t *)ipaddr;
 	ssize_t off = 0;
+	uint16_t ip[8] = {
+		ipaddr[0] << 8 | ipaddr[1],
+		ipaddr[2] << 8 | ipaddr[3],
+		ipaddr[4] << 8 | ipaddr[5],
+		ipaddr[6] << 8 | ipaddr[7],
+		ipaddr[8] << 8 | ipaddr[9],
+		ipaddr[10] << 8 | ipaddr[11],
+		ipaddr[12] << 8 | ipaddr[13],
+		ipaddr[14] << 8 | ipaddr[15]
+	};
 
 	format(buf, size, off, dp_type, "[");
 
@@ -163,9 +172,12 @@ format_ipv6_addr_helper(unsigned char *buf, size_t size, const char *dp_type,
 	if (largest_zero_block_size == 1)
 		largest_zero_block_offset = -1;
 
+	if (largest_zero_block_offset == 0 && largest_zero_block_size == 8)
+		format(buf, size, off, dp_type, "0");
+
 	for (i = 0; i < 8; i++) {
 		if (largest_zero_block_offset == i) {
-			format(buf, size, off, dp_type, "::");
+			format(buf, size, off, dp_type, ":");
 			i += largest_zero_block_size -1;
 			continue;
 		} else if (i > 0) {
@@ -174,6 +186,9 @@ format_ipv6_addr_helper(unsigned char *buf, size_t size, const char *dp_type,
 
 		format(buf, size, off, dp_type, "%x", ip[i]);
 	}
+
+	if (largest_zero_block_offset == 0 && largest_zero_block_size == 8)
+		format(buf, size, off, dp_type, ":0");
 
 	format(buf, size, off, dp_type, "]");
 	if (port > 0)
@@ -531,10 +546,14 @@ _format_message_dn(unsigned char *buf, size_t size, const_efidp dp)
 			       }
 	case EFIDP_MSG_IPv6: {
 		efidp_ipv6_addr const *a = &dp->ipv6_addr;
+		const uint8_t addr_zero[16] = { 00, 00, 00, 00,
+						00, 00, 00, 00,
+						00, 00, 00, 00,
+						00, 00, 00, 00 };
 
 		format(buf, size, off, "IPv6", "IPv6(");
 		format_ipv6_addr(buf, size, off, a->remote_ipv6_addr,
-				 a->remote_port);
+				 ntohs(a->remote_port));
 		format(buf, size, off, "IPv6",",");
 		format_ip_protocol(buf, size, off, "IPv6", a->protocol);
 		format(buf, size, off, "IPv6",",");
@@ -551,16 +570,24 @@ _format_message_dn(unsigned char *buf, size_t size, const_efidp dp)
 			       "StatefulAutoConfigure,");
 			break;
 		default:
-			format(buf, size, off, "IPv6",
-			       "0x%hx,", a->ip_addr_origin);
+			/*
+			 * edk2's DevPathToTextIPv6() just ignores this
+			 * field if it's anything else!
+			 */
 			break;
 		}
 
 		format_ipv6_addr(buf, size, off, a->local_ipv6_addr,
-				 a->local_port);
-		format(buf, size, off, "IPv6",",");
-		format_ipv6_addr(buf, size, off, a->gateway_ipv6_addr, 0);
-		format(buf, size, off, "IPv6",",%u)", a->prefix_length);
+				 ntohs(a->local_port));
+
+		if (memcmp(a->gateway_ipv6_addr, addr_zero, 16) != 0 ||
+		    a->prefix_length != 0) {
+			format(buf, size, off, "IPv6",",");
+			format_ipv6_addr(buf, size, off, a->gateway_ipv6_addr, 0);
+			format(buf, size, off, "IPv6",",%u)", a->prefix_length);
+		} else {
+			format(buf, size, off, "IPv6",")");
+		}
 
 		break;
 			     }
