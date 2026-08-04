@@ -584,6 +584,19 @@ test_make_sas(void)
 }
 
 static int
+test_make_sata()
+{
+	TEST_PREAMBLE;
+
+	TEST_RETURNS(sizeof(efidp_sata), efidp_make_sata, 1, 1, 1);
+
+	TEST_APPEND_END(efidp_make_sata, 1, 1, 1);
+	TEST_FORMAT((efidp)bufp, "Sata(1,1,1)");
+
+	TEST_POSTAMBLE;
+}
+
+static int
 test_make_vendor(void)
 {
 	TEST_PREAMBLE;
@@ -623,6 +636,7 @@ main(int argc __attribute__((__unused__)),
 	test(test_make_nvdimm);
 	test(test_make_nvme);
 	test(test_make_sas);
+	test(test_make_sata);
 	test(test_make_vendor);
 
 	printf("this should print no errors:\n");
