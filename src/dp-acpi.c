@@ -258,7 +258,7 @@ _format_acpi_dn(unsigned char *buf, size_t size, const_efidp dp)
 			case EFIDP_ACPI_HID:
 				debug("Decoding ACPI HID");
 				format(buf, size, off, "Acpi",
-				       "Acpi(0x%08x,0x%"PRIx32")",
+				       "Acpi(0x%"PRIx32",0x%"PRIx32")",
 				       dp->acpi_hid.hid, dp->acpi_hid.uid);
 				break;
 			default:
