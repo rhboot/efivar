@@ -638,6 +638,345 @@ test_make_vendor(void)
 	TEST_POSTAMBLE;
 }
 
+#pragma GCC diagnostic ignored "-Wunused-variable"
+#pragma GCC diagnostic ignored "-Wunused-but-set-variable"
+
+#define EFI_TEST_HD_SIGNATURE { 0xf7, 0x37, 0xbd, 0xc7, 0xbc, 0x0b, 0x4a, 0x26, 0xb8, 0xc7, 0xba, 0xac, 0x14, 0x31, 0xb6, 0xc0 }
+#define EFI_FEDORA_SHIM_EFI_UTF8 "\\EFI\\FEDORA\\SHIM.EFI"
+#define __MAKE_UNICODE(x) __CONCAT(u,x)
+#define EFI_FEDORA_SHIM_EFI_UCS2 __MAKE_UNICODE(EFI_FEDORA_SHIM_EFI_UTF8)
+#define ONE_MEG (1024 * 1024)
+#define ONE_GIG (ONE_MEG * 1024)
+
+static int
+test_dp_functions(void)
+{
+	TEST_PREAMBLE;
+
+	int16_t type;
+	efidp node, dp;
+	const_efidp next;
+	void *nodep;
+
+	efi_char16_t file_name[] = EFI_FEDORA_SHIM_EFI_UCS2;
+
+	struct sample_s {
+		efidp_pci pci;
+		efidp_hd hd;
+		struct {
+			efidp_header header;
+			efi_char16_t name[sizeof(file_name)/2];
+		} file;
+		efidp_header end;
+	};
+
+	uint8_t hd_signature[] = EFI_TEST_HD_SIGNATURE;
+
+	const struct sample_s sample = {
+		.pci = {
+			.header = {
+				.type = EFIDP_HARDWARE_TYPE,
+				.subtype = EFIDP_HW_PCI,
+				.length = sizeof(efidp_pci),
+			},
+			.function = 0xa5,
+			.device = 0x5a,
+		},
+		.hd = {
+			.header = {
+				.type = EFIDP_MEDIA_TYPE,
+				.subtype = EFIDP_MEDIA_HD,
+				.length = sizeof(efidp_hd),
+			},
+			.partition_number = 0,
+			.start = ONE_MEG,
+			.size = ONE_GIG,
+			.signature = EFI_TEST_HD_SIGNATURE,
+			.format = EFIDP_HD_FORMAT_GPT,
+			.signature_type = EFIDP_HD_SIGNATURE_GUID,
+		},
+		.file = {
+			.header = {
+				.type = EFIDP_MEDIA_TYPE,
+				.subtype = EFIDP_MEDIA_FILE,
+				.length = sizeof(efidp_header) + sizeof(file_name),
+			},
+			.name = EFI_FEDORA_SHIM_EFI_UCS2,
+		},
+		.end = {
+			.type = EFIDP_END_TYPE,
+			.subtype = EFIDP_END_ENTIRE,
+			.length = sizeof(efidp_header)
+		},
+	};
+
+	insz = sizeof(sample);
+	bufp = &buf[bufsz - insz];
+	node = dp = (efidp)bufp;
+	nodep = bufp;
+	dnsz = sizeof(sample.pci);
+
+	sz = efidp_make_generic(nodep, dnsz, EFIDP_HARDWARE_TYPE, EFIDP_HW_PCI, sizeof(efidp_pci));
+	assert_equal_goto(sz, sizeof(sample.pci), out, "got %zd expected %zd\n");
+
+	rc = efidp_set_node_data(node, (void *)&sample.pci.function, 2 * sizeof(sample.pci.function));
+	if (rc < 0)
+		print_efi_error();
+	assert_zero_goto(rc, out, "got %d\n");
+
+#ifdef DEBUG
+	printf("sample = {\n"
+	       "  .header = {\n"
+	       "    .type = %hu,\n"
+	       "    .subtype = %hu,\n"
+	       "    .length = %hhu\n"
+	       "  }\n"
+	       "  .pci = {\n"
+	       "    .device = 0x%hx,\n"
+	       "    .function = 0x%hx\n"
+	       "  }\n"
+	       "};\n",
+	       sample.pci.header.type,
+	       sample.pci.header.subtype,
+	       (unsigned char)sample.pci.header.length,
+	       sample.pci.device,
+	       sample.pci.function);
+
+	printf("node = {\n"
+	       "  .header = {\n"
+	       "    .type = %hu,\n"
+	       "    .subtype = %hu,\n"
+	       "    .length = %hhu\n"
+	       "  }\n"
+	       "  .pci = {\n"
+	       "    .device = 0x%hx,\n"
+	       "    .function = 0x%hx\n"
+	       "  }\n"
+	       "};\n",
+	       node->pci.header.type,
+	       node->pci.header.subtype,
+	       (unsigned char)node->pci.header.length,
+	       node->pci.device,
+	       node->pci.function);
+#endif
+
+	type = efidp_type((efidp)&sample.pci);
+	assert_equal_goto((uint32_t)type, EFIDP_HARDWARE_TYPE, out, "got %"PRIu32" expected %d");
+
+	type = efidp_subtype((efidp)&sample.pci);
+	assert_equal_goto((uint32_t)type, EFIDP_HW_PCI, out, "got %"PRIu32" expected %d");
+
+	rc = memcmp(node, &sample.pci, efidp_node_size(node));
+	assert_zero_goto(rc, out, "got %d\n");
+
+	rc = efidp_next_node((efidp)node, &next);
+	assert_positive_goto(rc, out, "\n");
+
+	node = (efidp)next;
+	nodep = (void *)node;
+	insz = sizeof(sample.hd);
+	sz = efidp_make_hd(nodep, insz, 0, ONE_MEG, ONE_GIG,
+			   hd_signature, EFIDP_HD_FORMAT_GPT,
+			   EFIDP_HD_SIGNATURE_GUID);
+	assert_equal_goto(sz, 42, out, "got %zd expected %d\n");
+
+	rc = memcmp(node, &sample.hd, efidp_node_size(node));
+#ifdef DEBUG
+	printf("sample = {\n"
+	       "  .header = {\n"
+	       "    .type = %hu,\n"
+	       "    .subtype = %hu,\n"
+	       "    .length = %hhu\n"
+	       "  },\n"
+	       "  .hd = {\n"
+	       "    .partition_number = 0x%hx,\n"
+	       "    .start = 0x%" PRIx64 ",\n"
+	       "    .size = 0x%" PRIx64 ",\n"
+	       "    .signature = { %hx,%hx,%hx,%hx,%hx,%hx,%hx,%hx,%hx,%hx,%hx,%hx,%hx,%hx,%hx,%hx },\n"
+	       "    .format = 0x%hhx,\n"
+	       "    .signature_type = %hhx\n"
+	       "  }\n"
+	       "};\n",
+	       sample.hd.header.type, sample.hd.header.subtype,
+	       (unsigned char)sample.hd.header.length, sample.hd.partition_number,
+	       sample.hd.start, sample.hd.size, sample.hd.signature[0],
+	       sample.hd.signature[1], sample.hd.signature[2],
+	       sample.hd.signature[3], sample.hd.signature[4],
+	       sample.hd.signature[5], sample.hd.signature[6],
+	       sample.hd.signature[7], sample.hd.signature[8],
+	       sample.hd.signature[9], sample.hd.signature[10],
+	       sample.hd.signature[11], sample.hd.signature[12],
+	       sample.hd.signature[13], sample.hd.signature[14],
+	       sample.hd.signature[15], sample.hd.format,
+	       sample.hd.signature_type);
+	printf("node = {\n"
+	       "  .header = {\n"
+	       "    .type = %hu,\n"
+	       "    .subtype = %hu,\n"
+	       "    .length = %hhu\n"
+	       "  },\n"
+	       "  .hd = {\n"
+	       "    .partition_number = 0x%hx,\n"
+	       "    .start = 0x%" PRIx64 ",\n"
+	       "    .size = 0x%" PRIx64 ",\n"
+	       "    .signature = { %hx,%hx,%hx,%hx,%hx,%hx,%hx,%hx,%hx,%hx,%hx,%hx,%hx,%hx,%hx,%hx },\n"
+	       "    .format = 0x%hhx,\n"
+	       "    .signature_type = %hhx\n"
+	       "  }\n"
+	       "};\n",
+	       node->hd.header.type, node->hd.header.subtype,
+	       (unsigned char)node->hd.header.length, node->hd.partition_number,
+	       node->hd.start, node->hd.size, node->hd.signature[0],
+	       node->hd.signature[1], node->hd.signature[2],
+	       node->hd.signature[3], node->hd.signature[4],
+	       node->hd.signature[5], node->hd.signature[6],
+	       node->hd.signature[7], node->hd.signature[8],
+	       node->hd.signature[9], node->hd.signature[10],
+	       node->hd.signature[11], node->hd.signature[12],
+	       node->hd.signature[13], node->hd.signature[14],
+	       node->hd.signature[15], node->hd.format,
+	       node->hd.signature_type);
+#endif
+	assert_zero_goto(rc, out, "got %d\n");
+
+	rc = efidp_next_node((efidp)node, &next);
+	assert_positive_goto(rc, out, "\n");
+
+	node = (efidp)next;
+	nodep = (void *)node;
+	insz = sizeof(sample.file);
+
+	sz = efidp_make_file(nodep, insz, EFI_FEDORA_SHIM_EFI_UTF8);
+	assert_equal_goto(sz, 46, out, "got %zd expected %d\n");
+
+#ifdef DEBUG
+	printf("sample.file = {\n"
+	       "  .header = {%hu, %hu, %hhu},\n"
+	       "  .name = \"",
+	       sample.file.header.type,
+	       sample.file.header.subtype,
+	       (unsigned char)sample.file.header.length);
+	for (unsigned int i = 0; sample.file.name[i] != 0; i++)
+		printf("%c", (char)sample.file.name[i]);
+	printf("\"\n};\n");
+
+	printf("node->file = {\n"
+	       "  .header = {%hu, %hu, %hhu},\n"
+	       "  .name = \"",
+	       node->file.header.type,
+	       node->file.header.subtype,
+	       (unsigned char)node->file.header.length);
+	for (unsigned int i = 0; node->file.name[i] != 0; i++)
+		printf("%c", (char)node->file.name[i]);
+	printf("\"\n};\n");
+#endif
+
+	rc = memcmp(node, &sample.file, efidp_node_size(node));
+	assert_zero_goto(rc, out, "got %d\n");
+
+	rc = efidp_next_node((efidp)node, &next);
+	assert_positive_goto(rc, out, "\n");
+
+	node = (efidp)next;
+	nodep = (void *)node;
+	insz = sizeof(sample.hd);
+	sz = efidp_make_end_entire(nodep, sizeof(efidp_header));
+	assert_equal_goto(sz, sizeof(sample.end), out, "got %zd expected %zd\n");
+
+	rc = memcmp(node, &sample.end, efidp_node_size(node));
+	assert_zero_goto(rc, out, "got %d\n");
+
+	rc = memcmp(dp, &sample, efidp_size(dp));
+	assert_zero_goto(rc, out, "got %d\n");
+
+	insz = sizeof(sample);
+	TEST_FORMAT((efidp)bufp,
+		    "Pci(0x5a,0xa5)/HD(0,GPT,c7bd37f7-0bbc-264a-b8c7-baac1431b6c0,0x100000,0x40000000)/\\EFI\\FEDORA\\SHIM.EFI");
+
+	struct {
+		efidp_header end_instance;
+		efidp_header end_entire;
+	} ends;
+
+	efidp_make_end_instance((uint8_t *)&ends.end_instance, 4);
+	efidp_make_end_entire((uint8_t *)&ends.end_entire, 4);
+
+#if 0
+		= calloc(1, sizeof(sample) * 2 + sizeof(efidp_header));
+	assert_not_equal_goto(double_path, NULL, out, "got %p expected !%p\n");
+#endif
+
+	efidp tmp0 = NULL;
+	rc = efidp_append_path((const_efidp)&ends.end_entire, (const_efidp)&sample, &tmp0);
+	assert_zero_goto(rc, out, "got %d\n");
+
+	insz = efidp_size(tmp0);
+	TEST_FORMAT(tmp0,
+		    "Pci(0x5a,0xa5)/HD(0,GPT,c7bd37f7-0bbc-264a-b8c7-baac1431b6c0,0x100000,0x40000000)/\\EFI\\FEDORA\\SHIM.EFI");
+
+	efidp tmp1 = NULL;
+	rc = efidp_append_node(tmp0, (const efidp)&ends.end_instance, &tmp1);
+	assert_zero_goto(rc, out, "got %d\n");
+
+	insz = efidp_size(tmp1);
+	dp = tmp1;
+	TEST_FORMAT(tmp1,
+		    "Pci(0x5a,0xa5)/HD(0,GPT,c7bd37f7-0bbc-264a-b8c7-baac1431b6c0,0x100000,0x40000000)/\\EFI\\FEDORA\\SHIM.EFI,");
+
+	efidp double_path = NULL;
+	rc = efidp_append_path(tmp1, (const_efidp)&sample, &double_path);
+	assert_zero_goto(rc, out, "got %d\n");
+
+	insz = efidp_size(double_path);
+	TEST_FORMAT(double_path,
+		    "Pci(0x5a,0xa5)/HD(0,GPT,c7bd37f7-0bbc-264a-b8c7-baac1431b6c0,0x100000,0x40000000)/\\EFI\\FEDORA\\SHIM.EFI,"
+		    "Pci(0x5a,0xa5)/HD(0,GPT,c7bd37f7-0bbc-264a-b8c7-baac1431b6c0,0x100000,0x40000000)/\\EFI\\FEDORA\\SHIM.EFI");
+
+	efidp new = NULL;
+	rc = efidp_duplicate_path(double_path, &new);
+	TEST_FORMAT(new,
+		    "Pci(0x5a,0xa5)/HD(0,GPT,c7bd37f7-0bbc-264a-b8c7-baac1431b6c0,0x100000,0x40000000)/\\EFI\\FEDORA\\SHIM.EFI,"
+		    "Pci(0x5a,0xa5)/HD(0,GPT,c7bd37f7-0bbc-264a-b8c7-baac1431b6c0,0x100000,0x40000000)/\\EFI\\FEDORA\\SHIM.EFI");
+
+	free(tmp0);
+	free(tmp1);
+	free(double_path);
+	free(new);
+
+	efidp_header hdr = { 0, 0, 2 };
+	char tmpstr[] = "abcdefg";
+	rc = efidp_set_node_data((efidp)&hdr, tmpstr, sizeof(tmpstr));
+	assert_negative_goto(rc, out, "%d\n", __LINE__);
+	efi_error_pop_all();
+
+	sz = efidp_parse_device_node(NULL, NULL, 0);
+	assert_negative_goto(sz, out, "\n");
+	assert_equal_goto(errno, ENOSYS, out, "got %d expected %d\n");
+	efi_error_pop_all();
+
+	sz = efidp_parse_device_path(NULL, NULL, 0);
+	assert_negative_goto(sz, out, "\n");
+	assert_equal_goto(errno, ENOSYS, out, "got %d expected %d\n");
+	efi_error_pop_all();
+
+	rc = efidp_append_path((const_efidp)&sample, NULL, &new);
+	assert_zero_goto(rc, out, "got %d %d\n", __LINE__);
+	TEST_FORMAT(new, "Pci(0x5a,0xa5)/HD(0,GPT,c7bd37f7-0bbc-264a-b8c7-baac1431b6c0,0x100000,0x40000000)/\\EFI\\FEDORA\\SHIM.EFI");
+	free(new);
+
+	rc = efidp_append_path(NULL, (const_efidp)&sample, &new);
+	assert_zero_goto(rc, out, "got %d %d\n", __LINE__);
+	TEST_FORMAT(new, "Pci(0x5a,0xa5)/HD(0,GPT,c7bd37f7-0bbc-264a-b8c7-baac1431b6c0,0x100000,0x40000000)/\\EFI\\FEDORA\\SHIM.EFI");
+	free(new);
+
+	rc = efidp_append_path(NULL, NULL, &new);
+	assert_zero_goto(rc, out, "got %d %d\n", __LINE__);
+	TEST_FORMAT(new, "");
+	free(new);
+
+	TEST_POSTAMBLE
+}
+
 int
 main(int argc __attribute__((__unused__)),
      char *argv[] __attribute__((__unused__)))
@@ -666,6 +1005,8 @@ main(int argc __attribute__((__unused__)),
 	test(test_make_sata);
 	test(test_make_scsi);
 	test(test_make_vendor);
+
+	test(test_dp_functions);
 
 	printf("this should print no errors:\n");
 	print_efi_error();
