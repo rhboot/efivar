@@ -1029,4 +1029,31 @@ efidp_make_uart(uint8_t *buf, ssize_t size, uint64_t baud_rate,
 	return sz;
 }
 
+ssize_t PUBLIC
+efidp_make_uart_flow_control(uint8_t *buf, ssize_t size,
+			     uint32_t flow_control_map)
+{
+	efidp_uart_flow_control *ufc = (efidp_uart_flow_control *)buf;
+	ssize_t req = sizeof (*ufc);
+	ssize_t sz;
+
+	sz = efidp_make_generic(buf, size, EFIDP_MESSAGE_TYPE,
+					EFIDP_MSG_VENDOR, sizeof (*ufc));
+	if (size && sz == req) {
+		ufc->vendor_guid = EFIDP_MSG_UART_GUID;
+		if ((flow_control_map & ~(EFIDP_UART_FLOW_CONTROL_HARDWARE | EFIDP_UART_FLOW_CONTROL_XONXOFF)) ||
+		    (flow_control_map == (EFIDP_UART_FLOW_CONTROL_HARDWARE | EFIDP_UART_FLOW_CONTROL_XONXOFF))) {
+			efi_error("UART flow control map 0x%x is invalid", flow_control_map);
+			errno = EINVAL;
+			return -1;
+		}
+		ufc->flow_control_map = flow_control_map;
+	}
+
+	if (sz < 0)
+		efi_error("efidp_make_generic failed");
+
+	return sz;
+}
+
 // vim:fenc=utf-8:tw=75:noet
