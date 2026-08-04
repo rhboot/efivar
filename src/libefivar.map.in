@@ -167,4 +167,5 @@ LIBEFIVAR_1.38 {
 
 LIBEFIVAR_1.39 {
 	global: efidp_make_ipv6;
+		efidp_make_uart;
 } LIBEFIVAR_1.38;

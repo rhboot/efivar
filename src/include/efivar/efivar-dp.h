@@ -521,6 +521,10 @@ typedef struct {
 	uint8_t		stop_bits;
 } EFIVAR_PACKED efidp_uart;
 
+extern ssize_t
+efidp_make_uart(uint8_t *buf, ssize_t size, uint64_t baud_rate,
+		uint8_t data_bits, uint8_t parity, uint8_t stop_bits);
+
 #define EFIDP_UART_PARITY_DEFAULT	0x00
 #define EFIDP_UART_PARITY_NONE		0x01
 #define EFIDP_UART_PARITY_EVEN		0x02

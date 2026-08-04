@@ -996,4 +996,37 @@ efidp_make_emmc(uint8_t *buf, ssize_t size, uint32_t slot_id)
 	return sz;
 }
 
+ssize_t PUBLIC
+efidp_make_uart(uint8_t *buf, ssize_t size, uint64_t baud_rate,
+		uint8_t data_bits, uint8_t parity, uint8_t stop_bits)
+{
+	efidp_uart *uart = (efidp_uart *)buf;
+	ssize_t req = sizeof (*uart);
+	ssize_t sz;
+
+	sz = efidp_make_generic(buf, size, EFIDP_MESSAGE_TYPE,
+					EFIDP_MSG_UART, sizeof (*uart));
+	if (size && sz == req) {
+		uart->baud_rate = baud_rate;
+		uart->data_bits = data_bits;
+		if (parity > EFIDP_UART_PARITY_SPACE) {
+			efi_error("UART parity 0x%x is invalid", parity);
+			errno = EINVAL;
+			return -1;
+		}
+		uart->parity = parity;
+		if (stop_bits > EFIDP_UART_STOP_BITS_TWO) {
+			efi_error("UART stop_bits 0x%x is invalid", stop_bits);
+			errno = EINVAL;
+			return -1;
+		}
+		uart->stop_bits = stop_bits;
+	}
+
+	if (sz < 0)
+		efi_error("efidp_make_generic failed");
+
+	return sz;
+}
+
 // vim:fenc=utf-8:tw=75:noet
