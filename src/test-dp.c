@@ -247,6 +247,19 @@ test_make_acpi_hid()
 	TEST_POSTAMBLE;
 }
 
+static int
+test_make_atapi()
+{
+	TEST_PREAMBLE;
+
+	TEST_RETURNS(sizeof(efidp_atapi), efidp_make_atapi, 1, 2, 3);
+
+	TEST_APPEND_END(efidp_make_atapi, 1, 2, 3);
+	TEST_FORMAT((efidp)bufp, "Ata(1,2,3)");
+
+	TEST_POSTAMBLE;
+}
+
 /*
  * This one is special: 1) we can't use the normal "append an end marker"
  * technique, 2) it tests the efi_get_error() path as well.
@@ -338,6 +351,7 @@ main(int argc __attribute__((__unused__)),
 	test(test_make_generic);
 
 	test(test_make_acpi_hid);
+	test(test_make_atapi);
 	test(test_make_end_entire);
 	test(test_make_end_instance);
 	test(test_make_vendor);
