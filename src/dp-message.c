@@ -62,6 +62,51 @@ format_ipv4_addr_helper(unsigned char *buf, size_t size, const char *dp_type,
 	return off;
 }
 
+/*
+ * In a few examples, the spec says this string:
+ *
+ * IPv6(2001:4898:000A:1005:95A6:EE6C:BED3:4859,TCPDHCP,2001:4898:000A:1005:0215:17FF:FE21:5593)
+ *
+ * should represent:
+ *
+ * 03				dp.header.type = messaging
+ * 0c				dp.header.subtype = ipv6
+ * 3c 00			dp.header.length = 60 (0x003c)
+ * 20 01 48 98 00 0a 10 05	dp.ipv6.local =
+ * 02 15 17 ff fe 21 55 93	  2001:4898:000a:1005:0215:17ff:fe21:5593
+ * 20 01 48 98 00 0a 10 05	dp.ipv6.remote =
+ * 95 a6 ee 6c be d3 48 59	  2001:4989:000a:1005:95a6:ee6c:bed3:4859
+ * 00 00			dp.ipv6.local_port = 0
+ * 0c bc			dp.ipv6.remote_port = 3260 (0x0cbc)
+ * 00 06			dp.ipv6.protocol = 6 (tcp)
+ * 01				dp.ipv6.origin = 1 (dhcp)
+ * 00 00 00 00 00 00 00 00	dp.ipv6.gateway = [0::0]
+ * 00 00 00 00 00 00 00 00
+ *
+ * Ignoring the missing comma (typo), this looks wrong with respect to
+ * other parts, which say:
+ *
+ *   IPv6 Address		IPv6 Address is expressed in the format
+ *				[address]:port. The ‘address’ is expressed
+ *				in the way defined in RFC4291 Section 2.2.
+ *				The ‘:port’ after the [address] is
+ *				optional. If present, the ‘port’ is an
+ *				integer value between 0-65535 to represent
+ *				the port number, or else, port number is
+ *				zero.
+ *
+ * and
+ *
+ *   IPv6(RemoteIp, Protocol, IPAddressOrigin, LocalIp, GatewayIPAddress, SubnetMask)
+ *   IPv6(RemoteIp) (Display Only)
+ *
+ * Which I think would express that data as:
+ *
+ * IPv6([2001:4898:000A:1005:95A6:EE6C:BED3:4859],TCP,DHCP,
+ *      [2001:4898:000A:1005:0215:17FF:FE21:5593]:3260,[0::0])
+ *
+ * And it just should not have included "SubnetMask".
+ */
 static ssize_t
 format_ipv6_addr_helper(unsigned char *buf, size_t size, const char *dp_type,
 			const uint8_t *ipaddr, int32_t port)
@@ -735,6 +780,37 @@ efidp_make_ipv4(uint8_t *buf, ssize_t size, uint32_t local, uint32_t remote,
 			ipv4->static_ip_addr = 1;
 		*((uint32_t *)ipv4->gateway) = htonl(gateway);
 		*((uint32_t *)ipv4->netmask) = htonl(netmask);
+	}
+
+	if (sz < 0)
+		efi_error("efidp_make_generic failed");
+
+	return sz;
+}
+
+ssize_t PUBLIC
+efidp_make_ipv6(uint8_t *buf, ssize_t size,
+		uint8_t local[16], uint8_t remote[16],
+		uint16_t local_port, uint16_t remote_port,
+		uint16_t protocol, uint8_t ip_addr_origin,
+		uint8_t prefix_length, uint8_t gateway[16])
+{
+	efidp_ipv6_addr *ipv6 = (efidp_ipv6_addr *)buf;
+	ssize_t sz = efidp_make_generic(buf, size, EFIDP_MESSAGE_TYPE,
+					EFIDP_MSG_IPv6, sizeof (*ipv6));
+	ssize_t req = sizeof (*ipv6);
+
+	if (size && sz == req) {
+		for (uint8_t i = 0; i < 16; i++) {
+			ipv6->local_ipv6_addr[i] = local[i];
+			ipv6->remote_ipv6_addr[i] = remote[i];
+			ipv6->gateway_ipv6_addr[i] = gateway[i];
+		}
+		ipv6->local_port = htons(local_port);
+		ipv6->remote_port = htons(remote_port);
+		ipv6->protocol = htons(protocol);
+		ipv6->ip_addr_origin = ip_addr_origin;
+		ipv6->prefix_length = prefix_length;
 	}
 
 	if (sz < 0)

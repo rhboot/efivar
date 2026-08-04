@@ -449,6 +449,7 @@ typedef struct {
 	uint8_t		gateway[4];
 	uint8_t		netmask[4];
 } EFIVAR_PACKED efidp_ipv4_addr;
+
 /* everything here is in host byte order */
 extern ssize_t efidp_make_ipv4(uint8_t *buf, ssize_t size,
 			       uint32_t local, uint32_t remote,
@@ -471,6 +472,14 @@ typedef struct {
 	uint8_t		prefix_length;
 	uint8_t		gateway_ipv6_addr[16];
 } EFIVAR_PACKED efidp_ipv6_addr;
+
+/* everything here is in host byte order */
+extern ssize_t
+efidp_make_ipv6(uint8_t *buf, ssize_t size,
+		uint8_t local[16], uint8_t remote[16],
+		uint16_t local_port, uint16_t remote_port,
+		uint16_t protocol, uint8_t ip_addr_origin,
+		uint8_t prefix_length, uint8_t gateway[16]);
 
 #define EFIDP_IPv6_ORIGIN_MANUAL	0x00
 #define EFIDP_IPv6_ORIGIN_STATIC	0x00
