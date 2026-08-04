@@ -13,6 +13,43 @@
 
 #include "efivar.h"	// IWYU pragma: keep
 
+/*
+ * In a few examples, the spec says this string:
+ *
+ * IPv4(192.168.0.100,TCP,Static,192.168.0.1)
+ *
+ * should represent:
+ *
+ * 03				dp.header.type = messaging
+ * 0c				dp.header.subtype = ipv4
+ * 1b 00			dp.header.length = 27 (0x001b)
+ * c0 a8 00 01			dp.ipv4.local = 192.168.0.1
+ * c0 a8 00 64			dp.ipv4.remote = 192.168.0.100
+ * 00 00			dp.ipv4.local_port = 0
+ * 0c bc			dp.ipv4.rempote_port = 3260
+ * 00 06			dp.ipv4.protocol = 6 (tcp)
+ * 01				dp.ipv4.static = true
+ * 00 00 00 00			dp.ipv4.gateway = 0.0.0.0
+ * 00 00 00 00			dp.ipv4.subnet_mask = 0.0.0.0
+ *
+ * Which I think is a bit junk, as surely nonzero ports were meant
+ * to be included.  Elsewhere it says:
+ *
+ *   IPv4 Address	Series of four integer values (each between 0-255),
+ *			separated by a ‘.’  Optionally, followed by a ‘:’
+ *			and an integer value between 0-65555. If the ‘:’
+ *			is not present, then the port value is zero.
+ *
+ * and:
+ *
+ *   IPv4(RemoteIp, Protocol, Type, LocalIp, GatewayIPAddress, SubnetMask)
+ *   IPv4(RemoteIp) (Display Only)
+ *
+ * So at the least that should have been:
+ *
+ * IPv4(192.168.0.100:3260,TCP,Static,192.168.0.1)
+ *
+ */
 static ssize_t
 format_ipv4_addr_helper(unsigned char *buf, size_t size, const char *dp_type,
 			const uint8_t *ipaddr, int32_t port)
@@ -21,7 +58,7 @@ format_ipv4_addr_helper(unsigned char *buf, size_t size, const char *dp_type,
 	format(buf, size, off, dp_type, "%hhu.%hhu.%hhu.%hhu",
 	       ipaddr[0], ipaddr[1], ipaddr[2], ipaddr[3]);
 	if (port > 0)
-		format(buf, size, off, dp_type, ":%hu", (uint16_t)port);
+		format(buf, size, off, dp_type, ":%hu", ntohs((uint16_t)port));
 	return off;
 }
 
@@ -102,7 +139,7 @@ format_ipv6_addr_helper(unsigned char *buf, size_t size, const char *dp_type,
 
 #define format_ip_protocol(buf, size, off, dp_type, proto)	\
 ({								\
-	switch(proto) {						\
+	switch(ntohs(proto)) {					\
 	case 6:							\
 		format(buf, size, off, dp_type, "TCP");		\
 		break;						\
@@ -110,7 +147,8 @@ format_ipv6_addr_helper(unsigned char *buf, size_t size, const char *dp_type,
 		format(buf, size, off, dp_type, "UDP");		\
 		break;						\
 	default:						\
-		format(buf, size, off, dp_type, "%u", proto);	\
+		format(buf, size, off, dp_type, "%u",		\
+		       ntohs(proto));				\
 		break;						\
 	}							\
 })
