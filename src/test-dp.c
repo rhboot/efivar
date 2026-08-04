@@ -405,6 +405,88 @@ test_make_hw_vendor(void)
 }
 
 static int
+test_make_ipv4()
+{
+	TEST_PREAMBLE;
+
+	uint32_t local = 0x0a000001;
+	uint32_t remote = 0x0a000101;
+	uint32_t gateway = 0x0a000002;
+	uint32_t netmask = 0xff000000;
+	uint32_t local_port = 1025;
+	uint32_t remote_port = 443;
+	uint16_t protocol = 0;
+	int is_static = 0;
+
+	/*
+	 * In a few examples, the spec says this string:
+	 *
+	 * IPv4(192.168.0.100,TCP,Static,192.168.0.1)
+	 *
+	 * should represent:
+	 *
+	 * 03				dp.header.type = messaging
+	 * 0c				dp.header.subtype = ipv4
+	 * 1b 00			dp.header.length = 27 (0x001b)
+	 * c0 a8 00 01			dp.ipv4.local = 192.168.0.1
+	 * c0 a8 00 64			dp.ipv4.remote = 192.168.0.100
+	 * 00 00			dp.ipv4.local_port = 0
+	 * 0c bc			dp.ipv4.rempote_port = 3260
+	 * 00 06			dp.ipv4.protocol = 6 (tcp)
+	 * 01				dp.ipv4.static = true
+	 * 00 00 00 00			dp.ipv4.gateway = 0.0.0.0
+	 * 00 00 00 00			dp.ipv4.subnet_mask = 0.0.0.0
+	 *
+	 * Which I think is a bit junk, as surely nonzero ports were meant
+	 * to be included.  Elsewhere it says:
+	 *
+	 *   IPv4 Address	Series of four integer values (each between 0-255),
+	 *			separated by a ‘.’  Optionally, followed by a ‘:’
+	 *			and an integer value between 0-65555. If the ‘:’
+	 *			is not present, then the port value is zero.
+	 *
+	 * and:
+	 *
+	 *   IPv4(RemoteIp, Protocol, Type, LocalIp, GatewayIPAddress, SubnetMask)
+	 *   IPv4(RemoteIp) (Display Only)
+	 *
+	 * So at the least that should have been:
+	 *
+	 * IPv4(192.168.0.100:3260,TCP,Static,192.168.0.1)
+	 *
+	 */
+
+	TEST_RETURNS(sizeof(efidp_ipv4_addr), efidp_make_ipv4,
+		     local, remote, gateway, netmask, local_port, remote_port, protocol, is_static);
+
+	TEST_APPEND_END(efidp_make_ipv4,
+		     local, remote, gateway, netmask, local_port, remote_port, protocol, is_static);
+	TEST_FORMAT((efidp)bufp, "IPv4(10.0.1.1:443,0,DHCP,10.0.0.1:1025,10.0.0.2,255.0.0.0)");
+
+	is_static = 1;
+	TEST_APPEND_END(efidp_make_ipv4,
+		     local, remote, gateway, netmask, local_port, remote_port, protocol, is_static);
+	TEST_FORMAT((efidp)bufp, "IPv4(10.0.1.1:443,0,Static,10.0.0.1:1025,10.0.0.2,255.0.0.0)");
+
+	protocol = 6;
+	TEST_APPEND_END(efidp_make_ipv4,
+		     local, remote, gateway, netmask, local_port, remote_port, protocol, is_static);
+	TEST_FORMAT((efidp)bufp, "IPv4(10.0.1.1:443,TCP,Static,10.0.0.1:1025,10.0.0.2,255.0.0.0)");
+
+	protocol = 17;
+	TEST_APPEND_END(efidp_make_ipv4,
+		     local, remote, gateway, netmask, local_port, remote_port, protocol, is_static);
+	TEST_FORMAT((efidp)bufp, "IPv4(10.0.1.1:443,UDP,Static,10.0.0.1:1025,10.0.0.2,255.0.0.0)");
+
+	protocol = 12345;
+	TEST_APPEND_END(efidp_make_ipv4,
+		     local, remote, gateway, netmask, local_port, remote_port, protocol, is_static);
+	TEST_FORMAT((efidp)bufp, "IPv4(10.0.1.1:443,12345,Static,10.0.0.1:1025,10.0.0.2,255.0.0.0)");
+
+	TEST_POSTAMBLE;
+}
+
+static int
 test_make_vendor(void)
 {
 	TEST_PREAMBLE;
@@ -437,6 +519,7 @@ main(int argc __attribute__((__unused__)),
 	test(test_make_file);
 	test(test_make_hd);
 	test(test_make_hw_vendor);
+	test(test_make_ipv4);
 	test(test_make_vendor);
 
 	printf("this should print no errors:\n");
