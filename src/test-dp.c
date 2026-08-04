@@ -353,6 +353,24 @@ test_make_end_instance(void)
 }
 
 static int
+test_make_file(void)
+{
+	TEST_PREAMBLE;
+
+	char teststr[] = "ééé";
+
+	/*
+	 * Is this actually reliably the right size with other strings?  Who knows...
+	 */
+	TEST_RETURNS(sizeof(efidp_file) + sizeof(teststr) + 1, efidp_make_file, teststr);
+
+	TEST_APPEND_END(efidp_make_file, teststr);
+	TEST_FORMAT((efidp)bufp, "ééé");
+
+	TEST_POSTAMBLE;
+}
+
+static int
 test_make_vendor(void)
 {
 	TEST_PREAMBLE;
@@ -382,6 +400,7 @@ main(int argc __attribute__((__unused__)),
 	test(test_make_emmc);
 	test(test_make_end_entire);
 	test(test_make_end_instance);
+	test(test_make_file);
 	test(test_make_vendor);
 
 	printf("this should print no errors:\n");
