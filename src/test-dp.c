@@ -388,6 +388,23 @@ test_make_hd(void)
 }
 
 static int
+test_make_hw_vendor(void)
+{
+	TEST_PREAMBLE;
+
+	char teststr[] = "éééa";
+	efi_guid_t vendor_guid = efi_guid_redhat_2;
+
+	TEST_RETURNS(sizeof(efidp_hw_vendor) + sizeof(teststr), efidp_make_hw_vendor,
+		     vendor_guid, teststr, sizeof(teststr));
+
+	TEST_APPEND_END(efidp_make_hw_vendor, vendor_guid, teststr, sizeof(teststr));
+	TEST_FORMAT((efidp)bufp, "VenHw(0223eddb-9079-4388-af77-2d65b1c35d3b,c3a9c3a9c3a96100)");
+
+	TEST_POSTAMBLE;
+}
+
+static int
 test_make_vendor(void)
 {
 	TEST_PREAMBLE;
@@ -419,6 +436,7 @@ main(int argc __attribute__((__unused__)),
 	test(test_make_end_instance);
 	test(test_make_file);
 	test(test_make_hd);
+	test(test_make_hw_vendor);
 	test(test_make_vendor);
 
 	printf("this should print no errors:\n");
