@@ -198,6 +198,11 @@ _format_acpi_dn(unsigned char *buf, size_t size, const_efidp dp)
 			       "Serial(0x%"PRIx32")",
 			       dp->acpi_hid.uid);
 			break;
+		case EFIDP_ACPI_PARALLEL_HID:
+			format(buf, size, off, "Parallel",
+			       "Parallel(0x%"PRIx32")",
+			       dp->acpi_hid.uid);
+			break;
 		case EFIDP_ACPI_NVDIMM_HID: {
 			int rc;
 			const_efidp next = NULL;
