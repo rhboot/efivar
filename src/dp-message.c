@@ -793,7 +793,6 @@ efidp_make_atapi(uint8_t *buf, ssize_t size, uint16_t primary,
 	return sz;
 }
 
-
 ssize_t PUBLIC
 efidp_make_sas(uint8_t *buf, ssize_t size, uint64_t sas_address)
 {
@@ -846,7 +845,7 @@ efidp_make_emmc(uint8_t *buf, ssize_t size, uint32_t slot_id)
 	ssize_t sz;
 
 	sz = efidp_make_generic(buf, size, EFIDP_MESSAGE_TYPE,
-					EFIDP_MSG_NVME, sizeof (*emmc));
+					EFIDP_MSG_EMMC, sizeof (*emmc));
 	if (size && sz == req)
 		emmc->slot = slot_id;
 
