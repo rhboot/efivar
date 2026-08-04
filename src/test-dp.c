@@ -8,6 +8,8 @@
 
 #include "test.h"
 
+#include "gpt.h"
+
 #include <stdlib.h>
 
 static void
@@ -370,6 +372,21 @@ test_make_file(void)
 	TEST_POSTAMBLE;
 }
 
+int
+test_make_hd(void)
+{
+	TEST_PREAMBLE;
+
+	partition_signature_t signature = { 0, };
+
+	TEST_RETURNS(sizeof(efidp_hd), efidp_make_hd, 0, 1024, 4096, (uint8_t *)&signature, 0, EFIDP_HD_SIGNATURE_NONE);
+
+	TEST_APPEND_END(efidp_make_hd, 0, 1024, 4096, (uint8_t *)&signature, 0, EFIDP_HD_SIGNATURE_NONE);
+	TEST_FORMAT((efidp)bufp, "HD(0,0,00000000000000000000000000000000,0x400,0x1000)");
+
+	TEST_POSTAMBLE;
+}
+
 static int
 test_make_vendor(void)
 {
@@ -401,6 +418,7 @@ main(int argc __attribute__((__unused__)),
 	test(test_make_end_entire);
 	test(test_make_end_instance);
 	test(test_make_file);
+	test(test_make_hd);
 	test(test_make_vendor);
 
 	printf("this should print no errors:\n");
