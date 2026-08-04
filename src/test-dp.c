@@ -519,6 +519,23 @@ test_make_media_vendor(void)
 }
 
 static int
+test_make_msg_vendor(void)
+{
+	TEST_PREAMBLE;
+
+	char teststr[] = "éééab";
+	efi_guid_t vendor_guid = efi_guid_redhat_2;
+
+	TEST_RETURNS(sizeof(efidp_msg_vendor) + sizeof(teststr), efidp_make_msg_vendor,
+		     vendor_guid, teststr, sizeof(teststr));
+
+	TEST_APPEND_END(efidp_make_msg_vendor, vendor_guid, teststr, sizeof(teststr));
+	TEST_FORMAT((efidp)bufp, "VenMsg(0223eddb-9079-4388-af77-2d65b1c35d3b,c3a9c3a9c3a9616200)");
+
+	TEST_POSTAMBLE;
+}
+
+static int
 test_make_vendor(void)
 {
 	TEST_PREAMBLE;
@@ -554,6 +571,7 @@ main(int argc __attribute__((__unused__)),
 	test(test_make_ipv4);
 	test(test_make_mac_addr);
 	test(test_make_media_vendor);
+	test(test_make_msg_vendor);
 	test(test_make_vendor);
 
 	printf("this should print no errors:\n");
