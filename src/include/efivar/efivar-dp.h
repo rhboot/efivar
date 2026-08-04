@@ -566,6 +566,12 @@ typedef struct {
 	uint32_t	flow_control_map;
 } EFIVAR_PACKED efidp_uart_flow_control;
 
+extern ssize_t
+efidp_make_uart_flow_control(uint8_t *buf, ssize_t size,
+			     uint32_t flow_control_map);
+
+
+#define EFIDP_UART_FLOW_CONTROL_NONE		0x0
 #define EFIDP_UART_FLOW_CONTROL_HARDWARE	0x1
 #define EFIDP_UART_FLOW_CONTROL_XONXOFF		0x2
 
