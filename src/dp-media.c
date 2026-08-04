@@ -59,7 +59,7 @@ _format_media_dn(unsigned char *buf, size_t size, const_efidp dp)
 		break;
 	case EFIDP_MEDIA_FILE: {
 		ssize_t limit = efidp_node_size(dp);
-		size_t offset = offsetof(efidp_usb_wwid, serial_number);
+		size_t offset = offsetof(efidp_file, name);
 		if (limit < 0 ||
 		    SUB(limit,  offset, &limit) ||
 		    DIV(limit, 2, &limit)) {
