@@ -550,6 +550,24 @@ test_make_nvdimm()
 	TEST_POSTAMBLE;
 }
 
+int
+test_make_nvme(void)
+{
+	TEST_PREAMBLE;
+
+	uint8_t eui[] = {0x9d, 0x9e, 0x7f, 0x00, 0x3a, 0x48, 0x52, 0x56};
+
+	TEST_RETURNS(sizeof(efidp_nvme), efidp_make_nvme, 0, eui);
+
+	TEST_APPEND_END(efidp_make_nvme, 0, eui);
+	TEST_FORMAT((efidp)bufp, "NVMe(0x0,9D-9E-7F-00-3A-48-52-56)");
+
+	TEST_APPEND_END(efidp_make_nvme, 1, eui);
+	TEST_FORMAT((efidp)bufp, "NVMe(0x1,9D-9E-7F-00-3A-48-52-56)");
+
+	TEST_POSTAMBLE;
+}
+
 static int
 test_make_vendor(void)
 {
@@ -588,6 +606,7 @@ main(int argc __attribute__((__unused__)),
 	test(test_make_media_vendor);
 	test(test_make_msg_vendor);
 	test(test_make_nvdimm);
+	test(test_make_nvme);
 	test(test_make_vendor);
 
 	printf("this should print no errors:\n");
