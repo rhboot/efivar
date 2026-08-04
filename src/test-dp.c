@@ -119,6 +119,13 @@ out:								\
 	assert_equal_goto(sz, dnsz, out, "got %zd expected %zd\n");				\
 	efi_error_pop_all();
 
+#define TEST_INVALID_ARG(makefn, args...)							\
+	insz = dnsz;										\
+	bufp = &buf[bufsz - insz];								\
+	sz = makefn(bufp, insz, ## args);							\
+	assert_negative_goto(sz, out, "\n");							\
+	efi_error_pop_all();
+
 #define __TEST_APPEND_END(ctr, makefn, args...)							\
 	insz = dnsz;										\
 	bufp = &buf[bufsz - insz - sizeof(efidp_header)];					\
@@ -772,6 +779,25 @@ test_make_scsi()
 }
 
 static int
+test_make_uart()
+{
+	TEST_PREAMBLE;
+
+	TEST_RETURNS(sizeof(efidp_uart), efidp_make_uart,
+		     9600, 8, EFIDP_UART_PARITY_NONE, EFIDP_UART_STOP_BITS_ONE);
+
+	TEST_APPEND_END(efidp_make_uart,
+			9600, 8, EFIDP_UART_PARITY_NONE, EFIDP_UART_STOP_BITS_ONE);
+	TEST_FORMAT((efidp)bufp, "Uart(9600,8,N,1)");
+
+	TEST_INVALID_ARG(efidp_make_uart, 9600, 8, EFIDP_UART_PARITY_SPACE+1, EFIDP_UART_STOP_BITS_ONE);
+
+	TEST_INVALID_ARG(efidp_make_uart, 9600, 8, EFIDP_UART_PARITY_SPACE, EFIDP_UART_STOP_BITS_TWO+1);
+
+	TEST_POSTAMBLE;
+}
+
+static int
 test_make_vendor(void)
 {
 	TEST_PREAMBLE;
@@ -1154,6 +1180,7 @@ main(int argc __attribute__((__unused__)),
 	test(test_make_sas);
 	test(test_make_sata);
 	test(test_make_scsi);
+	test(test_make_uart);
 	test(test_make_vendor);
 
 	test(test_dp_functions);
