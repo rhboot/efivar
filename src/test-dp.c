@@ -486,6 +486,155 @@ test_make_ipv4()
 	TEST_POSTAMBLE;
 }
 
+/*
+ * In a few examples, the spec says this string:
+ *
+ * IPv6(2001:4898:000A:1005:95A6:EE6C:BED3:4859,TCPDHCP,2001:4898:000A:1005:0215:17FF:FE21:5593)
+ *
+ * should represent:
+ *
+ * 03				dp.header.type = messaging
+ * 0c				dp.header.subtype = ipv6
+ * 3c 00			dp.header.length = 60 (0x003c)
+ * 20 01 48 98 00 0a 10 05	dp.ipv6.local =
+ * 02 15 17 ff fe 21 55 93	  2001:4898:000a:1005:0215:17ff:fe21:5593
+ * 20 01 48 98 00 0a 10 05	dp.ipv6.remote =
+ * 95 a6 ee 6c be d3 48 59	  2001:4989:000a:1005:95a6:ee6c:bed3:4859
+ * 00 00			dp.ipv6.local_port = 0
+ * 0c bc			dp.ipv6.remote_port = 3260 (0x0cbc)
+ * 00 06			dp.ipv6.protocol = 6 (tcp)
+ * 01				dp.ipv6.origin = 1 (dhcp)
+ * 00				dp.ipv6.prefix_length = 0
+ * 00 00 00 00 00 00 00 00	dp.ipv6.gateway = [0::0]
+ * 00 00 00 00 00 00 00 00
+ *
+ * Ignoring the missing comma (typo), this looks wrong with respect to
+ * other parts, which say:
+ *
+ *   IPv6 Address		IPv6 Address is expressed in the format
+ *				[address]:port. The ‘address’ is expressed
+ *				in the way defined in RFC4291 Section 2.2.
+ *				The ‘:port’ after the [address] is
+ *				optional. If present, the ‘port’ is an
+ *				integer value between 0-65535 to represent
+ *				the port number, or else, port number is
+ *				zero.
+ *
+ * and
+ *
+ *   IPv6(RemoteIp, Protocol, IPAddressOrigin, LocalIp, GatewayIPAddress, SubnetMask)
+ *   IPv6(RemoteIp) (Display Only)
+ *
+ * I think "SubnetMask" should have been PrefixLength.  The spec also says
+ * GatewayAddress and PrefixLength are optional and can be ommitted, though
+ * I assume the latter depends on the former.
+ *
+ * So that data should be expressed as:
+ *
+ * IPv6([2001:4898:000A:1005:95A6:EE6C:BED3:4859],TCP,DHCP,
+ *      [2001:4898:000A:1005:0215:17FF:FE21:5593]:3260)
+ *
+ * or
+ *
+ * IPv6([2001:4898:000A:1005:95A6:EE6C:BED3:4859],TCP,DHCP,
+ *      [2001:4898:000A:1005:0215:17FF:FE21:5593]:3260,[0::0],0)
+ */
+static int
+test_make_ipv6()
+{
+	TEST_PREAMBLE;
+
+	uint8_t		local[16] = { 0xfd, 0x00, 0x16, 0x00,
+				      0x00, 0xff, 0x00, 0x00,
+				      0x00, 0x01, 0xff, 0x00,
+				      0x00, 0x00, 0x00, 0x01 };
+	uint8_t		remote[16] = { 0xfd, 0x24, 0x16, 0xe2,
+				       0x03, 0x1c, 0x26, 0x01,
+				       0x00, 0x00, 0x00, 0x00,
+				       0x00, 0x00, 0x00, 0x02 };
+	uint16_t	local_port = 1025;
+	uint16_t	remote_port = 443;
+	uint16_t	protocol = 5;
+	uint8_t		origin = EFIDP_IPv6_ORIGIN_MANUAL;
+	uint8_t		prefix_length = 128;
+	uint8_t		gateway[16] = { 0xfd, 0x24, 0x16, 0xe2,
+					0x03, 0x1c, 0x26, 0x01,
+					0x00, 0x00, 0x00, 0x00,
+					0x00, 0x00, 0x00, 0xff};
+
+	TEST_RETURNS(sizeof(efidp_ipv6_addr), efidp_make_ipv6,
+		     local, remote, local_port, remote_port, protocol, origin, prefix_length, gateway);
+
+	TEST_APPEND_END(efidp_make_ipv6, local, remote, local_port, remote_port, protocol, origin, prefix_length, gateway);
+	TEST_FORMAT((efidp)bufp, "IPv6([fd24:16e2:31c:2601::2]:443,"
+				 "5,Static,"
+				 "[fd00:1600:ff:0:1:ff00:0:1]:1025,"
+				 "[fd24:16e2:31c:2601::ff],128)");
+
+	memset(gateway, 0, sizeof(gateway));
+	TEST_APPEND_END(efidp_make_ipv6, local, remote, local_port, remote_port, protocol, origin, prefix_length, gateway);
+	TEST_FORMAT((efidp)bufp, "IPv6([fd24:16e2:31c:2601::2]:443,"
+				 "5,Static,"
+				 "[fd00:1600:ff:0:1:ff00:0:1]:1025,"
+				 "[0::0],128)");
+
+	prefix_length = 0;
+	TEST_APPEND_END(efidp_make_ipv6, local, remote, local_port, remote_port, protocol, origin, prefix_length, gateway);
+	TEST_FORMAT((efidp)bufp, "IPv6([fd24:16e2:31c:2601::2]:443,"
+				 "5,Static,"
+				 "[fd00:1600:ff:0:1:ff00:0:1]:1025)");
+
+	protocol = 6;
+	TEST_APPEND_END(efidp_make_ipv6, local, remote, local_port, remote_port, protocol, origin, prefix_length, gateway);
+	TEST_FORMAT((efidp)bufp, "IPv6([fd24:16e2:31c:2601::2]:443,"
+				 "TCP,Static,"
+				 "[fd00:1600:ff:0:1:ff00:0:1]:1025)");
+
+	protocol = 17;
+	TEST_APPEND_END(efidp_make_ipv6, local, remote, local_port, remote_port, protocol, origin, prefix_length, gateway);
+	TEST_FORMAT((efidp)bufp, "IPv6([fd24:16e2:31c:2601::2]:443,"
+				 "UDP,Static,"
+				 "[fd00:1600:ff:0:1:ff00:0:1]:1025)");
+
+	protocol = 12345;
+	TEST_APPEND_END(efidp_make_ipv6, local, remote, local_port, remote_port, protocol, origin, prefix_length, gateway);
+	TEST_FORMAT((efidp)bufp, "IPv6([fd24:16e2:31c:2601::2]:443,"
+				 "12345,Static,"
+				 "[fd00:1600:ff:0:1:ff00:0:1]:1025)");
+
+	origin = EFIDP_IPv6_ORIGIN_AUTOCONF;
+	TEST_APPEND_END(efidp_make_ipv6, local, remote, local_port, remote_port, protocol, origin, prefix_length, gateway);
+	TEST_FORMAT((efidp)bufp, "IPv6([fd24:16e2:31c:2601::2]:443,"
+				 "12345,StatelessAutoConfigure,"
+				 "[fd00:1600:ff:0:1:ff00:0:1]:1025)");
+
+	origin = EFIDP_IPv6_ORIGIN_STATEFUL;
+	TEST_APPEND_END(efidp_make_ipv6, local, remote, local_port, remote_port, protocol, origin, prefix_length, gateway);
+	TEST_FORMAT((efidp)bufp, "IPv6([fd24:16e2:31c:2601::2]:443,"
+				 "12345,StatefulAutoConfigure,"
+				 "[fd00:1600:ff:0:1:ff00:0:1]:1025)");
+
+	origin = 3;
+	TEST_APPEND_END(efidp_make_ipv6, local, remote, local_port, remote_port, protocol, origin, prefix_length, gateway);
+	TEST_FORMAT((efidp)bufp, "IPv6([fd24:16e2:31c:2601::2]:443,"
+				 "12345,"
+				 "[fd00:1600:ff:0:1:ff00:0:1]:1025)");
+
+	local_port = 0;
+	TEST_APPEND_END(efidp_make_ipv6, local, remote, local_port, remote_port, protocol, origin, prefix_length, gateway);
+	TEST_FORMAT((efidp)bufp, "IPv6([fd24:16e2:31c:2601::2]:443,"
+				 "12345,"
+				 "[fd00:1600:ff:0:1:ff00:0:1])");
+
+	remote_port = 0;
+	TEST_APPEND_END(efidp_make_ipv6, local, remote, local_port, remote_port, protocol, origin, prefix_length, gateway);
+	TEST_FORMAT((efidp)bufp, "IPv6([fd24:16e2:31c:2601::2],"
+				 "12345,"
+				 "[fd00:1600:ff:0:1:ff00:0:1])");
+
+	TEST_POSTAMBLE;
+}
+
 static int
 test_make_mac_addr()
 {
@@ -995,6 +1144,7 @@ main(int argc __attribute__((__unused__)),
 	test(test_make_hd);
 	test(test_make_hw_vendor);
 	test(test_make_ipv4);
+	test(test_make_ipv6);
 	test(test_make_mac_addr);
 	test(test_make_media_vendor);
 	test(test_make_msg_vendor);
