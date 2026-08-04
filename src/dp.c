@@ -26,7 +26,7 @@ efidp_data_address(const_efidp dp)
 		efi_error("DP was smaller than DP header");
 		return NULL;
 	}
-	return (void *)((uint8_t *)dp + sizeof (dp));
+	return (void *)((uint8_t *)dp + sizeof (dp->header));
 }
 
 int PUBLIC
