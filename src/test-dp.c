@@ -568,6 +568,21 @@ test_make_nvme(void)
 	TEST_POSTAMBLE;
 }
 
+int
+test_make_sas(void)
+{
+	TEST_PREAMBLE;
+
+	uint64_t sas_addr = 0xa871311123554d57;
+
+	TEST_RETURNS(sizeof(efidp_sas), efidp_make_sas, sas_addr);
+
+	TEST_APPEND_END(efidp_make_sas, sas_addr);
+	TEST_FORMAT((efidp)bufp, "SAS(a871311123554d57,0,0,NoTopology)");
+
+	TEST_POSTAMBLE;
+}
+
 static int
 test_make_vendor(void)
 {
@@ -607,6 +622,7 @@ main(int argc __attribute__((__unused__)),
 	test(test_make_msg_vendor);
 	test(test_make_nvdimm);
 	test(test_make_nvme);
+	test(test_make_sas);
 	test(test_make_vendor);
 
 	printf("this should print no errors:\n");
