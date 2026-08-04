@@ -568,6 +568,19 @@ test_make_nvme(void)
 	TEST_POSTAMBLE;
 }
 
+static int
+test_make_pci()
+{
+	TEST_PREAMBLE;
+
+	TEST_RETURNS(sizeof(efidp_pci), efidp_make_pci, 1, 1);
+
+	TEST_APPEND_END(efidp_make_pci, 1, 1);
+	TEST_FORMAT((efidp)bufp, "Pci(0x1,0x1)");
+
+	TEST_POSTAMBLE;
+}
+
 int
 test_make_sas(void)
 {
@@ -648,6 +661,7 @@ main(int argc __attribute__((__unused__)),
 	test(test_make_msg_vendor);
 	test(test_make_nvdimm);
 	test(test_make_nvme);
+	test(test_make_pci);
 	test(test_make_sas);
 	test(test_make_sata);
 	test(test_make_scsi);
