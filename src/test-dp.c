@@ -798,6 +798,35 @@ test_make_uart()
 }
 
 static int
+test_make_uart_flow_control()
+{
+	TEST_PREAMBLE;
+
+	TEST_RETURNS(sizeof(efidp_uart_flow_control), efidp_make_uart_flow_control, 0);
+
+	TEST_RETURNS(sizeof(efidp_uart_flow_control), efidp_make_uart_flow_control,
+		     EFIDP_UART_FLOW_CONTROL_HARDWARE);
+
+	TEST_RETURNS(sizeof(efidp_uart_flow_control), efidp_make_uart_flow_control,
+		     EFIDP_UART_FLOW_CONTROL_XONXOFF);
+
+	TEST_INVALID_ARG(efidp_make_uart_flow_control, EFIDP_UART_FLOW_CONTROL_HARDWARE|EFIDP_UART_FLOW_CONTROL_XONXOFF);
+
+	TEST_INVALID_ARG(efidp_make_uart_flow_control, (EFIDP_UART_FLOW_CONTROL_HARDWARE|EFIDP_UART_FLOW_CONTROL_XONXOFF)<<1);
+
+	TEST_APPEND_END(efidp_make_uart_flow_control, EFIDP_UART_FLOW_CONTROL_NONE);
+	TEST_FORMAT((efidp)bufp, "UartFlowControl(None)");
+
+	TEST_APPEND_END(efidp_make_uart_flow_control, EFIDP_UART_FLOW_CONTROL_HARDWARE);
+	TEST_FORMAT((efidp)bufp, "UartFlowControl(Hardware)");
+
+	TEST_APPEND_END(efidp_make_uart_flow_control, EFIDP_UART_FLOW_CONTROL_XONXOFF);
+	TEST_FORMAT((efidp)bufp, "UartFlowControl(XonXoff)");
+
+	TEST_POSTAMBLE;
+}
+
+static int
 test_make_vendor(void)
 {
 	TEST_PREAMBLE;
@@ -1181,6 +1210,7 @@ main(int argc __attribute__((__unused__)),
 	test(test_make_sata);
 	test(test_make_scsi);
 	test(test_make_uart);
+	test(test_make_uart_flow_control);
 	test(test_make_vendor);
 
 	test(test_dp_functions);
