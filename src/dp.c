@@ -300,6 +300,7 @@ efidp_format_device_path(unsigned char *buf, size_t size, const_efidp dp,
 {
 	ssize_t off = 0;
 	int first = 1;
+	bool end_found = false;
 
 	if (!dp)
 		return -1;
@@ -307,7 +308,7 @@ efidp_format_device_path(unsigned char *buf, size_t size, const_efidp dp,
 	if (buf && size)
 		memset(buf, 0, size);
 
-	while (limit) {
+	while (limit && !end_found) {
 		ssize_t sz = efidp_node_size(dp);
 		if (SUB(sz, 4, &sz) ||
 		    sz < 0) {
@@ -325,9 +326,7 @@ efidp_format_device_path(unsigned char *buf, size_t size, const_efidp dp,
 			first = 0;
 		} else {
 			if (dp->type == EFIDP_END_TYPE) {
-				if (dp->subtype == EFIDP_END_INSTANCE) {
-					format(buf, size, off, "\b", ",");
-				} else {
+				if (!(dp->subtype == EFIDP_END_INSTANCE)) {
 					return off+1;
 				}
 			} else {
@@ -381,6 +380,11 @@ efidp_format_device_path(unsigned char *buf, size_t size, const_efidp dp,
 		case EFIDP_END_TYPE:
 			if (dp->subtype == EFIDP_END_INSTANCE) {
 				format(buf, size, off, "End", ",");
+				first = 1;
+				break;
+			}
+			if (dp->subtype == EFIDP_END_ENTIRE) {
+				end_found = true;
 				break;
 			}
 			break;
