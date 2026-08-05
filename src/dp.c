@@ -415,7 +415,7 @@ efidp_parse_device_node(unsigned char *path UNUSED,
 			efidp out UNUSED, size_t size UNUSED)
 {
 	efi_error("not implented");
-	errno = -ENOSYS;
+	errno = ENOSYS;
 	return -1;
 }
 
@@ -424,7 +424,7 @@ efidp_parse_device_path(unsigned char *path UNUSED, efidp out UNUSED,
 			size_t size UNUSED)
 {
 	efi_error("not implented");
-	errno = -ENOSYS;
+	errno = ENOSYS;
 	return -1;
 }
 
