@@ -1025,7 +1025,8 @@ efidp_get_next_end(const_efidp in, const_efidp *out)
 		const_efidp next;
 		ssize_t sz;
 
-		if (efidp_type(in) == EFIDP_END_TYPE) {
+		if (efidp_type(in) == EFIDP_END_TYPE &&
+		    efidp_subtype(in) == EFIDP_END_ENTIRE) {
 			*out = in;
 			return 0;
 		}
