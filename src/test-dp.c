@@ -270,6 +270,67 @@ test_make_atapi()
 }
 
 static int
+test_make_bios_boot()
+{
+	TEST_PREAMBLE;
+
+	char *descs[] = {
+		"",
+		"A:",
+		"C:",
+		"D:",
+		"E:",
+		"F:",
+		"network",
+		"???"
+	};
+
+	TEST_RETURNS(sizeof(efidp_bios_boot) + strlen(descs[1]) + 1, efidp_make_bios_boot,
+		     EFIDP_BIOS_BOOT_DEVICE_TYPE_FLOPPY, 0, (uint8_t *)descs[1]);
+
+	TEST_APPEND_END(efidp_make_bios_boot, EFIDP_BIOS_BOOT_DEVICE_TYPE_FLOPPY, 0, (uint8_t *)descs[1]);
+	TEST_FORMAT((efidp)bufp, "BBS(Floppy,A:,0x0)");
+
+	TEST_RETURNS(sizeof(efidp_bios_boot) + strlen(descs[2]) + 1, efidp_make_bios_boot,
+		     EFIDP_BIOS_BOOT_DEVICE_TYPE_HD, 0, (uint8_t *)descs[2]);
+
+	TEST_APPEND_END(efidp_make_bios_boot, EFIDP_BIOS_BOOT_DEVICE_TYPE_HD, 0, (uint8_t *)descs[2]);
+	TEST_FORMAT((efidp)bufp, "BBS(HD,C:,0x0)");
+
+	TEST_RETURNS(sizeof(efidp_bios_boot) + strlen(descs[3]) + 1, efidp_make_bios_boot,
+		     EFIDP_BIOS_BOOT_DEVICE_TYPE_CDROM, 0, (uint8_t *)descs[3]);
+
+	TEST_APPEND_END(efidp_make_bios_boot, EFIDP_BIOS_BOOT_DEVICE_TYPE_CDROM, 0, (uint8_t *)descs[3]);
+	TEST_FORMAT((efidp)bufp, "BBS(CDROM,D:,0x0)");
+
+	TEST_RETURNS(sizeof(efidp_bios_boot) + strlen(descs[4]) + 1, efidp_make_bios_boot,
+		     EFIDP_BIOS_BOOT_DEVICE_TYPE_PCMCIA, 0, (uint8_t *)descs[4]);
+
+	TEST_APPEND_END(efidp_make_bios_boot, EFIDP_BIOS_BOOT_DEVICE_TYPE_PCMCIA, 0, (uint8_t *)descs[4]);
+	TEST_FORMAT((efidp)bufp, "BBS(PCMCIA,E:,0x0)");
+
+	TEST_RETURNS(sizeof(efidp_bios_boot) + strlen(descs[5]) + 1, efidp_make_bios_boot,
+		     EFIDP_BIOS_BOOT_DEVICE_TYPE_USB, 0, (uint8_t *)descs[5]);
+
+	TEST_APPEND_END(efidp_make_bios_boot, EFIDP_BIOS_BOOT_DEVICE_TYPE_USB, 0, (uint8_t *)descs[5]);
+	TEST_FORMAT((efidp)bufp, "BBS(USB,F:,0x0)");
+
+	TEST_RETURNS(sizeof(efidp_bios_boot) + strlen(descs[6]) + 1, efidp_make_bios_boot,
+		     EFIDP_BIOS_BOOT_DEVICE_TYPE_EMBEDDED_NET, 0, (uint8_t *)descs[6]);
+
+	TEST_APPEND_END(efidp_make_bios_boot, EFIDP_BIOS_BOOT_DEVICE_TYPE_EMBEDDED_NET, 0, (uint8_t *)descs[6]);
+	TEST_FORMAT((efidp)bufp, "BBS(Network,network,0x0)");
+
+	TEST_RETURNS(sizeof(efidp_bios_boot) + strlen(descs[7]) + 1, efidp_make_bios_boot,
+		     EFIDP_BIOS_BOOT_DEVICE_TYPE_UNKNOWN, 0, (uint8_t *)descs[7]);
+
+	TEST_APPEND_END(efidp_make_bios_boot, EFIDP_BIOS_BOOT_DEVICE_TYPE_UNKNOWN, 0, (uint8_t *)descs[7]);
+	TEST_FORMAT((efidp)bufp, "BBS(255,???,0x0)");
+
+	TEST_POSTAMBLE;
+}
+
+static int
 test_make_edd10()
 {
 	TEST_PREAMBLE;
@@ -1191,6 +1252,7 @@ main(int argc __attribute__((__unused__)),
 
 	test(test_make_acpi_hid);
 	test(test_make_atapi);
+	test(test_make_bios_boot);
 	test(test_make_edd10);
 	test(test_make_emmc);
 	test(test_make_end_entire);

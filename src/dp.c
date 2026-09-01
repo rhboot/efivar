@@ -347,36 +347,9 @@ efidp_format_device_path(unsigned char *buf, size_t size, const_efidp dp,
 		case EFIDP_MEDIA_TYPE:
 			format_media_dn(buf, size, off, dp);
 			break;
-		case EFIDP_BIOS_BOOT_TYPE: {
-			char *types[] = {"", "Floppy", "HD", "CDROM", "PCMCIA",
-					 "USB", "Network", "" };
-
-			if (dp->subtype != EFIDP_BIOS_BOOT) {
-				format(buf, size, off, "BbsPath",
-				       "BbsPath(%d,", dp->subtype);
-				if (sz > 0)
-					format_hex(buf, size, off, "BbsPath",
-						   (uint8_t *)dp+4, sz);
-				format(buf, size, off, "BbsPath", ")");
-				break;
-			}
-
-			if (dp->bios_boot.device_type > 0 &&
-					dp->bios_boot.device_type < 7) {
-				format(buf, size, off, "BBS",
-				       "BBS(%s,%s,0x%"PRIx32")",
-				       types[dp->bios_boot.device_type],
-				       dp->bios_boot.description,
-				       dp->bios_boot.status);
-			} else {
-				format(buf, size, off, "BBS",
-				       "BBS(%d,%s,0x%"PRIx32")",
-				       dp->bios_boot.device_type,
-				       dp->bios_boot.description,
-				       dp->bios_boot.status);
-			}
+		case EFIDP_BIOS_BOOT_TYPE:
+			format_bios_boot_dn(buf, size, off, dp);
 			break;
-					   }
 		case EFIDP_END_TYPE:
 			if (dp->subtype == EFIDP_END_INSTANCE) {
 				format(buf, size, off, "End", ",");
