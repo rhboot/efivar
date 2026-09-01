@@ -834,6 +834,11 @@ typedef struct {
 	uint8_t		description[];
 } EFIVAR_PACKED efidp_bios_boot;
 
+extern ssize_t
+efidp_make_bios_boot(uint8_t *buf, ssize_t size,
+		     uint16_t device_type, uint16_t status,
+		     uint8_t *description);
+
 #define EFIDP_BIOS_BOOT_DEVICE_TYPE_FLOPPY	1
 #define EFIDP_BIOS_BOOT_DEVICE_TYPE_HD		2
 #define EFIDP_BIOS_BOOT_DEVICE_TYPE_CDROM	3
