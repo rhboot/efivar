@@ -186,7 +186,11 @@ secdb_add_entry_data(efi_secdb_t *secdb,
 		return -1;
 	}
 
-	allocsz = offsetof(secdb_entry_t, data) + datasz;
+	if (checked_add(offsetof(secdb_entry_t, data), datasz, &allocsz)) {
+		errno = EINVAL;
+		return -1;
+	}
+
 	new = calloc(1, allocsz);
 	if (!new)
 		return -1;
