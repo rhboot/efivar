@@ -10,7 +10,7 @@
 #include <stdint.h>
 #include <stdlib.h>
 
-#include "efivar.h"
+#include "efivar.h" // IWYU pragma: keep
 
 #define EFIVAR_MAGIC 0xf3df1597u
 
@@ -240,17 +240,23 @@ efi_variable_import_efivar(uint8_t *data, size_t datasz, efi_variable_t **var_ou
 		ptr += sizeof (uint32_t);
 		debug("data_len:%"PRIu32, data_len);
 
-		min -= 3;
-		min += name_len;
-		min += data_len;
+		size_t remaining = datasz - (size_t)(ptr - data);
+		if (remaining < sizeof(uint32_t)) {
+			free(var.guid);
+			errno = EINVAL;
+			efi_error("not enough remaining space");
+			return -1;
+		}
+
+		remaining -= sizeof(uint32_t);
 
 		if (name_len < 2 ||
-		    name_len > (datasz - data_len) ||
-		    data_len < 1 ||
-		    data_len > (datasz - name_len)) {
-			int saved_errno = errno;
+		    (size_t)name_len > remaining ||
+		    (size_t)data_len > remaining ||
+		    (size_t)data_len > (remaining - (size_t)name_len)) {
 			free(var.guid);
-			errno = saved_errno;
+			errno = EINVAL;
+			efi_error("not enough remaining space");
 			return -1;
 		}
 
