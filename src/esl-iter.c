@@ -420,6 +420,7 @@ esl_list_iter_next_with_size_correction(esl_list_iter *iter, efi_guid_t *type,
 			      (size_t)(iter->len - iter->offset), (uintmax_t)iter->offset);
 			iter->esl->signature_list_size = iter->len - iter->offset;
 		} else {
+			debug("EFI_SIGNATURE_LIST is malformed");
 			efi_error("EFI_SIGNATURE_LIST is malformed");
 			errno = EOVERFLOW;
 			return -1;

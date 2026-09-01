@@ -153,6 +153,7 @@ clean :
 	$(quiet)# remove the deps files we used to create, as well.
 	$(quiet)rm -rf $(rmverbose) .*.P .*.h.P *.S.P include/efivar/.*.h.P
 	$(quiet)$(MAKE) -f test.mk clean
+	$(quiet)$(MAKE) -f fuzz.mk clean
 
 install : all
 	$(quiet)$(INSTALL) -d -m 755 $(DESTDIR)$(LIBDIR)
@@ -184,15 +185,48 @@ $(TESTS) :
 		CC="$(CC)" \
 		COMPILER="$(COMPILER)" \
 		CFLAGS="$(CFLAGS)" \
-		OPTIMIZATIONS="$(OPTIMIZATIONS)" \
+		OPTIMIZE="$(OPTIMIZE)" \
 		TEST_LTO="$(TEST_LTO)" \
 		TEST_COVERAGE="$(TEST_COVERAGE)" \
 		LIBEFIVAR_OBJECTS="$(LIBEFIVAR_OBJECTS)" \
 		LIBEFIBOOT_OBJECTS="$(LIBEFIBOOT_OBJECTS)" \
 		"$@"
 
+FUZZ_TESTS = $(patsubst %.c,%,$(wildcard fuzz-*.c))
+
+fuzz : private CC=clang
+fuzz : private COMPILER=""
+fuzz : private CFLAGS+=-fcoverage-mapping -fprofile-instr-generate -fsanitize=fuzzer,address
+fuzz : $(FUZZ_TESTS)
+
+fuzz-clean :
+	$(quiet)$(MAKE) -f fuzz.mk clean
+
+$(FUZZ_TESTS) : private CC=clang
+$(FUZZ_TESTS) : private COMPILER=""
+$(FUZZ_TESTS) : private CFLAGS+=-fcoverage-mapping -fprofile-instr-generate -fsanitize=fuzzer,address
+$(FUZZ_TESTS) :
+	$(quiet)$(MAKE) \
+		CC="$(CC)" \
+		COMPILER="$(COMPILER)" \
+		CFLAGS="$(CFLAGS)" \
+		CCLDFLAGS="$(CCLDFLAGS)" \
+		OPTIMIZE="$(OPTIMIZE)" \
+		LIBEFIVAR_OBJECTS="$(LIBEFIVAR_OBJECTS)" \
+		LIBEFIBOOT_OBJECTS="$(LIBEFIBOOT_OBJECTS)" \
+		libefivar.a libefiboot.a libefisec.a
+	$(quiet)$(MAKE) -f fuzz.mk \
+		CC="$(CC)" \
+		COMPILER="$(COMPILER)" \
+		CFLAGS="$(CFLAGS)" \
+		CCLDFLAGS="$(CCLDFLAGS)" \
+		OPTIMIZE="$(OPTIMIZE)" \
+		LIBEFIVAR_OBJECTS="$(LIBEFIVAR_OBJECTS)" \
+		LIBEFIBOOT_OBJECTS="$(LIBEFIBOOT_OBJECTS)" \
+		"$@"
+
 .PHONY: abiclean abicheck abidw abixml all
-.PHONY: clean deps install test
+.PHONY: clean deps install test fuzz
 .SECONDARY : libefivar.so.1.$(VERSION) libefivar.so.1
 .SECONDARY : libefiboot.so.1.$(VERSION) libefiboot.so.1
 .SECONDARY : libefisec.so.1.$(VERSION) libefisec.so.1

@@ -27,7 +27,7 @@ CFLAGS_GCOV	?= $(if $(findstring gcc,$(CC)),--coverage)
 #OPTIMIZE_GCC = -flto
 OPTIMIZE_GCC =
 OPTIMIZE ?= -Og $(call family,OPTIMIZE)
-DEBUGINFO ?= -g3
+DEBUGINFO ?= -ggdb -gdwarf-4 -gstrict-dwarf
 WARNINGS_GCC ?=
 WARNINGS_CCC_ANALYZER ?= $(WARNINGS_GCC)
 WARNINGS ?= -Wall -Wextra $(call family,WARNINGS)
@@ -122,7 +122,7 @@ override HOST_CCLDFLAGS = $(HOST_LDFLAGS)
 
 PKG_CONFIG ?= $(shell if [ -e "$$(env $(CROSS_COMPILE)pkg-config 2>&1)" ]; then echo $(CROSS_COMPILE)pkg-config ; else echo pkg-config ; fi)
 INSTALL ?= install
-AR	:= $(CROSS_COMPILE)$(COMPILER)-ar
+AR	:= $(if $(findstring clang,$(CC)),ar,$(CROSS_COMPILE)$(COMPILER)-ar)
 NM	:= $(CROSS_COMPILE)$(COMPILER)-nm
 RANLIB	:= $(CROSS_COMPILE)$(COMPILER)-ranlib
 ABIDW	:= abidw

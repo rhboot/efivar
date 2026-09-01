@@ -12,5 +12,8 @@ guids.lds
 sbchooser
 test-*
 !test-*.c
+fuzz-*
+!fuzz-*.c
+!fuzz-*/
 thread-test
 util-makeguids.c

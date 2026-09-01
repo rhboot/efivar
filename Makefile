@@ -78,6 +78,18 @@ $(UNIT_TESTS) :
 
 unit-tests : $(UNIT_TESTS)
 
+fuzz fuzz-clean fuzz-coverage fuzz-lto : private CFLAGS_GCC=""
+fuzz fuzz-clean fuzz-coverage fuzz-lto : all
+	$(quiet)$(MAKE) -C src fuzz-clean $@
+
+FUZZ_TESTS = $(patsubst src/%.c,%,$(wildcard src/fuzz-*.c))
+
+$(FUZZ_TESTS) :
+	$(quiet)$(MAKE) -C src \
+		fuzz-clean $@
+
+fuzz-tests : $(FUZZ_TESTS)
+
 test-archive: abicheck efivar.spec
 	$(quiet)rm $(rmverbose) -rf /tmp/efivar-$(GITTAG) /tmp/efivar-$(GITTAG)-tmp
 	$(quiet)mkdir -p /tmp/efivar-$(GITTAG)-tmp
