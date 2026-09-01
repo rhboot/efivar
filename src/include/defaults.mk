@@ -40,8 +40,7 @@ override CPPFLAGS = $(_CPPFLAGS) -DLIBEFIVAR_VERSION=$(VERSION) \
 	    -D_FILE_OFFSET_BITS=64 \
 	    -I$(TOPDIR)/src/include/
 CFLAGS ?= $(OPTIMIZE) $(DEBUGINFO) $(WARNINGS) $(ERRORS)
-CFLAGS_GCC ?= -specs=$(TOPDIR)/src/include/gcc.specs \
-	      -fno-merge-constants
+CFLAGS_GCC ?= -specs=$(TOPDIR)/src/include/gcc.specs
 override _CFLAGS := $(CFLAGS)
 override CFLAGS = $(_CFLAGS) \
 		  -std=gnu11 \
