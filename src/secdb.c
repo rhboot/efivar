@@ -478,7 +478,7 @@ secdb_realize_visitor(unsigned int listnum,
 
 	debug("listnum:%d signum:%d has_owner:%d", listnum, signum, has_owner);
 	if (listnum > state->listnum || signum == 0) {
-		allocsz = state->pos + sizeof(state->esl) + headersz + esdsz;
+		allocsz = state->pos + sizeof(*state->esl) + headersz + esdsz;
 		allocsz = ALIGN_UP(allocsz, page_size);
 		buf = realloc(state->buf, allocsz);
 		if (!buf) {
