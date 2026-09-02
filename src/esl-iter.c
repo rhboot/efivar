@@ -25,14 +25,15 @@ extern int esl_list_sig_size(esl_list_iter *iter, size_t *ss);
 extern int esl_list_get_type(esl_list_iter *iter, efi_guid_t *type);
 
 struct esl_iter {
-	esl_list_iter *iter;
-	int line;
+	esl_list_iter *iter;	// iterator for the buffer this is a member of
+	int line;		// number of how many total ESD entries we've iterated
 
-	efi_signature_data_t *esd;
-	size_t len;
+	efi_signature_data_t *esd; // raw sig data, points into iter->buf
+	size_t len;		// iter->iter->signature_size
 
-	size_t nmemb;
-	unsigned int i;
+	size_t nmemb;		// (iter->iter->signature_list_size - sizeof(ESL) - iter->iter->signature_header_size)
+				// / iter->signature_size
+	unsigned int i;		// how many esd members we've parsed in this esd
 };
 
 int NONNULL(1, 2)
@@ -252,12 +253,12 @@ esl_iter_get_line(esl_iter *iter)
 }
 
 struct esl_list_iter {
-	uint8_t *buf;
-	size_t len;
+	uint8_t *buf;	// the allocated buffer
+	size_t len;	// size of the buffer
 
-	off_t offset;
+	off_t offset;	// where we're currently parsing
 
-	efi_signature_list_t *esl;
+	efi_signature_list_t *esl;	// raw data (==buf)
 };
 
 intptr_t NONNULL(1)
