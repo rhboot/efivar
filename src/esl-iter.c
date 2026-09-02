@@ -122,21 +122,22 @@ esl_iter_next_with_size_correction(esl_iter *iter, efi_guid_t *type,
 
 		if (!efi_guid_cmp(type, &efi_guid_x509_cert)) {
 			int32_t asn1size;
+			size_t asn1limit;
 
-			asn1size = get_asn1_seq_size(iter->esd->signature_data,
-				iter->len - sizeof(iter->esd->signature_owner));
+			if (checked_sub(iter->len, sizeof(iter->esd->signature_owner), &asn1limit)) {
+				asn1limit = iter->len;
+			}
+
+			asn1size = get_asn1_seq_size(iter->esd->signature_data, asn1limit);
 			debug("iter->len:%zu sizeof(owner):%zd bufsz:%zd asn1sz:%d (0x%x)",
-			      iter->len, sizeof(iter->esd->signature_owner),
-			      iter->len - sizeof(iter->esd->signature_owner), asn1size,
-			      asn1size);
+			      iter->len, sizeof(iter->esd->signature_owner), asn1limit,
+			      asn1size, asn1size);
 
 			if (asn1size < 0) {
 				debug("iterator data claims to be an X.509 Cert but is not valid ASN.1 DER");
-			} else if ((uint32_t)asn1size != iter->len -
-					sizeof(iter->esd->signature_owner)) {
+			} else if ((uint32_t)asn1size != asn1limit) {
 				debug("X.509 Cert ASN.1 size does not match signature_list Size (%d vs %zu)",
-				      asn1size, iter->len -
-					sizeof(iter->esd->signature_owner));
+				      asn1size, asn1limit);
 			}
 		}
 
