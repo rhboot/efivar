@@ -359,7 +359,6 @@ esl_list_iter_next_with_size_correction(esl_list_iter *iter, efi_guid_t *type,
 		      iter->esl->signature_list_size);
 		efi_guid_t type;
 		errno = 0;
-		esl_list_get_type(iter, &type);
 		if (iter->len - iter->offset < iter->esl->signature_list_size) {
 			debug("EFI_SIGNATURE_LIST is malformed");
 			if (correct_size && (iter->len - iter->offset) > 0) {
@@ -377,6 +376,8 @@ esl_list_iter_next_with_size_correction(esl_list_iter *iter, efi_guid_t *type,
 				return -1;
 			}
 		}
+
+		esl_list_get_type(iter, &type);
 		if (!efi_guid_cmp(&type, &efi_guid_x509_cert)) {
 			int32_t asn1size;
 
