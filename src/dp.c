@@ -10,7 +10,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 
-#include "efivar.h"
+#include "efivar.h" // IWYU pragma: keep
 
 static const efidp_header end_entire = {
 	.type = EFIDP_END_TYPE,
