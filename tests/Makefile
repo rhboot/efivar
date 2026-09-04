@@ -84,7 +84,7 @@ test.dmpstore.export:
 	else \
 		cmp test.dmpstore.export.result.var test.dmpstore.export.old.goal.var ; \
 	fi
-	$(quiet)rm -f test.dmpstore.export.result.*
+	$(quiet)rm $(rmverbose) -f test.dmpstore.export.result.*
 	$(quiet)echo passed
 
 test.efivar.export:
@@ -98,7 +98,7 @@ test.efivar.export:
 	else \
 		cmp test.efivar.export.result.var test.efivar.export.old.goal.var ; \
 	fi
-	$(quiet)rm -f test.efivar.export.result.*
+	$(quiet)rm $(rmverbose) -f test.efivar.export.result.*
 	$(quiet)echo passed
 
 test.grubenv.var:
@@ -143,7 +143,7 @@ test.grubenv.var:
 	else \
 		cmp test.grubenv.var.3.result.var test.grubenv.var.3.old.goal.var ; \
 	fi
-	$(quiet)rm -f test.grubenv.var.3.result.* test.grubenv.var.result.env test.grubenv.var.3.goal.var
+	$(quiet)rm $(rmverbose) -f test.grubenv.var.3.result.* test.grubenv.var.result.env test.grubenv.var.3.goal.var
 	$(quiet)echo passed
 	$(quiet)echo testing efivar -L
 	$(quiet)LD_LIBRARY_PATH=$(TOPDIR)/src $(EFIVAR) -L | \
@@ -281,7 +281,7 @@ test.esl.cert.addition:
 		diff -U 200 test.esl.cert.addition.esl.goal.txt test.esl.cert.addition.esl.result.txt ; \
 		exit 1 ; \
 	fi
-	$(quiet)rm -f test.esl.cert.addition.esl.result test.esl.cert.addition.*.esl.txt
+	$(quiet)rm $(rmverbose) -f test.esl.cert.addition.esl.result test.esl.cert.addition.*.esl.txt
 	$(quiet)echo passed
 
 test.esl.cert.removal.esl.goal.txt : test.esl.cert.removal.esl.goal
@@ -299,7 +299,7 @@ test.esl.cert.removal:
 		exit 1 ; \
 	fi
 	$(quiet)cmp test.esl.cert.removal.esl.goal test.esl.cert.removal.esl.result
-	$(quiet)rm -f test.esl.cert.removal.esl.result
+	$(quiet)rm $(rmverbose) -f test.esl.cert.removal.esl.result
 	$(quiet)echo passed
 
 test.sbchooser.sha512.vs.sha256.result:
@@ -323,7 +323,7 @@ test.sbchooser.sha512.vs.sha256:
 		exit 1 ; \
 	fi
 	$(quiet)cmp test.sbchooser.sha512.vs.sha256.goal.txt test.sbchooser.sha512.vs.sha256.result
-	$(quiet)rm -f test.sbchooser.sha512.vs.sha256.result
+	$(quiet)rm $(rmverbose) -f test.sbchooser.sha512.vs.sha256.result
 	$(quiet)echo passed
 
 test.sbchooser.sha512.vs.untrusted.result:
@@ -346,7 +346,7 @@ test.sbchooser.sha512.vs.untrusted:
 		exit 1 ; \
 	fi
 	$(quiet)cmp test.sbchooser.sha512.vs.untrusted.goal.txt test.sbchooser.sha512.vs.untrusted.result
-	$(quiet)rm -f test.sbchooser.sha512.vs.untrusted.result
+	$(quiet)rm $(rmverbose) -f test.sbchooser.sha512.vs.untrusted.result
 	$(quiet)echo passed
 
 test.sbchooser.sha512.vs.sha256.vs.dbx.result:
@@ -370,7 +370,7 @@ test.sbchooser.sha512.vs.sha256.vs.dbx:
 		exit 1 ; \
 	fi
 	$(quiet)cmp test.sbchooser.sha512.vs.sha256.vs.dbx.goal.txt test.sbchooser.sha512.vs.sha256.vs.dbx.result
-	$(quiet)rm -f test.sbchooser.sha512.vs.sha256.vs.dbx.result
+	$(quiet)rm $(rmverbose) -f test.sbchooser.sha512.vs.sha256.vs.dbx.result
 	$(quiet)echo passed
 
 test.sbchooser.sha512.vs.db.result:
@@ -392,7 +392,7 @@ test.sbchooser.sha512.vs.db:
 		exit 1 ; \
 	fi
 	$(quiet)cmp test.sbchooser.sha512.vs.db.goal.txt test.sbchooser.sha512.vs.db.result
-	$(quiet)rm -f test.sbchooser.sha512.vs.db.result
+	$(quiet)rm $(rmverbose) -f test.sbchooser.sha512.vs.db.result
 	$(quiet)echo passed
 
 test.sbchooser.db.vs.dbx.result:
@@ -414,7 +414,7 @@ test.sbchooser.db.vs.dbx:
 		exit 1 ; \
 	fi
 	$(quiet)cmp test.sbchooser.db.vs.dbx.goal.txt test.sbchooser.db.vs.dbx.result
-	$(quiet)rm -f test.sbchooser.db.vs.dbx.result
+	$(quiet)rm $(rmverbose) -f test.sbchooser.db.vs.dbx.result
 	$(quiet)echo passed
 
 test.sbchooser.identical.secbits.result:
@@ -438,7 +438,7 @@ test.sbchooser.identical.secbits:
 		exit 1 ; \
 	fi
 	$(quiet)cmp test.sbchooser.identical.secbits.goal.txt test.sbchooser.identical.secbits.result
-	$(quiet)rm -f test.sbchooser.identical.secbits.result
+	$(quiet)rm $(rmverbose) -f test.sbchooser.identical.secbits.result
 	$(quiet)echo passed
 
 test.sbchooser.first.sig.only.result:
@@ -462,7 +462,7 @@ test.sbchooser.first.sig.only:
 		exit 1 ; \
 	fi
 	$(quiet)cmp test.sbchooser.first.sig.only.goal.txt test.sbchooser.first.sig.only.result
-	$(quiet)rm -f test.sbchooser.first.sig.only.result
+	$(quiet)rm $(rmverbose) -f test.sbchooser.first.sig.only.result
 	$(quiet)echo passed
 
 test.sbchooser.sha512.vs.sha256.explain.result:
@@ -487,7 +487,7 @@ test.sbchooser.sha512.vs.sha256.explain:
 		exit 1 ; \
 	fi
 	$(quiet)cmp test.sbchooser.sha512.vs.sha256.explain.goal.txt test.sbchooser.sha512.vs.sha256.explain.result
-	$(quiet)rm -f test.sbchooser.sha512.vs.sha256.explain.result
+	$(quiet)rm $(rmverbose) -f test.sbchooser.sha512.vs.sha256.explain.result
 	$(quiet)echo passed
 
 test.sbchooser.sha512.vs.untrusted.explain.result:
@@ -511,7 +511,7 @@ test.sbchooser.sha512.vs.untrusted.explain:
 		exit 1 ; \
 	fi
 	$(quiet)cmp test.sbchooser.sha512.vs.untrusted.explain.goal.txt test.sbchooser.sha512.vs.untrusted.explain.result
-	$(quiet)rm -f test.sbchooser.sha512.vs.untrusted.explain.result
+	$(quiet)rm $(rmverbose) -f test.sbchooser.sha512.vs.untrusted.explain.result
 	$(quiet)echo passed
 
 test.sbchooser.sha512.vs.sha256.vs.dbx.explain.result:
@@ -536,7 +536,7 @@ test.sbchooser.sha512.vs.sha256.vs.dbx.explain:
 		exit 1 ; \
 	fi
 	$(quiet)cmp test.sbchooser.sha512.vs.sha256.vs.dbx.explain.goal.txt test.sbchooser.sha512.vs.sha256.vs.dbx.explain.result
-	$(quiet)rm -f test.sbchooser.sha512.vs.sha256.vs.dbx.explain.result
+	$(quiet)rm $(rmverbose) -f test.sbchooser.sha512.vs.sha256.vs.dbx.explain.result
 	$(quiet)echo passed
 
 test.sbchooser.sha512.vs.db.explain.result:
@@ -559,7 +559,7 @@ test.sbchooser.sha512.vs.db.explain:
 		exit 1 ; \
 	fi
 	$(quiet)cmp test.sbchooser.sha512.vs.db.explain.goal.txt test.sbchooser.sha512.vs.db.explain.result
-	$(quiet)rm -f test.sbchooser.sha512.vs.db.explain.result
+	$(quiet)rm $(rmverbose) -f test.sbchooser.sha512.vs.db.explain.result
 	$(quiet)echo passed
 
 test.sbchooser.db.vs.dbx.explain.result:
@@ -582,7 +582,7 @@ test.sbchooser.db.vs.dbx.explain:
 		exit 1 ; \
 	fi
 	$(quiet)cmp test.sbchooser.db.vs.dbx.explain.goal.txt test.sbchooser.db.vs.dbx.explain.result
-	$(quiet)rm -f test.sbchooser.db.vs.dbx.explain.result
+	$(quiet)rm $(rmverbose) -f test.sbchooser.db.vs.dbx.explain.result
 	$(quiet)echo passed
 
 test.sbchooser.identical.secbits.explain.result:
@@ -607,7 +607,7 @@ test.sbchooser.identical.secbits.explain:
 		exit 1 ; \
 	fi
 	$(quiet)cmp test.sbchooser.identical.secbits.explain.goal.txt test.sbchooser.identical.secbits.explain.result
-	$(quiet)rm -f test.sbchooser.identical.secbits.explain.result
+	$(quiet)rm $(rmverbose) -f test.sbchooser.identical.secbits.explain.result
 	$(quiet)echo passed
 
 test.sbchooser.first.sig.only.explain.result:
@@ -632,7 +632,7 @@ test.sbchooser.first.sig.only.explain:
 		exit 1 ; \
 	fi
 	$(quiet)cmp test.sbchooser.first.sig.only.explain.goal.txt test.sbchooser.first.sig.only.explain.result
-	$(quiet)rm -f test.sbchooser.first.sig.only.explain.result
+	$(quiet)rm $(rmverbose) -f test.sbchooser.first.sig.only.explain.result
 	$(quiet)echo passed
 
 test.sbchooser.padded.secdir.explain.result:
@@ -651,7 +651,7 @@ test.sbchooser.padded.secdir.explain:
 		exit 1 ; \
 	fi
 	$(quiet)cmp test.sbchooser.padded.secdir.explain.goal.txt test.sbchooser.padded.secdir.explain.result
-	$(quiet)rm -f test.sbchooser.padded.secdir.explain.result
+	$(quiet)rm $(rmverbose) -f test.sbchooser.padded.secdir.explain.result
 	$(quiet)echo passed
 
 .PHONY: all clean $(TESTS)

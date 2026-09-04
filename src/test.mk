@@ -25,7 +25,7 @@ test : $(tests)
 	$(quiet)$(MAKE) -f test.mk test-clean
 
 test-clean :
-	$(quiet)rm -vf vgcore.* $(tests) *.gcda *.gcno *.gcov *.profraw
+	$(quiet)rm $(rmverbose) -f vgcore.* $(tests) *.gcda *.gcno *.gcov *.profraw
 
 clean : test-clean
 

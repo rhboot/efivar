@@ -14,7 +14,7 @@ endif
 
 all : | efivar.spec src/include/version.mk prep
 all clean install prep :
-	@set -e ; for x in $(SUBDIRS) ; do \
+	$(quiet)set -e ; for x in $(SUBDIRS) ; do \
 		$(MAKE) -C $$x $@ ; \
 	done
 
@@ -29,13 +29,13 @@ $(SUBDIRS) :
 	$(MAKE) -C $@ all
 
 brick : all
-	@echo -n $(info this is the rule for brick PWD:$(PWD) MAKECMDGOALS:$(MAKECMDGOALS))
-	@set -e ; for x in $(SUBDIRS) ; do \
+	$(quiet)echo -n $(info this is the rule for brick PWD:$(PWD) MAKECMDGOALS:$(MAKECMDGOALS))
+	$(quiet)set -e ; for x in $(SUBDIRS) ; do \
 		$(MAKE) -C $${x} test ; \
 	done
 
 a :
-	@if [ $${EUID} != 0 ]; then \
+	$(quiet)if [ $${EUID} != 0 ]; then \
 		echo no 1>&2 ; \
 		exit 1 ; \
 	fi
@@ -46,12 +46,12 @@ efivar.spec : | Makefile src/include/version.mk
 
 clean : clean-toplevel
 clean-toplevel:
-	@rm -vf efivar.spec vgcore.* core.*
-	@$(MAKE) -C tests clean
+	$(quiet)rm $(rmverbose) -f efivar.spec vgcore.* core.*
+	$(quiet)$(MAKE) -C tests clean
 
 compile_commands.json : Makefile
-	make clean
-	bear -- make COMPILER=clang test all
+	$(quiet)make clean
+	$(quiet)bear -- make COMPILER=clang test all
 
 TEST_COVERAGE	?=
 TEST_LTO	?=
@@ -79,33 +79,33 @@ $(UNIT_TESTS) :
 unit-tests : $(UNIT_TESTS)
 
 test-archive: abicheck efivar.spec
-	@rm -rf /tmp/efivar-$(GITTAG) /tmp/efivar-$(GITTAG)-tmp
-	@mkdir -p /tmp/efivar-$(GITTAG)-tmp
-	@git archive --format=tar $(shell git branch | awk '/^*/ { print $$2 }') | ( cd /tmp/efivar-$(GITTAG)-tmp/ ; tar x )
-	@git diff | ( cd /tmp/efivar-$(GITTAG)-tmp/ ; patch -s -p1 -b -z .gitdiff )
-	@mv /tmp/efivar-$(GITTAG)-tmp/ /tmp/efivar-$(GITTAG)/
-	@cp efivar.spec /tmp/efivar-$(GITTAG)/
-	@dir=$$PWD; cd /tmp; tar -c --bzip2 -f $$dir/efivar-$(GITTAG).tar.bz2 efivar-$(GITTAG)
-	@rm -rf /tmp/efivar-$(GITTAG)
-	@echo "The archive is in efivar-$(GITTAG).tar.bz2"
+	$(quiet)rm $(rmverbose) -rf /tmp/efivar-$(GITTAG) /tmp/efivar-$(GITTAG)-tmp
+	$(quiet)mkdir -p /tmp/efivar-$(GITTAG)-tmp
+	$(quiet)git archive --format=tar $(shell git branch | awk '/^*/ { print $$2 }') | ( cd /tmp/efivar-$(GITTAG)-tmp/ ; tar x )
+	$(quiet)git diff | ( cd /tmp/efivar-$(GITTAG)-tmp/ ; patch -s -p1 -b -z .gitdiff )
+	$(quiet)mv /tmp/efivar-$(GITTAG)-tmp/ /tmp/efivar-$(GITTAG)/
+	$(quiet)cp efivar.spec /tmp/efivar-$(GITTAG)/
+	$(quiet)dir=$$PWD; cd /tmp; tar -c --bzip2 -f $$dir/efivar-$(GITTAG).tar.bz2 efivar-$(GITTAG)
+	$(quiet)rm $(rmverbose) -rf /tmp/efivar-$(GITTAG)
+	$(quiet)echo "The archive is in efivar-$(GITTAG).tar.bz2"
 
 bumpver :
-	@echo VERSION=$(GITTAG) > src/include/version.mk
-	@git add src/include/version.mk
-	git commit -m "Bump version to $(GITTAG)" -s
+	$(quiet)echo VERSION=$(GITTAG) > src/include/version.mk
+	$(quiet)git add src/include/version.mk
+	$(quiet)git commit -m "Bump version to $(GITTAG)" -s
 
 tag:
-	git tag -s $(GITTAG) refs/heads/master
+	$(quiet)git tag -s $(GITTAG) refs/heads/master
 
 archive: abicheck bumpver abidw tag efivar.spec
-	@rm -rf /tmp/efivar-$(GITTAG) /tmp/efivar-$(GITTAG)-tmp
-	@mkdir -p /tmp/efivar-$(GITTAG)-tmp
-	@git archive --format=tar $(GITTAG) | ( cd /tmp/efivar-$(GITTAG)-tmp/ ; tar x )
-	@mv /tmp/efivar-$(GITTAG)-tmp/ /tmp/efivar-$(GITTAG)/
-	@cp efivar.spec /tmp/efivar-$(GITTAG)/
-	@dir=$$PWD; cd /tmp; tar -c --bzip2 -f $$dir/efivar-$(GITTAG).tar.bz2 efivar-$(GITTAG)
-	@rm -rf /tmp/efivar-$(GITTAG)
-	@echo "The archive is in efivar-$(GITTAG).tar.bz2"
+	$(quiet)rm -rf /tmp/efivar-$(GITTAG) /tmp/efivar-$(GITTAG)-tmp
+	$(quiet)mkdir -p /tmp/efivar-$(GITTAG)-tmp
+	$(quiet)git archive --format=tar $(GITTAG) | ( cd /tmp/efivar-$(GITTAG)-tmp/ ; tar x )
+	$(quiet)mv /tmp/efivar-$(GITTAG)-tmp/ /tmp/efivar-$(GITTAG)/
+	$(quiet)cp efivar.spec /tmp/efivar-$(GITTAG)/
+	$(quiet)dir=$$PWD; cd /tmp; tar -c --bzip2 -f $$dir/efivar-$(GITTAG).tar.bz2 efivar-$(GITTAG)
+	$(quiet)rm $(rmverbose) -rf /tmp/efivar-$(GITTAG)
+	$(quiet)echo "The archive is in efivar-$(GITTAG).tar.bz2"
 
 .PHONY: $(SUBDIRS)
 .PHONY: a abiclean abicheck abidw abiupdate all archive
