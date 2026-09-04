@@ -170,19 +170,27 @@ test_make_generic(void)
 {
 	TEST_PREAMBLE;
 
-	bufp = &buf[bufsz - sizeof(efidp_header)];
+	size_t node_size;
 
-	sz = efidp_make_generic(bufp, bufsz, 0, 1, 0);
-	assert_zero_goto(sz, out, "got %zd\n");
+	node_size = sizeof(efidp_header);
+	bufp = &buf[bufsz - node_size];
+	sz = efidp_make_generic(bufp, bufsz, 0, 1, node_size);
+	assert_equal_goto(sz, 4, out, "got %zd expected %d\n");
 
-	sz = efidp_make_generic(bufp, bufsz, 0, 1, 1);
-	assert_positive_goto(sz, out, "\n");
+	node_size = sizeof(efidp_header) + 1;
+	bufp = &buf[bufsz - node_size];
+	sz = efidp_make_generic(bufp, bufsz, 0, 1, node_size);
+	assert_equal_goto(sz, 5, out, "got %zd expected %d\n");
 
-	sz = efidp_make_generic(bufp, bufsz, 0, 1, 4);
-	assert_positive_goto(sz, out, "\n");
+	node_size = sizeof(efidp_header) + 4;
+	bufp = &buf[bufsz - node_size];
+	sz = efidp_make_generic(bufp, bufsz, 0, 1, node_size);
+	assert_equal_goto(sz, 8, out, "got %zd expected %d\n");
 
-	sz = efidp_make_generic(bufp, bufsz, 0, 1, 5);
-	assert_positive_goto(sz, out, "\n");
+	node_size = sizeof(efidp_header) + 5;
+	bufp = &buf[bufsz - node_size];
+	sz = efidp_make_generic(bufp, bufsz, 0, 1, node_size);
+	assert_equal_goto(sz, 9, out, "got %zd expected %d\n");
 
 	rc = efi_error_get(0, &file, &func, &line, &msg, &error);
 	if (rc != 0)

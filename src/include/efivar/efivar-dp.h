@@ -1208,8 +1208,15 @@ extern ssize_t efidp_format_device_path(unsigned char *buf, size_t size,
 extern ssize_t efidp_make_vendor(uint8_t *buf, ssize_t size, uint8_t type,
 				 uint8_t subtype,  efi_guid_t vendor_guid,
 				 void *data, size_t data_size);
+/*
+ * buf: buffer to write into
+ * bufsz: size of the writable buffer
+ * type: dp type
+ * subtype: dp subtype
+ * node_size: size of this dp node
+ */
 extern ssize_t efidp_make_generic(uint8_t *buf, ssize_t size, uint8_t type,
-				  uint8_t subtype, ssize_t total_size);
+				  uint8_t subtype, ssize_t node_size);
 #define efidp_make_end_entire(buf, size)				\
 	efidp_make_generic(buf, size, EFIDP_END_TYPE, EFIDP_END_ENTIRE,	\
 			   sizeof (efidp_header));
