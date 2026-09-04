@@ -21,11 +21,7 @@ $(call set-if-undefined,HOSTCC,$(COMPILER))
 $(call set-if-undefined,HOSTCCLD,$(HOSTCC))
 
 CFLAGS_LTO	?= -flto
-CFLAGS_GCOV	?= $(if $(findstring gcc,$(CC)),-fprofile-arcs) \
-                   $(if $(findstring gcc,$(CC)),-ftest-coverage) \
-                   $(if $(findstring gcc,$(CC)),--coverage) \
-                   $(if $(findstring clang,$(CC)),-fcoverage-mapping) \
-                   $(if $(findstring clang,$(CC)),-fprofile-instr-generate) \
+CFLAGS_GCOV	?= $(if $(findstring gcc,$(CC)),--coverage)
 
 # temporary, see https://sourceware.org/bugzilla/show_bug.cgi?id=28264
 #OPTIMIZE_GCC = -flto
