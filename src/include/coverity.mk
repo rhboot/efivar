@@ -4,21 +4,21 @@ COV_URL=$(call get-config,coverity.url)
 COV_FILE=$(NAME)-coverity-$(VERSION)-$(COMMIT_ID).tar.bz2
 
 cov-int : clean
-	cov-build --dir cov-int make all
+	$(quiet)cov-build --dir cov-int make all
 
 cov-clean :
-	@rm -vf $(NAME)-coverity-*.tar.*
-	@if [[ -d cov-int ]]; then rm -rf cov-int && echo "removed 'cov-int'"; fi
+	$(quiet)rm $(rmverbose) -f $(NAME)-coverity-*.tar.*
+	$(quiet)if [[ -d cov-int ]]; then rm $(rmverbose) -rf cov-int && echo "removed 'cov-int'"; fi
 
 cov-file : | $(COV_FILE)
 
 $(COV_FILE) : cov-int
-	tar caf $@ cov-int
+	$(quiet)tar caf $@ cov-int
 
 cov-upload :
-	@if [[ -n "$(COV_URL)" ]] &&					\
-	    [[ -n "$(COV_TOKEN)" ]] &&					\
-	    [[ -n "$(COV_EMAIL)" ]] ;					\
+	$(quiet)if [[ -n "$(COV_URL)" ]] &&				\
+		   [[ -n "$(COV_TOKEN)" ]] &&				\
+		   [[ -n "$(COV_EMAIL)" ]] ;				\
 	then								\
 		echo curl --form token=$(COV_TOKEN) --form email="$(COV_EMAIL)" --form file=@"$(COV_FILE)" --form version=$(VERSION).1 --form description="$(COMMIT_ID)" "$(COV_URL)" ; \
 		curl --form token=$(COV_TOKEN) --form email="$(COV_EMAIL)" --form file=@"$(COV_FILE)" --form version=$(VERSION).1 --form description="$(COMMIT_ID)" "$(COV_URL)" ; \

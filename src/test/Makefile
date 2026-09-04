@@ -11,13 +11,13 @@ all : tester
 install :
 
 clean :
-	@rm -rfv tester *.o *.E *.S
+	$(quiet)rm -rf $(rmverbose) tester *.o *.E *.S
 
 test : tester
-	./tester
+	$(quiet)./tester
 
 tester :: tester.o
-	$(CC) $(cflags) $(LDFLAGS) -Wl,-rpath,$(TOPDIR)/src -L$(TOPDIR)/src -o $@ $^ -lefivar -ldl
+	$(quiet)$(CC) $(cflags) $(LDFLAGS) -Wl,-rpath,$(TOPDIR)/src -L$(TOPDIR)/src -o $@ $^ -lefivar -ldl
 
 .PHONY: all clean install test
 

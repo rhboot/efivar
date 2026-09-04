@@ -42,17 +42,17 @@ MAN3TARGETS = efi_append_variable.3 \
 all : $(MAN1TARGETS) $(MAN3TARGETS)
 
 clean :
-	@rm -f efisecdb.1 sbchooser.1
+	$(quiet)rm $(rmverbose) -f efisecdb.1 sbchooser.1
 
 prep :
 
 test :
 
 install : $(MAN1TARGETS) $(MAN3TARGETS)
-	$(INSTALL) -d -m 755 $(DESTDIR)$(MANDIR)/man1
-	$(foreach x, $(MAN1TARGETS), $(INSTALL) -m 644 $(x) $(DESTDIR)/$(MANDIR)/man1/;)
-	$(INSTALL) -d -m 755 $(DESTDIR)$(MANDIR)/man3
-	$(foreach x, $(MAN3TARGETS), $(INSTALL) -m 644 $(x) $(DESTDIR)/$(MANDIR)/man3/;)
+	$(quiet)$(INSTALL) -d -m 755 $(DESTDIR)$(MANDIR)/man1
+	$(quiet)$(foreach x, $(MAN1TARGETS), $(INSTALL) -m 644 $(x) $(DESTDIR)/$(MANDIR)/man1/;)
+	$(quiet)$(INSTALL) -d -m 755 $(DESTDIR)$(MANDIR)/man3
+	$(quiet)$(foreach x, $(MAN3TARGETS), $(INSTALL) -m 644 $(x) $(DESTDIR)/$(MANDIR)/man3/;)
 
 .PHONY: all clean install
 

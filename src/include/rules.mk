@@ -17,38 +17,38 @@ FAMILY_SUFFIXES = $(if $(findstring clang,$(CC)),CLANG,) \
 family = $(foreach FAMILY_SUFFIX,$(FAMILY_SUFFIXES),$($(1)_$(FAMILY_SUFFIX)))
 
 %.a :
-	$(AR) -cvqs $@ $^
+	$(quiet)$(AR) -cvqs $@ $^
 
 %.1 : %.1.mdoc
-	$(MANDOC) -mdoc -Tman -Ios=Linux $^ > $@
+	$(quiet)$(MANDOC) -mdoc -Tman -Ios=Linux $^ > $@
 
 %.3 : %.3.mdoc
-	$(MANDOC) -mdoc -Tman -Ios=Linux $^ > $@
+	$(quiet)$(MANDOC) -mdoc -Tman -Ios=Linux $^ > $@
 
 % : %.c
 
 % : %.o
-	$(CCLD) $(CCLDFLAGS) $(CPPFLAGS) -o $@ $(sort $^) $(LDLIBS)
+	$(quiet)$(CCLD) $(CCLDFLAGS) $(CPPFLAGS) -o $@ $(sort $^) $(LDLIBS)
 
 %-static : CCLDFLAGS+=-static
 %-static : %.o
-	$(CCLD) $(CCLDFLAGS) $(CPPFLAGS) -o $@ $(sort $^) $(LDLIBS)
+	$(quiet)$(CCLD) $(CCLDFLAGS) $(CPPFLAGS) -o $@ $(sort $^) $(LDLIBS)
 
 %.so :
-	$(CCLD) $(CCLDFLAGS) $(CPPFLAGS) $(SOFLAGS) -o $@ $^ $(LDLIBS)
-	ln -vfs $@ $@.1
+	$(quiet)$(CCLD) $(CCLDFLAGS) $(CPPFLAGS) $(SOFLAGS) -o $@ $^ $(LDLIBS)
+	$(quiet)ln -vfs $@ $@.1
 
 %.abixml : %.so
-	$(ABIDW) \
+	$(quiet)$(ABIDW) \
 		--headers-dir $(TOPDIR)/src/include/efivar/ \
 		--no-show-locs \
 		--no-architecture \
 		--type-id-style hash \
 		--out-file $@ $^
-	@sed -i -s 's,$(TOPDIR)/,,g' $@
+	$(quiet)sed -i -s 's,$(TOPDIR)/,,g' $@
 
 %.abicheck : %.so
-	$(ABIDIFF) \
+	$(quiet)$(ABIDIFF) \
 		--suppr abignore \
 		--no-show-locs \
 		--no-architecture \
@@ -57,22 +57,22 @@ family = $(foreach FAMILY_SUFFIX,$(FAMILY_SUFFIXES),$($(1)_$(FAMILY_SUFFIX)))
 		$<
 
 %.o : %.c
-	$(CC) $(CFLAGS) -fPIC $(CPPFLAGS) -c -o $@ $(filter %.c %.o %.S,$^)
+	$(quiet)$(CC) $(CFLAGS) -fPIC $(CPPFLAGS) -c -o $@ $(filter %.c %.o %.S,$^)
 
 %.static.o : %.c
-	$(CC) $(CFLAGS) -fPIE $(CPPFLAGS) -c -o $@ $(filter %.c %.o %.S,$^)
+	$(quiet)$(CC) $(CFLAGS) -fPIE $(CPPFLAGS) -c -o $@ $(filter %.c %.o %.S,$^)
 
 %.o : %.S
-	$(CC) $(CFLAGS) -fPIC $(CPPFLAGS) -c -o $@ $(filter %.c %.o %.S,$^)
+	$(quiet)$(CC) $(CFLAGS) -fPIC $(CPPFLAGS) -c -o $@ $(filter %.c %.o %.S,$^)
 
 %.static.o : %.S
-	$(CC) $(CFLAGS) -fPIE $(CPPFLAGS) -c -o $@ $(filter %.c %.o %.S,$^)
+	$(quiet)$(CC) $(CFLAGS) -fPIE $(CPPFLAGS) -c -o $@ $(filter %.c %.o %.S,$^)
 
 %.S: %.c
-	$(CC) $(CFLAGS) $(CPPFLAGS) -S $< -o $@
+	$(quiet)$(CC) $(CFLAGS) $(CPPFLAGS) -S $< -o $@
 
 %.E: %.c
-	$(CC) $(CFLAGS) $(CPPFLAGS) -E $< -o $@
+	$(quiet)$(CC) $(CFLAGS) $(CPPFLAGS) -E $< -o $@
 
 %.c : %.h
 
@@ -87,11 +87,11 @@ define substitute-version
 endef
 
 %.pc : %.pc.in
-	@$(call substitute-version,$<,$@)
+	$(quiet)$(call substitute-version,$<,$@)
 %.spec : %.spec.in
-	@$(call substitute-version,$<,$@)
+	$(quiet)$(call substitute-version,$<,$@)
 %.map : %.map.in
-	@$(call substitute-version,$<,$@)
+	$(quiet)$(call substitute-version,$<,$@)
 
 pkg-config-cflags = $(if $(PKGS),$(shell $(PKG_CONFIG) --cflags $(PKGS)))
 pkg-config-ccldflags = $(if $(PKGS),$(shell $(PKG_CONFIG) --libs-only-L --libs-only-other $(PKGS)))

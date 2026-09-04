@@ -34,7 +34,7 @@ MAKEGUIDS_OBJECTS = $(patsubst %.S,%.o,$(patsubst %.c,%.o,$(MAKEGUIDS_SOURCES)))
 MAKEGUIDS_OUTPUT = $(GENERATED_SOURCES)
 
 util-makeguids.c : util.c
-	cp util.c util-makeguids.c
+	$(quiet)cp util.c util-makeguids.c
 
 ALL_SOURCES=$(LIBEFISEC_SOURCES) $(LIBEFIBOOT_SOURCES) $(LIBEFIVAR_SOURCES) \
 	    $(MAKEGUIDS_SOURCES) $(GENERATED_SOURCES) $(EFIVAR_SOURCES) \
@@ -54,13 +54,13 @@ $(BINTARGETS) : | $(LIBTARGETS) $(PCTARGETS)
 $(STATICTARGETS) : | $(STATICLIBTARGETS) $(PCTARGETS)
 
 abiclean :
-	@rm -vf $(patsubst %.so,%.abixml,$@)
+	$(quiet)rm $(rmverbose) -f $(patsubst %.so,%.abixml,$@)
 
 abixml : | $(LIBTARGETS)
 abixml : $(patsubst %.so,%.abixml,$(LIBTARGETS))
 
 abidw : $(patsubst %.so,%.abixml,$(LIBTARGETS))
-	git commit -s --amend $^
+	$(quiet)git commit -s --amend $^
 
 abicheck : $(patsubst %.so,%.abicheck,$(LIBTARGETS))
 
@@ -75,7 +75,7 @@ makeguids : $(MAKEGUIDS_OBJECTS)
 
 $(MAKEGUIDS_OUTPUT) : makeguids
 $(MAKEGUIDS_OUTPUT) : guids.txt
-	@set -e ; \
+	$(quiet)set -e ; \
 	missing=no ; \
 	for x in $$(cat guids.txt  | awk '{ print $$2 }' | grep -v ^zz) ; do \
 		if ! grep -q "efi_guid_$${x}" libefivar.map.in ; then \
@@ -86,7 +86,7 @@ $(MAKEGUIDS_OUTPUT) : guids.txt
 	if [ "$${missing}" != "no" ]; then \
 		exit 1 ; \
 	fi
-	./makeguids guids.txt guid-symbols.c include/efivar/efivar-guids.h
+	$(quiet)./makeguids guids.txt guid-symbols.c include/efivar/efivar-guids.h
 
 prep : makeguids $(GENERATED_SOURCES)
 
@@ -142,30 +142,31 @@ thread-test.o : private CFLAGS=$(HOST_CFLAGS) -I$(TOPDIR)/src/include/efivar
 thread-test : private LIBS=pthread efivar
 
 deps : $(ALL_SOURCES)
-	@$(MAKE) -f $(SRCDIR)/include/deps.mk deps SOURCES="$(ALL_SOURCES)"
+	$(quiet)$(MAKE) -f $(SRCDIR)/include/deps.mk deps SOURCES="$(ALL_SOURCES)"
 
 clean : 
-	@rm -rfv *~ *.o *.a *.E *.so *.so.* *.pc *.bin .*.d *.map \
+	$(quiet)rm -rf $(rmverbose) \
+		*~ *.o *.a *.E *.so *.so.* *.pc *.bin .*.d *.map \
 		makeguids guid-symbols.c util-makeguids.c	\
 		include/efivar/efivar-guids.h $(TARGETS)	\
 		$(STATICTARGETS)
-	@# remove the deps files we used to create, as well.
-	@rm -rfv .*.P .*.h.P *.S.P include/efivar/.*.h.P
+	$(quiet)# remove the deps files we used to create, as well.
+	$(quiet)rm -rf $(rmverbose) .*.P .*.h.P *.S.P include/efivar/.*.h.P
 	$(quiet)$(MAKE) -f test.mk clean
 
 install : all
-	$(INSTALL) -d -m 755 $(DESTDIR)$(LIBDIR)
-	$(foreach x,$(LIBTARGETS), \
+	$(quiet)$(INSTALL) -d -m 755 $(DESTDIR)$(LIBDIR)
+	$(quiet)$(foreach x,$(LIBTARGETS), \
 		$(INSTALL) -m 755 $(x) $(DESTDIR)$(LIBDIR)/$(x).1.$(VERSION) ;\
 		ln -fs $(x).1.$(VERSION) $(DESTDIR)$(LIBDIR)/$(x).1 ;\
 		ln -fs $(x).1.$(VERSION) $(DESTDIR)$(LIBDIR)/$(x) ;\
 		)
-	$(INSTALL) -d -m 755 $(DESTDIR)$(PCDIR)
-	$(foreach x, $(PCTARGETS), $(INSTALL) -m 644 $(x) $(DESTDIR)$(PCDIR) ;)
-	$(INSTALL) -d -m 755 $(DESTDIR)$(INCLUDEDIR)/efivar
-	$(foreach x, $(sort $(wildcard $(TOPDIR)/src/include/efivar/*.h)), $(INSTALL) -m 644 $(x) $(DESTDIR)$(INCLUDEDIR)/efivar/$(notdir $(x));)
-	$(INSTALL) -d -m 755 $(DESTDIR)$(BINDIR)
-	$(foreach x, $(filter-out %-test,$(BINTARGETS)), $(INSTALL) -m 755 $(x) $(DESTDIR)$(BINDIR);)
+	$(quiet)$(INSTALL) -d -m 755 $(DESTDIR)$(PCDIR)
+	$(quiet)$(foreach x, $(PCTARGETS), $(INSTALL) -m 644 $(x) $(DESTDIR)$(PCDIR) ;)
+	$(quiet)$(INSTALL) -d -m 755 $(DESTDIR)$(INCLUDEDIR)/efivar
+	$(quiet)$(foreach x, $(sort $(wildcard $(TOPDIR)/src/include/efivar/*.h)), $(INSTALL) -m 644 $(x) $(DESTDIR)$(INCLUDEDIR)/efivar/$(notdir $(x));)
+	$(quiet)$(INSTALL) -d -m 755 $(DESTDIR)$(BINDIR)
+	$(quiet)$(foreach x, $(filter-out %-test,$(BINTARGETS)), $(INSTALL) -m 755 $(x) $(DESTDIR)$(BINDIR);)
 
 
 TESTS = $(patsubst %.c,%,$(wildcard test-*.c))

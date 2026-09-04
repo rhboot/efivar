@@ -6,12 +6,12 @@ endif
 scan-test : ; $(SCAN_BUILD_ERROR)
 
 scan-clean : clean
-	@if [[ -d scan-results ]]; then rm -rf scan-results && echo "removed 'scan-results'"; fi
+	$(quiet)if [[ -d scan-results ]]; then rm $(rmverbose) -rf scan-results && echo "removed 'scan-results'"; fi
 
 scan-build : | scan-test
 scan-build : clean
-	$(MAKE) -C src makeguids
-	scan-build -o scan-results make $(DASHJ) CC=clang all
+	$(quiet)$(MAKE) -C src makeguids
+	$(quiet)scan-build -o scan-results make $(DASHJ) CC=clang all
 
 scan-build-all: | scan-build
 scan : | scan-build
