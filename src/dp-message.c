@@ -7,11 +7,11 @@
 #include "fix_coverity.h" // IWYU pragma: keep
 
 #include <arpa/inet.h>
-#include <errno.h>
+#include <errno.h>	// IWYU pragma: keep
 #include <inttypes.h>
 #include <stddef.h>
 
-#include "efivar.h"
+#include "efivar.h"	// IWYU pragma: keep
 
 static ssize_t
 format_ipv4_addr_helper(unsigned char *buf, size_t size, const char *dp_type,
