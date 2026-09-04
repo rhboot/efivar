@@ -436,12 +436,12 @@ efidp_make_vendor(uint8_t *buf, ssize_t size, uint8_t type, uint8_t subtype,
 
 ssize_t PUBLIC
 efidp_make_generic(uint8_t *buf, ssize_t size, uint8_t type, uint8_t subtype,
-		   ssize_t total_size)
+		   ssize_t node_size)
 {
 	efidp_header *head = (efidp_header *)buf;
 
 	if (!size)
-		return total_size;
+		return node_size;
 
 	if (!buf) {
 		errno = EINVAL;
@@ -450,15 +450,22 @@ efidp_make_generic(uint8_t *buf, ssize_t size, uint8_t type, uint8_t subtype,
 		return -1;
 	}
 
-	if (size < total_size) {
+	if (size < node_size) {
 		errno = ENOSPC;
-		efi_error("total size is bigger than size limit");
+		efi_error("node size is bigger than size limit");
 		return -1;
 	}
 
+	if (node_size < (ssize_t)sizeof(efidp_header)) {
+		errno = EINVAL;
+		efi_error("DP node size is smaller than DP header");
+		return -1;
+	}
+	memset(buf, 0, node_size);
+
 	head->type = type;
 	head->subtype = subtype;
-	head->length = total_size;
+	head->length = node_size;
 	return head->length;
 }
 
