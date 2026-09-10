@@ -233,6 +233,7 @@ efi_secdb_add_entry_or_secdb(efi_secdb_t *top,
 	bool sort_data = false;
 	bool sort_descending = false;
 	int (*cmp)(const void *, const void *, void *);
+	int rc;
 
 	if (!top) {
 		errno = EINVAL;
@@ -269,7 +270,11 @@ efi_secdb_add_entry_or_secdb(efi_secdb_t *top,
 	}
 
 	debug("adding %zu(0x%zx) bytes of data", datasz, datasz);
-	secdb_add_entry_data(secdb, owner, data, datasz);
+	rc = secdb_add_entry_data(secdb, owner, data, datasz);
+	if (rc < 0) {
+		debug("secdb_add_entry_data() returned %d", rc);
+		return -1;
+	}
 	if (sort_data && secdb->sigsz) {
 		debug("sorting data %s", sort_descending ? "desc" : "asc");
 		cmp = sort_descending ? secdb_entry_cmp_descending
@@ -421,9 +426,14 @@ efi_secdb_parse(uint8_t *data, size_t datasz, efi_secdb_t **secdbp)
 				debug("wth?  why is force set");
 		}
 
-		efi_secdb_add_entry_or_secdb(secdb, &owner, secdb_type,
-					     (efi_secdb_data_t *)sig, sigsz,
-					     force);
+		int tmp_rc;
+		tmp_rc = efi_secdb_add_entry_or_secdb(secdb, &owner, secdb_type,
+						      (efi_secdb_data_t *)sig,
+						      sigsz, force);
+		if (tmp_rc < 0) {
+			debug("efi_secdb_add_entry_or_secdb() returned %d", tmp_rc);
+			return tmp_rc;
+		}
 		new_secdb = false;
 	} while (rc > 0);
 
