@@ -27,3 +27,43 @@ WARNING
 You should probably not run "make a brick" *ever*, unless you're already
 reasonably sure it won't permanently corrupt your firmware.  This is not a
 joke.
+
+Building from source
+====================
+
+You can build efivar’s source code by following these instructions:
+
+1. Make sure that you have the following installed:
+
+    * [GCC](https://gcc.gnu.org)
+    * [GNU Bash](https://www.gnu.org/software/bash)
+    * [GNU Grep](https://www.gnu.org/software/grep)
+    * [GNU Make](https://www.gnu.org/software/make)
+    * [GNU sed](https://www.gnu.org/software/sed)
+    * [Gawk](https://www.gnu.org/software/gawk)
+    * [The GNU Core Utilities](https://www.gnu.org/software/coreutils)
+    * [mandoc](https://mandoc.bsd.lv)
+
+1. Make sure that you have a copy of efivar’s source code on your computer.
+   You can download the latest stable release of efivar’s source code
+   [here](https://github.com/rhboot/efivar/releases/latest).
+
+1. Open a terminal.
+
+1. Change directory into efivar’s source code by running this command:
+
+    ```bash
+    cd <path to efivar source code>
+    ```
+
+1. Build efivar by running this command:
+
+    ```bash
+    make
+    ```
+
+You can then run the efivar binary that you just built by running this command:
+
+```bash
+LD_PRELOAD="$PWD/src/libefivar.so" ./src/efivar --help
+```
