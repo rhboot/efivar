@@ -31,6 +31,40 @@ efi_secdb_new(void)
 }
 
 /*
+ * adjust data size to remove owner_guid
+ */
+static ssize_t
+adjust_for_owner_guid_by_algo(efi_secdb_type_t algorithm, size_t datasz, bool *has_owner_p)
+{
+	bool has_owner = false;
+	size_t sigsz = datasz;
+
+	if (algorithm != EFI_SECDB_TYPE_X509_CERT)
+		sigsz = secdb_entry_size_from_type(algorithm);
+
+	if (secdb_entry_has_owner_from_type(algorithm, &has_owner) < 0) {
+		debug("secdb_entry_has_owner_from_type() failed");
+		return -1;
+	}
+
+	if (has_owner_p)
+		*has_owner_p = has_owner;
+
+	if (has_owner)
+		sigsz -= sizeof(efi_guid_t);
+
+	if (sigsz > datasz) {
+		debug("signature list size for type is bigger than available data: %zu(0x%zx) > %zu(0x%zx)",
+		      sigsz, sigsz, datasz, datasz);
+		errno = EINVAL;
+		efi_error("EFI_SIGNATURE_LIST is malformed");
+		return -1;
+	}
+
+	return sigsz;
+}
+
+/*
  * find the secdb entry for a given size and algorithm, or return NULL and set
  * errno to ENOENT if there aren't any.
  */
@@ -73,10 +107,11 @@ alloc_secdb_entry(efi_secdb_t *top,
 		  size_t datasz)
 {
 	efi_secdb_t *secdb = NULL;
-	size_t sigsz = datasz;
+	ssize_t sigsz;
 
-	if (algorithm != EFI_SECDB_TYPE_X509_CERT)
-		sigsz = secdb_entry_size_from_type(algorithm);
+	sigsz = adjust_for_owner_guid_by_algo(algorithm, datasz, NULL);
+	if (sigsz < 0)
+		return NULL;
 
 	debug("allocating new secdb entry alg %d", algorithm);
 	secdb = efi_secdb_new();
@@ -137,17 +172,14 @@ efi_secdb_del_entry(efi_secdb_t *top,
 {
 	efi_secdb_t *secdb;
 	list_t *pos;
-	size_t sigsz = datasz;
+	ssize_t sigsz;
 	bool has_owner = false;
 
-	if (algorithm != EFI_SECDB_TYPE_X509_CERT)
-		sigsz = secdb_entry_size_from_type(algorithm);
-
-	if (secdb_entry_has_owner_from_type(algorithm, &has_owner) < 0)
+	sigsz = adjust_for_owner_guid_by_algo(algorithm, datasz, &has_owner);
+	if (sigsz < 0) {
+		errno = EINVAL;
 		return -1;
-
-	if (has_owner)
-		sigsz -= sizeof(efi_guid_t);
+	}
 
 	if (!top || (has_owner && !owner) || !data || !datasz) {
 		errno = EINVAL;
@@ -249,15 +281,17 @@ efi_secdb_add_entry_or_secdb(efi_secdb_t *top,
 	if (force_new_secdb) {
 		debug("forcing new secdb entry (has_owner:%d)", has_owner);
 		secdb = alloc_secdb_entry(top, algorithm, sigsz);
+		if (!secdb)
+			return -1;
 		secdb->algorithm = algorithm;
 		secdb->sigsz = sigsz;
 	} else {
 		debug("finding secdb alg:%d datasz:%zd(0x%zx) sigsz:%zd(0x%zx) has_owner:%d",
 		      algorithm, datasz, datasz, sigsz, sigsz, has_owner);
 		secdb = find_or_alloc_secdb_entry(top, algorithm, sigsz);
+		if (!secdb)
+			return -1;
 	}
-	if (!secdb)
-		return -1;
 
 	sort = secdb->flags & (1ul << EFI_SECDB_SORT);
 	sort_data = secdb->flags & (1ul << EFI_SECDB_SORT_DATA);
