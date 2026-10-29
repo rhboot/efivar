@@ -57,6 +57,13 @@ secdb_buffer(char *val, size_t valsz, ssize_t offset)
 	return nbufsz;
 }
 
+/*
+ * val: pointer to our value
+ * size: size of our val buffer
+ * offset: how many bytes of output we've dumped
+ *
+ * return: new offset
+ */
 static inline ssize_t
 secdb_dump_value(char *val, size_t size, ssize_t offset, char *fmt, ...)
 {
@@ -133,6 +140,14 @@ secdb_dump_value(char *val, size_t size, ssize_t offset, char *fmt, ...)
 	return offset + printed;
 }
 
+/*
+ * print the ESL header
+ * secdb: the internal secdb representation
+ * esl: counter for how many ESL headers we've displayed
+ * offset: how many bytes of output we've dumped
+ *
+ * return: new offset
+ */
 static inline ssize_t
 secdb_dump_esl(efi_secdb_t *secdb, int esl, ssize_t offset)
 {
@@ -177,6 +192,16 @@ secdb_dump_esl(efi_secdb_t *secdb, int esl, ssize_t offset)
 	return offset;
 }
 
+/*
+ * Format one digest
+ * buf: output buffer
+ * bufsz: size of output buffer
+ * algorithm: type of digest
+ * data: digest data
+ * datasz: size of digest data
+ *
+ * return: how many bytes of digest output we dumped
+ */
 static int
 fmt_digest(char *buf, size_t bufsz, efi_secdb_type_t algorithm,
 	   uint8_t *data, size_t datasz)
@@ -223,6 +248,15 @@ fmt_digest(char *buf, size_t bufsz, efi_secdb_type_t algorithm,
 	return pos;
 }
 
+/*
+ * Format one cert
+ * buf: output buffer
+ * bufsz: size of output buffer
+ * data: digest data
+ * datasz: size of digest data
+ *
+ * return: how many bytes of digest output we dumped
+ */
 static int
 fmt_x509_cert(char *buf, size_t bufsz, uint8_t *data, size_t datasz)
 {
@@ -249,6 +283,17 @@ err:
 	return 0;
 }
 
+/*
+ * Dump a group of signature data
+ * entry: this secdb entry
+ * algorithm: which kind of thing this entry's data is
+ * esl: enumeration of which esl we're working on
+ * esd: enumeration of which esd we're working on
+ * data_size: size of the data in this entry (excluding owner_guid)
+ * offset: how many bytes of output we've dumped
+ *
+ * returns: new offset
+ */
 static inline ssize_t
 secdb_dump_esd(secdb_entry_t *entry, efi_secdb_type_t algorithm, int esl,
 	       int esd, size_t data_size, ssize_t offset)
@@ -298,6 +343,11 @@ secdb_dump_esd(secdb_entry_t *entry, efi_secdb_type_t algorithm, int esl,
 	return offset;
 }
 
+/*
+ * dump the security database list
+ * secdb: head secdb
+ * annotations: just hexdump or also annotate?
+ */
 void
 secdb_dump(efi_secdb_t *secdb, bool annotations)
 {
