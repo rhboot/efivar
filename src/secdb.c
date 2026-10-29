@@ -413,21 +413,10 @@ efi_secdb_parse(uint8_t *data, size_t datasz, efi_secdb_t **secdbp)
 		size_t sigsz = 0;
 		efi_guid_t secdb_type_guid, owner;
 		efi_secdb_type_t secdb_type;
-		bool corrected = false;
 		bool force = false;
 
 		rc = esl_iter_next(iter, &secdb_type_guid, &owner,
 					 &sig, &sigsz);
-		if (rc < 0 && errno == EOVERFLOW) {
-			debug("esl_iter_next at %zd(0x%zx) is malformed; attempting correction",
-			      esd_get_esl_offset(iter), esd_get_esl_offset(iter));
-			corrected = true;
-			rc = esl_iter_next_with_size_correction(iter,
-					&secdb_type_guid, &owner, &sig, &sigsz,
-					true);
-			debug("got new entry at 0x%zx with sigsz:%zd",
-			      esd_get_esl_offset(iter), sigsz);
-		}
 		if (rc < 0) {
 			efi_error("Could not get next security database entry");
 			esl_iter_end(iter);
@@ -444,17 +433,13 @@ efi_secdb_parse(uint8_t *data, size_t datasz, efi_secdb_t **secdbp)
                 secdb_type = secdb_entry_type_from_guid(&secdb_type_guid);
 		debug("secdb_type:%d", secdb_type);
 
-		if (corrected)
-			force = true;
 		if (rc == ESL_ITER_NEW_LIST && !sort)
 			force = true;
 		if (new_secdb)
 			force = false;
 
 		if (force) {
-			if (corrected)
-				debug("forcing new secdb due to size correction");
-			else if (rc == ESL_ITER_NEW_LIST && !sort)
+			if (rc == ESL_ITER_NEW_LIST && !sort)
 				debug("forcing new secdb due to new input ESL sort!=type");
 			else
 				debug("wth?  why is force set");

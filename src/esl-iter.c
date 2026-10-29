@@ -82,9 +82,8 @@ esl_iter_end(esl_iter *iter)
 }
 
 esl_iter_status_t NONNULL(1, 2, 3, 4, 5)
-esl_iter_next_with_size_correction(esl_iter *iter, efi_guid_t *type,
-				   efi_guid_t *owner, uint8_t **data,
-				   size_t *len, bool correct_size)
+esl_iter_next(esl_iter *iter, efi_guid_t *type, efi_guid_t *owner,
+	      uint8_t **data, size_t *len)
 {
 	esl_iter_status_t status = ESL_ITER_NEW_DATA;
 	int rc;
@@ -107,12 +106,10 @@ esl_iter_next_with_size_correction(esl_iter *iter, efi_guid_t *type,
 	iter->i += 1;
 
 	if (iter->i == iter->nmemb) {
-		debug("Getting next efi_signature_data_t (correct_size:%d)", correct_size);
+		debug("Getting next efi_signature_data_t");
 		iter->i = 0;
-		if (correct_size)
-			rc = esl_list_iter_next_with_size_correction(iter->iter, type, &iter->esd, &iter->len, true);
-		else
-			rc = esl_list_iter_next(iter->iter, type, &iter->esd, &iter->len);
+
+		rc = esl_list_iter_next(iter->iter, type, &iter->esd, &iter->len);
 		if (rc < 1) {
 			if (rc < 0)
 				efi_error("esl_list_iter_next() failed");
@@ -211,12 +208,11 @@ esl_iter_next_with_size_correction(esl_iter *iter, efi_guid_t *type,
 			debug("signature data entry is not within list bounds (%zd > %zd) (0x%zx > 0x%zx)",
 				  esd_get_esl_offset(iter) + ss, bufsz + esd_get_esl_offset(iter) - ss,
 				  (intptr_t)iter->esd + ss - (intptr_t)buf, bufsz);
-			if (!correct_size)
-				efi_error("signature data entry is not within list bounds (%p > %p) (%zd > %zd) (0x%zx > 0x%zx)",
-					  (void *)((intptr_t)iter->esd + ss),
-					  (void *)((intptr_t)buf + bufsz),
-					  (intptr_t)iter->esd + ss - (intptr_t)buf, bufsz,
-					  (intptr_t)iter->esd + ss - (intptr_t)buf, bufsz);
+			efi_error("signature data entry is not within list bounds (%p > %p) (%zd > %zd) (0x%zx > 0x%zx)",
+				  (void *)((intptr_t)iter->esd + ss),
+				  (void *)((intptr_t)buf + bufsz),
+				  (intptr_t)iter->esd + ss - (intptr_t)buf, bufsz,
+				  (intptr_t)iter->esd + ss - (intptr_t)buf, bufsz);
 			return -1;
 		}
 		iter->esd = (efi_signature_data_t *)((intptr_t)iter->esd + ss);
@@ -232,13 +228,6 @@ esl_iter_next_with_size_correction(esl_iter *iter, efi_guid_t *type,
 	*data = iter->esd->signature_data;
 	*len = ss - sizeof(iter->esd->signature_owner);
 	return status;
-}
-
-esl_iter_status_t NONNULL(1, 2, 3, 4, 5)
-esl_iter_next(esl_iter *iter, efi_guid_t *type,
-                         efi_guid_t *owner, uint8_t **data, size_t *len)
-{
-	return esl_iter_next_with_size_correction(iter, type, owner, data, len, false);
 }
 
 int NONNULL(1)
@@ -301,9 +290,8 @@ esl_list_iter_end(esl_list_iter *iter)
 }
 
 int NONNULL(1, 2, 3, 4)
-esl_list_iter_next_with_size_correction(esl_list_iter *iter, efi_guid_t *type,
-					efi_signature_data_t **data,
-					size_t *len, bool correct_size)
+esl_list_iter_next(esl_list_iter *iter, efi_guid_t *type,
+		   efi_signature_data_t **data, size_t *len)
 {
 	if (!iter) {
 		efi_error("iter is NULL");
@@ -332,7 +320,7 @@ esl_list_iter_next_with_size_correction(esl_list_iter *iter, efi_guid_t *type,
 
 	if (!iter->esl) {
 		size_t signature_data_size;
-		debug("Getting next ESL buffer (correct_size:%d)", correct_size);
+		debug("Getting next ESL buffer");
 		iter->esl = (efi_signature_list_t *)iter->buf;
 
 		debug("list has %zu bytes left, element is %"PRIu32"(0x%"PRIx32") bytes",
@@ -362,19 +350,9 @@ esl_list_iter_next_with_size_correction(esl_list_iter *iter, efi_guid_t *type,
 			      (intmax_t)iter->offset, (uintmax_t)iter->offset,
 			      remaining, remaining,
 			      iter->esl->signature_list_size, iter->esl->signature_list_size);
-			if (correct_size && remaining > 0) {
-				warnx("correcting ESL size from %d to %zu at 0x%jx",
-				      iter->esl->signature_list_size,
-				      remaining, (uintmax_t)iter->offset);
-				debug("correcting ESL size from %d to %zu at 0x%jx",
-				      iter->esl->signature_list_size,
-				      remaining, (uintmax_t)iter->offset);
-				iter->esl->signature_list_size = remaining;
-			} else {
-				efi_error("EFI_SIGNATURE_LIST is malformed");
-				errno = EOVERFLOW;
-				return -1;
-			}
+			efi_error("EFI_SIGNATURE_LIST is malformed");
+			errno = EOVERFLOW;
+			return -1;
 		}
 
 		if (checked_sub(iter->esl->signature_list_size, iter->esl->signature_header_size,
@@ -414,20 +392,9 @@ esl_list_iter_next_with_size_correction(esl_list_iter *iter, efi_guid_t *type,
 
 		if (remaining < iter->esl->signature_list_size) {
 			debug("EFI_SIGNATURE_LIST is malformed");
-			if (correct_size && remaining > 0) {
-				warnx("correcting ESL size from %d to %zu at 0x%jx",
-				      iter->esl->signature_list_size,
-				      remaining, (uintmax_t)iter->offset);
-				debug("correcting ESL size from %d to %zu at 0x%jx",
-				      iter->esl->signature_list_size,
-				      remaining, (uintmax_t)iter->offset);
-				iter->esl->signature_list_size = remaining;
-			} else {
-				debug("EFI_SIGNATURE_LIST is malformed");
-				efi_error("EFI_SIGNATURE_LIST is malformed");
-				errno = EOVERFLOW;
-				return -1;
-			}
+			efi_error("EFI_SIGNATURE_LIST is malformed");
+			errno = EOVERFLOW;
+			return -1;
 		}
 
 		esl_list_get_type(iter, &type);
@@ -480,20 +447,9 @@ esl_list_iter_next_with_size_correction(esl_list_iter *iter, efi_guid_t *type,
 	/* if this list size is too big for our data, then it's malformed */
 	if (iter->esl->signature_list_size > remaining) {
 		debug("EFI_SIGNATURE_LIST is malformed");
-		if (correct_size && (iter->len - iter->offset) > 0) {
-			warnx("correcting ESL size from %d to %jd at 0x%jx",
-			      iter->esl->signature_list_size,
-			      (intmax_t)(iter->len - iter->offset), (uintmax_t)iter->offset);
-			debug("correcting ESL size from %d to %zu at 0x%jx",
-			      iter->esl->signature_list_size,
-			      (size_t)(iter->len - iter->offset), (uintmax_t)iter->offset);
-			iter->esl->signature_list_size = iter->len - iter->offset;
-		} else {
-			debug("EFI_SIGNATURE_LIST is malformed");
-			efi_error("EFI_SIGNATURE_LIST is malformed");
-			errno = EOVERFLOW;
-			return -1;
-		}
+		efi_error("EFI_SIGNATURE_LIST is malformed");
+		errno = EOVERFLOW;
+		return -1;
 	}
 
 	size_t header_sz = sizeof(efi_signature_list_t)
@@ -506,13 +462,6 @@ esl_list_iter_next_with_size_correction(esl_list_iter *iter, efi_guid_t *type,
 	*len = iter->esl->signature_size;
 
 	return 1;
-}
-
-int NONNULL(1, 2, 3, 4)
-esl_list_iter_next(esl_list_iter *iter, efi_guid_t *type,
-		   efi_signature_data_t **data, size_t *len)
-{
-	return esl_list_iter_next_with_size_correction(iter, type, data, len, false);
 }
 
 int NONNULL(1, 2)
