@@ -227,7 +227,6 @@ fmt_digest(char *buf, size_t bufsz, efi_secdb_type_t algorithm,
 		return -1;
 	}
 
-	datasz = MIN(efi_secdb_algs_[algorithm].size, datasz);
 	if (bufsz == 0) {
 		return strlen(alg_names[algorithm]) // string
 			+ 1 // colon
