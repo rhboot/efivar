@@ -113,7 +113,7 @@ secdb_entry_type_from_guid(const efi_guid_t * const guid)
 static inline efi_guid_t const *
 secdb_guid_from_type(const efi_secdb_type_t secdb_type)
 {
-	if (secdb_type < 0 || secdb_type >= EFI_SECDB_TYPE_MAX) {
+	if ((int32_t)secdb_type < 0 || secdb_type >= EFI_SECDB_TYPE_MAX) {
 		errno = EINVAL;
 		return NULL;
 	}
@@ -129,7 +129,7 @@ secdb_entry_size_from_guid(const efi_guid_t * const alg_guid)
 	efi_secdb_type_t type;
 
 	type = secdb_entry_type_from_guid(alg_guid);
-	if (type < 0)
+	if ((int32_t)type < 0)
 		return type;
 
 	return efi_secdb_algs_[type].size
