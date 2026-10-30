@@ -6,6 +6,8 @@
 
 #include "efisec.h"
 
+#include "secdb.h"
+
 typedef struct esl_list_iter esl_list_iter;
 extern int esl_list_iter_new(esl_list_iter **iter, uint8_t *buf, size_t len);
 extern int esl_list_iter_end(esl_list_iter *iter);
@@ -289,6 +291,138 @@ esl_list_iter_end(esl_list_iter *iter)
 	return 0;
 }
 
+static int
+check_esl_list_sanity(esl_list_iter *iter, size_t esd_len)
+{
+	size_t remaining = 0;
+	size_t signature_data_size = 0;
+	efi_guid_t type;
+
+	remaining = iter->len - iter->offset;
+	debug("list has %zu bytes left", remaining);
+	if (remaining == 0)
+		return 0;
+
+	if (remaining < sizeof(efi_signature_list_t) + sizeof(efi_signature_data_t)) {
+		debug("remaining %zu is too small for an EFI_SIGNATURE_LIST", remaining);
+inval:
+		debug("EFI_SIGNATURE_LIST is malformed.");
+		errno = EINVAL;
+		efi_error("EFI_SIGNATURE_LIST is malformed");
+		return -1;
+	}
+
+	debug("list element is %"PRIu32"(0x%"PRIx32") bytes",
+	      iter->esl->signature_list_size,
+	      iter->esl->signature_list_size);
+
+	if (checked_sub(iter->len, iter->offset, &remaining)) {
+		debug("iter->offset %zd > iter->len %zu",
+		      iter->offset, iter->len);
+		debug("internal error");
+		errno = EINVAL;
+		efi_error("internal error");
+		return -1;
+	}
+
+	if (iter->esl->signature_list_size == 0) {
+		debug("signature_list_size == 0");
+		goto inval;
+	}
+
+	if (iter->esl->signature_size == 0) {
+		debug("signature_size == 0");
+		goto inval;
+	}
+
+	if (iter->esl->signature_header_size != 0) {
+		debug("signature_header_size == 0.  Suspicious.");
+		if (iter->esl->signature_header_size >= iter->esl->signature_list_size) {
+			debug("signature_header_size %"PRIu32" > signature_list_size %"PRIu32,
+			      iter->esl->signature_header_size,
+			      iter->esl->signature_list_size);
+			goto inval;
+		}
+	}
+
+	if (remaining < iter->esl->signature_list_size) {
+		debug("remaining:%zu(0x%zx) signature_list_size:%"PRIu32"(0x%"PRIx32")",
+		      remaining, remaining,
+		      iter->esl->signature_list_size, iter->esl->signature_list_size);
+		goto inval;
+	}
+
+	if (remaining < iter->esl->signature_header_size) {
+		debug("remaining:%zu(0x%zx) signature_header_size:%"PRIu32"(0x%"PRIx32")",
+		      remaining, remaining,
+		      iter->esl->signature_header_size, iter->esl->signature_header_size);
+		goto inval;
+	}
+
+	if (remaining < iter->esl->signature_size) {
+		debug("remaining:%zu(0x%zx) signature_size:%"PRIu32"(0x%"PRIx32")",
+		      remaining, remaining,
+		      iter->esl->signature_size, iter->esl->signature_size);
+		goto inval;
+	}
+
+	if (checked_sub(iter->esl->signature_list_size, iter->esl->signature_header_size,
+			&signature_data_size) ||
+	    checked_sub(signature_data_size, sizeof(efi_signature_list_t), &signature_data_size)) {
+		debug("signature_list_size %zd(0x%zx) is smaller than signature_header_size %zd(0x%zx)",
+		      iter->esl->signature_list_size, iter->esl->signature_list_size,
+		      iter->esl->signature_header_size, iter->esl->signature_header_size);
+		goto inval;
+	}
+
+	if (signature_data_size == 0) {
+		debug("signature_data_size == 0");
+		goto inval;
+	}
+
+	if (signature_data_size % iter->esl->signature_size != 0) {
+		debug("signature_data_size %zd(0x%zx) is not a multiple of signature_size %zd(0x%zx)",
+		      signature_data_size, signature_data_size,
+		      iter->esl->signature_size, iter->esl->signature_size);
+		goto inval;
+	}
+
+	esl_list_get_type(iter, &type);
+
+	if (!efi_guid_cmp(&type, &efi_guid_x509_cert)) {
+		int32_t asn1size;
+
+		asn1size = get_asn1_seq_size(iter->buf + iter->offset
+					     + sizeof(efi_signature_list_t)
+					     + sizeof(efi_guid_t),
+					     esd_len - sizeof(efi_guid_t));
+		if (asn1size < 0) {
+			debug("iterator data claims to be an X.509 Cert but is not valid ASN.1 DER");
+		} else if ((uint32_t)asn1size != iter->esl->signature_size
+						 - sizeof(efi_guid_t)) {
+			debug("X.509 Cert ASN.1 size does not match signature_list_size (%d vs %zu)",
+			      asn1size, iter->esl->signature_size -
+					sizeof(efi_guid_t));
+		}
+	} else {
+		ssize_t typesz = 0;
+
+		typesz = secdb_entry_size_from_guid(&type);
+		if (typesz < 0) {
+			debug("unknown signature algorithm");
+			goto inval;
+		}
+
+		if (iter->esl->signature_size != typesz) {
+			debug("signature_size %zu != typesz",
+			      iter->esl->signature_size, typesz);
+			goto inval;
+		}
+	}
+
+	return 0;
+}
+
 int NONNULL(1, 2, 3, 4)
 esl_list_iter_next(esl_list_iter *iter, efi_guid_t *type,
 		   efi_signature_data_t **data, size_t *len)
@@ -312,108 +446,23 @@ esl_list_iter_next(esl_list_iter *iter, efi_guid_t *type,
 	size_t remaining = 0;
 
 	if (checked_sub(iter->len, iter->offset, &remaining)) {
-		debug("EFI_SIGNATURE_LIST is malformed; offset computation overflows");
-		efi_error("EFI_SIGNATURE_LIST is malformed");
+		debug("iter->offset %zd > iter->len %zu",
+		      iter->offset, iter->len);
+		debug("internal error");
+		efi_error("internal error");
 		errno = EINVAL;
 		return -1;
 	}
 
+	int rc = 0;
 	if (!iter->esl) {
-		size_t signature_data_size;
 		debug("Getting next ESL buffer");
+
 		iter->esl = (efi_signature_list_t *)iter->buf;
-
-		debug("list has %zu bytes left, element is %"PRIu32"(0x%"PRIx32") bytes",
-		      remaining,
-		      iter->esl->signature_list_size,
-		      iter->esl->signature_list_size);
-
-		if (iter->esl->signature_list_size == 0) {
-			debug("EFI_SIGNATURE_LIST is malformed; signature_list_size == 0");
-			efi_error("EFI_SIGNATURE_LIST is malformed");
-			errno = EINVAL;
-			return -1;
-		}
-
-		if (iter->esl->signature_size == 0) {
-			debug("EFI_SIGNATURE_LIST is malformed; signature_size == 0");
-			efi_error("EFI_SIGNATURE_LIST is malformed");
-			errno = EINVAL;
-			return -1;
-		}
-
-		if (remaining < iter->esl->signature_list_size ||
-		    remaining < iter->esl->signature_header_size ||
-		    remaining < iter->esl->signature_size) {
-			debug("EFI_SIGNATURE_LIST is malformed: len:%zu(0x%zx) offset:%jd(0x%jx) len-off:%zu(0x%zx) esl_size:%"PRIu32"(0x%"PRIx32")",
-			      iter->len, iter->len,
-			      (intmax_t)iter->offset, (uintmax_t)iter->offset,
-			      remaining, remaining,
-			      iter->esl->signature_list_size, iter->esl->signature_list_size);
-			efi_error("EFI_SIGNATURE_LIST is malformed");
-			errno = EOVERFLOW;
-			return -1;
-		}
-
-		if (checked_sub(iter->esl->signature_list_size, iter->esl->signature_header_size,
-				&signature_data_size) ||
-		    checked_sub(signature_data_size, sizeof(efi_signature_list_t), &signature_data_size)) {
-			debug("EFI_SIGNATURE_LIST is malformed.");
-			debug("signature_list_size %zd(0x%zx) is smaller than signature_header_size %zd(0x%zx)",
-			      iter->esl->signature_list_size, iter->esl->signature_list_size,
-			      iter->esl->signature_header_size, iter->esl->signature_header_size);
-			efi_error("EFI_SIGNATURE_LIST is malformed");
-			errno = EINVAL;
-			return -1;
-		}
-
-		if (signature_data_size == 0) {
-			debug("EFI_SIGNATURE_LIST is malformed.  Signature data size == 0");
-			efi_error("EFI_SIGNATURE_LIST is malformed");
-			errno = EINVAL;
-			return -1;
-		}
-
-		if (signature_data_size % iter->esl->signature_size != 0) {
-			debug("EFI_SIGNATURE_LIST is malformed.");
-			debug("signature_data_size %zd(0x%zx) is not a multiple of signature_size %zd(0x%zx)",
-			      signature_data_size, signature_data_size,
-			      iter->esl->signature_size, iter->esl->signature_size);
-			efi_error("EFI_SIGNATURE_LIST is malformed");
-			errno = EINVAL;
-			return -1;
-		}
 	} else {
 		debug("Getting next efi_signature_list_t");
 		debug("list has %zu bytes left, element is %"PRIu32" bytes",
 		      remaining, iter->esl->signature_list_size);
-		efi_guid_t type;
-		errno = 0;
-
-		if (remaining < iter->esl->signature_list_size) {
-			debug("EFI_SIGNATURE_LIST is malformed");
-			efi_error("EFI_SIGNATURE_LIST is malformed");
-			errno = EOVERFLOW;
-			return -1;
-		}
-
-		esl_list_get_type(iter, &type);
-		if (!efi_guid_cmp(&type, &efi_guid_x509_cert)) {
-			int32_t asn1size;
-
-			asn1size = get_asn1_seq_size(iter->buf + iter->offset
-						     + sizeof(efi_signature_list_t)
-						     + sizeof(efi_guid_t),
-						     *len - sizeof(efi_guid_t));
-			if (asn1size < 0) {
-				debug("iterator data claims to be an X.509 Cert but is not valid ASN.1 DER");
-			} else if ((uint32_t)asn1size != iter->esl->signature_size
-							 - sizeof(efi_guid_t)) {
-				debug("X.509 Cert ASN.1 size does not match signature_list_size (%d vs %zu)",
-				      asn1size, iter->esl->signature_size -
-						sizeof(efi_guid_t));
-			}
-		}
 
 		iter->offset += iter->esl->signature_list_size;
 		if ((uint32_t)iter->offset >= iter->len) {
@@ -422,16 +471,12 @@ esl_list_iter_next(esl_list_iter *iter, efi_guid_t *type,
 			return 0;
 		}
 		iter->esl = (efi_signature_list_t *)(iter->buf + (size_t)iter->offset);
-		remaining = iter->len - iter->offset;
-		if (remaining < sizeof(efi_signature_list_t)) {
-			debug("remaining data size %zu(0x%zx) is smaller than ESL", remaining, remaining);
-			if (remaining != 0) {
-				efi_error("Malformed EFI_SIGNATURE_LIST");
-				errno = EINVAL;
-				return -1;
-			}
-			return 0;
-		}
+	}
+
+	rc = check_esl_list_sanity(iter, *len);
+	if (rc < 0) {
+		debug("esl sanity check failed");
+		return rc;
 	}
 
 	efi_signature_list_t esl;
@@ -444,13 +489,6 @@ esl_list_iter_next(esl_list_iter *iter, efi_guid_t *type,
 	debug("signature list size:%d iter->len:%zu iter->offset:%jd signature_size:%u",
 	      iter->esl->signature_list_size, iter->len, (intmax_t)iter->offset,
 	      iter->esl->signature_size);
-	/* if this list size is too big for our data, then it's malformed */
-	if (iter->esl->signature_list_size > remaining) {
-		debug("EFI_SIGNATURE_LIST is malformed");
-		efi_error("EFI_SIGNATURE_LIST is malformed");
-		errno = EOVERFLOW;
-		return -1;
-	}
 
 	size_t header_sz = sizeof(efi_signature_list_t)
 			   + iter->esl->signature_header_size;
