@@ -123,7 +123,7 @@ secdb_guid_from_type(const efi_secdb_type_t secdb_type)
 /*
  * find the size to store a signature from the efi guid for the signature type
  */
-static inline size_t
+static inline ssize_t
 secdb_entry_size_from_guid(const efi_guid_t * const alg_guid)
 {
 	efi_secdb_type_t type;
@@ -140,7 +140,7 @@ secdb_entry_size_from_guid(const efi_guid_t * const alg_guid)
  * find the size to store a signature from the secdb_type_t type, including
  * signature owner.  It's the size of the entire esl.Signatures array entry.
  */
-static inline size_t
+static inline ssize_t
 secdb_entry_size_from_type(const efi_secdb_type_t secdb_type)
 {
 	if (secdb_type < 0 || secdb_type >= EFI_SECDB_TYPE_MAX) {
