@@ -103,6 +103,12 @@ read_file(int fd, uint8_t **result, size_t *bufsize)
 		}
 	} while (1);
 
+	if (filesize == 0) {
+		free(buf);
+		*result = NULL;
+		*bufsize = 0;
+		return 0;
+	}
 	newbuf = realloc(buf, filesize+1);
 	if (!newbuf) {
 		free(buf);
