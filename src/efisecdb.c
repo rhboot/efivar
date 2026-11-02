@@ -291,8 +291,10 @@ parse_input_files(list_t *infiles, efi_secdb_t **secdb, bool dump)
 		rc = read_file(infd, &siglist, &siglistsz);
 		if (rc < 0)
 			err(1, "could not read \"%s\"", infile);
-		siglistsz -= 1;
 		close(infd);
+		if (siglistsz == 0)
+			continue;
+		siglistsz -= 1;
 
 		rc = efi_secdb_parse(siglist, siglistsz, secdb);
 		efi_error_clear();
