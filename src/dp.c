@@ -294,6 +294,63 @@ efidp_append_instance(const_efidp dp, const_efidp dpi, efidp *out)
 
 }
 
+/*
+ * This tests if the buffer we're given holds either:
+ * a) a device path that ends with an EndEntire marker, or
+ * b) a device path that fits the buffer limit exactly (whether or not it
+ *    has an end marker)
+ */
+static bool
+is_dp_well_formed(const_efidp dp, ssize_t limit)
+{
+	while (limit >= 0) {
+		debug("dp:%p limit:%zd", dp, limit);
+		if (limit == 0) {
+			debug("limit is 0 -> true");
+			return true;
+		}
+		if (limit >= 0 && (size_t)limit < sizeof(efidp_header)) {
+			debug("limit %zd < sizeof(efidp_header) -> false", limit);
+			return false;
+		}
+
+		ssize_t sz = efidp_node_size(dp);
+		if (sz < 0) {
+			debug("efidp_node_size() returned %zd -> false", sz);
+			return false;
+		}
+
+		if (sz < 4) {
+			debug("sz %d is < 4 -> false", sz);
+			return false;
+		}
+
+		if (limit >= 0 && (limit < 4 || sz > limit)) {
+			debug("sz %zd < limit %zd -> false", sz, limit);
+			return false;
+		}
+
+		if (dp->type == EFIDP_END_TYPE &&
+		    dp->subtype == EFIDP_END_ENTIRE) {
+			debug("found end entire -> true");
+			return true;
+		}
+
+		if (limit) {
+			limit -= efidp_node_size(dp);
+			debug("new limit:%zd", limit);
+		}
+
+		int rc = efidp_next_node(dp, &dp);
+		if (rc < 0) {
+			debug("efidp_next_node() == %d -> false", rc);
+			return false;
+		}
+	}
+
+	return false;
+}
+
 ssize_t PUBLIC
 efidp_format_device_path(unsigned char *buf, size_t size, const_efidp dp,
 			 ssize_t limit)
@@ -307,6 +364,12 @@ efidp_format_device_path(unsigned char *buf, size_t size, const_efidp dp,
 
 	if (buf && size)
 		memset(buf, 0, size);
+
+	if (!is_dp_well_formed(dp, limit)) {
+		efi_error("invalid device path");
+		errno = EINVAL;
+		return -1;
+	}
 
 	while (limit && !end_found) {
 		const_efidp next = NULL;
