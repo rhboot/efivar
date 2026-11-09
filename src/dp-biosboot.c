@@ -37,6 +37,7 @@ _format_bios_boot_dn(unsigned char *buf, size_t size, const_efidp dp)
 	ssize_t off = 0;
 	char *types[] = {"", "Floppy", "HD", "CDROM", "PCMCIA", "USB", "Network", "" };
 
+	check_node_size_for_type(dp, efidp_bios_boot);
 	if (dp->subtype != EFIDP_BIOS_BOOT) {
 		size_t sz = efidp_node_size(dp) - sizeof(efidp_header);
 		format(buf, size, off, "BbsPath", "BbsPath(%d", dp->subtype);
@@ -48,6 +49,14 @@ _format_bios_boot_dn(unsigned char *buf, size_t size, const_efidp dp)
 		return off;
 	}
 
+	size_t nodesz = efidp_node_size(dp);
+	size_t offset;
+
+	offset = offsetof(efidp_bios_boot, description);
+	if (!string_is_terminated((char *)dp->bios_boot.description, nodesz-offset)) {
+		errno = EINVAL;
+		return -1;
+	}
 	if (dp->bios_boot.device_type >= EFIDP_BIOS_BOOT_DEVICE_TYPE_FLOPPY &&
 	    dp->bios_boot.device_type <= EFIDP_BIOS_BOOT_DEVICE_TYPE_EMBEDDED_NET) {
 		format(buf, size, off, "BBS", "BBS(%s,%s,0x%"PRIx32")",
