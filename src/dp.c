@@ -309,6 +309,7 @@ efidp_format_device_path(unsigned char *buf, size_t size, const_efidp dp,
 		memset(buf, 0, size);
 
 	while (limit && !end_found) {
+		const_efidp next = NULL;
 		debug("buf:%p size:%zu dp:%p limit:%zd", buf, size, dp, limit);
 		if (limit >= 0 && (size_t)limit < sizeof(efidp_header)) {
 			efi_error("invalid device path");
@@ -317,16 +318,24 @@ efidp_format_device_path(unsigned char *buf, size_t size, const_efidp dp,
 		}
 
 		ssize_t sz = efidp_node_size(dp);
-		if (SUB(sz, 4, &sz) ||
-		    sz < 0) {
+		if (sz < (ssize_t)sizeof(efidp_header)) {
 			efi_error("bad DP node size");
 			return -1;
 		}
-		if (limit >= 0 && (limit < 4 || efidp_node_size(dp) > limit)) {
+
+		if (limit >= 0 && (limit < 4 || sz > limit)) {
 			if (off)
 				return off;
 			else
 				return -1;
+		}
+
+		ssize_t tmpsz = 0;
+		if (!ADD(sz, sizeof(efidp_header), &tmpsz) &&
+		    limit >= tmpsz) {
+			int rc = efidp_next_node(dp, &next);
+			if (rc < 0)
+				next = NULL;
 		}
 
 		if (first) {
@@ -346,7 +355,7 @@ efidp_format_device_path(unsigned char *buf, size_t size, const_efidp dp,
 			format_hw_dn(buf, size, off, dp);
 			break;
 		case EFIDP_ACPI_TYPE:
-			format_acpi_dn(buf, size, off, dp);
+			format_acpi_dn(buf, size, off, dp, next);
 			break;
 		case EFIDP_MESSAGE_TYPE:
 			format_message_dn(buf, size, off, dp);
@@ -371,6 +380,7 @@ efidp_format_device_path(unsigned char *buf, size_t size, const_efidp dp,
 		default:
 			format(buf, size, off, "Path",
 				    "Path(%d,%d,", dp->type, dp->subtype);
+			sz -= sizeof(efidp_header);
 			if (sz > 0)
 			format_hex(buf, size, off, "Path", (uint8_t *)dp + 4,
 				   sz);
