@@ -309,6 +309,13 @@ efidp_format_device_path(unsigned char *buf, size_t size, const_efidp dp,
 		memset(buf, 0, size);
 
 	while (limit && !end_found) {
+		debug("buf:%p size:%zu dp:%p limit:%zd", buf, size, dp, limit);
+		if (limit >= 0 && (size_t)limit < sizeof(efidp_header)) {
+			efi_error("invalid device path");
+			errno = EINVAL;
+			return -1;
+		}
+
 		ssize_t sz = efidp_node_size(dp);
 		if (SUB(sz, 4, &sz) ||
 		    sz < 0) {
