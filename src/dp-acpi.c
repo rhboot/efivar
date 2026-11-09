@@ -161,6 +161,7 @@ _format_acpi_dn(unsigned char *buf, size_t size, const_efidp dp)
 			}
 		}
 	} else if (dp->subtype == EFIDP_ACPI_HID) {
+		check_node_size_for_type(dp, efidp_acpi_hid);
 		debug("formatting ACPI HID 0x%08x", dp->acpi_hid.hid);
 
 		switch (dp->acpi_hid.hid) {
@@ -257,6 +258,7 @@ _format_acpi_dn(unsigned char *buf, size_t size, const_efidp dp)
 				break;
 			case EFIDP_ACPI_HID:
 				debug("Decoding ACPI HID");
+				check_node_size_for_type(dp, efidp_acpi_hid);
 				format(buf, size, off, "Acpi",
 				       "Acpi(0x%"PRIx32",0x%"PRIx32")",
 				       dp->acpi_hid.hid, dp->acpi_hid.uid);
