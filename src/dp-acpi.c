@@ -85,7 +85,7 @@ _format_acpi_hid_ex(unsigned char *buf, size_t size,
 		      hidstr, cidstr, uidstr)
 
 ssize_t
-_format_acpi_dn(unsigned char *buf, size_t size, const_efidp dp)
+_format_acpi_dn(unsigned char *buf, size_t size, const_efidp dp, const_efidp next)
 {
 	ssize_t off = 0;
 	const char *hidstr = NULL;
@@ -94,6 +94,7 @@ _format_acpi_dn(unsigned char *buf, size_t size, const_efidp dp)
 	size_t uidlen = 0;
 	const char *cidstr = NULL;
 	// size_t cidlen = 0;
+	size_t nodesz = efidp_node_size(dp);
 
 	if (dp->subtype == EFIDP_ACPI_ADR) {
 		debug("formatting ACPI _ADR");
@@ -101,7 +102,7 @@ _format_acpi_dn(unsigned char *buf, size_t size, const_efidp dp)
 		return off;
 	} else if (dp->subtype != EFIDP_ACPI_HID_EX &&
 		   dp->subtype != EFIDP_ACPI_HID) {
-		ssize_t limit = efidp_node_size(dp);
+		ssize_t limit = nodesz;
 
 		debug("DP subtype %d, formatting as ACPI Path", dp->subtype);
 		if (SUB(limit, 4, &limit) ||
@@ -115,22 +116,35 @@ _format_acpi_dn(unsigned char *buf, size_t size, const_efidp dp)
 		format(buf, size, off, "AcpiPath", ")");
 		return off;
 	} else if (dp->subtype == EFIDP_ACPI_HID_EX) {
-		ssize_t limit = efidp_node_size(dp)
+		check_node_size_for_type(dp, efidp_acpi_hid_ex);
+		ssize_t limit = nodesz
 				- offsetof(efidp_acpi_hid_ex, hidstr);
 
 		debug("formatting ACPI HID EX");
 		hidstr = dp->acpi_hid_ex.hidstr;
-		hidlen = strnlen(hidstr, limit);
-		limit -= hidlen + 1;
-
-		if (limit) {
-			uidstr = hidstr + hidlen + 1;
-			uidlen = strnlen(uidstr, limit);
-			limit -= uidlen + 1;
+		if (!string_is_terminated((char *)hidstr, limit)) {
+			hidstr = NULL;
+			hidlen = 0;
+		} else {
+			hidlen = strnlen(hidstr, limit);
+			limit -= hidlen + 1;
 		}
 
-		if (limit) {
+		if (limit > 0 && hidlen != 0) {
+			uidstr = hidstr + hidlen + 1;
+			if (!string_is_terminated((char *)uidstr, limit)) {
+				uidstr = NULL;
+				uidlen = 0;
+			} else {
+				uidlen = strnlen(uidstr, limit);
+				limit -= uidlen + 1;
+			}
+		}
+
+		if (limit > 0 && uidlen != 0) {
 			cidstr = uidstr + uidlen + 1;
+			if (!string_is_terminated((char *)cidstr, limit))
+				cidstr = NULL;
 			// cidlen = strnlen(cidstr, limit);
 			// limit -= cidlen + 1;
 		}
@@ -205,24 +219,23 @@ _format_acpi_dn(unsigned char *buf, size_t size, const_efidp dp)
 			       dp->acpi_hid.uid);
 			break;
 		case EFIDP_ACPI_NVDIMM_HID: {
-			int rc;
-			const_efidp next = NULL;
 			efidp_acpi_adr *adrdp;
 			int end;
 
 			format(buf, size, off, "NvRoot()", "NvRoot()");
 
-			rc = efidp_next_node(dp, &next);
-			if (rc < 0 || !next) {
-				efi_error("could not format DP");
-				return rc;
+			if (!next) {
+				debug("NvRoot() requires a next node");
+				errno = EINVAL;
+				return -1;
 			}
 
 			if (efidp_type(next) != EFIDP_ACPI_TYPE ||
 			    efidp_subtype(next) != EFIDP_ACPI_ADR) {
 				efi_error("Invalid child node type (0x%02x,0x%02x)",
 					  efidp_type(next), efidp_subtype(next));
-				return -EINVAL;
+				errno = EINVAL;
+				return -1;
 			}
 			adrdp = (efidp_acpi_adr *)next;
 

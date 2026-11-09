@@ -151,16 +151,16 @@ format_vendor_helper(unsigned char *buf, size_t size, char *label,
 	})
 
 extern ssize_t _format_hw_dn(unsigned char *buf, size_t size, const_efidp dp);
-extern ssize_t _format_acpi_dn(unsigned char *buf, size_t size, const_efidp dp);
+extern ssize_t _format_acpi_dn(unsigned char *buf, size_t size, const_efidp dp, const_efidp nextdp);
 extern ssize_t _format_message_dn(unsigned char *buf, size_t size, const_efidp dp);
 extern ssize_t _format_media_dn(unsigned char *buf, size_t size, const_efidp dp);
 extern ssize_t _format_bios_boot_dn(unsigned char *buf, size_t size, const_efidp dp);
 
-#define format_helper_2(name, buf, size, off, dp) ({			\
+#define format_helper_2(name, buf, size, off, dp...) ({			\
 		ssize_t _sz;						\
 		_sz = name(((buf)+(off)),				\
 			   ((size)?((size)-(off)):0),			\
-			   (dp));					\
+			   ## dp);					\
 		if (_sz < 0) {						\
 			efi_error("%s failed", #name);			\
 			return -1;					\
@@ -170,8 +170,8 @@ extern ssize_t _format_bios_boot_dn(unsigned char *buf, size_t size, const_efidp
 
 #define format_hw_dn(buf, size, off, dp) \
 	format_helper_2(_format_hw_dn, buf, size, off, dp)
-#define format_acpi_dn(buf, size, off, dp) \
-	format_helper_2(_format_acpi_dn, buf, size, off, dp)
+#define format_acpi_dn(buf, size, off, dp, nextdp) \
+	format_helper_2(_format_acpi_dn, buf, size, off, dp, nextdp)
 #define format_message_dn(buf, size, off, dp) \
 	format_helper_2(_format_message_dn, buf, size, off, dp)
 #define format_media_dn(buf, size, off, dp) \
