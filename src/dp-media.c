@@ -19,6 +19,7 @@ _format_media_dn(unsigned char *buf, size_t size, const_efidp dp)
 	ssize_t off = 0;
 	switch (dp->subtype) {
 	case EFIDP_MEDIA_HD:
+		check_node_size_for_type(dp, efidp_hd);
 		format(buf, size, off, "HD", "HD(%d,", dp->hd.partition_number);
 		switch (dp->hd.signature_type) {
 		case EFIDP_HD_SIGNATURE_MBR:
@@ -49,12 +50,14 @@ _format_media_dn(unsigned char *buf, size_t size, const_efidp dp)
 		}
 		break;
 	case EFIDP_MEDIA_CDROM:
+		check_node_size_for_type(dp, efidp_cdrom);
 		format(buf, size, off, "CDROM",
 		       "CDROM(%d,0x%"PRIx64",0x%"PRIx64")",
 		       dp->cdrom.boot_catalog_entry,
 		       dp->cdrom.partition_rba, dp->cdrom.sectors);
 		break;
 	case EFIDP_MEDIA_VENDOR:
+		check_node_size_for_type(dp, efidp_media_vendor);
 		format_vendor(buf, size, off, "VenMedia", dp);
 		break;
 	case EFIDP_MEDIA_FILE: {
@@ -70,24 +73,30 @@ _format_media_dn(unsigned char *buf, size_t size, const_efidp dp)
 		break;
 			       }
 	case EFIDP_MEDIA_PROTOCOL:
+		check_node_size_for_type(dp, efidp_protocol);
 		format(buf, size, off, "Media", "Media(");
 		format_guid(buf, size, off, "Media",
 			    &dp->protocol.protocol_guid);
 		format(buf, size, off, "Media", ")");
 		break;
 	case EFIDP_MEDIA_FIRMWARE_FILE:
+		check_node_size_for_type(dp, efidp_firmware_file);
+		check_node_size_for_type(dp, efidp_protocol);
 		format(buf, size, off, "FvFile", "FvFile(");
 		format_guid(buf, size, off, "FvFile",
 			    &dp->protocol.protocol_guid);
 		format(buf, size, off, "FvFile", ")");
 		break;
 	case EFIDP_MEDIA_FIRMWARE_VOLUME:
+		check_node_size_for_type(dp, efidp_firmware_volume);
+		check_node_size_for_type(dp, efidp_protocol);
 		format(buf, size, off, "FvVol", "FvVol(");
 		format_guid(buf, size, off, "FvVol",
 			    &dp->protocol.protocol_guid);
 		format(buf, size, off, "FvVol", ")");
 		break;
 	case EFIDP_MEDIA_RELATIVE_OFFSET:
+		check_node_size_for_type(dp, efidp_relative_offset);
 		format(buf, size, off, "Offset",
 		       "Offset(0x%"PRIx64",0x%"PRIx64")",
 		       dp->relative_offset.first_byte,
@@ -106,6 +115,7 @@ _format_media_dn(unsigned char *buf, size_t size, const_efidp dp)
 		};
 		char *label = NULL;
 
+		check_node_size_for_type(dp, efidp_ramdisk);
 		for (int i = 0; !efi_guid_is_zero(&subtypes[i].guid); i++) {
 			if (efi_guid_cmp(&subtypes[i].guid,
 					  &dp->ramdisk.disk_type_guid))
