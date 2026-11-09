@@ -416,36 +416,44 @@ _format_message_dn(unsigned char *buf, size_t size, const_efidp dp)
 	ssize_t off = 0;
 	switch (dp->subtype) {
 	case EFIDP_MSG_ATAPI:
+		check_node_size_for_type(dp, efidp_atapi);
 		format(buf, size, off, "Ata", "Ata(%d,%d,%d)",
 			      dp->atapi.primary, dp->atapi.slave,
 			      dp->atapi.lun);
 		break;
 	case EFIDP_MSG_SCSI:
+		check_node_size_for_type(dp, efidp_scsi);
 		format(buf, size, off, "SCSI", "SCSI(%d,%d)",
 			      dp->scsi.target, dp->scsi.lun);
 		break;
 	case EFIDP_MSG_FIBRECHANNEL:
+		check_node_size_for_type(dp, efidp_fc);
 		format(buf, size, off, "Fibre", "Fibre(%"PRIx64",%"PRIx64")",
 			      le64_to_cpu(dp->fc.wwn),
 			      le64_to_cpu(dp->fc.lun));
 		break;
 	case EFIDP_MSG_FIBRECHANNELEX:
+		check_node_size_for_type(dp, efidp_fcex);
 		format(buf, size, off, "Fibre", "Fibre(%"PRIx64",%"PRIx64")",
 			      be64_to_cpu(dp->fc.wwn),
 			      be64_to_cpu(dp->fc.lun));
 		break;
 	case EFIDP_MSG_1394:
+		check_node_size_for_type(dp, efidp_1394);
 		format(buf, size, off, "I1394", "I1394(0x%"PRIx64")",
 			      dp->firewire.guid);
 		break;
 	case EFIDP_MSG_USB:
+		check_node_size_for_type(dp, efidp_usb);
 		format(buf, size, off, "USB", "USB(%d,%d)",
 			      dp->usb.parent_port, dp->usb.interface);
 		break;
 	case EFIDP_MSG_I2O:
+		check_node_size_for_type(dp, efidp_i2o);
 		format(buf, size, off, "I2O", "I2O(%d)", dp->i2o.target);
 		break;
 	case EFIDP_MSG_INFINIBAND:
+		check_node_size_for_type(dp, efidp_infiniband);
 		format(buf, size, off, "Infiniband",
 		       "Infiniband(%08x,%"PRIx64"%"PRIx64",%"PRIx64",%"PRIu64",%"PRIu64")",
 		       dp->infiniband.resource_flags,
@@ -456,6 +464,7 @@ _format_message_dn(unsigned char *buf, size_t size, const_efidp dp)
 		       dp->infiniband.device_id);
 		break;
 	case EFIDP_MSG_MAC_ADDR:
+		check_node_size_for_type(dp, efidp_mac_addr);
 		format(buf, size, off, "MAC", "MAC(");
 		format_hex(buf, size, off, "MAC", dp->mac_addr.mac_addr,
 				  dp->mac_addr.if_type < 2 ? 6
@@ -463,6 +472,7 @@ _format_message_dn(unsigned char *buf, size_t size, const_efidp dp)
 		format(buf, size, off, "MAC", ",%d)", dp->mac_addr.if_type);
 		break;
 	case EFIDP_MSG_IPv4: {
+		check_node_size_for_type(dp, efidp_ipv4_addr);
 		efidp_ipv4_addr const *a = &dp->ipv4_addr;
 		format(buf, size, off, "IPv4", "IPv4(");
 		format_ipv4_addr(buf, size, off,
@@ -481,6 +491,7 @@ _format_message_dn(unsigned char *buf, size_t size, const_efidp dp)
 		break;
 			     }
 	case EFIDP_MSG_VENDOR: {
+		check_node_size_for_type(dp, efidp_msg_vendor);
 		struct {
 			efi_guid_t guid;
 			char label[40];
@@ -545,6 +556,7 @@ _format_message_dn(unsigned char *buf, size_t size, const_efidp dp)
 		break;
 			       }
 	case EFIDP_MSG_IPv6: {
+		check_node_size_for_type(dp, efidp_ipv6_addr);
 		efidp_ipv6_addr const *a = &dp->ipv6_addr;
 		const uint8_t addr_zero[16] = { 00, 00, 00, 00,
 						00, 00, 00, 00,
@@ -592,6 +604,7 @@ _format_message_dn(unsigned char *buf, size_t size, const_efidp dp)
 		break;
 			     }
 	case EFIDP_MSG_UART: {
+		check_node_size_for_type(dp, efidp_uart);
 		int parity = dp->uart.parity;
 		char parity_label[] = "DNEOMS";
 		int stop_bits = dp->uart.stop_bits;
@@ -611,9 +624,11 @@ _format_message_dn(unsigned char *buf, size_t size, const_efidp dp)
 		break;
 			     }
 	case EFIDP_MSG_USB_CLASS:
+		check_node_size_for_type(dp, efidp_usb_class);
 		format_helper(format_usb_class, buf, size, off, "UsbClass", dp);
 		break;
 	case EFIDP_MSG_USB_WWID: {
+		check_node_size_for_type(dp, efidp_usb_wwid);
 		ssize_t limit = efidp_node_size(dp);
 		size_t offset = offsetof(efidp_usb_wwid, serial_number);
 		if (limit <= 0 ||
@@ -632,14 +647,17 @@ _format_message_dn(unsigned char *buf, size_t size, const_efidp dp)
 		break;
 				 }
 	case EFIDP_MSG_LUN:
+		check_node_size_for_type(dp, efidp_lun);
 		format(buf, size, off, "Unit", "Unit(%d)", dp->lun.lun);
 		break;
 	case EFIDP_MSG_SATA:
+		check_node_size_for_type(dp, efidp_sata);
 		format(buf, size, off, "Sata", "Sata(%d,%d,%d)",
 			    dp->sata.hba_port, dp->sata.port_multiplier_port,
 			    dp->sata.lun);
 		break;
 	case EFIDP_MSG_ISCSI: {
+		check_node_size_for_type(dp, efidp_iscsi);
 		ssize_t sz = efidp_node_size(dp)
 			- offsetof(efidp_iscsi, target_name);
 		if (sz < 0) {
@@ -669,12 +687,15 @@ _format_message_dn(unsigned char *buf, size_t size, const_efidp dp)
 		break;
 			      }
 	case EFIDP_MSG_VLAN:
+		check_node_size_for_type(dp, efidp_vlan);
 		format(buf, size, off, "Vlan", "Vlan(%d)", dp->vlan.vlan_id);
 		break;
 	case EFIDP_MSG_SAS_EX:
+		check_node_size_for_type(dp, efidp_sas);
 		format_sas(buf, size, NULL, dp);
 		break;
 	case EFIDP_MSG_NVME:
+		check_node_size_for_type(dp, efidp_nvme);
 		format(buf, size, off, "NVMe", "NVMe(0x%"PRIx32","
 			   "%02X-%02X-%02X-%02X-%02X-%02X-%02X-%02X)",
 			   dp->nvme.namespace_id, dp->nvme.ieee_eui_64[0],
@@ -684,6 +705,7 @@ _format_message_dn(unsigned char *buf, size_t size, const_efidp dp)
 			   dp->nvme.ieee_eui_64[7]);
 		break;
 	case EFIDP_MSG_URI: {
+		check_node_size_for_type(dp, efidp_uri);
 		ssize_t sz = efidp_node_size(dp) - offsetof(efidp_uri, uri);
 		if (sz < 0) {
 			efi_error("bad DP node size");
@@ -697,28 +719,34 @@ _format_message_dn(unsigned char *buf, size_t size, const_efidp dp)
 		break;
 			    }
 	case EFIDP_MSG_UFS:
+		check_node_size_for_type(dp, efidp_ufs);
 		format(buf, size, off, "UFS", "UFS(%d,0x%02x)",
 			    dp->ufs.target_id, dp->ufs.lun);
 		break;
 	case EFIDP_MSG_SD:
+		check_node_size_for_type(dp, efidp_sd);
 		format(buf, size, off, "SD", "SD(%d)", dp->sd.slot_number);
 		break;
 	case EFIDP_MSG_BT:
+		check_node_size_for_type(dp, efidp_bt);
 		format(buf, size, off, "Bluetooth", "Bluetooth(");
 		format_hex_separated(buf, size, off, "Bluetooth", ":", 1,
 				     dp->bt.addr, sizeof(dp->bt.addr));
 		format(buf, size, off, "Bluetooth", ")");
 		break;
 	case EFIDP_MSG_WIFI:
+		check_node_size_for_type(dp, efidp_wifi);
 		format(buf, size, off, "Wi-Fi", "Wi-Fi(");
 		format_hex_separated(buf, size, off, "Wi-Fi", ":", 1,
 				     dp->wifi.ssid, sizeof(dp->wifi.ssid));
 		format(buf, size, off, "Wi-Fi", ")");
 		break;
 	case EFIDP_MSG_EMMC:
+		check_node_size_for_type(dp, efidp_emmc);
 		format(buf, size, off, "eMMC", "eMMC(%d)", dp->emmc.slot);
 		break;
 	case EFIDP_MSG_BTLE:
+		check_node_size_for_type(dp, efidp_btle);
 		format(buf, size, off, "BluetoothLE", "BluetoothLE(");
 		format_hex_separated(buf, size, off, "BluetoothLE", ":", 1,
 				     dp->btle.addr, sizeof(dp->btle.addr));
@@ -726,6 +754,7 @@ _format_message_dn(unsigned char *buf, size_t size, const_efidp dp)
 		       dp->btle.addr_type);
 		break;
 	case EFIDP_MSG_DNS: {
+		check_node_size_for_type(dp, efidp_dns);
 		int end = (efidp_node_size(dp)
 			   - sizeof(dp->dns.header)
 			   - sizeof(dp->dns.is_ipv6)
@@ -744,6 +773,7 @@ _format_message_dn(unsigned char *buf, size_t size, const_efidp dp)
 		break;
 	}
 	case EFIDP_MSG_NVDIMM:
+		check_node_size_for_type(dp, efidp_nvdimm);
 		format(buf, size, off, "NVDIMM", "NVDIMM(");
 		format_guid(buf, size, off, "NVDIMM", &dp->nvdimm.uuid);
 		format(buf, size, off, "NVDIMM", ")");
