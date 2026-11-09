@@ -18,6 +18,7 @@ FUZZ_ARGS	?=
 
 fuzzers := $(patsubst %.c,%,$(wildcard fuzz-*.c))
 
+fuzz-efidp-format_LIBS = ./libefivar.a
 fuzz-efisec_LIBS = ./libefisec.a ./libefivar.a
 
 ifneq ($(origin FUZZ_VERBOSE),undefined)
