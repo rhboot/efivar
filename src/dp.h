@@ -191,4 +191,13 @@ extern ssize_t _format_bios_boot_dn(unsigned char *buf, size_t size, const_efidp
 	}								\
 })
 
+static inline bool UNUSED string_is_terminated(char *buf, size_t size)
+{
+	for (size_t i = 0; i < size; i++) {
+		if (buf[i] == '\0')
+			return true;
+	}
+	return false;
+}
+
 // vim:fenc=utf-8:tw=75:noet
