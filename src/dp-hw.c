@@ -27,22 +27,28 @@ _format_hw_dn(unsigned char *buf, size_t size, const_efidp dp)
 {
 	efi_guid_t edd10_guid = EDD10_HARDWARE_VENDOR_PATH_GUID;
 	ssize_t off = 0;
+
+	debug("buf:%p size:%zu dp:%p", buf, size, dp);
 	switch (dp->subtype) {
 	case EFIDP_HW_PCI:
+		check_node_size_for_type(dp, efidp_pci);
 		format(buf, size, off, "Pci", "Pci(0x%"PRIx32",0x%"PRIx32")",
 		       dp->pci.device, dp->pci.function);
 		break;
 	case EFIDP_HW_PCCARD:
+		check_node_size_for_type(dp, efidp_pccard);
 		format(buf, size, off, "PcCard", "PcCard(0x%"PRIx32")",
 		       dp->pccard.function);
 		break;
 	case EFIDP_HW_MMIO:
+		check_node_size_for_type(dp, efidp_mmio);
 		format(buf, size, off, "MemoryMapped",
 		       "MemoryMapped(%"PRIu32",0x%"PRIx64",0x%"PRIx64")",
 		       dp->mmio.memory_type, dp->mmio.starting_address,
 		       dp->mmio.ending_address);
 		break;
 	case EFIDP_HW_VENDOR:
+		check_node_size_for_type(dp, efidp_hw_vendor);
 		if (!efi_guid_cmp(&dp->hw_vendor.vendor_guid, &edd10_guid)) {
 			format_helper(format_edd10_guid, buf, size, off,
 				      "EDD 1.0", dp);
@@ -51,10 +57,12 @@ _format_hw_dn(unsigned char *buf, size_t size, const_efidp dp)
 		}
 		break;
 	case EFIDP_HW_CONTROLLER:
+		check_node_size_for_type(dp, efidp_controller);
 		format(buf, size, off, "Ctrl", "Ctrl(0x%"PRIx32")",
 		       dp->controller.controller);
 		break;
 	case EFIDP_HW_BMC:
+		check_node_size_for_type(dp, efidp_bmc);
 		format(buf, size, off, "BMC", "BMC(%d,0x%"PRIx64")",
 		       dp->bmc.interface_type, dp->bmc.base_addr);
 		break;

@@ -179,4 +179,16 @@ extern ssize_t _format_bios_boot_dn(unsigned char *buf, size_t size, const_efidp
 #define format_bios_boot_dn(buf, size, off, dp) \
 	format_helper_2(_format_bios_boot_dn, buf, size, off, dp)
 
+#define check_node_size_for_type(dp, type) ({				\
+	size_t _nodesz = efidp_node_size(dp);				\
+	size_t _typesz = sizeof(type);					\
+									\
+	if (_nodesz < _typesz) {					\
+		debug("node size %zu < %s size %zu",			\
+		      _nodesz, STRING(type), _typesz);			\
+		errno = EINVAL;						\
+		return -1;						\
+	}								\
+})
+
 // vim:fenc=utf-8:tw=75:noet
