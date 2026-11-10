@@ -18,7 +18,7 @@ extern "C" {
 	({ (name) = ((value) & (mask)) >> (shift); })
 
 #define efidp_size_after(dp, field)					\
-	(efidp_size((const_efidp)dp) -					\
+	(efidp_node_size((const_efidp)dp) -				\
 	 (offsetof(__typeof__ (*(dp)), field) + sizeof((dp)->field)))
 
 #define EFIVAR_PACKED __attribute__((__packed__))
