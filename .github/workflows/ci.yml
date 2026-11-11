@@ -21,6 +21,7 @@
                 { "run": "make all test" },
                 { "run": "make abicheck" },
                 { "run": "make clean fuzz-efisec MAX_FUZZ_RUNS=1024 MAX_FUZZ_TIME=60" },
+                { "run": "make clean fuzz-efidp-format MAX_FUZZ_RUNS=1024 MAX_FUZZ_TIME=60" },
             ],
         },
     },
