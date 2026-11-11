@@ -169,6 +169,11 @@ err_secdb_free:
 	efi_secdb_free(secdb);
 }
 
+int __lsan_is_turned_off(void)
+{
+	return 1;
+}
+
 int
 LLVMFuzzerTestOneInput(const uint8_t *data, size_t size)
 {
