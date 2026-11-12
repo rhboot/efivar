@@ -48,13 +48,19 @@ family = $(foreach FAMILY_SUFFIX,$(FAMILY_SUFFIXES),$($(1)_$(FAMILY_SUFFIX)))
 	$(quiet)sed -i -s 's,$(TOPDIR)/,,g' $@
 
 %.abicheck : %.so
-	$(quiet)$(ABIDIFF) \
-		--suppr abignore \
-		--no-show-locs \
-		--no-architecture \
-		--headers-dir2 $(TOPDIR)/src/include/efivar/ \
-		$(patsubst %.so,%.abixml,$<) \
-		$<
+	$(quiet)if abidw --abixml-version | grep -q 'abidw.*3\.0' ; then \
+		$(ABIDIFF) \
+			--suppr abignore \
+			--no-show-locs \
+			--no-architecture \
+			--headers-dir2 $(TOPDIR)/src/include/efivar/ \
+			$(patsubst %.so,%.abixml,$<) \
+			$< ; \
+	else \
+		echo -n "libabigail is too old: " ; \
+		abidw --abixml-version ; \
+		echo "skipping abi check" ; \
+	fi
 
 %.o : %.c
 	$(quiet)$(CC) $(CFLAGS) -fPIC $(CPPFLAGS) -c -o $@ $(filter %.c %.o %.S,$^)
