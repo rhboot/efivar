@@ -260,7 +260,7 @@ static int
 fmt_x509_cert(char *buf, size_t bufsz, uint8_t *data, size_t datasz)
 {
 	X509 *cert = NULL;
-	X509_NAME *subject = NULL;
+	const X509_NAME *subject = NULL;
 
 	cert = d2i_X509(NULL, (const unsigned char **)&data, datasz);
 	if (!cert)

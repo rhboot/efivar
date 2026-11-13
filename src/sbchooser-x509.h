@@ -15,8 +15,8 @@ struct cert_data {
 	/*
 	 * OpenSSL owns these and they should not be individually freed
 	 */
-	X509_NAME *issuer;
-	X509_NAME *subject;
+	const X509_NAME *issuer;
+	const X509_NAME *subject;
 	ASN1_INTEGER *serial;
 
 	const ASN1_TIME *not_before;

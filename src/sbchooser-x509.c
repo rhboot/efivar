@@ -193,7 +193,7 @@ elaborate_x509_info(cert_data_t *cert)
 	 */
 	while (true) {
 		if (!strcmp(pksn, "rsaEncryption")) {
-			X509_PUBKEY *xpk;
+			const X509_PUBKEY *xpk;
 			ASN1_OBJECT *ppkalg = NULL;
 			const unsigned char *pk = NULL;
 			int pklen = 0;
